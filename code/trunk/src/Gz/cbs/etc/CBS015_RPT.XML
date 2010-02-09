@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÊ¡¼¯ÖÐÆ½Ì¨ÍøÒø¿ÛÊÕ·ÑÓÃ¿Í»§»Øµ¥ -->
+<Application dbconnect="YES" trclog="CBS015.log">
+	<VarDef>
+		<String alias="RptSmr" pos="1"/>
+		<String alias="TxnMon" pos="2"/>
+		<String alias="DrAct"  pos="3"/>
+		<String alias="FeeFlg" pos="4"/>
+		<String alias="BrNo"   pos="5"/>
+		<String alias="NodNo"  pos="6"/>
+		<String alias="PrtTlr" pos="7"/>
+		<String alias="PrtDat" pos="8"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="FEESTS">
+			<Convert value="U" msg="³õÊ¼"/>
+			<Convert value="S" msg="¼ÇÕÊ³É¹¦"/>
+			<Convert value="T" msg="¼ÇÕÊ³¬Ê±"/>
+			<Convert value="E" msg="¼ÇÕÊÊ§°Ü"/>
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select ActDat,TlrId,TckNo,NodNo,TxnMon,DrAct,DrNam,int(TxnNum) TxnNum,CcyCod,FeeAmt,PstAmt,int(PrtNum) PrtNum
+									from CbsNetFee where FeeSts='S' and TxnMon='%s' and BrNo='%s' and (DrAct='%s' or '%s'='')">
+				<FieldList>$TxnMon|$BrNo|$DrAct|$DrAct|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine>
+		<Iterative line="1">
+			<Para label="01" alias="$TxnMon"/>
+			<Para label="02" alias="$ACTDAT"/>
+			<Para label="03" alias="$DRACT"/>
+			<Para label="04" alias="$DRNAM"/>
+			<Para label="05" alias="$CCYCOD"/>
+			<Para label="06" alias="AMTFMT(ADD($FEEAMT,$PSTAMT))"/>
+			<Para label="07" alias="AMTTOCAP(ADD($FEEAMT,$PSTAMT))"/>
+			<Para label="08" alias="$TXNMON"/>
+			<Para label="09" alias="$TXNNUM"/>
+			<Para label="10" alias="$PRTNUM"/>
+			<Para label="11" alias="$TCKNO"/>
+			<Para label="12" alias="$NodNo"/>
+			<Para label="13" alias="$PrtTlr"/>
+			<Para label="14" alias="$PrtDat"/>
+			<Format>
+                                      ÍøÒøÍ¬³Ç×ªÕÊÒµÎñ
+
+
+                                     ¡¾#¡¿ÔÂ·Ý¿Û¿î»ØÖ´
+
+
+  ÒµÎñ    ÖÖÀà£ºÍøÒøÍ¬³Ç×ªÕÊÒµÎñ            ¿ÛÊÕÈÕÆÚ£º#
+  
+  
+  ¿ÛÊÕ    ÕËºÅ£º#
+  ¿ÛÊÕÕË»§Ãû³Æ£º#
+  
+  
+  ½»Ò×    ±ÒÖÖ£º#                           ¿ÛÊÕ½ð¶î£º£¤#
+  ½ð¶î£¨´óÐ´£©£º#
+  
+  
+  Õª        Òª£ºÇåËãÍøÒøÍ¬³Ç×ªÕÊ¡¾#¡¿ÔÂ¡¾#¡¿±ÊÒµÎñÊÖÐø·Ñ£¬µÚ¡¾#¡¿´Î´òÓ¡
+  
+  
+  »á¼Æ Á÷ Ë®ºÅ£º#                           ¼ÇÕÊÍøµã£º# 
+  ´òÓ¡    ¹ñÔ±£º#                           ´òÓ¡ÈÕÆÚ£º#
+  
+
+
+
+
+
+
+
+
+
+
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

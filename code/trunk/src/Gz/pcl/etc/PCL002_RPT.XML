@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÉÌ»§POSÔ¤ÇåËãÇåµ¥ -->
+<Application dbconnect="YES" trclog="Pcl002.log">
+	<VarDef>
+		<String alias="ClrDat" pos="1" />
+		<String alias="ActDat" pos="2" />
+		<String alias="PrtTlr" pos="3" />
+		<String alias="AgrBr"  pos="4" />
+	</VarDef>
+	<MsgConvert>
+		<Item alias="CDFLAG">
+			<Convert value="C" msg="Ïû·ÑÇåËã" />
+			<Convert value="D" msg="ÍË»õÇåËã" />
+			<DEFAULT msg="Î´ÖªÒµÎñ" />	
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select OpnBr, CdFlag,
+									case when CdFlag='C' then value(sum(bigint(ClearAmt)),0)
+											 when CdFlag='D' then value((-1)*sum(bigint(ClearAmt)),0)
+									 end ClearAmt,
+									case when CdFlag='C' then value(sum(bigint(MerFee)),0)
+											 when CdFlag='D' then value((-1)*sum(bigint(MerFee)),0)
+									 end MerFee,
+									case when CdFlag='C' then value(sum(bigint(BankFee)),0)
+											 when CdFlag='D' then value((-1)*sum(bigint(BankFee)),0)
+									 end BankFee
+									from PclTxnDtl
+								 where CtrPostDate='%s' and AgrBr='%s' and Sts='0' group by OpnBr, CdFlag" >
+				<FieldList>$ClrDat|$AgrBr|</FieldList>
+			</Sql>
+		</Iterative>
+		<Summed type="field">
+			<Field sum="CLEARAMT" sum_alias="TotClearAmt"/>
+			<Field sum="MERFEE" sum_alias="TotMerFee"/>
+			<Field sum="BANKFEE" sum_alias="TotBankFee"/>
+		</Summed>   
+	</DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$CLEARDT"/>
+			<Format>
+                               ½»Í¨ÒøÐÐÉÌ»§ POS Ô¤ÇåËãÇåµ¥
+                       =============================================
+                                  µ¼ÈëÊý¾ÝÈÕÆÚ£º#
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§ ·ÖÐÐºÅ ©§ÇåËã¿îÏî©§      ÈëÕË½ð¶î        ©§    ÉÌ»§Ó¦¸¶ÊÖÐø·Ñ    ©§    ÊÕµ¥Ó¦ÊÕÊÖÐø·Ñ    ©§
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$OPNBR" spread="mid" />
+			<Para label="02" alias="$CDFLAG" convert="yes" spread="mid" />
+			<Para label="03" alias="AMTFMT($CLEARAMT)" spread="left" />
+			<Para label="04" alias="AMTFMT($MERFEE)" spread="left" />
+			<Para label="05" alias="AMTFMT($BANKFEE)" spread="left" />
+			<Format>
+©§#       ©§       #©§                     #©§                     #©§                     #©§
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="AMTFMT($TotClearAmt)" spread="left" />
+			<Para label="02" alias="AMTFMT($TotMerFee)" spread="left" />
+			<Para label="03" alias="AMTFMT($TotBankFee)" spread="left" />
+			<Format>
+©Ç©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ½ð¶î£º                               #©§                     #©§                     #©§
+©Ç©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Para label="01" alias="$PrtTlr"/>
+			<Para label="02" alias="$ActDat"/>
+			<Format>
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+  ¹ñÔ±£º#                                                            ²Ù×÷ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

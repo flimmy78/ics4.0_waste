@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="PNT008.log">
+	<VarDef>
+		<String alias="RptHead" pos="1"/>
+		<String alias="TxnDat"  pos="2"/>
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select ZHBankCd,ZHBankNm,TxnDat,TotNum,ZHActNo,ZHActNm,TotAmt,DSBankNo,DSBankNm,DSActNo,TitNum,TitAmt,TCrpCd,TCrpNm,PrjCod,PrjNam,DtlAmt,RevDat  from PntHzfczh where  TxnDat='%s' and dtlsts='2'">              
+				<FieldList>$TxnDat|</FieldList>
+			</Sql>
+		</Iterative>
+    <Summed type="sql">
+       <Sql sql="select TxnDat,sum(cast(TotAmt as bigint)) as sumamt,coalesce(COUNT(*),0) SumCnt from PntHzfczh where TxnDat='%s' and dtlsts='2' group by TxnDat">
+       <FieldList>$TxnDat|</FieldList>
+     </Sql>
+    </Summed>		
+	</DataSource>
+	<FormatDefine pagerows="20" pagesum="NO">
+		<TableHeader line="1">
+			<Para label="01" alias="$RptHead"/>
+			<Para label="02" alias="$TxnDat"/>
+			<Format>           
+                                                                       #
+                                                                                                                           ´òÓ¡ÈÕÆÚ:#                                                                                                                                                                                                                                                                                
+  ©³©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+  ©§  ½»Ò×ÈÕÆÚ  ©§    ×¨»§ÒøÐÐ±àÂë  ©§ ×¨»§ÒøÐÐÃû³Æ     ©§      ½É·Ñ½ð¶î          ©§       ×¨»§ÕËºÅ             ©§    ×¨»§ÕË»§Ãû³Æ      ©§     ´úÊÕÒøÐÐ±àÂë     ©§   ´úÊÕÒøÐÐÃû³Æ       ©§  ´úÊÕÕËºÅ        ©§    Ö´ÊÕµ¥Î»±àÂë      ©§   Ö´ÐÐµ¥Î»Ãû³Æ   ©§  ÊÕ·ÑÏîÄ¿±àÂë    ©§    ÊÕ·ÑÏîÄ¿Ãû³Æ      ©§   ÊÕ·ÑÈÕÆÚ       ©§
+  ©§            ©§                  ©§                  ©§                        ©§                            ©§                      ©§                      ©§                      ©§                  ©§                      ©§                  ©§                  ©§                      ©§                  ©§
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$TxnDat"/>	
+			<Para label="02" alias="$ZHBankCd"/>
+			<Para label="03" alias="$ZHBankNm"/>
+			<Para label="04" alias="AMTFMT($TotAmt)"/>
+			<Para label="05" alias="$ZHActNo"/>
+			<Para label="06" alias="$ZHActNm"/>
+			<Para label="07" alias="$DSBankNo"/>
+			<Para label="08" alias="$DSBankNm"/>				
+			<Para label="09" alias="$DSActNo"/>
+			<Para label="10" alias="$TCrpCd"/>
+			<Para label="11" alias="$TCrpNm"/>
+			<Para label="12" alias="$PrjCod"/>
+			<Para label="13" alias="$PrjNam"/>
+			<Para label="14" alias="$RevDat"/>
+			<Format>
+  ©Ç©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+  ©§#           ©§#                 ©§#                 ©§                   #    ©§#                           ©§#                     ©§#                     ©§#                     ©§#                 ©§#                     ©§#                 ©§#                 ©§#                     ©§#                 
+			</Format>
+		</Iterative>
+    <Summed line='1'>
+       <Para label="01" alias="$TxnDat"         spread="left"></Para>
+       <Para label="02" alias="$SumCnt"         spread="left"></Para>
+       <Para label="03" alias="AMTFMT($sumamt)" spread="left"></Para>
+       <Format>
+  ©Ç©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+  ©§ ºÏ¼Æ       ·Ö³ÉÈÕÆÚ: #                       ±ÊÊý:   #              ½ð¶î£º            #                                                                                                                                                                                                                            ©§
+  ©§                                                                                                                                                                                                                                                                                                                    ©§
+       </Format>
+    </Summed>		
+		<TableFooter>
+			<Format>
+  ©»©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+	             
+	                                                                                           ÒøÐÐ(Ç©ÕÂ)£º     
+
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

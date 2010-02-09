@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐÖéº£·ÖÐÐÉÌ»§POSÌØÖÖ×ªÕË´«Æ± -->
+<Application dbconnect="YES" trclog="Pcl010.log">
+	<VarDef>
+		<String alias="ClrDat" pos="1"/>
+		<String alias="ActDat" pos="2"/>
+		<String alias="PrtTlr" pos="3"/>
+    <String alias="OpnBr"  pos="4"/>
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select a.MerId MERID, a.MerAccFromTbl MERACCFROMTBL, b.CusNam CusNam, b.BankNm BANKNM,
+			 								 case when a.InMode='0' then sum( int( a.TranAmt) )
+			 											when a.InMode='1' then sum( int( a.ClearAmt) )
+			 								 end ClearAmt
+									from PclTxnDtl a, PclCusAgt b
+							   where a.CTRPOSTDATE='%s' 
+									 and a.STS = '1'
+									 and b.PosTyp='0'
+                   and b.SysFlg='1'
+									 and a.MerId = b.BusiNo
+								 group by a.MerId, a.MerAccFromTbl, b.CusNam, b.BankNm, a.InMode" >
+				<FieldList>$ClrDat|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+
+	<FormatDefine pagerows="3">
+		<Iterative line="1">
+			<Para label="01" alias="$ActDat"  spread="left" />
+			<Para label="02" alias="ADDCHAR($CUSNAM,60, ,0)"  spread="left" />
+			<Para label="03" alias="ADDCHAR($MerAccFromTbl,30, ,0)"	spread="left" />
+			<Para label="04" alias="ADDCHAR($BANKNM,60, ,0)"	spread="left"  />
+			<Para label="05" alias="ADDCHAR(AMTTOCAP($CLEARAMT),42, ,0)" spread="left" />
+			<Para label="06" alias="ADDCHAR(AMTFMT($CLEARAMT),22, ,0)"   spread="right" />
+			<Para label="07" alias="ADDCHAR($MERID,15, ,0)"		spread="left" />
+			<Format>
+                                                       ½»Í¨ÒøÐÐÖéº£·ÖÐÐÌØÖÖ×ªÕË´«Æ±
+                                               ____________________________________________       
+                                                          »á¼ÆÈÕÆÚ£º # 
+        ©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+        ©§¸¶    ©¦È«    ³Æ©¦ÔÝÊÕ¿îÏî              ©¦ÊÕ©¦È«    ³Æ©¦#    ©§
+        ©§¿î    ©À©¤©¤©¤©¤©à©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©È¿î©À©¤©¤©¤©¤©à©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©Ì
+        ©§µ¥    ©¦ÕÊ    ºÅ©¦444800012620190014899 ©¦µ¥©¦ÕÊ    ºÅ©¦#                                  ©§
+        ©§Î»    ©À©¤©¤©¤©¤©à©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©ÈÎ»©À©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©Ì
+        ©§      ©¦¿ª»§ÒøÐÐ©¦½»ÐÐÖéº£·ÖÐÐ          ©¦  ©¦¿ª»§ÒøÐÐ: #     ©§
+        ©Ç©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+        ©§½ð  ¶î©¦ #            ©¦                               £¤ #©§
+        ©Ä©¤©¤©¤©à©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©Ð©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©Ì
+        ©§      ©¦¸¶½ð¿¨ÁªÍø»§Ïû·Ñ¿î                                    ©¦ »á¼Æ·ÖÂ¼:                                              ©§
+        ©§      ©¦ÉÌ»§ºÅ #                                 ©¦ ´û(ÊÕ)                                                 ©§
+        ©§±¸  ×¢©¦                                                      ©¦ ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨                                 ©§
+        ©§      ©¦                                                      ©¦ ¶Ô·½¿ÆÄ¿:½è(¸¶)                                        ©§
+        ©§      ©¦                                                      ©¦ ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨                               ©§
+        ©»©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+           »á¼Æ:                 ¸´ºË:			 ¼ÇÕÊ:                      ÖÆÆ±:  
+           
+
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

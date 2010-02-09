@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="MdfFmt.log" err_file="MdfFmt.err">
+  <CodeSwitching>
+    <Table name="JFYHTOJFYHSMR" file="etc/MDF_CSW.XML">
+      <Column name="JFYH" sort="no"/>
+      <Column name="JFYHSMR" sort="no"/>
+    </Table>
+  </CodeSwitching>
+
+  <Process name="MDFCUSINF" desc="¿Í»§ÐÅÏ¢±í">
+<!--
+    <Data>
+-->
+      <AddItem name="RegDat" expression="$ActDat" desc="Èë¿âÊ±¼ä"/>
+      <Item name="TBSDM"  length="  1" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"   length=" 20" expression="TRIM($SBBM,all)" desc="Éç±£±àÂë"/>
+      <Item name="JFZT"   length="  1" desc="½É·ÑÖ÷Ìå"/>
+      <Item name="SSQ"    length="  6" desc="ËùÊôÇø"/>
+      <Item name="DWMC"   length=" 60" expression="TRIM($DWMC,all)" desc="½É·ÑÈËÃû³Æ"/>
+      <Item name="GRSF"   length="  3" desc="¸öÈËÉí·Ý"/>
+      <Item name="CBDWBM" length="  8" desc="ËùÔÚ²Î±£µ¥Î»±àÂë"/>
+      <Item name="CBDWMC" length="100" expression="TRIM($CBDWMC,all)" desc="ËùÔÚ²Î±£µ¥Î»Ãû³Æ"/>
+      <Item name="ZJLX"   length="  3" desc="Ö¤¼þÀàÐÍ"/>
+      <Item name="ZJHM"   length=" 25" expression="TRIM($ZJHM,all)" desc="Ö¤¼þºÅÂë"/>
+      <Item name="XJHM"   length=" 40" expression="TRIM($XJHM,all)" desc="Ñ§¼®ºÅÂë"/>
+      <Item name="JFYH"   length="  2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="YHHH"   length=" 10" expression="TRIM($YHHH,all)" desc="½É·Ñ¿ª»§ÒøÐÐÐÐºÅ"/>
+      <Item name="KHYH"   length=" 40" expression="TRIM($KHYH,all)" desc="½É·Ñ¿ª»§ÒøÐÐÃû³Æ"/>
+      <Item name="YHZH"   length=" 40" expression="TRIM($YHZH,all)" desc="½É·ÑÒøÐÐÕÊºÅ"/>
+      <Item name="YHHM"   length=" 40" expression="TRIM($YHHM,all)" desc="½É·ÑÈËÒøÐÐ»§Ãû"/>
+      <Item name="YB"     length="  6" desc="ÓÊ±à"/>
+      <Item name="DWDZ"   length="100" expression="TRIM($DWDZ,all)" desc="ÁªÏµµØÖ·"/>
+      <Item name="LXR"    length=" 10" expression="TRIM($LXR,all)"  desc="ÁªÏµÈË"/>
+      <Item name="LXDH"   length=" 15" expression="TRIM($LXDH,all)" desc="ÁªÏµµç»°"/>
+<!--
+      <Item name="LRSJ"   length=" 19" desc="Â¼ÈëÊ±¼ä"/>
+      <Item name="XGSJ"   length=" 19" desc="ÐÞ¸ÄÊ±¼ä"/>
+-->
+<!--
+    </Data>
+-->
+  </Process>
+
+
+  <Process name="MDFYHYSHZ" desc="Ó¦ÊÕÃ÷Ï¸»ã×Ü">
+    <AddItem name="YSHZZT" value="U" desc="×´Ì¬"/>
+    <Item name="YSPC"    length="11" expression="DELSPACE($YSPC,all)" desc="Ó¦ÊÕÅú´Î"/>
+    <Item name="DSJBR"   length="10" desc="µØË°¾­°ìÈË"/>
+    <Item name="PCFSSJ"  length="19" desc="·¢ËÍÊ±¼ä"/>
+    <Item name="MXBS"    length=" 9" expression="DELSPACE($MXBS,all)" desc="Ã÷Ï¸±ÊÊý"/>
+    <Item name="MXZJE"   length="14" expression="FABSAMT(AMTPOWER($MXZJE,2),15)" desc="Ã÷Ï¸×Ü½ð¶î"/>
+    <Item name="CJBS"    length=" 9" expression="DELSPACE($CJBS,all)" desc="³å¼õ±ÊÊý"/>
+    <Item name="CJZJE"   length="14" expression="FABSAMT(AMTPOWER($CJZJE,2),15)" desc="³å¼õ½ð¶î"/>
+    <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+    <Item name="YHJBR"   length="10" desc="ÒøÐÐ¾­°ìÈË"/>
+    <Item name="JSSJ"    length="19" desc="ÒøÐÐ½ÓÊÕÊ±¼ä"/>
+    <Item name="JSMXBS"  length=" 9" expression="DELSPACE($JSMXBS,all)" desc="ÒøÐÐ½ÓÊÕÃ÷Ï¸±ÊÊý"/>
+    <Item name="JSMXZJE" length="14" expression="FABSAMT(AMTPOWER($JSMXZJE,2),15)" desc="½ÓÊÕÃ÷Ï¸×Ü½ð¶î"/>
+    <Item name="JSCJBS"  length=" 9" expression="DELSPACE($JSCJBS,all)" desc="ÒøÐÐ½ÓÊÕ³å¼õ±ÊÊý"/>
+    <Item name="JSCJZJE" length="14" expression="FABSAMT(AMTPOWER($JSCJZJE,2),15)" desc="½ÓÊÕ³å¼õ×Ü½ð¶î"/>
+    <Item name="DZBZ"    length=" 1" desc="¶ÔÕË±êÖ¾"/>
+    <Item name="PCBZ"    length="30" desc="±¸×¢"/>
+  </Process>
+
+
+
+  <Process name="MDFYHYSMX" desc="Ó¦ÊÕÃ÷Ï¸">
+<!--
+    <Head>
+      <AddItem name="YSHZZT" value="U" desc="×´Ì¬"/>
+      <Item name="YSPC"    length="11" desc="Ó¦ÊÕÅú´Î"/>
+      <Item name="DSJBR"   length="10" desc="µØË°¾­°ìÈË"/>
+      <Item name="PCFSSJ"  length="19" desc="·¢ËÍÊ±¼ä"/>
+      <Item name="MXBS"    length=" 9" desc="Ã÷Ï¸±ÊÊý"/>
+      <Item name="MXZJE"   length="14" expression="FABSAMT(AMTPOWER($MXZJE,2),15)" desc="Ã÷Ï¸×Ü½ð¶î"/>
+      <Item name="CJBS"    length=" 9" desc="³å¼õ±ÊÊý"/>
+      <Item name="CJZJE"   length="14" expression="FABSAMT(AMTPOWER($CJZJE,2),15)" desc="³å¼õ½ð¶î"/>
+      <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="YHJBR"   length="10" desc="ÒøÐÐ¾­°ìÈË"/>
+      <Item name="JSSJ"    length="19" desc="ÒøÐÐ½ÓÊÕÊ±¼ä"/>
+      <Item name="JSMXBS"  length=" 9" desc="ÒøÐÐ½ÓÊÕÃ÷Ï¸±ÊÊý"/>
+      <Item name="JSMXZJE" length="14" expression="FABSAMT(AMTPOWER($JSMXZJE,2),15)" desc="½ÓÊÕÃ÷Ï¸×Ü½ð¶î"/>
+      <Item name="JSCJBS"  length=" 9" desc="ÒøÐÐ½ÓÊÕ³å¼õ±ÊÊý"/>
+      <Item name="JSCJZJE" length="14" expression="FABSAMT(AMTPOWER($JSCJZJE,2),15)" desc="½ÓÊÕ³å¼õ×Ü½ð¶î"/>
+      <Item name="DZBZ"    length=" 1" desc="¶ÔÕË±êÖ¾"/>
+      <Item name="PCBZ"    length="30" desc="±¸×¢"/>
+    </Head>
+    <Data>
+-->
+      <Item name="YSPC"    length="11" expression="DELSPACE($YSPC,all)" desc="µØË°·¢ËÍ¸øÒøÐÐÓ¦ÊÕÅú´Î"/>
+      <Item name="YSLSH"   length="18" desc="µØË°·¢ËÍ¸øÒøÐÐÓ¦ÊÕÁ÷Ë®"/>
+      <Item name="SBPC"    length=" 9" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÅú´Î"/>
+      <Item name="SBLSH"   length="18" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÁ÷Ë®ºÅ"/>
+      <Item name="DYSBLSH" length="18" desc="¶ÔÓ¦Éç±£Á÷Ë®ºÅ"/>
+      <Item name="TBSDM"   length=" 1" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"    length="20" expression="DELSPACE($SBBM,all)" desc="Éç±£±àÂë"/>
+      <Item name="SSQ"     length=" 6" desc="ËùÊôÇø"/>
+      <Item name="HDFS"    length=" 1" desc="ºË¶¨·½Ê½"/>
+      <Switch expression="$HDFS">
+        <Case value="0"/>
+        <Case value="1"/>
+        <Case value="3">
+          <AddItem name="YSMXZT" value="U" desc="×´Ì¬"/>
+          <Break/>
+        </Case>
+        <Case value="4"/>
+        <Case value="5">
+          <AddItem name="YSMXZT" value="A" desc="×´Ì¬"/>
+          <AddItem name="SJZT" value="5300" desc="Êý¾Ý×´Ì¬"/>
+          <AddItem name="JYSJ" expression="GETDATETIME(YYYYMMDDHHMISS)" desc="½»Ò×Ê±¼ä"/>
+          <AddItem name="ZSFS" value="03" desc="Õ÷ÊÕ·½Ê½"/>
+          <Break/>
+        </Case>
+      </Switch>
+      <Item name="TZNY"   length=" 6" desc="Ì¨ÕÊÄêÔÂ"/>
+      <Item name="SSRQ"   length=" 6" desc="·Ñ¿îËùÊôÆÚ"/>
+      <Item name="XZDM"   length=" 2" desc="ÏÕÖÖ´úÂë"/>
+      <Item name="ZMDM"   length=" 2" desc="¿îÏî(×ÓÄ¿´úÂë)"/>
+      <Item name="TmpAmt" length="14" expression="AMTPOWER($TmpAmt,2)" desc="½ð¶î"/>
+      <If condition="INTCMP($TmpAmt,1,0)">
+        <AddItem name="CdFlag" value="C" desc="½è·½"/>
+      </If>
+      <Else>
+        <AddItem name="CdFlag" value="D" desc="´û·½"/>
+      </Else>
+      <AddItem name="JE" expression="FABSAMT($TmpAmt,15)" desc="½ð¶î"/>
+      <Item name="JFZT"    length=" 1" desc="½É·ÑÖ÷Ìå"/>
+      <Item name="JFLX"    length=" 2" desc="½É·ÑÀàÐÍ"/>
+      <Item name="JFFS"    length=" 1" desc="½É·Ñ·½Ê½"/>
+      <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="YHHH"    length="10" desc="½É·Ñ¿ª»§ÒøÐÐÐÐºÅ"/>
+      <Item name="KHYH"    length="40" desc="½É·Ñ¿ª»§ÒøÐÐÃû³Æ"/>
+      <Item name="YHZH"    length="40" desc="½É·ÑÒøÐÐÕÊºÅ"/>
+      <If condition="INTCMP(STRLEN(DELSPACE($YHZH,all)),6,21)">
+        <AddItem name="YSMXZT" value="F" desc="×´Ì¬"/>
+        <AddItem name="SJZT" value="5308" desc="Êý¾Ý×´Ì¬"/>
+        <AddItem name="JYSJ" expression="GETDATETIME(YYYYMMDDHHMISS)" desc="½»Ò×Ê±¼ä"/>
+        <AddItem name="ZSFS" value="03" desc="Õ÷ÊÕ·½Ê½"/>
+      </If>
+      <Item name="YHHM"    length="40" desc="½É·ÑÈËÒøÐÐ»§Ãû"/>
+      <Item name="LSH"     length="14" desc="Á÷Ë®ºÅ"/>
+      <Item name="TZTZ"    length=" 6" desc="µ÷ÕûÌ¨ÕÊÄêÔÂ"/>
+      <Item name="FSSJ"    length="19" desc="·¢ËÍÊ±¼ä"/>
+      <Item name="SJZT"    length=" 4" desc="Êý¾Ý×´Ì¬"/>
+      <Item name="SJLY"    length=" 1" desc="À´¾ÝÀ´Ô´"/>
+      <Item name="BZ"      length="30" desc="±¸×¢"/>
+      <Item name="KDM"     length=" 2" desc="ÒøÐÐ¸ù¾Ý¿â´úÂë½øÐÐ¿îÏîÈë¿â"/>
+      <AddItem name="BokAmt" expression="$JE" desc="Êµ¿Û½ð¶î"/>
+      <AddItem name="RegDat" expression="$ActDat" desc="Èë¿âÈÕÆÚ"/>
+<!--
+    </Data>
+-->
+  </Process>
+
+
+  <Process name="MDFYHDZMX" desc="¶ÔÕËÃ÷Ï¸">
+    <Head>
+      <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="DZPC"    length="11" desc="¶ÔÕËÅú´Î"/>
+      <Item name="YHJBR"   length="20" desc="ÒøÐÐ¾­°ìÈË"/>
+      <Item name="FSSJ"    length="19" desc="·¢ËÍÊ±¼ä"/>
+      <Item name="MXBS"    length=" 9" desc="Ã÷Ï¸±ÊÊý"/>
+      <Item name="MXZJE"   length="14" expression="AMTSIMPLEFMT($MXZJE)" desc="Ã÷Ï¸×Ü½ð¶î"/>
+      <Item name="CJBS"    length=" 9" desc="³å¼õ±ÊÊý"/>
+      <Item name="CJZJE"   length="14" expression="AMTSIMPLEFMT(MUL($CJZJE,-1))" desc="³å¼õ½ð¶î"/>
+      <Item name="DSJBR"   length="20" value="" desc="µØË°¾­°ìÈË"/>
+      <Item name="JSSJ"    length="19" desc="½ÓÊÕÊ±¼ä"/>
+      <Item name="JSMXBS"  length=" 9" desc="ÒøÐÐ½ÓÊÕÃ÷Ï¸±ÊÊý"/>
+      <Item name="JSMXZJE" length="14" desc="Ã÷Ï¸×Ü½ð¶î"/>
+      <Item name="JSCJBS"  length=" 9" desc="ÒøÐÐ½ÓÊÕ³å¼õ±ÊÊý"/>
+      <Item name="JSCJZJE" length="14" desc="ÒøÐÐ½ÓÊÕ³å¼õ×Ü½ð¶î"/>
+      <Item name="DZBZ"    length=" 1" values="2" desc="¶ÔÕË±êÖ¾"/>
+      <Item name="BZ"      length="30" desc="±¸×¢"/>
+    </Head>
+    <Data>
+      <Item name="DZPC"    length="11" desc="µ½ÕÊÅú´Î"/>
+      <Item name="YHDZLSH" length="30" desc="ÒøÐÐµ½ÕÊÁ÷Ë®"/>
+      <Item name="DZLSH"   length="18" value="" desc="µ½ÕÊÁ÷Ë®ºÅ"/>
+      <Item name="SBPC"    length=" 9" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÅú´Î"/>
+      <Item name="SBLSH"   length="18" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÁ÷Ë®ºÅ"/>
+      <Item name="TBSDM"   length=" 1" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"    length="20" desc="Éç±£±àÂë"/>
+      <Item name="TZNY"    length=" 6" desc="Ì¨ÕÊÄêÔÂ"/>
+      <Item name="SSRQ"    length=" 6" desc="·Ñ¿îËùÊôÆÚ"/>
+      <Item name="XZDM"    length=" 2" desc="ÏÕÖÖ´úÂë"/>
+      <Item name="ZMDM"    length=" 2" desc="¿îÏî(×ÓÄ¿´úÂë)"/>
+      <Item name="BokAmt"  length="14" expression="AMTSIMPLEFMT($BokAmt)" desc="½ð¶î"/>
+      <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="JYLSH"   length="30" desc="ÒøÐÐ½»Ò×Á÷Ë®ºÅ"/>
+      <Item name="JYSJ"    length="19" desc="½»Ò×Ê±¼ä"/>
+      <Item name="ZSFS"    length=" 2" desc="Õ÷ÊÕ·½Ê½"/>
+      <Item name="YHHH"    length="10" desc="½É·Ñ¿ª»§ÒøÐÐÐÐºÅ"/>
+      <Item name="KHYH"    length="40" desc="½É·Ñ¿ª»§ÒøÐÐÃû³Æ"/>
+      <Item name="YHZH"    length="40" desc="½É·ÑÒøÐÐÕÊºÅ"/>
+      <Item name="YHHM"    length="40" desc="½É·ÑÈËÒøÐÐ»§Ãû"/>
+      <Item name="HDFS"    length=" 1" desc="ºË¶¨·½Ê½"/>
+      <Item name="JFFS"    length=" 1" desc="½É·Ñ·½Ê½"/>
+      <Item name="JFZT"    length=" 1" desc="½É·ÑÖ÷Ìå"/>
+      <Item name="JFLX"    length=" 2" desc="½É·ÑÀàÐÍ"/>
+      <Item name="YHFSSJ"  length="19" desc="·¢ËÍÊ±¼ä"/>
+<!--
+      <Item name="SJZT"    length=" 4" desc="Êý¾Ý×´Ì¬"/>
+      <Item name="BZ"      length="30" desc="±¸×¢"/>
+-->
+      <AddItem name="FilDat1" value="0002" desc="Êý¾Ý×´Ì¬"/>
+      <Item name="FilDat1"  length="4"  desc="Êý¾Ý×´Ì¬"/>
+      <AddItem name="FilDat2" value="" desc="±¸×¢"/>
+      <Item name="FilDat2" length="30" desc="±¸×¢"/>
+      <Item name="KDM"     length=" 2" desc="ÒøÐÐ¸ù¾Ý¿â´úÂë½øÐÐ¿îÏîÈë¿â"/>
+    </Data>
+  </Process>
+
+
+
+  <Process name="MDFYHYSMXALL" desc="´¦Àí½á¹ûÃ÷Ï¸">
+    <Data>
+      <Item name="YSPC"    length="11" desc="µØË°·¢ËÍ¸øÒøÐÐÓ¦ÊÕÅú´Î"/>
+      <Item name="YSLSH"   length="18" desc="µØË°·¢ËÍ¸øÒøÐÐÓ¦ÊÕÁ÷Ë®"/>
+      <Item name="SBPC"    length=" 9" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÅú´Î"/>
+      <Item name="SBLSH"   length="18" desc="Éç±£·¢ËÍÔ­Ê¼Ó¦ÊÕÁ÷Ë®ºÅ"/>
+      <Item name="DYSBLSH" length="18" desc="¶ÔÓ¦Éç±£Á÷Ë®ºÅ"/>
+      <Item name="TBSDM"   length=" 1" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"    length="20" desc="Éç±£±àÂë"/>
+      <Item name="SSQ"     length=" 6" desc="ËùÊôÇø"/>
+      <Item name="HDFS"    length=" 1" desc="ºË¶¨·½Ê½"/>
+      <Item name="TZNY"    length=" 6" desc="Ì¨ÕÊÄêÔÂ"/>
+      <Item name="SSRQ"    length=" 6" desc="·Ñ¿îËùÊôÆÚ"/>
+      <Item name="XZDM"    length=" 2" desc="ÏÕÖÖ´úÂë"/>
+      <Item name="ZMDM"    length=" 2" desc="¿îÏî(×ÓÄ¿´úÂë)"/>
+      <Item name="BokAmt"  length="14" expression="AMTSIMPLEFMT($BokAmt)" desc="½ð¶î"/>
+      <Item name="JFZT"    length=" 1" desc="½É·ÑÖ÷Ìå"/>
+      <Item name="JFLX"    length=" 2" desc="½É·ÑÀàÐÍ"/>
+      <Item name="JFFS"    length=" 1" desc="½É·Ñ·½Ê½"/>
+      <Item name="JFYH"    length=" 2" desc="½É·ÑÒøÐÐ"/>
+      <Item name="YHHH"    length="10" desc="½É·Ñ¿ª»§ÒøÐÐÐÐºÅ"/>
+      <Item name="KHYH"    length="40" desc="½É·Ñ¿ª»§ÒøÐÐÃû³Æ"/>
+      <Item name="YHZH"    length="40" desc="½É·ÑÒøÐÐÕÊºÅ"/>
+      <Item name="YHHM"    length="40" desc="½É·ÑÈËÒøÐÐ»§Ãû"/>
+      <Item name="LSH"     length="14" desc="Á÷Ë®ºÅ"/>
+      <Item name="TZTZ"    length=" 6" desc="µ÷ÕûÌ¨ÕÊÄêÔÂ"/>
+      <Item name="FSSJ"    length="19" desc="·¢ËÍÊ±¼ä"/>
+      <Item name="SJZT"    length=" 4" desc="Êý¾Ý×´Ì¬"/>
+      <Item name="SJLY"    length=" 1" value="" desc="À´¾ÝÀ´Ô´"/>
+      <AddItem name="FilDat1" expression="GETDATETIME(YYYY-MM-DD HH:MI:SS)" desc="±¸×¢"/>
+      <Item name="FilDat1" length="30" desc="±¸×¢"/>
+      <Item name="KDM"     length=" 2" desc="ÒøÐÐ¸ù¾Ý¿â´úÂë½øÐÐ¿îÏîÈë¿â"/>
+    </Data>
+  </Process>
+
+</BATCH>

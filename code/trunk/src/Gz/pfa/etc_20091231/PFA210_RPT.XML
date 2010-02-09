@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="PFA210.log">
+  <VarDef>
+    <String alias="RptNam" pos="1"/>
+    <String alias="PfaSub" pos="2"/>
+    <String alias="OIFlag" pos="3"/>
+    <String alias="ClrDat" pos="4"/>
+    <String alias="TActNo" pos="5"/>
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select a.FCusId FCUSID, a.SubCod SUBCOD, a.EContp ECONTP, a.PrjCod PRJCOD,
+                       b.FCusNm FCUSNM, substr( c.CodNam,1,30) SUBNAM, substr( d.CodNam,1,20) ECONNM,
+                       substr( e.CodNam,1,34) PRJNAM,
+                       sum(bigint(a.UseAmt)) TOTAMT
+                  from PfaVchDtl%s a, PfaCusInf b, PfaCodInf c, PfaCodInf d, PfaCodInf e,  PfaQuoBal f
+                 where a.PfaSub='%s' and a.OIFlag='%s' and a.ClrDat='%s' and a.ClrSts='2'
+                   and a.PfaSub=b.PfaSub and a.BCusId=b.BCusId
+                   and a.PfaSub=c.PfaSub and c.CodTyp='SUBCOD' and a.SubCod=c.Code
+                   and a.PfaSub=d.PfaSub and d.CodTyp='ECONTP' and a.EConTp=d.Code
+                   and a.PfaSub=e.PfaSub and e.CodTyp='PRJCOD' and a.PrjCod=e.Code
+                   and a.TSeqNo=f.TSeqNo and f.Year=substr('%s',1,4) and f.ClrAct='%s'
+              group by a.FCusId,a.SubCod,a.EContp,a.PrjCod,b.FCusNm,c.CodNam,d.CodNam,e.CodNam">
+        <FieldList>$PfaSub|$PfaSub|$OIFlag|$ClrDat|$ClrDat|$TActNo|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type="field">
+      <Field sum="TOTAMT" sum_alias="ALLAMT"/>
+    </Summed>   
+  </DataSource>
+  <FormatDefine pagerows="10" pagesum="YES">
+    <ReportHeader>
+      <Para label="01" alias="$RptNam"/>
+      <Format>
+                                                                      #
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$TActNo"/>
+      <Para label="02" alias="SUBSTR($ClrDat,1,4)"/>
+      <Para label="03" alias="SUBSTR($ClrDat,5,2)"/>
+      <Para label="04" alias="SUBSTR($ClrDat,7,2)"/>
+      <Format>
+
+ ´úÀíÒøÐÐ²ÆÕþ(ÊÚÈ¨Ö§¸¶)                        ÇåËãÐÐÕËºÅ£º#                                                                                                     #Äê#ÔÂ#ÈÕ
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§                      Ò»¼¶Ô¤Ëãµ¥Î»±àÂë                      ©§     Ô¤Ëã¿ÆÄ¿¹¦ÄÜ·ÖÀà±àÂë     ©§    ¾­¼Ã·ÖÀà±àÂë    ©§            Ô¤ËãÏîÄ¿±àÂë            ©§   Ö§¸¶½ð¶î£¨Ð¡Ð´£©   ©§
+©Ä©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©Ì                      ©§
+©§                      Ò»¼¶Ô¤Ëãµ¥Î»Ãû³Æ                      ©§     Ô¤Ëã¿ÆÄ¿¹¦ÄÜ·ÖÀàÃû³Æ     ©§    ¾­¼Ã·ÖÀàÃû³Æ    ©§            Ô¤ËãÏîÄ¿Ãû³Æ            ©§    ½ð¶îµ¥Î»£ºÔª      ©§
+      </Format>
+    </TableHeader>
+    <Iterative>
+      <Para label="01" alias="$FCUSID"/>
+      <Para label="02" alias="$SUBCOD"/>
+      <Para label="03" alias="$EConTp"/>
+      <Para label="04" alias="$PrjCod"/>
+      <Para label="05" alias="AMTFMT($TOTAMT)" spread="left"/>
+      <Para label="06" alias="$FCUSNM"/>
+      <Para label="07" alias="$SUBNAM"/>
+      <Para label="08" alias="$ECONNM"/>
+      <Para label="09" alias="$PRJNAM"/>
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§#                                                           ©§#                             ©§#                   ©§#                                   ©§                      ©§
+©Ä©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©Ì                     #©§
+©§#                                                           ©§#                             ©§#                   ©§#                                   ©§                      ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTFMT($ALLAMT)"  spread="left" />
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ                                                                                                                                                    ©§                     #©§
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+      </Format>
+    </TableFooter>
+    <ReportFooter>
+      <Format> 
+      </Format>
+    </ReportFooter>
+  </FormatDefine>
+</Application>

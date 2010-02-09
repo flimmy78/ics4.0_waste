@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="CBS_FMT2.log"  err_file="CBS_FMT2.err">
+
+   <Process name="CBS_AGR_HEAD" >
+    	<Item name="FilTyp" length="2" />			
+    	<Item name="FilNam" length="37" />
+    	<Item name="FilCnt" length="8" deli_asc="10" />
+   </Process>
+   
+   <Process name="CBS_AGR_BODY" deli_asc="58">
+    	<Item name="AgrNo"/>		
+    	<Item name="ChgMod"/>
+    	<Item name="UsrCod"/>
+    	<Item name="UsrNam"/>
+    	<Item name="LnkNam"/>
+    	<Item name="LnkAdr"/>
+    	<Item name="LnkPst"/>
+    	<Item name="LnkTel"/>		
+    	<Item name="OrgCod"/>
+    	<Item name="SBusTy"/>
+    	<Item name="PayOBnk"/>
+    	<Item name="PayAct"/>
+    	<Item name="PayNam"/>
+    	<Item name="PayIdTy"/>
+    	<Item name="PayIdNo"/>
+    	<Item name="PayMob"/>
+    	<Item name="PayEml"/>
+    	<Item name="TxnDat"/>
+    	<Item name="Smr" />		
+      <Switch expression="$SBusTy">
+        <Case value="94905">    	
+    	    <Item name="CasCod" />
+    	    <Item name="LmtAmt" expression="ADDCHAR(DELSPACE($LmtAmt,both),15,0,1)"/>    	    	
+    	    <Item name="LmtAct" deli_asc="10" necessary="no"/>
+          <Break/>
+        </Case>
+       <Default>
+          <Item name="CasCod" deli_asc="10"/>   
+       </Default>        
+      </Switch>    	    
+   </Process>
+
+   <Process name="CBS_ORG_BODY" deli_asc="124">
+    	<Item name="OrgCod"/>
+    	<Item name="OrgNam"/>
+    	<Item name="CtyCod"/>
+    	<Item name="SBusTy"/>
+    	<Item name="TxnKnd"/>
+    	<Item name="CcyCod"/>
+    	<Item name="OrgOBnk"/>
+    	<Item name="OrgActNo"/>
+    	<Item name="OrgActNm"/>
+    	<Item name="ComTel"/>
+    	<Item name="ComMan"/>
+    	<Item name="EffDat"/>
+    	<Item name="EprDat"/>
+   </Process>
+
+</BATCH>

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="SPE001.log">
+  <VarDef>
+    <String alias="ActNo"  pos="1"/>
+    <String alias="ActNm"  pos="2"/>
+    <String alias="BgnDat" pos="3"/>
+    <String alias="EndDat" pos="4"/>
+    <String alias="PrtNod" pos="5"/>
+    <String alias="PrtTlr" pos="6"/>
+    <String alias="PrtDat" pos="7"/>
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select PyrAct, ActDat, TckNo, PyeAct, PyrAct, InsAmt, CcyCod, BilDat, BilNo, PyrNam, PyeNam, ActRmk from Svrrgdrec
+                 where ( PyrAct='%s' or PyeAct='%s' ) and ( ActDat between '%s' and '%s' ) order by ActDat, TckNo">
+        <FieldList>$ActNo|$ActNo|$BgnDat|$EndDat|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type="field">
+      <Field sum="INSAMT" sum_alias="TotAmt" count="TotNum"/>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="12" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$BgnDat"/>
+      <Para label="02" alias="$EndDat"/>
+      <Para label="03" alias="$ActNo"/>
+      <Para label="04" alias="$ActNm"/>
+      <Para label="05" alias="$PAGESUM"/>
+      <Para label="06" alias="$PAGENUM"/>
+      <Format>
+                                                                          ¿Í»§½»Ò×Ã÷Ï¸Çåµ¥
+                                                               ½»Ò×ÈÕÆÚ¡¾#¡¿-¡¾#¡¿
+ ¿Í»§ÕËºÅ£º# 
+ ¿Í»§Ãû³Æ£º#                                                                                                                                           ¹² # Ò³ µÚ # Ò³ 
+©³©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§ÈëÕËÈÕÆÚ©§           ÊÕ¿îÈËÕËºÅ           ©§                         ÊÕ¿îÈË»§Ãû                         ©§ Æ±¾ÝºÅÂë ©§   »á¼ÆÁ÷Ë®   ©§        Ö§¸¶½ð¶î£¨Ð¡Ð´£©        ©§
+©Ä©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©Ü©¨©¨©¨©¨©¨©¨©¨©Ü©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©Ì
+©§Æ±¾ÝÈÕÆÚ©§           ¸¶¿îÈËÕËºÅ           ©§                         ¸¶¿îÈË»§Ãû                         ©§                          ½»Ò×ÕªÒª                          ©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$ACTDAT"/>
+      <Para label="02" alias="$PYEACT"/>
+      <Para label="03" alias="$PYENAM"/>
+      <Para label="04" alias="$BILNO" spread="mid"/>
+      <Para label="05" alias="$TCKNO" spread="mid"/>
+      <Para label="06" alias="AMTFMT($INSAMT)" spread="left"/>
+      <Para label="07" alias="$BILDAT"/>
+      <Para label="08" alias="$PYRACT"/>
+      <Para label="09" alias="$PYRNAM"/>
+      <Para label="10" alias="$ACTRMK"/>
+      <Format>
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§#       ©§#                               ©§#                                                           ©§#         ©§#             ©§                               #©§
+©Ä©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©æ©¨©¨©¨©¨©¨©Ü©¨©¨©¨©¨©¨©¨©¨©Ü©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©¨©Ì
+©§#       ©§#                               ©§#                                                           ©§#                                                           ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="$TOTNUM" spread="left"/>/>
+      <Para label="02" alias="AMTFMT($TOTAMT)" spread="left"/>
+      <Format>
+©Ç©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ                                      ©§±ÊÊý£º                                                     #©§½ð¶î£º                                                     #©§
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Para label="01" alias="$PrtNod"/>
+      <Para label="02" alias="$PrtTlr"/>
+      <Para label="03" alias="$PrtDat"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+   ´òÓ¡ÍøµãºÅ£º#                                                         ´òÓ¡¹ñÔ±ºÅ£º#                                       ´òÓ¡ÈÕÆÚ£º#
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

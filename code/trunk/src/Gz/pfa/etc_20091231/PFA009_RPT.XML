@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="PFA009.log">
+	<VarDef>
+		<String alias="RptNam" pos="1"/>
+		<String alias="PfaSub" pos="2"/>
+		<String alias="OIFlag" pos="3"/>
+		<String alias="ClrDat" pos="4"/>
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select substr(a.PayBNm,1,18) PAYBNM, a.FCusId, substr(b.FCusNm,1,28) FCUSNM, a.BCusId, substr(b.BCusNm,1,28) BCUSNM,
+											 substr(a.SubCod,4,17) SubCod,
+											 substr(a.PyeNam,1,30) PYENAM, substr(a.PyeBNm,1,16) PYEBNM, a.UseAmt
+									from PfaVchDtl%s a, PfaCusInf b 
+								 where a.PfaSub='%s' and a.OIFlag='%s' and a.ClrDat='%s' and a.ClrSts='2'
+									 and a.PfaSub=b.PfaSub and a.BCusId=b.BCusId">
+				<FieldList>$PfaSub|$PfaSub|$OIFlag|$ClrDat|</FieldList>
+			</Sql>
+		</Iterative>
+		<Summed type="field">
+			<Field sum="USEAMT" sum_alias="TotPayAmt"/>
+		</Summed>
+	</DataSource>
+	<FormatDefine pagerows="20" pagesum="YES">
+		<ReportHeader>
+			<Para label="01" alias="$RptNam"/>
+			<Format>
+                                                                      #
+			</Format>
+		</ReportHeader>
+		<TableHeader>
+			<Para label="01" alias="SUBSTR($ClrDat,1,4)"/>
+			<Para label="02" alias="SUBSTR($ClrDat,5,2)"/>
+			<Para label="03" alias="SUBSTR($ClrDat,7,2)"/>
+			<Format>
+                                                                                                                       
+ ´úÀíÒøÐÐ(ÊÚÈ¨Ö§¸¶)                                                                                                                                              #Äê #ÔÂ #ÈÕ    
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§    ´úÀíÒøÐÐ      ©§            Ò»¼¶Ô¤Ëãµ¥Î»            ©§                »ù²ãÔ¤Ëãµ¥Î»            ©§Ô¤Ëã¿ÆÄ¿©§                    ÊÕ¿îÈË                      ©§    Ö§¸¶½ð¶î    ©§
+©§                  ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©Ï        ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©Ï     (Ð¡Ð´)     ©§
+©§                  ©§             Ãû³Æ           ©§ ±àÂë ©§           Ãû³Æ             ©§ ±àÂë     ©§        ©§             È«³Æ             ©§     ¿ª»§ÐÐ     ©§                ©§
+			</Format>
+		</TableHeader>
+		<Iterative>
+			<Para label="01" alias="$PAYBNM" spread="mid"/>
+			<Para label="02" alias="$FCUSNM" spread="mid"/>
+			<Para label="03" alias="$FCUSID" spread="mid"/>
+			<Para label="04" alias="$BCUSNM" spread="mid"/>
+			<Para label="05" alias="$BCUSID" spread="mid"/>
+			<Para label="06" alias="$SUBCOD" spread="mid"/>
+			<Para label="07" alias="$PYENAM" spread="mid"/>
+			<Para label="08" alias="$PYEBNM" spread="mid"/>
+			<Para label="09" alias="AMTFMT($USEAMT)" spread="left"/>
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§#                 ©§#                           ©§#     ©§#                           ©§#         ©§#       ©§#                             ©§#               ©§               #©§
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="AMTFMT($TOTPAYAMT)" spread="left"/>
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ                                                                                                                                                          ©§               #©§           
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¿
+			</Format>
+		</TableFooter>
+		<ReportFooter>
+			<Format> 
+				<Para label="01" alias="$PAGESUM" spread="left"/>
+				<Para label="02" alias="$PAGENUM" spread="left"/>               
+              
+                                    ´úÀíÐÐÇ©ÕÂ£º                                                                                            µÚ #Ò³      ¹² # Ò³     
+			</Format>
+		</ReportFooter>
+	</FormatDefine>
+</Application>

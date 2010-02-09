@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ãÖÝ·ÖÐÐ×ªÕÊPOSÊý¾Ýµ¼Èë³ö´íÇåµ¥ -->
+<Application dbconnect="YES" trclog="Pcl011.log">
+	<VarDef>
+		<String alias="ClrDat" pos="1"/>
+		<String alias="ActDat" pos="2"/>
+		<String alias="PrtTlr" pos="3"/>
+		<String alias="OpnBr"  pos="4"/>
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select distinct MerId, TermId, ErrMsg
+									from PclDTxnDtl
+								 where CtrPostDate ='%s'
+									 and OpnBr ='%s'
+									 and TxnSts = 'E'" >
+				<FieldList>$ClrDat|$OpnBr|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$CLEARDT"/>
+			<Para label="02" alias="$PAGESUM"/>
+			<Para label="03" alias="$PAGENUM"/>
+			<Format>
+                                   ½»Í¨ÒøÐÐ×ªÕÊ POS Êý¾Ýµ¼Èë³ö´íÇåµ¥
+                              =============================================
+                                             µ¼ÈëÊý¾ÝÈÕÆÚ£º#
+                                                                            ¹²  #  Ò³       µÚ  #  Ò³   
+©³©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§ ×ªÕÊÉÌ»§ÉÌ»§ºÅ ©§    ×ªÕÊÉÌ»§ÖÕ¶ËºÅ    ©§                          ³ö´íÔ­Òò                          ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$MERID"  spread="mid" />
+			<Para label="02" alias="$TERMID" spread="mid" />
+			<Para label="03" alias="$ERRMSG" spread="mid" />
+			<Format>
+©§#               ©§#                     ©§#                                                           ©§
+			</Format>
+		</Iterative>
+		<TableFooter>
+			<Para label="01" alias="$PrtTlr"/>
+			<Para label="02" alias="$ActDat"/>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+		´òÓ¡¹ñÔ±ºÅ£º#                                                                   ²Ù×÷ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

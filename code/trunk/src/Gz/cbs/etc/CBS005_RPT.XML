@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÊ¡¼¯ÖÐÆ½Ì¨¶¨ÆÚ½è¼ÇÆ¾Ö¤ -->
+<Application dbconnect="YES" trclog="CBS005.log">
+	<VarDef>
+		<String alias="TblNam" pos="1"/>
+		<String alias="TraKnd" pos="2"/>
+		<String alias="TxnKnd" pos="3"/>
+		<String alias="CcyCod" pos="4"/>
+		<String alias="OIFlag" pos="5"/>
+		<String alias="TxnDat" pos="6"/>
+		<String alias="BTckNo" pos="7"/>
+		<String alias="ETckNo" pos="8"/>
+		<String alias="BilSts" pos="9"/>
+		<String alias="BrNo"   pos="10"/>
+		<String alias="NodNo"  pos="11"/>
+		<String alias="TlrId"  pos="12"/>
+		<String alias="PrtDat" pos="13"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="TRAKND">
+			<Convert value="1001" msg="Í¬³Ç´û¼ÇÒµÎñ" />
+			<Convert value="1002" msg="ÔÚÏßÖ§¸¶ÒµÎñ" />
+			<Convert value="1003" msg="ÊµÊ±¿Û¿îÒµÎñ" />
+			<Convert value="1051" msg="ÅúÁ¿/¶¨ÆÚ´û¼ÇÒµÎñ" />
+			<Convert value="1052" msg="¶¨ÆÚ½è¼Ç" />
+			<Convert value="1053" msg="ÅúÁ¿´úÊÕ" />
+			<Convert value="2001" msg="²éÑ¯" />
+			<Convert value="2002" msg="Í¨Öª" />
+			<Convert value="3001" msg="Í¬³Ç´û¼ÇÍË»Ø" />
+			<Convert value="3002" msg="¿Û¿î³åÕý" />
+			<DEFAULT msg="ÆäËû" />	
+		</Item>
+		<Item alias="TXNKND">
+			<Convert value="100101" msg="£Å£Æ£ÔÍ¬³ÇÈËÃñ±Ò" />
+			<Convert value="100102" msg="£Å£Æ£ÔÍ¬³Ç£Í£Ô£±£°£³" />
+			<Convert value="100103" msg="£Å£Æ£ÔÍ¬³Ç£Í£Ô£²£°£²" />
+			<Convert value="100104" msg="£Å£Æ£ÔÔÁ¸Û£Í£Ô£±£°£³" />
+			<Convert value="100105" msg="£Å£Æ£ÔÔÁ¸Û£Í£Ô£²£°£²" />
+			<Convert value="100106" msg="ÄÚ²¿×ªÕÊ" />
+			<Convert value="100201" msg="ÔÚÏßÖ§¸¶" />
+			<Convert value="105101" msg="ÅúÁ¿£¯¶¨ÆÚ´û¼Ç" />
+			<Convert value="105201" msg="¶¨ÆÚ½è¼Ç" />
+			<Convert value="100301" msg="ÊµÊ±¿Û¿î" />
+			<Convert value="105301" msg="ÅúÁ¿´úÊÕ" />
+			<Convert value="200101" msg="¿ÉÓÃÓà¶î²éÑ¯" />
+			<Convert value="200201" msg="Í¨ÖªÐÅÏ¢£¨ÒøÐÐ£¯ÆóÒµ·¢Æð£©" />
+			<Convert value="200202" msg="Í¨ÖªÐÅÏ¢£¨ÖÐÐÄ·¢Æð£©" />
+			<Convert value="300101" msg="£Å£Æ£ÔÍ¬³ÇÈËÃñ±Ò£¨³åÕý£¯ÍË»Ø£©" />
+			<Convert value="300102" msg="£Å£Æ£ÔÍ¬³ÇÍâ±Ò£¨³åÕý£¯ÍË»Ø£©" />
+			<Convert value="300103" msg="£Å£Æ£ÔÔÁ¸Û£Í£Ô£±£°£³£¨³åÕý£¯ÍË»Ø£©" />
+			<Convert value="300201" msg="ÊµÊ±¿Û¿î³åÕý£¨»ú¹¹·¢Æð£©" />
+			<Convert value="800101" msg="Ö÷»úÇëÇó¶ÔÕËÃ÷Ï¸" />
+			<Convert value="800102" msg="¶ÔÕËºÏ¼Æ" />
+			<Convert value="800103" msg="¶ÔÕËÃ÷Ï¸(ÎÄ¼þ)" />
+			<Convert value="900101" msg="µÇÂ¼ÏµÍ³" />
+			<Convert value="900102" msg="ÍË³öÏµÍ³" />
+			<Convert value="900103" msg="ÏµÍ³ÈÕ¼ä¹Ø±ÕÍ¨Öª" />
+			<Convert value="900104" msg="ÏµÍ³ÔËÐÐ×´Ì¬ÇÐ»»Í¨Öª" />
+			<DEFAULT msg="ÆäËû" />	
+		</Item>
+		<Item alias="PSTTYP">
+			<Convert value="0" msg="×Ô¶¯ÈëÕÊ" />
+			<Convert value="1" msg="È·ÈÏÈëÕÊ" />
+			<Convert value="2" msg="Åú×¢ÈëÕÊ" />
+			<DEFAULT msg="ÆäËû" />	
+		</Item>
+		<Item alias="BILSTS">
+			<Convert value="U" msg="Ô¤¼ÇÂ¼" />
+			<Convert value="Z" msg="ÒÑ¿Û¿î³É¹¦" />
+			<Convert value="E" msg="¿Û¿îÊ§°Ü" />
+			<DEFAULT msg="Òì³£" />	
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select a.TraKnd TRAKND, a.SndBNo SNDBNO, a.SndDat SNDDAT, a.VchId VCHID,   a.BilSts BILSTS, a.AccFlg ACCFLG,
+											 a.LogNo LOGNO,   a.HLogNo HLOGNO, a.TckNo TCKNO,   a.TxnAmt TXNAMT, a.SOpnBk SOPNBK, a.SndAct SNDACT,
+											 a.SndNm SNDNM,	  a.RcvBNo RCVBNO, a.RcvAct RCVACT, a.RcvNm RCVNM,   a. Smr SMR,      a.TlrId  TLRID,
+											 b.BankNm RCVBNM, c.BankNm SNDBNM
+									from %s a, CbsBankCd b, CbsBankCd c
+								 where a.TraKnd='%s' and a.TxnKnd='%s' and a.OIFlag='1' and a.BrNo='%s' and a.NodNo='%s'
+								 	 and a.ActDat='%s' and a.CcyCod='%s' and a.TckNo between '%s' and '%s'
+								 	 and a.RcvBNo=b.BankNo and a.SndBNo=c.BankNo and a.BilSts in ( 'Z','S' )
+							order by a.RcvAct" >
+				<FieldList>$TblNam|$TraKnd|$TxnKnd|$BrNo|$NodNo|$TxnDat|$CcyCod|$BTckNo|$ETckNo|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+
+	<FormatDefine>
+		<Iterative line="1">
+			<Para label="01" alias="$TRAKND" convert="yes"/>
+			<Para label="02" alias="$TXNKND" convert="yes"/>
+			<Para label="03" alias="$SNDBNO"/>
+			<Para label="04" alias="$SNDDAT"/>
+			<Para label="05" alias="$VCHID" />
+			<Para label="06" alias="$SOPNBK"/>
+			<Para label="07" alias="$SNDBNM"/>
+			<Para label="08" alias="$SNDACT"/>
+			<Para label="09" alias="$SNDNM" />
+			<Para label="10" alias="$RCVBNO"/>
+			<Para label="11" alias="$RCVBNM"/>
+			<Para label="12" alias="$RCVACT"/>
+			<Para label="13" alias="$RCVNM" />
+			<Para label="14" alias="$CCYCOD"/>
+			<Para label="15" alias="AMTFMT($TXNAMT)"/>
+			<Para label="16" alias="DELBOTHSPACE(AMTTOCAP($TxnAmt))"/>
+			<Para label="17" alias="$SMR"   />
+			<Para label="18" alias="$PSTTYP" convert="yes"/>
+			<Para label="19" alias="$TLRID"/>
+			<Para label="20" alias="$TCKNO" />
+			<Format>
+
+
+
+
+ÒµÎñ    ÖÖÀà£º#                           ÒµÎñÖÖÀàÏ¸·Ö£º#
+·¢Æð ÐÐ ÐÐºÅ£º#                           ÒµÎñ·¢ÆðÈÕÆÚ£º#                             Æ¾Ö¤Ìá½»ºÅ£º#
+
+·¢ÆðÈË¿ª»§ÐÐ£º#
+·¢ÆðÐÐ  ÐÐÃû£º#
+·¢ÆðÈË  ÕÊºÅ£º#
+·¢ÆðÈË  Ãû³Æ£º#
+
+½ÓÊÕÈË¿ª»§ÐÐ£º#
+½ÓÊÕÐÐ  ÐÐÃû£º#
+½ÓÊÕÈË  ÕÊºÅ£º#
+½ÓÊÕÈË  Ãû³Æ£º#
+½»Ò×    ±ÒÖÖ£º#                           ½»Ò×    ½ð¶î£º#
+½»Ò×½ð¶î´óÐ´£º#
+Õª        Òª£º#
+
+ÈëÕÊ    ·½Ê½£º#                           ÈëÕÊ    ¹ñÔ±£º#                            ÈëÕÊÁ÷Ë®ºÅ£º#
+
+
+
+
+
+
+
+
+
+
+
+
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

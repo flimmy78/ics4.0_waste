@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="PntFmt.log" err_file="PntFmt.err">
+	<CodeSwitching>
+		<Table name="HisBrToBrNo" file="etc/PFA_CSW.XML">
+			<Column name="HisBr"  sort="no"/>
+			<Column name="BrNo"  sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+	<Process name="WTZWHEAD" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+	</Process>
+
+	<Process name="WTZWTITLE" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="RevDt" desc="½Ú¶Î±êÊ¶(ÊÕ¿îÈÕÆÚ)"/>
+		<Item name="TitNum" expression="DELCTRL($TitNum)"  desc="½Ú¶Î±ÊÊý"/>
+	</Process>
+
+	<Process name="WTZWDATA" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TBilTp" desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+		<Item name="TBilNo" desc="Æ±¾ÝºÅÂë"/>
+		<Item name="TError" expression="DELCTRL($TError)" desc="´íÎóÔ­Òò"/>
+	</Process>
+
+
+
+	<Process name="FCCZHEAD" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="RcvAct" desc="»ã½ÉÕË»§"/>
+		<Item name="TxnDat" desc="·Ö³ÉÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" expression="ADDCHAR(MUL($TotAmt,100),15,0,1)" desc="×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="FCCZTITLE" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="CityCd" desc="½Ú¶Î±êÊ¶(ÐÐÕþÇøÓò±àÂë)"/>
+		<Item name="TitNum" desc="½Ú¶Î±ÊÊý"/>
+		<Item name="TitAmt" expression="ADDCHAR(MUL($TitAmt,100),15,0,1)" desc="·Ö³É×Ü½ð¶î"/>
+		<Item name="ActNam" desc="ÕË»§Ãû³Æ"/>
+		<Item name="ActBnk" desc="ÕË»§ËùÔÚÒøÐÐ"/>
+		<Item name="ActNo"  desc="ÕËºÅ"/>
+	</Process>
+
+	<Process name="FCCZDATA" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TCrpNm" desc="Ö´ÊÕµ¥Î»Ãû³Æ"/>
+		<Item name="PrjCod" desc="ÊÕ·ÑÏîÄ¿±àÂë"/>
+		<Item name="PrjNam" desc="ÊÕ·ÑÏîÄ¿Ãû³Æ"/>
+		<Item name="DtlAmt" expression="ADDCHAR(MUL($DtlAmt,100),15,0,1)" desc="·Ö³É½ð¶î"/>
+		<AddItem name="DtlSts" value="1" desc="·Ö³É±êÊ¶"/>
+	</Process>
+
+
+
+	<Process name="FCGKHEAD" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="RcvAct" desc="»ã½ÉÕË»§"/>
+		<Item name="TxnDat" desc="·Ö³ÉÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" expression="ADDCHAR(MUL($TotAmt,100),15,0,1)" desc="×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="FCGKTITLE" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="CityCd" desc="½Ú¶Î±êÊ¶(ÐÐÕþÇøÓò±àÂë)"/>
+		<Item name="TitNum" desc="½Ú¶Î±ÊÊý"/>
+		<Item name="TitAmt" expression="ADDCHAR(MUL($TitAmt,100),15,0,1)" desc="·Ö³É×Ü½ð¶î"/>
+		<Item name="ActNam" desc="ÕË»§Ãû³Æ"/>
+		<Item name="ActBnk" desc="ÕË»§ËùÔÚÒøÐÐ"/>
+		<Item name="ActNo"  desc="ÕËºÅ"/>
+	</Process>
+
+	<Process name="FCGKDATA" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="SubCod" desc="Ô¤Ëã¿ÆÄ¿±àÂë"/>
+		<Item name="SubNam" desc="Ô¤Ëã¿ÆÄ¿Ãû³Æ"/>
+		<Item name="PrjCod" desc="ÊÕ·ÑÏîÄ¿±àÂë"/>
+		<Item name="PrjNam" desc="ÊÕ·ÑÏîÄ¿Ãû³Æ"/>
+		<Item name="DtlAmt" expression="ADDCHAR(MUL($DtlAmt,100),15,0,1)"  desc="·Ö³É½ð¶î"/>
+		<AddItem name="DtlSts" value="1" desc="·Ö³É±êÊ¶"/>		
+	</Process>
+
+
+	<Process name="HZFCZHHEAD" deli_str="|" desc="»ã×Ü·Ö³É×¨»§ÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="ZHBankCd" desc="×¨»§ÒøÐÐ±àÂë"/>
+		<Item name="ZHBankNm" desc="×¨»§ÒøÐÐÃû³Æ"/>
+		<Item name="TxnDat" desc="·Ö³ÉÈÕÆÚ"/>
+		<Item name="TotNum" desc="½Ú¶ÎÐÐÊý"/>
+		<Item name="ZHActNm" desc="×¨»§ÕË»§Ãû³Æ"/>
+		<Item name="ZHActNo" desc="×¨»§ÕËºÅ"/>
+		<Item name="TotAmt" expression="ADDCHAR(MUL($TotAmt,100),15,0,1)" desc="×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="HZFCZHTITLE" deli_str="|" desc="»ã×Ü·Ö³É×¨»§ÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="DSBankNo" desc="´úÊÕÒøÐÐ±àÂë"/>
+		<Item name="DSBankNm" desc="´úÊÕÒøÐÐÃû³Æ"/>
+		<Item name="DSActNo"  desc="´úÊÕÕËºÅ"/>
+		<Item name="TitNum"   desc="×Ü±ÊÊý"/>
+		<Item name="TitAmt" expression="ADDCHAR(MUL($TitAmt,100),15,0,1)" desc="·Ö³É×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="HZFCZHDATA" deli_str="|" desc="»ã×Ü·Ö³É×¨»§ÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TCrpNm" desc="Ö´ÐÐµ¥Î»Ãû³Æ"/>
+		<Item name="PrjCod" desc="ÊÕ·ÑÏîÄ¿±àÂë"/>
+		<Item name="PrjNam" desc="ÊÕ·ÑÏîÄ¿Ãû³Æ"/>
+		<Item name="DtlAmt" expression="ADDCHAR(MUL($DtlAmt,100),15,0,1)"  desc="·Ö³É½ð¶î"/>	
+		<AddItem name="DtlSts" value="1" desc="·Ö³É±êÊ¶"/>
+	</Process>
+
+
+  <Process name="HZDZ"><!--×¨»§/¹ú¿âÒøÐÐ²úÉúµÄ»ã×Ü´ïÕËÎÄ¼þ-->
+    <Data>
+      <Item name="TCrpCd"  deli_str="|"  expression="ADDCHAR($TCrpCd,20, ,0)"/>   <!--µ¥Î»±àÂë-->
+      <Item name="RevDat"  deli_str="|"/>   <!--ÊÕ·ÑÈÕÆÚ-->
+      <Item name="PrjCod"  deli_str="|"  expression="ADDCHAR($PrjCod,20, ,0)"/>   <!--ÊÕ·ÑÏîÄ¿±àÂë-->
+      <Item name="TotAmt"  deli_str="|"  expression="ADDCHAR(AMTSIMPLEFMT($TotAmt),18, ,0)"/>   <!--½ð¶î-->
+      <Item name="ZCKM"    deli_str="|"  expression="ADDCHAR($ZCKM,20, ,0)"/>   <!--Ö§³ö¿ÆÄ¿-->
+      <Item name="JJCK"    deli_str="|"  expression="ADDCHAR($JJCK,20, ,0)"/>   <!--¾­¼Ã¿ÆÄ¿-->
+      <Item name="ZHBankCd"  deli_str="|"/>   <!--ÒøÐÐ±àÂë-->
+      <Item name="TxnDat"    deli_str="|"/>   <!--·Ö³ÉÈÕÆÚ-->     
+      <Item name="ZHActNo"   deli_str="|"/>   <!--ÕËºÅ-->
+      <Item name="TCrpCd"    deli_str="|"/>   <!--µ¥Î»±àÂë-->     
+      <Item name="PrjCod"    deli_str="|"/>   <!--·ÇË°ÊÕ·ÑÏîÄ¿±àÂë-->  
+    </Data>
+  </Process>
+
+	<Process name="PLKSHEAD" deli_str="|"  desc="ÅúÁ¿¿ÛÊÕÖ¸ÁîÐÅÏ¢Í·ÎÄ¼þ">
+		<Item name="FileNo" desc="ÎÄ¼þºÅ"/>
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TxnDat" desc="ÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" desc="×Ü½ð¶î"/>
+		<AddItem name="DskSts" value="1" desc="Åú´Î×´Ì¬"/>
+		<AddItem name="DskNo"   expression="$DskNo"/>
+	</Process>
+	<Process name="PLKSDATA" deli_str="|"  desc="ÅúÁ¿¿ÛÊÕÖ¸ÁîÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <Item name="TVchId" desc="½É¿îÍ¨ÖªÊéºÅÂë"/>
+	  <Item name="TBilTp" desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+	  <Item name="PayNam" desc="½É¿îÈË(µ¥Î»)ÐÕÃû"/>
+	  <Item name="ActNo"  desc="½É¿îÕË»§"/>
+	  <Item name="TCusNm" desc="»§Ö÷ÐÕÃû"/>
+	  <Item name="TxnAmt" expression="ADDCHAR(MUL($TxnAmt,100),15,0,1)" desc="Ó¦¿Û×Ü½ð¶î"/>
+	  <Item name="PrjNum" desc="ÊÕ¿îÏîÄ¿Êý"/>
+	  <Switch expression="$PrjNum">
+	    <Case value="1">
+	      <Item name="AA"     desc="ÊÕ·ÑÏîÄ¿±àÂë1"/>
+	      <Item name="BB"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ1"/>
+	      <Item name="CC"     desc="¼Æ·Ñµ¥Î»1"/>
+	      <Item name="DD"     desc="¼Æ·ÑÊýÁ¿1"/>
+	      <Item name="EE"     desc="ÊÕ·Ñ±ê×¼1"/>
+	      <Item name="FF"     desc="Ó¦¿Û½ð¶î1"/>
+	      <Break/>
+	    </Case>
+	    <Case value="2">
+	      <Item name="AA"     desc="ÊÕ·ÑÏîÄ¿±àÂë1"/>
+	      <Item name="BB"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ1"/>
+	      <Item name="CC"     desc="¼Æ·Ñµ¥Î»1"/>
+	      <Item name="DD"     desc="¼Æ·ÑÊýÁ¿1"/>
+	      <Item name="EE"     desc="ÊÕ·Ñ±ê×¼1"/>
+	      <Item name="FF"     desc="Ó¦¿Û½ð¶î1"/>
+	      <Item name="GG"     desc="ÊÕ·ÑÏîÄ¿±àÂë2"/>
+	      <Item name="HH"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ2"/>
+	      <Item name="II"     desc="¼Æ·Ñµ¥Î»2"/>
+	      <Item name="JJ"     desc="¼Æ·ÑÊýÁ¿2"/>
+	      <Item name="KK"     desc="ÊÕ·Ñ±ê×¼2"/>
+	      <Item name="LL"     desc="Ó¦¿Û½ð¶î2"/>	
+	      <Break/>
+	    </Case>
+	    <Case value="3"> 
+	      <Item name="AA"     desc="ÊÕ·ÑÏîÄ¿±àÂë1"/>
+	      <Item name="BB"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ1"/>
+	      <Item name="CC"     desc="¼Æ·Ñµ¥Î»1"/>
+	      <Item name="DD"     desc="¼Æ·ÑÊýÁ¿1"/>
+	      <Item name="EE"     desc="ÊÕ·Ñ±ê×¼1"/>
+	      <Item name="FF"     desc="Ó¦¿Û½ð¶î1"/>
+	      <Item name="GG"     desc="ÊÕ·ÑÏîÄ¿±àÂë2"/>
+	      <Item name="HH"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ2"/>
+	      <Item name="II"     desc="¼Æ·Ñµ¥Î»2"/>
+	      <Item name="JJ"     desc="¼Æ·ÑÊýÁ¿2"/>
+	      <Item name="KK"     desc="ÊÕ·Ñ±ê×¼2"/>
+	      <Item name="LL"     desc="Ó¦¿Û½ð¶î2"/>	  
+	      <Item name="MM"     desc="ÊÕ·ÑÏîÄ¿±àÂë3"/>
+	      <Item name="NN"     desc="ÊÕ·ÑÏîÄ¿Ãû³Æ3"/>
+	      <Item name="OO"     desc="¼Æ·Ñµ¥Î»3"/>
+	      <Item name="PP"     desc="¼Æ·ÑÊýÁ¿3"/>
+	      <Item name="QQ"     desc="ÊÕ·Ñ±ê×¼3"/>
+	      <Item name="RR"     desc="Ó¦¿Û½ð¶î3"/>
+	      <Break/>
+	    </Case>
+	    <Default>
+	      <Break/>
+	    </Default>
+	  </Switch>
+	  <Item name="RsFld1" desc="±¸×¢"/>	  
+	  <Item name="SS"     desc="¶îÍâÐÅÏ¢Êý"/>
+	  <Switch expression="$SS">
+	    <Case value="0">
+	      <Break/>
+	    </Case>
+	    <Case value="1">
+	      <Item name="TT"     desc="¶îÍâÐÅÏ¢1"/>	
+	      <Break/>
+	    </Case>
+	    <Case value="2">
+	      <Item name="TT"     desc="¶îÍâÐÅÏ¢1"/>	
+	      <Item name="UU"     desc="¶îÍâÐÅÏ¢2"/>
+	      <Break/>
+	    </Case>
+	    <Case value="3">
+	      <Item name="TT"     desc="¶îÍâÐÅÏ¢1"/>	
+	      <Item name="UU"     desc="¶îÍâÐÅÏ¢2"/>
+	      <Item name="VV"     desc="¶îÍâÐÅÏ¢3"/>
+	      <Break/>
+	    </Case>
+	    <Default>
+	      <Break/>
+	    </Default>	                  
+	  </Switch> 
+	  <AddItem name="DskNo"   expression="$DskNo"/>
+	  <!--<AddItem name="SeqNo"   desc="Ë³ÐòºÅ"/>  -->
+	</Process>
+
+	<Process name="PLKSINFO" deli_str="|"  desc="ÅúÁ¿¿ÛÊÕÖ¸ÁîÐÅÏ¢Í·ÎÄ¼þ">
+		<Item name="FileNo" desc="ÎÄ¼þºÅ"/>
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TxnDat" desc="ÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" desc="×Ü½ð¶î"/>
+		<AddItem name="DskSts" value="1" desc="Åú´Î×´Ì¬"/>		
+	</Process>
+	
+
+<!--zhongshan 0414add-->
+	<Process name="JCSJHEAD" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="CreDate" desc="²úÉúÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+	</Process>
+
+	<Process name="JCSJTITLE" deli_str="|"  desc="»ù´¡Êý¾Ý±êÌâÍ·ÐÅÏ¢ÎÄ¼þ">
+		<Item name="NodeID"     desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum"    desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Process>
+	<Process name="SFXMDATA" deli_str="|"  desc="ÊÕ·ÑÏîÄ¿ÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999" desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="Prjcod"     desc="ÏîÄ¿±àÂë"/>
+	  <Item name="PrjNam"     desc="ÏîÄ¿Ãû³Æ"/>
+	  <Item name="Subcod"     desc="Ô¤Ëã¿ÆÄ¿±àÂë"/>
+	  <Item name="SubNam"     desc="Ô¤Ëã¿ÆÄ¿Ãû³Æ"/>
+	  <Item name="SfxmSts"    desc="×´Ì¬"/> 
+	</Process>
+	
+	<Process name="DWXXDATA" deli_str="|" desc="µ¥Î»ÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"       value="484999" desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TCrpCd"     desc="µ¥Î»±àÂë"/>
+	  <Item name="TCrpNm"     desc="µ¥Î»Ãû³Æ"/>
+	  <Item name="DwxxSts"    desc="×´Ì¬"/> 
+	</Process>
+	
+	<Process name="DWXMDATA" deli_str="|" desc="µ¥Î»ÏîÄ¿ÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"    desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TCrpCd"     desc="µ¥Î»±àÂë"/>
+	  <Item name="Prjcod"     desc="ÏîÄ¿±àÂë"/>
+	</Process>	
+
+	<Process name="PJLXDATA"  deli_str="|" desc="Æ±¾ÝÀàÐÍÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"    desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+	  <Item name="TBilNm"     desc="Æ±¾ÝÀàÐÍÃû³Æ"/>
+	  <Item name="PjlxSts"    desc="×´Ì¬"/> 
+	</Process>		
+	
+	<Process name="PJFFDATA" deli_str="|"  desc="Æ±¾Ý·¢·ÅÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+	  <Item name="TBilStar"   desc="Æ±¾ÝÆðÊ¼ºÅÂë"/>
+	  <Item name="TBilEnd"    desc="Æ±¾ÝÖÕÖ¹ºÅÂë"/>
+	  <Item name="TBilTot"    desc="Æ±¾Ý·ÝÊý"/>
+	</Process>	
+
+	<Process name="XMPJDATA" deli_str="|"  desc="ÏîÄ¿Æ±¾ÝÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="PrjCod"     desc="ÏîÄ¿±àÂë"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/> 
+	</Process>
+	
+	<Process name="QYXXDATA" deli_str="|"  desc="ÇøÓòÐÅÏ¢Êý¾ÝÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="AreaNo"     desc="ÇøÓò±àÂë"/>
+	  <Item name="AreaNm"     desc="ÇøÓòÃû³Æ"/>
+	</Process>	
+
+	<Process name="PRGXDATA" deli_str="|" desc="Í¨ÖªÊéÇ°×ºÓëÕËºÅ¶ÔÓ¦ÎÄ¼þÎÄ¼þ">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TCrpHD"     desc="Í¨ÖªÊéÇ°×º"/>
+	  <Item name="PActNm"     desc="ÕË»§Ãû³Æ"/>
+	  <Item name="PActNo"     desc="»ã½ÉÕË»§"/>
+	</Process>	
+	
+</BATCH>

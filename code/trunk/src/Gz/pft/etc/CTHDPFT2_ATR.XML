@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name="CTHDPFT2" type="CCA" ip="_LOCAL_IP">
+    <ThreadPool>
+      <MinWorkerThreads>20</MinWorkerThreads>
+      <MaxWorkerThreads>20</MaxWorkerThreads>
+    </ThreadPool>
+    <ProcessMemoryManager>
+      <BlockSize>102400</BlockSize><!--ÄÚ´æ¿é´óÐ¡(×Ö½Ú)-->
+      <PoolInitSize>16</PoolInitSize><!--ÄÚ´æ³Ø³õÊ¼´óÐ¡(¿é)-->
+      <PoolMaxSize>1024</PoolMaxSize><!--ÄÚ´æ³Ø×î´ó´óÐ¡(¿é)-->
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+        <PageSize>64</PageSize><!--Ò³´óÐ¡(×Ö½Ú)-->
+        <MaxBlocks>10</MaxBlocks ><!--ÔÊÐíÉêÇëµÄ×î´ó¿éÊý-->
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+    <DllPriDataCtrl dllfile="dll/pftclifil_gz.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="ConTyp">0</Para>
+      <Para name="IpList">etc/CTHDPFT2_IPD.XML</Para>
+      <Para name="MaxCon">20</Para>
+      <Para name="PreLen">0</Para>
+      <Para name="TimOut">60</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="file1">etc/CTHDPFT2_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <Connection type="LEFT">
+      <Entrance name="APP" type="TCP">
+        <ListenerModule name="serverSyncIn" dllfile="dll/pftclifil_gz.so">
+          <Para name="MsgTyp">PLTIN0</Para>
+          <Para name="Port">_PORT</Para>
+<!--´ÓÓ¦ÓÃ×ÊÔ´±íÈ¡-->
+          <Para name="TrdNum">5</Para>
+        </ListenerModule>
+      </Entrance>
+    </Connection>
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/dataparser.so">
+        <Entry>
+          <MessageType>SYSMNG</MessageType>
+          <ProcessModule>mngDataParser</ProcessModule>
+        </Entry>
+        <Entry>
+          <MessageType>PLTIN0</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile="dll/pftclifil_gz.so" dbapplication="NO">
+        <Entry>
+          <MessageType>PLTIN0</MessageType>
+          <ProcessModule>serverSyncOut</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <ResponseProcessor dllfile="dll/dataparser.so">
+        <Entry>
+          <MessageType>PLTIN0</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>

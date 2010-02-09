@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="BCM" code="249" trace="yes">
+  <TableDeclare>
+    <Table name="BcmActReg441"    value="BcmActReg441" />
+    <Table name="BcmTxnJnl441"    value="BcmTxnJnl441" />
+  </TableDeclare>
+
+  <BusDefDeclare>
+    <Busdef name="AplCls" value="249"/>
+    <Busdef name="TSDir"  value="dat/term/send/" />
+    <Busdef name="BrNo"   value="441999"/>         <!--·ÖÐÐºÅ-->
+  </BusDefDeclare>
+
+  <Define>
+    <Macro name="DbSele"> <!-- Í¨ÓÃÊý¾Ý¿â²éÑ¯ -->
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="$QrySen" />
+        </Args>
+      </Exec>
+      <If condition="~RetCod=-1">
+        <Exec func="PUB:RollbackWork" error="IGNORE" />      
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Êý¾Ý¿â´¦ÀíÊ§°Ü</Set>
+        <Return/>
+      </If> 
+    </Macro>
+    <Macro name="DbExec"> <!-- Í¨ÓÃÊý¾Ý¿â´¦Àí -->
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="$QrySen" />
+        </Args>
+      </Exec>
+      <If condition="~RetCod=-1">
+        <Exec func="PUB:RollbackWork" error="IGNORE" />      
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Êý¾Ý¿â´¦ÀíÊ§°Ü</Set>
+        <Return/>
+      </If> 
+    </Macro>  
+  </Define>
+
+
+  <Transaction code="464901" desc="¼¯ÍÅÕÊºÅ¹éÊôÎ¬»¤" trace="yes" >
+    <DynSentence name="Sql00"> <!-- Ôö¼Ó -->
+      <Sentence>
+        insert into BcmActReg441( Sts, MActNo, SActNo, SActNm, MaxAmt, Rmk, ValDat, BltTlr, BltNod )
+                      values( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+      </Sentence>
+      <Fields>Sts|MActNo|SActNo|SActNm|MaxAmt|Rmk|ValDat|TlrId|NodNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="Sql01"> <!-- ÐÞ¸Ä -->
+      <Sentence>
+        update BcmActReg441 set Sts='%s', SActNm='%s', MaxAmt='%s', Rmk='%s', UpdTlr='%s', UpdNod='%s', UpdDat='%s'
+          where MActNo='%s' and SActNo='%s'
+      </Sentence>
+      <Fields>Sts|SActNm|MaxAmt|Rmk|TlrId|NodNo|ActDat|MActNo|SActNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="Sql02"> <!-- ²éÑ¯ -->
+      <Sentence>
+        select ValDat from BcmActReg441 where MActNo='%s' and SActNo='%s'
+      </Sentence>
+      <Fields>MActNo|SActNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="Sql03"> <!-- É¾³ý -->
+      <Sentence>
+        delete from BcmActReg441 where MActNo='%s' and SActNo='%s'
+      </Sentence>
+      <Fields>MActNo|SActNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="Sql04"> <!-- ÅÐ¶ÏÖØ¸´ -->
+      <Sentence>
+        select 'Y' YN from TABLE(VALUES(1)) AS anony
+          where EXISTS
+              ( select 'Y' from BcmActReg441 where SActNo='%s' )
+      </Sentence>
+      <Fields>SActNo|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+<!--Ìí¼ÓÊÚÈ¨Ô­Òò -->
+      <If condition="IS_NOEQUAL_STRING($NodNo,441900)">
+        <Set>RspCod=CBS999</Set>
+        <Set>RspMsg=²¿ÃÅÎÞ´ËÈ¨ÏÞ</Set>
+        <Return/>
+      </If>
+
+      <Exec func="PUB:AddAuthReason">
+        <Arg name="AthCod" value="50" />
+        <Arg name="AthMsg" value="BCM000" />
+      </Exec>
+      <Exec func="PUB:CheckLocalAuth" >
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+      <Set>QrySen=Sql02</Set>
+      <Quote name="DbSele"/>
+      <Switch expression="$FUNC">
+        <Case value="0"> <!-- Ôö¼Ó -->
+          <If condition="~RetCod!=-2">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=BCM999</Set>
+            <Set>RspMsg=¼ÇÂ¼ÒÑ´æÔÚ</Set>
+            <Return/>
+          </If>
+          <Set>QrySen=Sql04</Set>
+          <Quote name="DbSele"/>
+          <If condition="~RetCod=0">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=BCM999</Set>
+            <Set>RspMsg=¸ÃÕÊºÅÒÑ¹éÊôÆäËüÄ¸ÕÊºÅ</Set>
+            <Return/>
+          </If>
+          <Set>QrySen=Sql00</Set>
+          <Quote name="DbExec"/>
+          <Break/>
+        </Case>
+        <Case value="1"> <!-- ÐÞ¸Ä -->
+          <If condition="~RetCod=-2">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=BCM999</Set>
+            <Set>RspMsg=Ö¸¶¨¼ÇÂ¼²»´æÔÚ</Set>
+            <Return/>
+          </If>
+          <Set>QrySen=Sql01</Set>
+          <Quote name="DbExec"/>
+          <Break/>
+        </Case>
+        <Case value="2"> <!-- ²éÑ¯ -->
+          <If condition="~RetCod=-2">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=BCM999</Set>
+            <Set>RspMsg=Ö¸¶¨¼ÇÂ¼²»´æÔÚ</Set>
+            <Return/>
+          </If>
+          <Break/>
+        </Case>
+        <Case value="3"> <!-- É¾³ý -->
+          <If condition="~RetCod=-2">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=BCM999</Set>
+            <Set>RspMsg=Ö¸¶¨¼ÇÂ¼²»´æÔÚ</Set>
+            <Return/>
+          </If>
+          <Set>QrySen=Sql03</Set>
+          <Quote name="DbExec"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=BCM999</Set>
+          <Set>RspMsg=ÏµÍ³´íÎó</Set>
+          <Return/>
+        </Default>
+      </Switch>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=½»Ò×³É¹¦</Set>
+    </FlowCtrl>
+  </Transaction> 
+
+
+  <Transaction code="464902" desc="¼¯ÍÅÄÚ²¿×Ê½ð»®²¦¼ÇÕÊ" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select MActNo, MaxAmt from BcmActReg441 where SActNo='%s' and Sts='0'
+      </Sentence>
+      <Fields>SActNo|</Fields>
+    </DynSentence>
+    <DynSentence name="Sql02">
+      <Sentence>
+        update BcmTxnJnl441 set TxnSts='%s', ActDat='%s', HLogNo='%s', TckNo='%s', HTxnSt='%s', HRspCd='%s' where LogNo='%s'
+      </Sentence>
+      <Fields>TxnSts|ActDat|HLogNo|TckNo|HTxnSt|HRspCd|LogNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+      <If condition="~RetCod=-2">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Ã»ÓÐ¶ÔÓ¦µÄ¼¯ÍÅÖ÷ÕÊºÅ</Set>
+        <Return/>
+      </If>
+      <If condition="STRCMP( $MaxAmt, $TxnAmt )=1">
+        <Exec func="PUB:AddAuthReason">
+          <Arg name="AthCod" value="50" />
+          <Arg name="AthMsg" value="BCM888" />
+        </Exec>
+      </If>
+      <Else>
+        <Exec func="PUB:AddAuthReason">
+          <Arg name="AthCod" value="55" />
+          <Arg name="AthMsg" value="BCM000" />
+        </Exec>
+      </Else>
+      <Exec func="PUB:CheckLocalAuth" >
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+<!--Á÷Ë®±í³õÊ¼Êý¾Ý-->
+      <Exec func="PUB:GetLogNo" />
+      <Set>TxnSts=U</Set>
+      <Set>HLogNo= </Set>
+      <Set>TckNo= </Set>
+<!--
+<Set>BusTyp=FTT53</Set>
+-->
+      <Set>BusTyp=BCM53</Set>
+      <Set>CrpCod=BCM999999999</Set>
+      <Set>ActNo=$MActNo</Set>
+      <Set>NamChk=1</Set>
+      <Set>CcyCod=CNY</Set>
+      <Set>AccMod=0</Set>
+      <Set>TActNo=$SActNo</Set>
+      <Set>TTxnCd=464902</Set>
+      <Set>HTxnCd=451200</Set>
+      <Exec func="PUB:InsertJournal" />
+      <Exec func="PUB:CallHostOther" error="IGNORE" >
+        <Arg name="HTxnCd" value="$HTxnCd" />
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+      <Set>QrySen=Sql02</Set>
+      <Quote name="DbExec"/>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464903" desc="¼¯ÍÅÄÚ²¿×Ê½ð»®²¦Ä¨ÕÊ" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select LogNo, BusTyp, TTxnCd OTTxnCd, HTxnCd OHTxnCd, TckNo OTckNo, HLogNo OHLogNo from BcmTxnJnl441
+         where TlrId='%s' and TckNo='%s' and TxnSts='S'
+      </Sentence>
+      <Fields>TlrId|TckNo|</Fields>
+    </DynSentence>
+    <DynSentence name="Sql02">
+      <Sentence>
+        update BcmTxnJnl441 set TxnSts='C' where LogNo='%s'
+      </Sentence>
+      <Fields>LogNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+<!--Ìí¼ÓÊÚÈ¨Ô­Òò-->
+      <Exec func="PUB:AddAuthReason">
+        <Arg name="AthCod" value="50" />
+        <Arg name="AthMsg" value="BCM000" />
+      </Exec>
+      <Exec func="PUB:CheckLocalAuth" >
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+      <Set>TIATyp=C</Set>
+      <Set>HTxnCd=STRCAT(SUBSTR($OHTxnCd,1,5),9)</Set>
+      <Set>OTTxnCd=464902</Set>
+      <Set>TTxnCd=464903</Set>
+      <Exec func="PUB:CallHostOther" error="IGNORE"><!--ÉÏÖ÷»úÏµÍ³Ä¨ÕË -->
+        <Arg name="HTxnCd" value="959999" /><!--Ö÷»ú½»Ò×Âë -->
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+      <If condition="OR(IS_EQUAL_STRING($HRspCd,AG8001),IS_EQUAL_STRING($HRspCd,AG8981),IS_EQUAL_STRING($HRspCd,SC6129),IS_EQUAL_STRING($HRspCd,SC6034),IS_EQUAL_STRING($HRspCd,SC0000))">
+        <Set>TxnSts=C</Set>
+      </If>
+      <Set>QrySen=Sql02</Set>
+      <Quote name="DbExec"/>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464921" desc="¼¯ÍÅÕÊºÅ¹éÊôä¯ÀÀ" trace="yes" >
+    <DynSentence name="MultiQuery">
+      <Sentence>
+        select Sts, MActNo, SActNo, SActNm, MaxAmt, ValDat from BcmActReg441 where MActNo like '%s%%' and SActNo like '%s%%'
+      </Sentence>
+      <Fields>MActNo|SActNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo" />
+      <Exec func="PUB:MultiQuery" />
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464941" desc="¼¯ÍÅÕÊºÅÇåµ¥Æ¾Ö¤´òÓ¡" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        update BcmTxnJnl441 set PrtCnt = char( int(PrtCnt) + 1 )
+         where NodNo='%s' and ActDat='%s' and TLRID='%s' and TxnSts='S' and HTxnst='S' and HRspCd='SC0000'
+      </Sentence>
+      <Fields>NodNo|ActDat|TlrId|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+<!--Ìí¼ÓÊÚÈ¨Ô­Òò -->
+      <Exec func="PUB:AddAuthReason">
+        <Arg name="AthCod" value="50" />      <!--ÊÚÈ¨Âë-->
+        <Arg name="AthMsg" value="BCM000" />  <!--ÊÚÈ¨ÐÅÏ¢Âë-->
+      </Exec>
+<!--ÊÚÈ¨¼ì²é -->
+      <Exec func="PUB:CheckLocalAuth" >
+        <Arg name="ObjSvr" value="SHSTPUB1" />
+      </Exec>
+      <Switch expression="$PrtTyp">
+        <Case value="1"> <!-- Á÷Ë®Çåµ¥ -->
+          <Set>FilNam=STRCAT(BCM,$BrNo,001,$TlrId,.RPT)</Set>
+          <Set>FmtFil=STRCAT(etc/,BCM001_RPT_,$BrNo,.XML)</Set>
+          <Set>Summary=STRCAT(¼¯ÍÅ¿Í»§,$BilDat,¼ÇÕÊÁ÷Ë®Çåµ¥)</Set>
+          <Exec func="PUB:GenerateReport">
+            <Arg name="RptName"    value="STRCAT($TSDir,$FilNam)"/>
+            <Arg name="RptFile"    value="$FmtFil"/>
+            <Arg name="BilDat"    value="$BilDat"/>
+            <Arg name="ActDat"    value="$ActDat"/>
+            <Arg name="PrtTlr"    value="$TlrId"/>
+            <Arg name="NodNo"      value="$NodNo"/>
+          </Exec>
+          <Break/>
+        </Case>
+        <Case value="2"> <!-- ¼ÇÕÊÆ¾Ö¤ -->
+          <Set>QrySen=Sql01</Set>
+          <Quote name="DbExec"/>
+          <Set>FilNam=STRCAT(BCM,$BrNo,002,$TlrId,.RPT)</Set>
+          <Set>FmtFil=STRCAT(etc/,BCM002_RPT_,$BrNo,.XML)</Set>
+          <Set>Summary=STRCAT(¼¯ÍÅ¿Í»§,$BilDat,¼ÇÕÊÆ¾Ö¤)</Set>
+          <Exec func="PUB:GenerateReport">
+            <Arg name="RptName" value="STRCAT($TSDir,$FilNam)"/>
+            <Arg name="RptFile" value="$FmtFil"/>
+            <Arg name="BilDat"  value="$BilDat"/>
+            <Arg name="ActDat"  value="$ActDat"/>
+            <Arg name="PrtTlr"  value="$TlrId"/>
+            <Arg name="NodNo"   value="$NodNo"/>
+            <Arg name="BTckNo"  value="$BTckNo"/>
+            <Arg name="ETckNo"  value="$ETckNo"/>
+          </Exec>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>RspCod=BC3010</Set>
+          <Return/>
+        </Default>
+      </Switch>
+      <Exec func="PUB:SendFileMessage">
+        <Arg name="MsgTyp"    value="4"/>
+        <Arg name="ObjNod"    value="$NodNo"/>
+        <Arg name="BusTyp"    value="46"/>
+        <Arg name="AplCod"    value="461940"/>
+        <Arg name="FilNam"    value="$FilNam"/>
+        <Arg name="Summary"    value="$Summary"/>
+        <Arg name="ObjTlr"    value="$TlrId"/> 
+      </Exec>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464981" desc="¼¯ÍÅÕÊºÅ¹éÊôµ¥±Ê²éÑ¯" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select Sts, SActNm, MaxAmt, Rmk, ValDat from BcmActReg441 where MActNo='%s' and SActNo='%s'
+      </Sentence>
+      <Fields>MActNo|SActNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+      <If condition="~RetCod=-2">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Ã»ÓÐÂú×ãÌõ¼þµÄ¼ÇÂ¼</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464982" desc="¼¯ÍÅ×ÓÕÊºÅ²éÑ¯Ö÷ÕÊºÅ" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select MActNo from BcmActReg441 where SActNo='%s' and Sts='0'
+      </Sentence>
+      <Fields>SActNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+      <If condition="~RetCod=-2">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Ã»ÓÐ¶ÔÓ¦µÄ¼¯ÍÅÖ÷ÕÊºÅ</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464983" desc="¸ù¾ÝÁ÷Ë®ºÅ²éÑ¯Á÷Ë®ÐÅÏ¢" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select SActNo, TxnAmt, Smr from BcmTxnJnl441 where TlrId='%s' and TckNo='%s' and TxnSts='S'
+      </Sentence>
+      <Fields>TlrId|TckNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+      <If condition="~RetCod=-2">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Ã»ÓÐ¶ÔÓ¦µÄ¼ÇÕÊÁ÷Ë®</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="464984" desc="ÅÐ¶Ï½»Ò×½ð¶îÊÇ·ñ³¬ÏÞ" trace="yes" >
+    <DynSentence name="Sql01">
+      <Sentence>
+        select MaxAmt from BcmActReg441 where SActNo='%s' and Sts='0'
+      </Sentence>
+      <Fields>SActNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:GetAppInfo"/>
+      <Set>QrySen=Sql01</Set>
+      <Quote name="DbSele"/>
+      <If condition="~RetCod=-2">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=BCM999</Set>
+        <Set>RspMsg=Ã»ÓÐ¶ÔÓ¦µÄ¼¯ÍÅÖ÷ÕÊºÅ</Set>
+        <Return/>
+      </If>
+      <If condition="STRCMP( $MaxAmt, $TxnAmt )=1">
+      </If>
+      <Else>
+        <Set>MsgTyp=W</Set>
+        <Set>RspCod=BCM888</Set>
+        <Set>RspMsg=³¬¹ýÊÚÈ¨½ð¶îÉÏÏÞ</Set>
+        <Return/>
+      </Else>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=BCM999</Set>
+      <Set>RspMsg=½»Ò×¼ÌÐø</Set>
+      <Return/>
+    </FlowCtrl>
+  </Transaction>
+
+</Application>

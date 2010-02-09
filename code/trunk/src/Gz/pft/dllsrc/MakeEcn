@@ -1,0 +1,21 @@
+MODULE		= Gz/pft
+
+include $(RULES_MAKEFILE)
+
+#USERLIBS = -bloadmap:xx -lhiipchk -lets
+USERLIBS = -lhiipchk -lets
+USERFLAG = -DDEBUG
+
+DLLNAME1 = ecnsvrasyncl_pft.so
+DLLOBJS1 = ecnsvrasyncl_pft.o
+
+ALL =  $(DLLNAME1)
+
+all: $(ALL) clean
+
+$(DLLNAME1): $(DLLOBJS1)
+	$(HISUN_COMBINED) tmpxxx.exp $?	
+	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? -bE:tmpxxx.exp
+
+clean:
+	-rm *.o *.exp

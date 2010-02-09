@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="RTY" trace="yes">
+	<Define>
+		<Macro name="HEADMSG">
+			<Item name="TotLen"  length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!-- ÏûÏ¢×Ü³¤¶È  -->
+			<Item name="ComId"	 length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!-- ÏìÓ¦ÀàÐÍ    -->
+			<Item name="SeqnoId" length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!-- ÏûÏ¢Á÷Ë®ºÅ  -->		
+		</Macro>
+		
+		<Macro name="HEADMSG_RESQ">
+			<Item name="TotLen"  length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!-- ÏûÏ¢×Ü³¤¶È  -->
+			<Item name="ComId"	 length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!-- ÏìÓ¦ÀàÐÍ    -->
+			<Item name="SeqnoId" length="4" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!-- ÏûÏ¢Á÷Ë®ºÅ  -->
+		</Macro>
+	</Define>
+	<!-- ½É¿îÐÅÏ¢²éÑ¯ -->
+	<Transaction code="464701">
+		<Request>
+			<AddItem name="TotLen"  value="52000000" />			<!-- Ê®½øÖÆ 82 -->
+			<AddItem name="ComId"   value="01000000" />
+			<Quote name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"/>
+			<Item    name="FMPVal"  length="32" />
+			<Item    name="PayNo"   length="20" />
+			<Item    name="TimStp"  length="12" />
+		</Request>
+		<Response necessary="no">
+			<Quote name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />
+			<Item    name="Descrp"   length="50" />
+			<Item    name="PayNo"   length="20" />
+			<Item    name="CntCod"  length="20" />
+			<Item    name="HusInf"  length="300"/>
+			<Item    name="BkCod"   length="10" />
+			<Item    name="BkAct"   length="50" />
+			<Item    name="TrmCod"  length="3"  />
+			<Item    name="PblDat"  length="8"  />
+			<Item    name="PblAmt"  length="17" expression="ADDCHAR(AMTPOWER($PblAmt,2),17,0,1)"/>
+			<Item    name="PayAmt"  length="17" expression="ADDCHAR(AMTPOWER($PayAmt,2),17,0,1)"/>
+			<Item    name="UpaAmt"  length="17" expression="ADDCHAR(AMTPOWER($UpaAmt,2),17,0,1)"/>
+			<Item    name="BkSts"   length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+
+	<!-- ½É¿îÐÅÏ¢Ìá½» -->
+	<Transaction code="464702">
+		<Request>
+			<AddItem name="TotLen"  value="E4000000" />			<!-- Ê®½øÖÆ 228 -->
+			<AddItem name="ComId"   value="02000000" />
+			<Quote name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"/>
+			<Item    name="FMPVal"  length="32"/>
+			<Item    name="PayNo"   length="20"/>
+			<Item    name="BkAct"   length="50"/>
+			<Item    name="BkCod"   length="10"/>
+			<Item    name="PblDat"  length="8" />
+			<Item    name="PblAmt"  length="17" expression="AMTSIMPLEFMT($PblAmt)"/>
+			<Item    name="PblBk"   length="10"/>
+			<Item    name="PblAct"  length="50"/>
+			<Item    name="IfOsd"   length="1" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+			<Item    name="TimStp"  length="12" />
+		</Request>
+		<Response necessary="no">
+			<Quote name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />
+			<Item    name="Descrp"   length="50" />
+			<Item    name="BusLog"  length="14" />
+			<Item    name="PayNo_resq"   length="20" />
+			<Item    name="CntCod"  length="20" />
+			<Item    name="HusInf"  length="300"/>
+			<Item    name="BkAct_resq"   length="50" />
+			<Item    name="BkCod_resq"   length="10" />
+			<Item    name="TrmCod"  length="3"  />
+			<Item    name="PblTm_resq"   length="14" />
+			<Item    name="PblAmt_resq"  length="17" expression="ADDCHAR(AMTPOWER($PblAmt,2),17,0,1)"/>
+			<Item    name="PblBk_resq"   length="10" />
+			<Item    name="PblAct_resq"  length="50" />
+			<Item    name="BkSts"   length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+	
+	<!-- È¡ÏûÉÌÆ··¿½É¿îÐÅÏ¢ -->
+	<Transaction code="464703">
+		<Request>
+			<AddItem name="TotLen"  value="1A010000" />			<!-- Ê®½øÖÆ 282 -->
+			<AddItem name="ComId"   value="03000000"/>
+			<Quote   name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"  />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32" />			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="PayNo"   length="20" />			<!--½É¿îÍ¨ÖªÊé±àºÅ-->
+			<Item    name="CclRsn"  length="200"/>			<!--È¡ÏûÔ­Òò-->
+			<Item    name="TimStp"  length="12" />			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<AddItem name="TRspCd"  value='000000'/>
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="BusLog"  length="14" />			<!--ÒµÎñÁ÷Ë®ºÅ-->
+			<Item    name="PayNo_resq"   length="20" />			<!--½É¿îÍ¨ÖªÊé±àºÅ-->
+			<Item    name="CntCod_resq"  length="20"  necessary="no"/>			<!--ºÏÍ¬ºÅ-->
+			<Item    name="HusInf_resq"  length="300" necessary="no"/>			<!--·¿ÎÝÐÅÏ¢-->	
+			<Item    name="BkAct_resq"   length="50"  necessary="no"/>			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod_resq"   length="10"  necessary="no"/>			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="TrmCod_resq"  length="3"   necessary="no"/>			<!--ÆÚÊý-->
+			<Item    name="PblTm_resq"   length="14"  necessary="no"/>			<!--¸¶¿îÊ±¼ä-->
+			<Item    name="PblAmt_resq"  length="17"  necessary="no" expression="ADDCHAR(AMTPOWER($PblAmt,2),17,0,1)"/>		<!--¸¶¿î½ð¶î-->
+			<Item    name="PblBk_resq"   length="10"  necessary="no"/>			<!--½É¿îÒøÐÐ-->
+			<Item    name="PblAct_resq"  length="50"  necessary="no"/>			<!--½É¿îÕÊºÅ-->
+			<Item    name="BkSts"        length="1"   necessary="no" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->			
+		</Response>
+	</Transaction>
+
+	<!-- »ñÈ¡Ö§³öÅú×¼ÊéÐÅÏ¢ -->
+	<Transaction code="464704">
+		<Request>
+			<AddItem name="TotLen"  value="52000000"/>			<!-- Ê®½øÖÆ 82 -->
+			<AddItem name="ComId"   value="05000000"/>
+			<Quote   name="HEADMSG"/>		
+			<Item    name="FMPAcc"  length="6" />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32"/>			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="AuthNo"  length="20"/>			<!--Ö§³öÅú×¼Êé±àºÅ-->
+			<Item    name="TimStp"  length="12"/>			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="AuthNo"  length="20" />			<!--Åú×¼Êé±àºÅ-->
+			<Item    name="CmpNam"  length="100"/>			<!--¿ª·¢¹«Ë¾-->
+			<Item    name="PjtNam"  length="100"/>			<!--ÏîÄ¿Ãû³Æ-->
+			<Item    name="PSlCod"  length="20" />			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct"   length="50" />			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PotPan"  length="50" />			<!--ÓÃ¿î¼Æ»®-->
+			<Item    name="AthAmt"  length="17" expression="ADDCHAR(AMTPOWER($AthAmt,2),17,0,1)"/>		<!--Åú×¼½ð¶î-->
+			<Item    name="InUnit"  length="100"/>			<!--»®Èëµ¥Î»-->
+			<Item    name="InAct"   length="50" />			<!--»®ÈëÕÊ»§-->
+			<Item    name="InBank"  length="10" />			<!--»®ÈëÒøÐÐ´úÂë-->
+			<Item    name="AthDat"  length="8"  />			<!--Åú×¼ÈÕÆÚ-->
+			<Item    name="BkSts"   length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+
+	<!-- ¼à¿ØÕÊ»§Ö§³öÐÅÏ¢Ìá½» -->
+	<Transaction code="464705">
+		<Request>
+			<AddItem name="TotLen"  value="54010000" />			 <!--Ê®½øÖÆ 340--> 
+			<AddItem name="ComId"   value="04000000"/>
+			<Quote   name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"  />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32" />			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="AuthNo"  length="20" />			<!--Ö§³öÅú×¼Êé±àºÅ-->
+			<Item    name="BkAct"   length="50" />			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PotAmt"  length="17" expression="AMTSIMPLEFMT($PotAmt)"/>	<!--Ö§³ö½ð¶î-->
+			<Item    name="GtrAct"  length="50" />			<!--ÊÕ¿îÈËÕÊºÅ-->
+			<Item    name="GtrNam"  length="100"/>			<!--ÊÕ¿îÈËÃû³Æ-->
+			<Item    name="PotTim"  length="14" />			<!--»®¿îÊ±¼ä-->
+			<Item    name="BkBal"   length="17" expression="AMTSIMPLEFMT($BkBal)"/>		<!--¼à¿ØÕÊºÅÓà¶î-->
+			<Item    name="TimStp"  length="12" />			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="BusLog"  length="14" />	 		<!--ÒµÎñÁ÷Ë®ºÅ-->
+			<Item    name="AuthNo_resq"  length="20" expression="DELRIGHTSPACE($AuthNo_resq)"/>			<!--Ö§³öÅú×¼Êé±àºÅ-->
+			<Item    name="BkAct_resq"   length="50" expression="DELRIGHTSPACE($BkAct_resq)"/>			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod_resq"   length="10" expression="DELRIGHTSPACE($BkCod_resq)"/>			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PotAmt_resq"  length="17" expression="ADDCHAR(AMTPOWER($PotAmt_resq,2),17,0,1)"/>	<!--Ö§³ö½ð¶î-->
+			<Item    name="GtrAct_resq"  length="50" expression="DELRIGHTSPACE($GtrAct_resq)"/>			<!--ÊÕ¿îÈËÕÊºÅ-->
+			<Item    name="GtrNam_resq"  length="100" expression="DELRIGHTSPACE($GtrNam_resq)"/>			<!--ÊÕ¿îÈËÃû³Æ-->
+			<Item    name="PotTim_resq"  length="14" expression="DELRIGHTSPACE($PotTim_resq)"/>			<!--»®¿îÊ±¼ä-->
+			<Item    name="BkBal_resq"   length="17" expression="ADDCHAR(AMTPOWER($BkBal_resq,2),17,0,1)"/>	<!--¼à¿ØÕÊºÅÓà¶î-->
+			<Item    name="BkSts"   length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+	
+	<!-- È¡Ïû¼à¿ØÕÊ»§Ö§³öÐÅÏ¢ -->
+	<Transaction code="464706">
+		<Request>
+			<AddItem name="TotLen"  value="1A010000" />			<!-- Ê®½øÖÆ 282 -->
+			<AddItem name="ComId"   value="06000000"/>
+			<Quote   name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"  />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32" />			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="AuthNo"  length="20" />			<!--Ö§³öÅú×¼Êé±àºÅ-->
+			<Item    name="CclRsn"  length="200"/>			<!--È¡ÏûÔ­Òò-->
+			<Item    name="TimStp"  length="12" />			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no" type="fixed">
+			<AddItem name="TRspCd"  value='000000'/>
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="BusLog"  length="14" />			<!--ÒµÎñÁ÷Ë®ºÅ-->
+			<Item    name="AuthNo_resq"  length="20" expression="DELRIGHTSPACE($AuthNo_resq)"/>			<!--Ö§³öÅú×¼Êé±àºÅ-->
+			<Item    name="BkAct_resq"   length="50" expression="DELRIGHTSPACE($BkAct_resq)"/>			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod_resq"   length="10" expression="DELRIGHTSPACE($BkCod_resq)"/>			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PotAmt_resq"  length="17" expression="ADDCHAR(AMTPOWER($PotAmt_resq,2),17,0,1)"/>	<!--Ö§³ö½ð¶î-->
+			<Item    name="GtrAct_resq"  length="50" expression="DELRIGHTSPACE($GtrAct_resq)"/>			<!--ÊÕ¿îÈËÕÊºÅ-->
+			<Item    name="GtrNam_resq"  length="100" expression="DELRIGHTSPACE($GtrNam_resq)"/>			<!--ÊÕ¿îÈËÃû³Æ-->
+			<Item    name="PotTim_resq"  length="14" expression="DELRIGHTSPACE($PotTim_resq)"/>			<!--»®¿îÊ±¼ä-->
+			<Item    name="BkBal_resq"   length="17" necessary="no"  expression="ADDCHAR(AMTPOWER($BkBal_resq,2),17,0,1)"/>	<!--¼à¿ØÕÊºÅÓà¶î-->
+			<Item    name="BkSts"        length="1"  necessary="no"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->			
+		</Response>
+	</Transaction>
+
+	<!-- ¼à¿ØÕÊ»§Ã¿ÈÕÊÕÖ§ÐÅÏ¢Ìá½» -->
+	<Transaction code="464707">
+		<Request>
+			<AddItem name="TotLen"  value="2D010000" />			<!-- Ê®½øÖÆ 301 -->
+			<AddItem name="ComId"   value="07000000"/>
+			<Quote   name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"  />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32" />			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="BkDat"   length="8"  />			<!--¼à¿ØÈÕÆÚ-->
+			<Item    name="PSlCod"  length="20" />			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct"   length="50" />			<!--¼à¿ØÕË»§-->
+			<Item    name="BkCod"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PrjNam"  length="100"/>			<!--ÏîÄ¿Ãû³Æ-->
+			<Item    name="BalOut"  length="17" expression="AMTSIMPLEFMT($BalOut)"/>			<!--µ±ÈÕÖ§³ö½ð¶î-->
+			<Item    name="BalIn"   length="17" expression="AMTSIMPLEFMT($BalIn)"/>				<!--µ±ÈÕÊÕÈë½ð¶î-->
+			<Item    name="BalAmt"  length="17" expression="AMTSIMPLEFMT($BalAmt)"/>			<!--µ±ÈÕÕË»§Óà¶î-->
+			<Item    name="TimStp"  length="12" />			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="BusLog"  length="14" />			<!--ÒµÎñÁ÷Ë®ºÅ-->
+			<Item    name="BkDat"   length="8"  />			<!--¼à¿ØÈÕÆÚ-->
+			<Item    name="PSlCd"   length="20" />			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct"   length="50" expression="DELRIGHTSPACE($BkAct)"/>			<!--¼à¿ØÕÊºÅ-->
+			<Item    name="BkCod"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="PjtNam"  length="100"/>			<!--ÏîÄ¿Ãû³Æ-->
+			<Item    name="BalOut"  length="17" expression="ADDCHAR(AMTPOWER($BalOut,2),17,0,1)"/>			<!--µ±ÈÕÖ§³ö½ð¶î-->
+			<Item    name="BalIn"   length="17" expression="ADDCHAR(AMTPOWER($BalIn,2),17,0,1)"/>			<!--µ±ÈÕÊÕÈë½ð¶î-->
+			<Item    name="BalAmt"  length="17" expression="ADDCHAR(AMTPOWER($BalAmt,2),17,0,1)"/>			<!--µ±ÈÕÕË»§Óà¶î-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+
+	<!-- ¼à¿ØÒøÐÐ¼à¿ØÕÊºÅ¿çÐÐ×ªÕÊÊÕ¿îÃ÷Ï¸ÐÅÏ¢Ìá½» -->
+	<Transaction code="464708">
+		<Request>
+			<AddItem name="TotLen"  value="0A010000" />			<!-- Ê®½øÖÆ 266 -->
+			<AddItem name="ComId"   value="08000000"/>
+			<Quote   name="HEADMSG"/>
+			<Item    name="FMPAcc"  length="6"  />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32" />			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="InDat"   length="8"  />			<!--ÊÕ¿îÈÕÆÚ-->
+			<Item    name="TtlCnt"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!--×Ü±ÊÊý-->
+			<Item    name="CurRec"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!--µ±Ç°±ÊÊý-->
+			<Item    name="PSlCod"  length="20" />			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct"   length="50" />			<!--¼à¿ØÕË»§-->
+			<Item    name="BkCod"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="InAmt"   length="17" expression="AMTSIMPLEFMT($InAmt)"/>			<!--×ªÈë½ð¶î-->
+			<Item    name="InNam"   length="50" />			<!--½É¿îÈËÐÕÃû-->
+			<Item    name="CntCod"  length="20" />			<!--¹º·¿ºÏÍ¬ºÅ-->
+			<Item    name="PayNo"   length="20" />			<!--½É¿îÍ¨ÖªÊé±àºÅ-->
+			<Item    name="IfOsd"   length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>	<!--ÊÇ·ñ¿çÐÐ-->
+			<Item    name="TimStp"  length="12" />			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×´Ì¬-->
+			<Item    name="Descrp"   length="50" />			<!--´íÎóÃèÊö-->
+			<Item    name="BusLog"  length="14" />			<!--ÒµÎñÁ÷Ë®ºÅ-->
+			<Item    name="InDat_resq"   length="8"  />			<!--ÊÕ¿îÈÕÆÚ-->
+			<Item    name="TtlCnt"  length="4"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--×Ü±ÊÊý-->
+			<Item    name="CurRec"  length="4"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>	<!--µ±Ç°±ÊÊý-->
+			<Item    name="PSlCod_resq"  length="20" />			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct_resq"   length="50" expression="DELRIGHTSPACE($BkAct)"/>			<!--¼à¿ØÕË»§-->
+			<Item    name="BkCod_resq"   length="10" />			<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="InAmt_resq"   length="17" expression="ADDCHAR(AMTPOWER($InAmt,2),17,0,1)"/>	<!--×ªÈë½ð¶î-->
+			<Item    name="InNam"   length="50" />			<!--½É¿îÈËÐÕÃû-->
+			<Item    name="CntCod"  length="20" />			<!--¹º·¿ºÏÍ¬ºÅ-->
+			<Item    name="PayNo"   length="20" />			<!--½É¿îÍ¨ÖªÊé±àºÅ-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+	<!-- ÐÞ¸Ä½ÓÈëÓÃ»§ÃÜÂë -->
+	<Transaction code="464709">
+		<Request>
+			<AddItem name="TotLen"  value="48000000"/>			<!-- Ê®½øÖÆ 72 -->
+			<AddItem name="ComId"   value="09000000"/>
+			<Quote   name="HEADMSG"/>		
+			<Item    name="FMPAcc"  length="6" />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32"/>			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="NewPwd"  length="10"/>			<!--ÐÂÃÜÂë-->
+			<Item    name="TimStp"  length="12"/>			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />	<!--×´Ì¬-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+	<!-- È¡Ïû¼à¿ØÅú×¼ÊéÐÅÏ¢²éÑ¯ -->
+	<Transaction code="464710">
+		<Request>
+			<AddItem name="TotLen"  value="52000000"/>			<!-- Ê®½øÖÆ 82 -->
+			<AddItem name="ComId"   value="0A000000"/>
+			<Quote   name="HEADMSG"/>		
+			<Item    name="FMPAcc"  length="6" />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32"/>			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="CMonNo"  length="20"/>			<!--È¡Ïû¼à¿ØÅú×¼Êé±àºÅ-->
+			<Item    name="TimStp"  length="12"/>			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />	<!--×´Ì¬-->
+			<Item    name="Descrp"  length="50" />				<!--´íÎóÃèÊö-->
+			<Item    name="CMonNo"  length="20" />				<!--È¡Ïû¼à¿ØÅú×¼Êé±àºÅ-->
+			<Item    name="BkCod"   length="10" />				<!--¼à¿ØÒøÐÐ´úÂë-->
+			<Item    name="BkNam"   length="50" />				<!--¼à¿ØÒøÐÐÃû³Æ-->
+			<Item    name="CmpNam"  length="100" />				<!--¿ª·¢ÉÌÃû³Æ-->
+			<Item    name="Area"    length="50" />				<!--ÇøÃû-->
+			<Item    name="PjtNam"  length="100" />				<!--ÏîÄ¿Ãû³Æ-->
+			<Item    name="PSlCod"  length="20" />				<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="BkAct"   length="50" />				<!--¼à¿ØÕË»§-->
+			<Item    name="CclDat"  length="8" />				<!--È¡ÏûÈÕÆÚ-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+	<!-- ²éÑ¯¿îÏîÊÇ·ñÔÚ¼à¿Ø·¶Î§ -->
+	<Transaction code="464711">
+		<Request>
+			<AddItem name="TotLen"  value="98000000"/>			<!-- Ê®½øÖÆ 152 -->
+			<AddItem name="ComId"   value="0B000000"/>
+			<Quote   name="HEADMSG"/>		
+			<Item    name="FMPAcc"  length="6" />			<!--½ÓÈëÓÃ»§ÕÊ»§-->
+			<Item    name="FMPVal"  length="32"/>			<!--½ÓÈëÓÃ»§ÑéÖ¤·û-->
+			<Item    name="CntCod"  length="20"/>			<!--ºÏÍ¬±àºÅ-->
+			<Item    name="GtrAct"  length="50"/>			<!--ÊÕ¿îÕÊºÅ-->
+			<Item    name="PSalNo"  length="20"/>			<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="TimStp"  length="12"/>			<!--Ê±¼ä´Á-->
+		</Request>
+		<Response necessary="no">
+			<Quote   name="HEADMSG_RESQ"/>
+			<Item    name="Status"  length="1" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" />	<!--×´Ì¬-->
+			<Item    name="Descrp"  length="50" />				<!--´íÎóÃèÊö-->
+			<Item    name="GtrAct" length="50"/>				<!--ÊÕ¿îÕÊºÅ-->
+			<Item    name="PSalNo" length="20"/>				<!--Ô¤ÊÛÖ¤ºÅ-->
+			<Item    name="CntCod" length="20"/>				<!--ºÏÍ¬±àºÅ-->
+			<Item    name="CmpNam" length="100" />				<!--¿ª·¢ÉÌÃû³Æ-->
+			<Item    name="PjtNam" length="100" />				<!--ÏîÄ¿Ãû³Æ-->
+			<AddItem name="TRspCd"  value='000000'/>
+		</Response>
+	</Transaction>
+</Application>

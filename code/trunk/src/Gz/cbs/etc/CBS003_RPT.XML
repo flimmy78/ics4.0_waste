@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÊ¡¼¯ÖÐÆ½Ì¨¶¨ÆÚ½è¼ÇÇåµ¥ -->
+<Application dbconnect="YES" trclog="CBS003.log">
+	<VarDef>
+		<String alias="RptHead" pos="1" />
+		<String alias="TraKnd"  pos="2" />
+		<String alias="TxnKnd"  pos="3" />
+		<String alias="CcyCod"  pos="4" />
+		<String alias="OIFlag"  pos="5" />
+		<String alias="TxnDat"  pos="6" />
+		<String alias="BchSqn"  pos="7" />
+		<String alias="BrNo"    pos="8" />
+		<String alias="NodNo"   pos="9" />
+		<String alias="TlrId"   pos="10"/>
+		<String alias="PrtDat"  pos="11"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="BCHSTS">
+			<Convert value="U" msg="³õÊ¼  ×´Ì¬"/>
+			<Convert value="B" msg="ÒµÎñ´¦ÀíÖÐ"/>
+			<Convert value="C" msg="»ØÓ¦ÒÑ·¢ËÍ"/>
+			<Convert value="D" msg="ÒµÎñÒÑÇåËã"/>
+			<DEFAULT msg="×´Ì¬Î´Ã÷£¬Çë²éÑ¯"/>	
+		</Item>
+		<Item alias="RTNCOD">
+			<Convert value="000I1000" msg="½»Ò×    ³É¹¦"/>
+			<Convert value="001O6001" msg="²é¿ª»§·½Ô­Òò"/>
+			<Convert value="001O6006" msg="ÎÞÐ§    ¿¨ºÅ"/>
+			<Convert value="001O6016" msg="´æ¿îÓà¶î²»×ã"/>
+			<Convert value="001O6017" msg="ÕÊ»§ ²» ´æÔÚ"/>
+			<Convert value="001O6024" msg="ÕÊ»§ ÒÑ ¹ÒÊ§"/>
+			<Convert value="001O6025" msg="ÕÊ»§ÒÑ¾­¶³½á"/>
+			<Convert value="001O6026" msg="ÕÊ»§ ÒÑ Ïú»§"/>
+			<Convert value="001O6043" msg="ÏµÍ³Ã¦Î´Ìá½»"/>
+			<Convert value="001O6062" msg="½ð¶î    ´íÎó"/>
+			<Convert value="001O6065" msg="Î´ÓëÒøÐÐÇ©Ô¼"/>
+			<DEFAULT msg="×´Ì¬Òì³£Çë²éÑ¯"/>	
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select A.BCHSTS BCHSTS, A.CLRDAT CLRDAT, A.SNDBNO SNDBNO, A.FILNAM FILNAM, A.BCHSQN BCHSQN,
+											 B.MSGSQN MSGSQN, B.SNDBNO SNDBNO, B.SNDDAT SNDDAT, B.VCHID  VCHID,	 B.BILSTS BILSTS,
+											 B.TXNAMT TXNAMT, B.THDLOG THDLOG, B.RTNCOD RTNCOD, B.SMRCOD SMRCOD, B.USGCOD USGCOD,
+											 B.SNDACT SNDACT, B.SNDNM  SNDNM,	 B.ROPNBK ROPNBK, B.RCVACT RCVACT, B.RCVNM  RCVNM,
+											 B.SMR    SMR,    B.HRSPCD HRSPCD, B.TCKNO  TCKNO
+									from CBSBCHSUM A, CBSBCHJNL B
+								 where A.BCHSQN='%s'
+									 and A.FILNAM=B.FILNAM
+									 and A.OIFLAG='%s'
+									 and B.ACTDAT='%s'
+									 and B.BrNo='%s'
+							order by A.FILNAM, B.RTNCOD, B.THDLOG" >
+				<FieldList>$BchSqn|$OIFlag|$TxnDat|$BrNo|</FieldList>
+			</Sql>
+		</Iterative>
+		<SubTotal type="field" groupby="RTNCOD|">
+			<Field fmtseq="1"  field="RTNCOD">
+				<Sum sum="TXNAMT" sum_alias="SubAmt" count="SubNum"/>
+				<Sum sum="TXNAMT" sum_alias="SubAmt"/>
+			</Field>
+		</SubTotal>
+		<Summed type="field">
+			<Field sum="TXNAMT" sum_alias="TotAmt" count="TotNum"/>
+		</Summed>   
+	</DataSource>
+
+	<FormatDefine pagerows="13" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$RptHead"/>
+			<Para label="02" alias="$BrNo"/>
+			<Para label="03" alias="$NodNo"/>
+			<Para label="04" alias="$PAGESUM"/>
+			<Para label="05" alias="$PAGENUM"/>
+			<Para label="06" alias="$SNDBNO"/>
+			<Para label="07" alias="$BCHSQN"/>
+			<Para label="08" alias="$FILNAM"/>
+			<Para label="09" alias="$BCHSTS" convert="yes" />
+			<Format>
+                                                                   ½»Í¨ÒøÐÐÊ¡¼¯ÖÐÆ½Ì¨ #
+                                                       ==========================================================
+	·Ö  ÐÐ  ºÅ: #                                                           ²¿  ÃÅ  ºÅ£º#                                                            ¹²  #  Ò³    µÚ  #  Ò³
+	·¢Æð·½ÐÐºÅ£º#
+	ÅúÁ¿°üÐòºÅ£º#                                                           ÅúÁ¿ÎÄ¼þÃû£º#                                                            Åú´Î×´Ì¬£º#
+©³©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©·
+©§ ÐÅ  Ï¢  Ðò  ºÅ ©§ ·¢ÆðÐÐÐÐºÅ ©§Ìá ½» ºÅ©§  ·¢     Æð     ÈË     ÕÊ     ºÅ  ©§     ·¢          Æð          ÈË          Ãû          ³Æ     ©§  ½»  Ò×  ½ð  ¶î  ©§ ´¦ Àí ½á  ¹û ©§
+©§                ©§ ½ÓÊÕÐÐÐÐºÅ ©§·¢ËÍÈÕÆÚ©§  ½Ó     ÊÕ     ÈË     ÕÊ     ºÅ  ©§     ½Ó          ÊÕ          ÈË          Ãû          ³Æ     ©§  »á ¼Æ Á÷ Ë® ºÅ  ©§              ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$MSGSQN"         spread="mid" />
+			<Para label="02" alias="$SNDBNO"         spread="mid" />
+			<Para label="03" alias="$VCHID"          spread="mid" />
+			<Para label="04" alias="$SNDACT"         spread="mid" />
+			<Para label="05" alias="$SNDNM"          spread="mid" />
+			<Para label="06" alias="AMTFMT($TXNAMT)" spread="left"/>
+			<Para label="07" alias="$RTNCOD" convert="yes" spread="mid" />
+			<Para label="08" alias="$ROPNBK"         spread="mid" />
+			<Para label="09" alias="$SNDDAT"         spread="mid" />
+			<Para label="10" alias="$RCVACT"         spread="mid" />
+			<Para label="11" alias="$RCVNM"          spread="mid" />
+			<Para label="12" alias="$TCKNO"          spread="mid" />
+			<Format>
+©§#               ©§#           ©§#       ©§#                                 ©§#                                                           ©§                 #©§#             ©§
+©§                ©§#           ©§#       ©§#                                 ©§#                                                           ©§#                 ©§              ©§
+			</Format>
+		</Iterative>
+		<SubTotal  fmtseq="1">
+			<Para label="01" alias="$SubNum"					spread="mid" />
+			<Para label="02" alias="AMTFMT($SubAmt)"	spread="left" />
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§Ð¡¼Æ£º      	                   ±ÊÊý£º     #                                                                                           #                                     ©§          
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</SubTotal>
+		<Summed>
+			<Para label="01" alias="$TotNum"         spread="mid" />
+			<Para label="02" alias="AMTFMT($TotAmt)" spread="left" />
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º      	                   ±ÊÊý£º     #                                                                                           #                                     ©§          
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Para label="01" alias="$TlrId"/>
+			<Para label="02" alias="$PrtDat"/>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¿
+                                ´òÓ¡¹ñÔ±ºÅ£º#                                                            ´òÓ¡ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

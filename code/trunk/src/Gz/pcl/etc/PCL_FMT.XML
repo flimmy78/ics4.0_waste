@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="pclfmt.log" err_file="pclfmt.err">
+	<CodeSwitching>
+		<Table name="HRspCd" file="etc/PCL_CSW.XML">
+			<Column name="HRspCd" sort="no"/>
+			<Column name="HRspCdSmr" sort="no"/>
+		</Table>
+	</CodeSwitching>
+	<Process name="FmtRD" begin_ignore_line="1" end_ignore_line="1" debug_file="pclfmt.log" err_file="pclfmt.err">
+<!--
+		<Data record_length="278" > 
+-->
+		<Data>
+			<Item name="SEQNO"         length=" 6"/>
+			<Item name="ISSCODE"       length=" 8"/>
+			<Item name="RECVINS"       length=" 8"/>
+			<Item name="TRANACC"       length="19"/>
+			<Item name="ACQCODE"       length=" 8"/>
+			<Item name="FORWINS"       length=" 8"/>
+			<Item name="ACQINS"        length=" 8"/>
+			<Item name="REFNO"         length="12"/>
+			<Item name="CTRDT"         length=" 8"/>
+			<Item name="CTRTIME"       length=" 8"/>
+			<Item name="CTRTRN"        length=" 6"/>
+			<Item name="TRANAMT"       length="12" expression="ADDCHAR($TRANAMT,12,0,1)"/>
+			<Item name="MERSTANDCOMM"  length=" 4" expression="ADDCHAR($MERSTANDCOMM,6,0,1)"/>
+			<Item name="MTI"           length=" 2"/>
+			<Item name="PROCCODE"      length=" 6"/>
+			<Item name="MERTYPE"       length=" 4"/>
+			<Item name="CTRPOSTDATE"   length=" 4"/>
+			<Item name="TERMID"        length=" 8"/>
+			<Item name="MERID"         length="15"/>
+			<Item name="MERACCFROMTBL" length="30"/>
+			<Item name="TRANCURR"      length=" 3"/>
+			<Item name="CLEARAMT"      length="12" expression="ADDCHAR($CLEARAMT,12,0,1)"/>
+			<Item name="MANUAUTHFLAG"  length=" 1"/>
+			<Item name="GNETAUTHFLAG"  length=" 1"/>
+			<Item name="AUTHCODE"      length=" 6"/>
+			<Item name="TXCODE"        length=" 3"/>
+			<Item name="REPCODE"       length=" 2"/>
+			<Item name="MERNAME"       length="20"/>
+			<Item name="ORIGCTRTRN"    length=" 6"/>
+			<Item name="ORIGREFNO"     length="12"/>
+			<Item name="ENDFLAG"       length=" 2"/>
+			<Item name="BANKFEE"       length="12" expression="ADDCHAR($BANKFEE,12,0,1)"/>
+			<Item name="MERFEE"        length="12" expression="ADDCHAR($MERFEE,12,0,1)"/>
+			<If condition="IS_NOEQUAL_STRING($REPCODE,00)">
+				<AddItem name="STAT"     value="A"/>
+			</If>
+			<ElseIf condition="OR( AND(IS_EQUAL_STRING($TXCODE,PER), IS_EQUAL_STRING($ENDFLAG,02)), AND(IS_EQUAL_STRING($TXCODE,PEC), IS_EQUAL_STRING($ENDFLAG,03)), AND(IS_EQUAL_STRING($TXCODE,ACR), IS_EQUAL_STRING($ENDFLAG,02)), AND(IS_EQUAL_STRING($TXCODE,ACC), IS_EQUAL_STRING($ENDFLAG,03)) )" >
+				<AddItem name="STAT"     value="9"/>
+			</ElseIf>
+			<Else>
+				<AddItem name="STAT"     value="0"/>
+			</Else>
+			<AddItem name="INACNO"       value="000000000000000000000"/>
+			<AddItem name="BELONGDEPTNO" value=" "/>
+			<AddItem name="BANKNO"       value="000000000000"/>
+			<AddItem name="INMODE"       value="0"/>
+			<AddItem name="DSKNO"        value=" "/>
+			<AddItem name="LOGNO"        value=" "/>
+			<AddItem name="ACTDAT"       value=" "/>
+			<AddItem name="HLOGNO"       value=" "/>
+			<AddItem name="TLRID"        value=" "/>
+			<AddItem name="TCKNO"        value=" "/>
+			<AddItem name="PAYPRTNUM"    value="00"/>
+			<AddItem name="RCVPRTNUM"    value="00"/>
+			<AddItem name="RSPMSG"       value=" "/>
+		</Data>						    
+	</Process>   
+
+
+	<Process name="FmtSD" debug_file="pclfmt.log" err_file="pclfmt.err">
+		<Data deli_str="|">
+			<Item name="CTRDT"/>
+			<Item name="CTRTRN"/>
+			<Item name="SEQNO"/>
+			<Item name="ISSCODE"/>
+			<Item name="RECVINS"/>
+			<Item name="TRANACC"/>
+			<Item name="ACQCODE"/>
+			<Item name="FORWINS"/>
+			<Item name="ACQINS"/>
+			<Item name="REFNO"/>
+			<Item name="CTRTIME"/>
+			<Item name="TRANAMT" expression="AMTSIMPLEFMT($TRANAMT)"/>
+			<Item name="MERSTANDCOMM"/>
+			<Item name="MTI"/>
+			<Item name="PROCCODE"/>
+			<Item name="MERTYPE"/>
+			<Item name="CTRPOSTDATE"/>
+			<Item name="TERMID"/>
+			<Item name="MERID"/>
+			<Item name="MERACCFROMTBL"/>
+			<Item name="TRANCURR"/>
+			<Item name="CLEARAMT"	expression="AMTSIMPLEFMT($CLEARAMT)"/>
+			<Item name="MANUAUTHFLAG"/>
+			<Item name="GNETAUTHFLAG"/>
+			<Item name="AUTHCODE"/>
+			<Item name="TXCODE"/>
+			<Item name="REPCODE"/>
+			<Item name="MERNAME"/>
+			<Item name="ORIGCTRTRN"/>
+			<Item name="ORIGREFNO"/>
+			<Item name="ENDFLAG"/>
+			<Item name="ACTDAT"/>
+		</Data>						    
+	</Process>
+
+	<Process name="PclDzFil" debug_file="Pclfmt.log" err_file="Pclfmt.err">
+		<Data deli_str=",">
+			<Item name="RefNo"       desc="ÏµÍ³²Î¿¼ºÅ"/>
+			<Item name="CtrPostDate" desc="ÇåËãÈÕ£¨ÓÉÒøÁªËÄÎ»À©Õ¹£©"/>
+			<Item name="CtrDt"       desc="½»Ò×·¢ÉúÈÕ"/>
+			<Item name="CtrTime"     desc="½»Ò×Ê±¼ä"/>
+			<Item name="TranAcc"     desc="×ª³ö¿¨ÕÊºÅ"/>
+			<Item name="Mti"         desc="ÐÅÏ¢Âë"/>
+			<Item name="ProcCode"    desc="´¦ÀíÂë"/>
+			<Item name="CdFlag"      desc="½è´û±êÖ¾"/>
+			<Item name="TranAmt"     desc="½»Ò×½ð¶î"/>
+			<Item name="FeeAmt"      desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="OrigRefNo"   desc="Ô­ÏµÍ³²Î¿¼ºÅ"/>
+			<Item name="MerId"       desc="ÉÌ»§ºÅ"/>
+			<Item name="TermId"      desc="ÖÕ¶Ë»úºÅ"/>
+			<Item name="CtrTrn"      desc="POS½»Ò×Á÷Ë®ºÅ"/>
+			<Item name="RepCode"     desc="½»Ò×ÏìÓ¦Âë"/>
+			<Item name="BankId"      desc="ÒøÐÐ´úÂë"/>
+			<Item name="TBusTp"      desc="ÒµÎñ´úÂë"/>
+		</Data>
+	</Process>
+
+	<Process name="PclMerId" debug_file="Pclfmt.log" err_file="Pclfmt.err">
+		<Data>
+			<Item name="MerId" desc="ÉÌ»§ºÅ"/>
+			<AddItem name="SplitFlg" value="," desc="·Ö¸ô·û"/>
+			<Item name="SplitFlg" desc="·Ö¸ô·û"/>
+			<Item name="TermId" desc="ÖÕ¶Ë»úºÅ"/>
+		</Data>
+	</Process>
+
+  <Process name="PclCusAgt" deli_asc="9" desc="ÉÌ»§×ÊÁÏ±í">
+    <Item name="PosTyp" desc="ÉÌ»§ÖÖÀà"/>
+    <Item name="BusiNo" desc="ÉÌ»§ºÅ"/>
+    <Item name="CusNam" desc="ÉÌ»§Ãû³Æ"/>
+    <Item name="DeptNo" desc="¹éÊô²¿ÃÅ"/>
+    <Item name="OpnBr"  desc="¹éÊô·ÖÐÐ"/>
+    <Item name="AgrBr"  desc="´úÀí·ÖÐÐ"/>
+    <Item name="BankNo" desc="ÇåËãÐÐÖ§¸¶ÐÐºÅ"/>
+    <Item name="BankNm" desc="ÇåËãÐÐÖ§¸¶ÐÐÃû"/>
+    <Item name="AccFlg" desc="ÕËºÅÐÔÖÊ"/>
+    <Item name="InAcNo" desc="ÇåËãÕËºÅ"/>
+    <Item name="InAcNm" expression="DELSPACE($InAcNm,all)" desc="ÇåËã»§Ãû"/>
+    <Item name="InMode" desc="ÈëÕË·½Ê½"/>
+    <Item name="FeeRat" expression="FABSAMT(AMTPOWER($FeeRat,2),6)" desc="ÊÖÐø·ÑÂÊ"/>
+    <Item name="TopAmt" deli_asc="10" expression="FABSAMT(AMTPOWER($TopAmt,2),15)" desc="·â¶¥½ð¶î"/>
+    <AddItem name="Sts" value="0"/>
+    <If condition="IS_EQUAL_STRING(SUBSTR($BankNo,1,3),301)">
+      <AddItem name="SysFlg" value="0" desc="½»ÐÐÏµÍ³"/>
+    </If>
+    <Else>
+      <AddItem name="SysFlg" value="1" desc="·Ç½»ÐÐÏµÍ³"/>
+    </Else>
+    <AddItem name="ValDt" expression="$ActDat"/>
+    <AddItem name="Smr" expression="STRCAT(²Ù×÷Ô±¡¾,$TlrId,¡¿²Ù×÷Ê±¼ä¡¾,GETDATETIME(YYYY-MM-DD HH:MM:SS),¡¿ÅúÁ¿µ¼Èë)"/>
+  </Process>
+</BATCH>
