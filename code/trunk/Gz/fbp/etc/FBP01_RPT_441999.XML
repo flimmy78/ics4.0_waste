@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="FBP01_RPT_441999.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="DskNo"           name="$DskNo"/>
+    <String alias="CAgtNo"          name="$CAgtNo"/>
+    <String alias="BBusTyp"         name="$BBusTyp"/>
+    <String alias="CrpNam"          name="$CrpNam"/>
+    <String alias="OrnCnt"          name="$OrnCnt"/>
+    <String alias="OrnAmt"          name="$OrnAmt"/>
+  </VarDef>
+  <MsgConvert>
+     <Item alias="RecSts">
+      <Convert value="0" msg="Î´´¦Àí"/>
+      <Convert value="1" msg="Î´Öª"/>
+      <Convert value="2" msg="ÒÑ´¦Àí"/>
+      <Convert value="X" msg="Ð­Òé¼ì²é´í"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+    <Item alias="HRspCd">
+      <Convert value="SC0000" msg="½»Ò×³É¹¦"/>
+      <Convert value="PD3510" msg="ÕÊºÅ²»´æÔÚ"/>
+      <Convert value="PC3254" msg="Óà¶î²»×ã"/>
+      <Convert value="481903" msg="ÕÊºÅ²»´æÔÚ"/>
+      <Convert value="481904" msg="Ö¤¼þ»ò»§Ãû²»·û"/>
+      <Convert value="PC3119" msg="¿¨ÒÑ¾­¹ýÆÚ"/>
+      <Convert value="PD5100" msg="Óà¶î²»×ã"/>
+      <Convert value="PA1038" msg="½ð¶îÊäÈë´íÎó"/>
+      <Convert value="CD5200" msg="¶Ô¹«ÕË»§Óà¶î²»×ã"/>
+      <Convert value="PC3150" msg="ÕÊ»§ÒÑÏú»§"/>
+      <Convert value="PD3750" msg="ÕÊ»§ÒÑÏú»§"/>
+      <Convert value=" " msg="Î´´¦Àí"/>
+      <DEFAULT msg="½»Ò×Ê§°Ü"/>
+    </Item>
+    <Item alias="CAgtNo">
+      <Convert value="4410000560" msg="´ú¿Û±£ÏÕ"/>
+      <Convert value="4410000561" msg="´ú·¢±£ÏÕ"/>
+      <Convert value="4410000578" msg="²ÊÆ±·µ½±"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="SELECT SeqNo,ActNo,TxnAmt,TCusID,TCusNm,RecSts,TlrId,ACTDAT,HRspCd FROM afebatrec WHERE DskNo='%s' ORDER BY SeqNo">
+        <FieldList>$DskNo|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type ="sql">
+      <Sql sql="SELECT coalesce(SUM(CAST(TxnAmt AS BIGINT)),0) TotAmt,coalesce(COUNT(*),0) TotCnt FROM afebatrec WHERE DskNo='%s' and HRspCd='SC0000'">
+        <FieldList>$DskNo|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                            ¹ãÖÝÅúÁ¿´úÊÕ´ú¸¶Â¼ÈëÇåµ¥
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$DskNo"  spread="left"/>
+      <Para label="02" alias="$CAgtNo"  spread="left"/>
+      <Para label="03" alias="$CrpNam"  spread="left"/>
+      <Para label="04" alias="$CAgtNo" convert="YES" spread="left"/>
+      <Para label="05" alias="$PAGESUM" spread="left"/>
+      <Para label="06" alias="$PAGENUM" spread="left"/>
+      <Format>
+  Åú´ÎºÅ: #              µ¥Î»±àºÅ: #               µ¥Î»Ãû³Æ: #                         
+  ÒµÎñÀàÐÍ: #
+            ¹² # Ò³    µÚ # Ò³
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+ Ë³ÐòºÅ   ¿¨ºÅ/ÕËºÅ                   ½ð¶î          ±£µ¥±àºÅ/Á÷Ë®ºÅ       ´úÀí¿Í»§ÐÕÃû            ¼ÇÂ¼×´Ì¬
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$SeqNo" spread="right"/>
+      <Para label="02" alias="$ActNo" spread="right"/>
+      <Para label="03" alias="AMTFMT($TxnAmt)" spread="right"/>
+      <Para label="04" alias="$TCusID" spread="right"/>
+      <Para label="05" alias="SUBSTR($TCusNm,1,30)" spread="right"/>
+      <Para label="06" alias="$HRspCd" convert="YES" spread="right"/>
+      <Format>
+ #         #                          #              #                     #                     #
+      </Format>
+    </Iterative>
+    <Summed line="2">
+      <Para label="01" alias="$OrnCnt" spread="right"/>
+      <Para label="02" alias="AMTFMT($OrnAmt)" spread="right"/>
+      <Para label="03" alias="$TotCnt" spread="right"/>
+      <Para label="04" alias="AMTFMT($TotAmt)" spread="right"/>
+      <Format>
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ×Ü¼Æ:       ×Ü±ÊÊý: #                   ×Ü½ð¶î: #
+                  ³É¹¦×Ü±ÊÊý: #               ³É¹¦×Ü½ð¶î: #
+
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Para label="01" alias="$TlrId"              spread="left"/>
+      <Para label="02" alias="FMTDATE($ACTDAT,,1)"  spread="left"/>
+      <Format>
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ²Ù×÷¹ñÔ±: #                    ²Ù×÷ÈÕÆÚ: #
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
+

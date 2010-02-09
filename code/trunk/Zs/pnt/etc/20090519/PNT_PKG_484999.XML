@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Package>
+	<Define>
+		<Macro name="Def_TxnChk"><!--¹¦ÄÜ¼ì²éÏà¹ØÓï¾ä¶¨Òå-->
+			<DynSentence name="Chk_CrpAgr"><!--¼ì²éµ¥Î»Ð­Òé -->
+				<Sentence>
+				  select a.BrNo,a.BBusTyp,a.TActNo,a.CrpCod,a.TxnDir,b.StlAct from savcrpagr a, savcrpinf b where a.CAgtNo='%s' and SvrSts='1' and b.CrpCod=a.CrpCod and a.brno=b.brno
+				</Sentence>
+				<Fields>CAgtNo|</Fields>
+			</DynSentence>
+			<!--DynSentence name="Chk_CrpSignIn"><¼ì²éµ¥Î»Ç©µ½×´Ì¬>
+				<Sentence>
+					SELECT 'Y' YN from table(values(1)) as anony
+					where Exists(select * from savthdinf where CAgtNo='%s' and status='1')
+				</Sentence>
+				<Fields>CAgtNo|</Fields>
+			</DynSentence-->
+		</Macro>
+		<Macro name="Do_TxnChk"><!--¹¦ÄÜ¼ì²é¶¯×÷¶¨Òå-->
+			<Set>inTxnCnl=STRCAT(|,$TxnCnl,|)</Set>
+			<If condition="OR(ISNULL(@PARA.ChkCrp),ISNULL(@PARA.CnlLst),ISNULL(@PARA.ChkPsn),ISNULL(@PARA.IsSignIn))">
+				<Set>RspCod=478600</Set><!--Ó¦ÓÃ²ÎÊýÎ´¶¨Òå-->
+				<Set>RspMsg=ÊÜÀíÇþµÀ </Set>
+				<Return/>
+			</If>
+			<If condition="INTCMP(GETSTRPOS(@PARA.CnlLst,$inTxnCnl),1,0)">
+				<Set>RspCod=478601</Set><!--·µ»Ø$TxnCnlÇþµÀ²»ÔÊÐí-->
+				<Return/>
+			</If>
+			<If condition="@PARA.ChkCrp=1">
+				<Exec func="PUB:ReadRecord" error="IGNORE">
+					<Arg name="SqlCmd" value="Chk_CrpAgr"/>
+				</Exec>
+				<If condition="~RetCod=-1">
+					<Set>RspCod=478399</Set>
+					<Set>RspMsg=²éÑ¯µ¥Î»Ð­ÒéÊ±ÏµÍ³´íÎó</Set>
+					<Return/>
+				</If>
+				<If condition="~RetCod=-2">
+					<Set>RspCod=478602</Set><!--·µ»ØÎÞÓÐÐ§µ¥Î»Ð­Òé-->
+					<Return/>
+				</If>
+			</If>
+			<!--If condition="@PARA.IsSignIn=1">
+				<Exec func="PUB:ReadRecord" error="IGNORE">
+					<Arg name="SqlCmd" value="Chk_CrpSignIn"/>
+				</Exec>
+				<If condition="~RetCod=-1">
+					<Set>RspCod=478399</Set>
+					<Set>RspMsg=¼ì²éµ¥Î»Ç©µ½×´Ì¬Ê±ÏµÍ³´íÎó</Set>
+					<Return/>
+				</If>
+				<If condition="~RetCod=-2">
+					<Set>RspCod=478605</Set><·µ»Ø¸Ãµ¥Î»Î´Ç©µ½>
+					<Return/>
+				</If>
+			</If-->
+		</Macro>
+	</Define>
+
+	<!-- ÅúÁ¿ÎÄ¼þ´óÐ¡Í¨µÀ´ú¿Û -->
+	<Function name="AFE_PNTBatByCnl" desc="ÎÄ¼þ´óÐ¡Í¨µÀÅú¿Û">
+		<Quote name="Def_TxnChk"/>
+		<DynSentence name="UpdOldAct">  <!--¾ÉÕËºÅ×ª»» -->
+			<Sentence>
+				UPDATE pntbatrec a
+				Set ActNo=(Select ActNo FROM savoldact WHERE OldAct=a.ActNo)
+				WHERE DskNo='%s' and ActNo in (SELECT OldAct FROM savoldact WHERE OldAct=a.ActNo)
+			</Sentence>
+			<Fields>DskNo|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdCusAgtInf2">  <!--¼ì²éÓÐÐ§µÄ¶ÔË½¿Í»§Ð­Òé -->
+			<Sentence>
+				UPDATE pntbatrec a
+				SET RecSts='Y'
+				WHERE (TCusId,ActNo) IN (SELECT CusId,ActNo FROM savcusagt WHERE CAgtNo='%s')
+				AND CAgtNo='%s'
+			</Sentence>
+			<Fields>CAgtNo|CAgtNo|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdNoAgr">  <!-- ¸üÐÂÃ»Í¨¹ýÐ­Òé¼ì²éµÄ¼ÇÂ¼ -->
+			<Sentence>
+				UPDATE pntbatrec a
+				SET RecSts='X'
+				WHERE RecSts!='Y' AND CAgtNo='%s'
+			</Sentence>
+			<Fields>CAgtNo|</Fields>
+		</DynSentence>
+		<DynSentence name="DeleteInf"> 
+			<Sentence>
+				Delete from pubbatinf where BrNo='%s' AND DskNo='%s' and Status!='N'
+			</Sentence>
+			<Fields>BrNo|DskNo|</Fields>
+		</DynSentence>
+		<Process>
+
+			<Set>TxnMod=1</Set>
+			<Set>CmtFlg=0</Set>
+			<Exec func="PUB:GetAppInfo"/>
+			<Quote name="Do_TxnChk"/>  
+			
+			<Set>ObjSvr=@PARA.ObjSvr</Set>
+			<Set>FTxnCd=@PARA.FTxnCd</Set><!--ºóÐø½»Ò×(ÓÃÓÚºóÐø²Ù×÷²¢Í¨ÖªÇ°¶ËÅú´ÎÍê³ÉµÄ)-->
+			<Set>BrNo=$BrNo</Set>   <!--ÈëÕË·ÖÐÐºÅ-->
+			<Set>ActNod=$NodNo</Set>  <!--ÕËÎñÍøµãºÅ-->
+			<Set>TrdTbl=@PARA.TrdTbl</Set>
+			<!--Set>NamChk=1</Set>         ²»ÐèÒª¼ì²é»§Ãû-->
+			<Set>NamChk=0</Set>         <!--ÐèÒª¼ì²é»§Ãû-->
+			<Set>TxnSqn=600</Set>
+			<Set>TxnMod=1</Set>         <!-- ÐèÒªµ¥±ÊÉÏËÍ -->
+			<Set>CmtFlg=0</Set>         <!-- ´óÐ¡Í¨µÀ·¢ËÍ×´Ì¬ -->
+			<Set>UpdFlg=N</Set>         <!-- ¸üÐÂ±êÖ¾ -->
+			<Set>PayMod=0</Set>
+			<Set>HPrChk=0</Set>
+			<Set>HLsChk=0</Set>
+			<Set>CActNo=$TActNo</Set>
+			<Set>TxnCnl=PNT</Set>
+			<Set>IsTxn=Y</Set>
+			<Set>HTxnSt=U</Set>
+			<Set>RsvFld=$CAgtNo</Set>
+			<Set>HTxnCd=@PARA.HTxnCd</Set>
+			<Set>Reckey=STRCAT($AplCls,:,$TxnCod,:,$DskNam)</Set>
+			<!--If condition="INTCMP($TxnDir,3,1)">  <´ú¸¶>
+			   <Set>CActNo=$StlAct</Set>
+			</If-->
+			
+			<Exec func="PUB:Lock" error="IGNORE"><!-- Í¨¹ý¼ÓËø¿ØÖÆÅú´Î×´Ì¬ -->
+				<Arg name="RecKey" value="$Reckey"/>
+				<Arg name="TimOut" value="30"/>
+				<Arg name="AutoUnlock" value="yes"/>
+			</Exec>
+			<Exec func="PUB:CollateRepeatRecord"/>
+			<Exec func="PUB:RegisterBatchDiskNo"/><!--µÇ¼ÇÅúÁ¿ÐÅÏ¢µ½pubbatinf-->
+			<!--½»Ò×½âËø-->
+			<Exec func="PUB:Unlock">
+				<Arg name="RecKey" value="$Reckey"/>
+			</Exec>
+			
+			<Set>RcvFil=$DskNam</Set>
+			<!--<Set>LclFil=STRCAT($RcvFil,.,$BrNo)</Set>-->
+			<Set>LclFil=$RcvFil</Set>
+			<Set>LclDir=dat/pnt/recv</Set>
+			<Set>ObjFil=$LclFil</Set>
+			
+			<If condition="@PARA.RcvMod=1">
+				<Exec func="PUB:FtpGet" error="IGNORE">
+					<Arg name="FtpId" value="@PARA.FtpIdRcv"/>
+				</Exec>
+				<If condition="~RetCod!=0">
+					<Exec func="PUB:ExecSql">
+					  <Arg name="SqlCmd" value="DeleteInf"/>
+				  </Exec>
+				  <Set>RspCod=461597</Set>
+				  <Set>RspMsg=È¡ÎÄ¼þÊ§°Ü</Set>
+				  <Return/>
+			  </If>				
+			</If>
+			<!--
+			<Else>
+				<Set>LclDir=term/recv</Set>
+				<Exec  func="PUB:CopyFile">
+					<Arg name="SrcFil" value="STRCAT(dat/term/recv/,$RcvFil)"/>
+					<Arg name="ObjFil" value="STRCAT(dat/pnt/recv/plks,$LclFil)"/>
+				</Exec>
+			</Else>
+			<Exec func="PUB:PasteBatchFile" error="IGNORE">   <Íâ²¿ÎÄ¼þµ½ÅúÁ¿ÎÄ¼þÄ¿Â¼>
+				<Arg name="PathIn" value="dat/pnt/recv/plks"/>
+				<Arg name="FileNameIn" value="$LclFil"/>
+				<Arg name="FileNameCurr" value="01"/>
+			</Exec>
+			<If condition="~RetCod=-1">
+			  <Exec func="PUB:ExecSql">
+					     <Arg name="SqlCmd" value="DeleteInf"/>
+				</Exec>			
+				<Set>RspCod=478007</Set>
+				<Set>RspMsg=¿½±´ÎÄ¼þÊ§°Ü</Set>
+				<Return/>
+			</If>   -->
+      <Set>BSmr=STRCAT(9,$BBusTyp)</Set>
+			<Set>SeqNo=00001</Set>
+			<Set>RecSts=0</Set> <!--RecSts 0:³õÊ¼»¯ 1:³É¹¦ 2:Ê§°Ü-->
+			<!--
+			<Exec func="PUB:ParseBatchFile"  error="IGNORE">   <ÎÄ¼þ²ð·ÖÈë¿â>
+				<Arg name="FormatName"     value="@PARA.RcvFmt"/>   <ÎÄ¼þ¸ñÊ½>
+				<Arg name="TableName"      value="pntbatrec"/>
+				<Arg name="FileNameCurr"   value="01"/>
+				<Arg name="ApplyLogNoFlag" value="1"/>
+			</Exec>-->
+
+			<Set>DatFil=STRCAT( $LclDir,/plks/,$LclFil )</Set>
+			<Exec func="PUB:OpenFile">
+				<Arg name="FileName"   value="$DatFil"/>
+				<Arg name="Mode"       value="r"/>
+			</Exec>
+<!--¶ÁÈ¡ÎÄ¼þÍ·-->
+
+			<Exec func="PUB:GetFileLineAndParse" error="IGNORE">
+				<Arg name="ConfigName" value="BatFormat"/>
+				<Arg name="RootName"   value="BATCH"/>
+				<Arg name="NodeName"   value="Process"/>
+				<Arg name="AttrName"   value="name"/>
+				<Arg name="AttrValue"  value="PLKSHEAD"/>
+				<Arg name="MaxLen"     value="100000"/>
+			</Exec>		
+			<If condition="INTCMP($TotNum,3,0)">
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Return/>
+			</If>
+			<Set>FileNam=$DskNam</Set>
+			<Exec func="PUB:InsertRecord">   
+			  <Args>
+			     <Arg name="tablename" value="pntfilctl"/>
+			  </Args>
+		  </Exec>	
+			<!--¶Á¿ÕÐÐ-->
+
+			<Exec func="PUB:GetFileLine" error="IGNORE">
+        <Arg name="FieldName" value="DatFNms"/>
+      </Exec>
+      <!--
+			<Set>DatNum=0</Set>
+			<While>
+				<If condition="INTCMP($TotNum,3,$DatNum)">
+					<Break/>
+				</If>
+				<Exec func="PUB:GetFileLineAndParse" error="IGNORE">
+					<Arg name="ConfigName" value="BatFormat"/>
+					<Arg name="RootName"   value="BATCH"/>
+					<Arg name="NodeName"   value="Process"/>
+					<Arg name="AttrName"   value="name"/>
+					<Arg name="AttrValue"  value="FCGKTITLE"/>
+					<Arg name="MaxLen"     value="100000"/>
+				</Exec>-->
+
+				<Set>DtlNum=0</Set>
+				<While>
+					<If condition="INTCMP($TotNum,3,$DtlNum)">
+						<Break/>
+					</If>
+					<Exec func="PUB:GetFileLineAndParse" error="IGNORE">
+						<Arg name="ConfigName" value="BatFormat"/>
+						<Arg name="RootName"   value="BATCH"/>
+						<Arg name="NodeName"   value="Process"/>
+						<Arg name="AttrName"   value="name"/>
+						<Arg name="AttrValue"  value="PLKSDATA"/>
+						<Arg name="MaxLen"     value="100000"/>
+					</Exec>
+					<Set>LogNo=STRCAT($DskNo,$DtlNum)</Set>
+				  <Exec func="PUB:InsertRecord">   
+			     <Args>
+				       <Arg name="tablename" value="pntbatrec"/>
+			     </Args>
+		      </Exec>
+		      <Set>SeqNo=ADDCHAR(ADD($SeqNo,1),5,0,1)</Set>
+					<Set>DtlNum=ADD($DtlNum,1)</Set>
+				</While>
+				<!--<Set>DatNum=ADD($DatNum,1)</Set>
+			</While>-->
+			
+      
+      <If condition="~RetCod!=0">
+				<Exec func="PUB:DeleteDiskNo"/>
+				<Exec func="PUB:ExecSql">
+					<Arg name="SqlCmd" value="DeleteInf"/>
+				</Exec>
+				<!--Set>RspCod=481299</Set-->
+				<Return/>
+			</If>
+
+		
+			<If condition="@PARA.ChkPsn=1">
+				<Exec func="PUB:ExecSql" error="IGNORE">
+					<Arg name="SqlCmd" value="UpdCusAgtInf2"/>
+				</Exec>
+				<If condition="~RetCod=-1">
+					<Exec func="PUB:DeleteDiskNo" />
+					<Return />
+				</If>
+				<ElseIf condition="~RetCod=-2">
+					<Set>RspCod=000000</Set>
+				</ElseIf>
+
+				<!-- ¸üÐÂÃ»Í¨¹ýÐ­Òé¼ì²éµÄ¼ÇÂ¼ -->
+				<Exec func="PUB:ExecSql" error="PUB:DeleteDiskNo">
+					<Arg name="SqlCmd" value="UpdNoAgr"/>
+				</Exec>
+			</If>
+			<!--ÐÞ¸Ä±¾Åú´ÎÎªÔ¤±¸È·ÈÏ×´Ì¬£¬µÈ´ýÆô¶¯´óÐ¡Í¨µÀ -->
+			<Exec func="PUB:UpdateBatchStatus" error="PUB:DeleteDiskNo">
+				<Arg name="ChkFlg" value="P"/>
+			</Exec>
+			<Exec func="PUB:DeleteDiskNo"/>
+		</Process>
+	</Function>
+</Package>
+

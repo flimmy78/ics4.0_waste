@@ -1,0 +1,1435 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<FrontTab>
+	<Macro name="PfaSqlLst" desc="ºêÇåµ¥">
+<!--ÏµÍ³¿ØÖÆ±í¡¾PfaSubCfg¡¿²Ù×÷-->
+<!--ÏµÍ³¿ØÖÆ±í¡¾PfaSubCfg¡¿²Ù×÷-->
+<!--ÏµÍ³¿ØÖÆ±í¡¾PfaSubCfg¡¿²Ù×÷-->
+		<DynSentence name="SubCfgCtlPar" desc="¸ù¾Ý²ÆÕþ´úÂëÈ¡¶î¶î¶È¿ØÖÆ²ÎÊý">
+			<Sentence>
+				select FldNm1,FldNm2,FldNm3,FldNm4,FldNm5,FldNm6,FldNm7,FldNm8,FldNm9 from PfaSubCfg where PfaSub='%s'
+			</Sentence>
+			<Fields>PfaSub|</Fields>
+		</DynSentence>
+		<DynSentence name="SubCfgRunPar" desc="¸ù¾Ý²ÆÕþ´úÂëÈ¡ÏµÍ³ÔËÐÐ²ÎÊý">
+			<Sentence>
+				select PfaKnd, PreDat, ClrNod, RActSq, OpnSts, BokFlg, RtnFlg, AgtNod, BrNo AgtBr, RtnSeq, ClrAct, ClrNam,
+							 RcvAct, RcvNam, PmsSeq, SOpnBk, RBkNo, RbkNm
+					from PfaSubCfg where PfaSub='%s'
+			</Sentence>
+			<Fields>PfaSub|</Fields>
+		</DynSentence>
+<!--¶î¶ÈÓà¶î±í¡¾PfaQuoBal¡¿²Ù×÷-->
+<!--¶î¶ÈÓà¶î±í¡¾PfaQuoBal¡¿²Ù×÷-->
+<!--¶î¶ÈÓà¶î±í¡¾PfaQuoBal¡¿²Ù×÷-->
+		<DynSentence name="GetQuoBal" desc="²éÑ¯¶î¶ÈÓà¶î±í">
+			<Sentence>
+				select QuoTot, Quobal from PfaQuoBal where %s
+			</Sentence>
+			<Fields>SqlStr|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdQuoBal" desc="¸ù¾ÝÌõ¼þ¸üÐÂ¶î¶È">
+			<Sentence>
+				update pfaquobal set QuoTot='%s', QuoBal='%s' where %s
+			</Sentence>
+			<Fields>QuoTot|QuoBal|SqlStr|</Fields>
+		</DynSentence>
+		<DynSentence name="LckQuoBal" desc="ÓÃSQLÓï¾ä¶Ô¶î¶ÈÓà¶î±í¼ÇÂ¼¼ÓËø">
+			<Sentence>
+				update PfaQuoBal set BalSts=BalSts where %s
+			</Sentence>
+			<Fields>SqlStr|</Fields>
+		</DynSentence>
+		<DynSentence name="ChgQuoBal" desc="¸üÐÂ¶î¶ÈÓà¶î">
+			<Sentence>
+				update PfaQuoBal set Quobal=substr(right( '000000000000000' || rtrim(char(bigint(Quobal)+(%s)*bigint('%s'))), 15 ),1,15)
+				 where %s
+			</Sentence>
+			<Fields>AddFlg|UseAmt|SqlStr|</Fields>
+		</DynSentence>
+<!--Ö§¸¶ÁîÃ÷Ï¸±í¡¾PfaVchDtl¡¿²Ù×÷-->
+<!--Ö§¸¶ÁîÃ÷Ï¸±í¡¾PfaVchDtl¡¿²Ù×÷-->
+<!--Ö§¸¶ÁîÃ÷Ï¸±í¡¾PfaVchDtl¡¿²Ù×÷-->
+		<DynSentence name="GetVchDtlPar" desc="²éÑ¯Ö§¸¶Áî¶ÔÓ¦¶î¶È¿ØÖÆÓò">
+			<Sentence>
+				select %s from %s where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s'
+			</Sentence>
+			<Fields>SqlCol|VchDtlTbl|PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="ChkVchDtl">
+			<Sentence>
+				select DtlSts,QuoId,PayAct,PyeAct,DtlAmt ODtlAmt,UseAmt OUseAmt,SubCod,EConTp,PrjCod,DptCod,TVchTp,VchNo OVchNo,
+							 StlMod,VchDat OVchDat
+					from %s where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s'
+			</Sentence>
+			<Fields>VchDtlTbl|PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="ChkVchDtl2">
+			<Sentence>
+				select DtlSts,QuoId,PayAct,PyeAct,DtlAmt ODtlAmt,UseAmt OUseAmt,SubCod,EConTp,PrjCod,DptCod,TVchTp,VchNo OVchNo,
+							 StlMod,VchDat OVchDat
+					from %s where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s' and AVchNo='%s'
+			</Sentence>
+			<Fields>VchDtlTbl|PfaSub|ActDat|AVchCd|AVchNo|</Fields>
+		</DynSentence>
+		<DynSentence name="GetDtlByAVchNo">
+			<Sentence>
+				select %s, AVchCd, UseAmt from %s where PfaSub='%s' and Year=substr('%s',1,4) and AVchNo='%s'
+			</Sentence>
+			<Fields>SqlCol|VchDtlTbl|PfaSub|ActDat|AVchNo|</Fields>
+		</DynSentence>
+		<DynSentence name="GetDtlByAVchCd">
+			<Sentence>
+				select DtlSts,OIFlag,VchDat,PayAct,PayNam,PayBNm,PyeAct,PyeNam,PyeBNm,StlMod,DtlAmt,UseAmt,
+							 TPayTp,RefCod,BCusId,DtlSmr,QuoId,SubCod,EConTp,PrjCod,DptCod,AVchNo,VchNo,TVchTp
+					from %s
+				 where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s'
+			</Sentence>
+			<Fields>VchDtlTbl|PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="GetDtlByBCusId">
+			<Sentence>
+				select %s, AVchCd from %s
+				 where PfaSub='%s' and Year=substr('%s',1,4)
+					 and BCusId='%s' and SubCod='%s' and PrjCod='%s' and DptCod='%s' and DtlAmt>='%s'
+					 and OIFlag='O' and DtlSts='U' and TVchTp='1'
+			order by DtlAmt fetch first 1 rows only
+			</Sentence>
+			<Fields>SqlCol|VchDtlTbl|PfaSub|ActDat|BCusId|SubCod|PrjCod|DptCod|TxnAmt|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdDtlByAVchCd" desc="¸ù¾ÝÊÚÈ¨Æ¾Ö¤µÇ¼ÇºÅÐÞ¸ÄÖ§¸¶Áî×´Ì¬(Í¬²½VchBokºÍVchDtl×´Ì¬)">
+			<Sentence>
+				update %s set DtlSts='%s',ChkFlg='%s',UseAmt='%s',AVchNo='%s', VchTyp='%s', VchNo='%s',
+														 PayAct='%s',PayNam='%s',PayBNm='%s',PyeAct='%s',PyeNam='%s',PyeBNm='%s'
+				 where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s' and DtlSts='%s'
+			</Sentence>
+			<Fields>VchDtlTbl|VchSts|ChkFlg|OUseAmt|AVchNo|VchTyp|VchNo|PayAct|PayNam|PayBNm|PyeAct|PyeNam|PyeBNm|PfaSub|ActDat|AVchCd|DtlSts|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdDtlByAVchNo" desc="¸ù¾ÝÊÚÈ¨Æ¾Ö¤µÇ¼ÇºÅÐÞ¸ÄÃ÷Ï¸ÄÚÈÝ">
+			<Sentence>
+				PfaSub='%s' and Year=substr('%s',1,4) and AVchNo='%s'
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchNo|</Fields>
+		</DynSentence>
+		<DynSentence name="GetVchDtlInf">
+			<Sentence>
+				select distinct BCusId,SubCod,PrjCod,DptCod from %s
+				 where PfaSub='%s' and ( PfaDat between '%s' and '%s' ) and ClrSts='3'  
+			</Sentence>
+			<Fields>VchDtlTbl|PfaSub|BegDat|EndDat|</Fields>
+		</DynSentence>
+		<DynSentence name="DelVchDtl"> <!--É¾³ý-->
+			<Sentence>
+				 delete from %s where PfaSub='%s' and AVchNo='%s' and RegId='%s' and DtlSts='%s'
+			</Sentence>
+			<Fields>VchDtlTbl|PfaSub|AVchNo|TlrId|DtlSts|</Fields>
+		</DynSentence>
+<!--Ö§¸¶ÁîµÇ¼Ç±í¡¾PfaVchBok¡¿²Ù×÷-->
+<!--Ö§¸¶ÁîµÇ¼Ç±í¡¾PfaVchBok¡¿²Ù×÷-->
+<!--Ö§¸¶ÁîµÇ¼Ç±í¡¾PfaVchBok¡¿²Ù×÷-->
+		<DynSentence name="GetVchBok" desc="¸ù¾ÝÊÚÈ¨Æ¾Ö¤µÇ¼ÇºÅ²éÑ¯Ö§¸¶Áî±í">
+			<Sentence>
+				select VchSts,BusMod,OIFlag,VchDat,CrpVch,PayAct,PayNam,PayBNm,PyeAct,PyeNam,PyeBNm,StlMod,VchTyp OVchTyp,VchNo,TxnAmt,
+							 TPayTp,RefCod,BCusId,AmtTyp,DtlNum,VchSmr,VchSmr Smr,RegId,BokId,ChkId,BokTck, UdwDat, Pin
+					from PfaVchBok
+				 where PfaSub='%s' and Year=substr('%s',1,4) and AVchNo='%s'
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchNo|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdVchBokByAVchNo" desc="¸ù¾ÝÊÚÈ¨Æ¾Ö¤µÇ¼ÇºÅÐÞ¸ÄÖ§¸¶Áî×´Ì¬">
+			<Sentence>
+				PfaSub='%s' and Year=substr('%s',1,4) and AVchNo='%s' 
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchNo|</Fields>
+		</DynSentence>
+		<DynSentence name="DelVchBok"> <!--É¾³ý-->
+			<Sentence>
+				 delete from pfavchbok where PfaSub='%s' and AVchNo='%s' and RegId='%s' and VchSts='%s'
+			</Sentence>
+			<Fields>PfaSub|AVchNo|TlrId|VchSts|</Fields>
+		</DynSentence>
+<!--½»Ò×Á÷Ë®±í¡¾PfaTxnJnl¡¿²Ù×÷-->
+<!--½»Ò×Á÷Ë®±í¡¾PfaTxnJnl¡¿²Ù×÷-->
+<!--½»Ò×Á÷Ë®±í¡¾PfaTxnJnl¡¿²Ù×÷-->
+		<DynSentence name="ChkTxnJnl" desc="¼ì²éÁ÷Ë®±í">
+			<Sentence>
+				select LogNo OLogNo,TckNo OTckNo,HTxnSt,TxnSts,TTxnSt,ActSts
+					from pfatxnjnl
+				 where PfaSub='%s' and AVchNo='%s' and ActDat='%s' and (HTxnSt='S' or HTxnST='T' or HTxnST='U')
+			</Sentence>
+			<Fields>PfaSub|AVchNo|ActDat|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdTxnJnl" desc="¸üÐÂÁ÷Ë®±í">
+			<Sentence>
+				update pfatxnjnl set HTxnSt='%s',TxnSts='%s',TTxnSt='%s',ActSts='%s',TckNo='%s' where LogNo='%s'
+			</Sentence>
+			<Fields>HTxnSt|TxnSts|TTxnSt|ActSts|TckNo|OLogNo|</Fields>
+		</DynSentence>
+		<DynSentence name="GetTxnJnl" desc="¸´ºËÄ¨ÕÊ²éÔ­Á÷Ë®">
+			<Sentence>
+				Select AVchNo,ActSts,HTxnSt,TTxnSt,PrvDat,TLogNo,HLogNo OHLogNo,TckNo OTckNo,TTxnCd OTTxnCd,TxnCod OTxnCod,
+							 TlrId OTlrId, ClrSts,PayAct,PayNam,VchTyp,VchNo, UdwDat, Pin,  TxnAmt,PyeAct,PyeNam,Smr
+					from pfatxnjnl where LogNo='%s'
+			</Sentence>
+			<Fields>OLogNo|</Fields>
+		</DynSentence>
+<!--»ù´¡ÐÅÏ¢±í¡¾PfaCusInf¡¿¡¾PfaCodInf¡¿²Ù×÷-->
+<!--»ù´¡ÐÅÏ¢±í¡¾PfaCusInf¡¿¡¾PfaCodInf¡¿²Ù×÷-->
+<!--»ù´¡ÐÅÏ¢±í¡¾PfaCusInf¡¿¡¾PfaCodInf¡¿²Ù×÷-->
+		<DynSentence name="GetCusInf">
+			<Sentence>
+				select BCusNm,FCusId,FCusNm,ActNo,ActNam,TCusId,OpnNod,BrNo ActBr from pfacusinf where PfaSub='%s' and BCusId='%s'
+			</Sentence>
+			<Fields>PfaSub|BCusId|</Fields>
+		</DynSentence>
+		<DynSentence name="GetCodInf">
+			<Sentence>
+				select CodNam %s from PfaCodInf where PfaSub='%s' and CodTyp='%s' and Code='%s'
+			</Sentence>
+			<Fields>CodNam|PfaSub|CodTyp|Code|</Fields>
+		</DynSentence>
+<!--»ú¹¹×´Ì¬±í¡¾PfaOrgSts¡¿²Ù×÷-->
+<!--»ú¹¹×´Ì¬±í¡¾PfaOrgSts¡¿²Ù×÷-->
+<!--»ú¹¹×´Ì¬±í¡¾PfaOrgSts¡¿²Ù×÷-->
+		<DynSentence name="ChkOrgSts">       <!--¸ù¾Ý²ÆÕþ´úÂëºÍºÍÍøµãºÅ¼ì²éÊÇ·ñ¿ÉÒÔ¼ÇÕÊ-->
+			<Sentence>
+				select SgnFlg,BokFlg from PfaOrgSts where PfaSub='%s' and OrgNod='%s'
+			</Sentence>
+			<Fields>PfaSub|NodNo|</Fields>
+		</DynSentence>
+<!--¹«Îñ¿¨ÐÂÔö-->
+<!--¹«Îñ¿¨ÐÂÔö-->
+<!--¹«Îñ¿¨ÐÂÔö-->
+<!--¹«Îñ¿¨ÐÂÔö-->
+<!--¹«Îñ¿¨ÐÂÔö-->
+		<DynSentence name="ChkCrdDtl">
+			<Sentence>
+				select value(sum(bigint(BokAmt)),0) Amt	from pfacrddtl
+				 where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s' and DtlSts='U'
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="GetCrdDtl">     <!--¸ù¾Ý»¹¿îÅú´ÎºÅ»ñÈ¡×ÊÁÏ-->
+			<Sentence>
+				select Year, CardNo, CardNm, substr(right('0000000000000000'||rtrim(char(value(sum(bigint(BokAmt)),0))),15),1,15) TxnAmt
+					from pfacrddtl
+				 where PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s' and DtlSts='B'
+			group by Year,CardNo,CardNm
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdCrdDtl">
+			<Sentence>
+				PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s'
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchCd|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdCrdDtlByCardNo">
+			<Sentence>
+				PfaSub='%s' and Year=substr('%s',1,4) and AVchCd='%s' and CardNo='%s'
+			</Sentence>
+			<Fields>PfaSub|ActDat|AVchCd|CardNo|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdCrdJnl">     <!--¸ù¾ÝÁ÷Ë®ºÅ¸üÐÂ×ÊÁÏ-->
+			<Sentence>
+				LogNo='%s'
+			</Sentence>
+			<Fields>LogNo|</Fields>
+		</DynSentence>
+	</Macro>
+
+	<Macro name="InitTran" desc="·ÇÕÊÎñÀà½»Ò×³õÊ¼»¯">
+		<Exec func="PUB:GetBranchNoByNodeNo"/>
+		<Exec func="PUB:InitTransaction"/>
+		<Set>QuoBokTbl=STRCAT(pfaquobok,$PfaSub)</Set>
+		<Set>VchDtlTbl=STRCAT(pfavchdtl,$PfaSub)</Set>
+	</Macro>
+
+	<Macro name="AccInitTran" desc="ÕÊÎñÀà½»Ò×³õÊ¼»¯">
+		<Exec func="PUB:GetBranchNoByNodeNo"/>
+		<Exec func="PUB:InitTransaction"/>
+		<Exec func="PUB:GetAppInfo"/>
+		<Set>QuoBokTbl=STRCAT(pfaquobok,$PfaSub)</Set>
+		<Set>VchDtlTbl=STRCAT(pfavchdtl,$PfaSub)</Set>
+	</Macro>
+
+	<Macro name="ChkSubCfg" desc="¼ì²é²ÆÕþÅäÖÃ²ÎÊý">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="SqlCmd" value="SubCfgRunPar"/>
+		</Exec>
+		<If condition="INTCMP(~RetCod,4,0)">
+			<Set>RspMsg=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(Êý¾Ý¿â²éÑ¯Ê§°Ü»ò²ÆÕþ´úÂë¡¾,$PfaSub,¡¿²»´æÔÚ)</Set>
+			<Return/>
+		</If>
+	</Macro>
+
+	<Macro name="GetSqlStr" desc="»ñÈ¡¶î¶È¿ØÖÆÌõ¼þ">
+		<Delete>SqlStr</Delete>
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="SqlCmd" value="SubCfgCtlPar"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(ÎÞ²ÆÕþ¡¾,$PfaSub,¡¿ÅäÖÃÐÅÏ¢)</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Case>
+			<Case value="0">
+				<Set>SqlStr=STRCAT($StsNam,=',$StsVal,')</Set>
+				<Set>FldNum=1</Set>
+				<While condition="INTCMP($FldNum,2,9)">
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName"  value="STRCAT(ROOT.FldNm,$FldNum)"/>
+						<Arg name="DestName"  value="ROOT.FldNam"/>
+					</Exec>
+					<If condition="STRLEN(TRIM($FldNam,right))&gt;0">
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName"  value="STRCAT(ROOT.,$FldNam)"/>
+							<Arg name="DestName"  value="ROOT.FldDat"/>
+						</Exec>
+						<Set>SqlStr=STRCAT($SqlStr, and ,$FldNam,=',$FldDat,')</Set>
+					</If>
+					<Set>FldNum=ADD($FldNum,1)</Set>
+				</While>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡²ÆÕþ¡¾,$PfaSub,¡¿ÅäÖÃÌõ¼þ´íÎó)</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+	<Macro name="GetSqlCol" desc="»ñÈ¡¶î¶È¿ØÖÆ×Ö¶Î">
+		<Delete>SqlCol</Delete>
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="SqlCmd" value="SubCfgCtlPar"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(ÎÞ²ÆÕþ¡¾,$PfaSub,¡¿ÅäÖÃÐÅÏ¢)</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Case>
+			<Case value="0">
+				<Set>SqlCol=$StsNam</Set>
+				<Set>FldNum=1</Set>
+				<While condition="INTCMP($FldNum,2,9)">
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName"  value="STRCAT(ROOT.FldNm,$FldNum)"/>
+						<Arg name="DestName"  value="ROOT.FldNam"/>
+					</Exec>
+					<If condition="STRLEN(TRIM($FldNam,right))&gt;0">
+						<Set>SqlCol=STRCAT($SqlCol,$SplFlg,$FldNam)</Set>
+					</If>
+					<Set>FldNum=ADD($FldNum,1)</Set>
+				</While>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡²ÆÕþ¡¾,$PfaSub,¡¿ÅäÖÃ²ÎÊý´íÎó)</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+
+	<Macro name="ProChkBal" desc="¼ì²éµ¥Î»¶î¶È">
+<!--ÉèÖÃ¶î¶È±ä¸ü±êÖ¾-->
+		<Set>AddFlg=0</Set>
+		<Set>TotAmt=0</Set>
+		<Set>StsNam=DtlSts</Set>
+		<Quote name="GetSqlCol"/>
+<!--¶Ô¶à±ÊÃ÷Ï¸´¦Àí-->
+		<Exec func="PUB:OpenCursor" error="IGNORE">  <!--´ò¿ªÓÎ±ê-->
+			<Arg name="SqlCmd" value="GetDtlByAVchNo"/>
+		</Exec>
+		<If condition="INTCMP(~RetCod,4,0)">
+ 			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(´ò¿ªÓÎ±ê¡¾GetDtlByAVchNo¡¿´í)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<While>
+			<Exec func="PUB:FetchCursor" error="IGNORE"/>
+			<If condition="INTCMP(~RetCod,3,-1)">  <!--³ö´í-->
+				<Exec func="PUB:CloseCursor"/>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=Êý¾Ý¿â´íÎó</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</If>
+			<If condition="INTCMP(~RetCod,3,100)">  <!--½áÊø-->
+				<Break/>
+			</If>
+			<Set>StsNam=BalSts</Set>
+			<Set>StsVal=0</Set>
+			<Quote name="GetSqlStr"/>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="sql" value="LckQuoBal"/>
+			</Exec>
+			<Switch expression="~RetCod">
+				<Case value="-1">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(±í¡¾PfaQuoBal¡¿¼ÓËøÊ§°Ü)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="-2">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(ÎÞÖ§¸¶Áî¡¾,$AVchCd,¡¿¶î¶È)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="0">
+<!--
+					<Exec func="PUB:ExecSql">
+						<Arg name="sql" value="ChgQuoBal"/>
+					</Exec>
+-->
+					<Break/>
+				</Case>
+				<Default>
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(Ö§¸¶Áî¡¾,AVchCd,¡¿¶î¶È²éÑ¯Òì³£)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Default>
+			</Switch>
+			<Set>TotAmt=ADD($TotAmt,$UseAmt)</Set>
+		</While>
+		<If condition="INTCMP($TxnAmt,1,$TotAmt)">
+			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(Ö§¸¶½ð¶î¡¾,AMTFMT($TxnAmt),¡¿ÓëÖ§¸¶Áî»ã×Ü½ð¶î¡¾,AMTFMT($TotAmt),¡¿²»·û)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<Exec func="PUB:CloseCursor" error="IGNORE"/>
+	</Macro>
+
+
+
+	<Macro name="ProSubBal" desc="¿Û¼õµ¥Î»¶î¶È">
+<!--ÉèÖÃ¶î¶È±ä¸ü±êÖ¾-->
+		<Set>AddFlg=-1</Set>
+		<Set>TotAmt=0</Set>
+		<Set>StsNam=DtlSts</Set>
+		<Quote name="GetSqlCol"/>
+<!--¶Ô¶à±ÊÃ÷Ï¸´¦Àí-->
+		<Exec func="PUB:OpenCursor" error="IGNORE">  <!--´ò¿ªÓÎ±ê-->
+			<Arg name="SqlCmd" value="GetDtlByAVchNo"/>
+		</Exec>
+		<If condition="INTCMP(~RetCod,4,0)">
+ 			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(´ò¿ªÓÎ±ê¡¾GetDtlByAVchNo¡¿´í)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<While>
+			<Exec func="PUB:FetchCursor" error="IGNORE"/>
+			<If condition="INTCMP(~RetCod,3,-1)">  <!--³ö´í-->
+				<Exec func="PUB:CloseCursor" error="IGNORE"/>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=Êý¾Ý¿â´íÎó</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE" />
+				<Return/>
+			</If>
+			<If condition="INTCMP(~RetCod,3,100)">  <!--½áÊø-->
+				<Break/>
+			</If>
+			<Set>StsNam=BalSts</Set>
+			<Set>StsVal=0</Set>
+			<Quote name="GetSqlStr"/>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="sql" value="LckQuoBal"/>
+			</Exec>
+			<Switch expression="~RetCod">
+				<Case value="-1">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(±í¡¾PfaQuoBal¡¿¼ÓËøÊ§°Ü)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="-2">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=CD5200</Set>
+					<Set>RspMsg=STRCAT(ÎÞÖ§¸¶Áî¡¾,$AVchCd,¡¿¶î¶È)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="0">
+					<Exec func="PUB:ReadRecord">
+						<Arg name="SqlCmd" value="GetQuoBal"/>
+					</Exec>
+					<If condition="INTCMP($Quobal,1,$UseAmt)">
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=CD5200</Set>
+						<Set>RspMsg=STRCAT(Ö§¸¶Áî¡¾,$AVchCd,¡¿¶î¶ÈÓà¶î²»×ã)</Set>
+						<Exec func="PUB:RollbackWork" error="IGNORE"/>
+						<Exec func="PUB:CloseCursor" error="IGNORE"/>
+						<Return/>
+					</If>
+					<Exec func="PUB:ExecSql">
+						<Arg name="sql" value="ChgQuoBal"/>
+					</Exec>
+					<Break/>
+				</Case>
+				<Default>
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(¿Û¼õÖ§¸¶Áî¡¾,AVchCd,¡¿¶î¶ÈÒì³£)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Default>
+			</Switch>
+			<Set>TotAmt=ADD($TotAmt,$UseAmt)</Set>
+		</While>
+		<If condition="INTCMP($TxnAmt,1,$TotAmt)">
+			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(Ö§¸¶½ð¶î¡¾,AMTFMT($TxnAmt),¡¿ÓëÖ§¸¶Áî»ã×Ü½ð¶î¡¾,AMTFMT($TotAmt),¡¿²»·û)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<Exec func="PUB:CloseCursor" error="IGNORE"/>
+	</Macro>
+
+
+	<Macro name="ProAddBal" desc="Ôö¼Óµ¥Î»¶î¶È">
+<!--ÉèÖÃ¶î¶È±ä¸ü±êÖ¾-->
+		<Set>AddFlg=1</Set>
+		<Set>TotAmt=0</Set>
+		<Set>StsNam=DtlSts</Set>
+		<Quote name="GetSqlCol"/>
+<!--¶Ô¶à±ÊÃ÷Ï¸´¦Àí-->
+		<Exec func="PUB:OpenCursor" error="IGNORE">  <!--´ò¿ªÓÎ±ê-->
+			<Arg name="SqlCmd" value="GetDtlByAVchNo"/>
+		</Exec>
+		<If condition="INTCMP(~RetCod,4,0)">
+ 			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(´ò¿ªÓÎ±ê¡¾GetDtlByAVchNo¡¿´í)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<While>
+			<Exec func="PUB:FetchCursor" error="IGNORE"/>
+			<If condition="INTCMP(~RetCod,3,-1)">  <!--³ö´í-->
+				<Exec func="PUB:CloseCursor"/>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=Êý¾Ý¿â´íÎó</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</If>
+			<If condition="INTCMP(~RetCod,3,100)">  <!--½áÊø-->
+				<Break/>
+			</If>
+			<Set>StsNam=BalSts</Set>
+			<Set>StsVal=0</Set>
+			<Quote name="GetSqlStr"/>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="sql" value="LckQuoBal"/>
+			</Exec>
+			<Switch expression="~RetCod">
+				<Case value="-1">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(±í¡¾PfaQuoBal¡¿¼ÓËøÊ§°Ü)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="-2">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(ÎÞÖ§¸¶Áî¡¾,$AVchCd,¡¿¶î¶È)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Case>
+				<Case value="0">
+					<Exec func="PUB:ExecSql">
+						<Arg name="sql" value="ChgQuoBal"/>
+					</Exec>
+					<Break/>
+				</Case>
+				<Default>
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=STRCAT(¿Û¼õÖ§¸¶Áî¡¾,AVchCd,¡¿¶î¶ÈÒì³£)</Set>
+					<Exec func="PUB:RollbackWork" error="IGNORE"/>
+					<Exec func="PUB:CloseCursor" error="IGNORE"/>
+					<Return/>
+				</Default>
+			</Switch>
+			<Set>TotAmt=ADD($TotAmt,$UseAmt)</Set>
+		</While>
+		<If condition="INTCMP($TxnAmt,1,$TotAmt)">
+			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(Ö§¸¶½ð¶î¡¾,AMTFMT($TxnAmt),¡¿ÓëÖ§¸¶Áî»ã×Ü½ð¶î¡¾,AMTFMT($TotAmt),¡¿²»·û)</Set>
+			<Exec func="PUB:RollbackWork" error="IGNORE"/>
+			<Exec func="PUB:CloseCursor" error="IGNORE"/>
+			<Return/>
+		</If>
+		<Exec func="PUB:CloseCursor" error="IGNORE"/>
+	</Macro>
+
+
+	<Macro name="ProUpdVchBok" desc="Ö§¸¶Áî×´Ì¬ÐÞ¸Ä">
+		<Exec func="PUB:UpdateRecord">
+			<Arg name="TblNam" value="pfavchbok"/>
+			<Arg name="CndSts" value="UpdVchBokByAVchNo"/>
+		</Exec>
+	</Macro>
+
+
+	<Macro name="ProUpdVchDtl" desc="Ö§¸¶ÁîÃ÷Ï¸×´Ì¬ÐÞ¸Ä">
+		<Exec func="PUB:UpdateRecord">
+			<Arg name="TblNam" value="$VchDtlTbl"/>
+			<Arg name="CndSts" value="UpdDtlByAVchNo"/>
+		</Exec>
+	</Macro>
+
+
+	<Macro name="ChkVchBok" desc="Ö§¸¶Áî×´Ì¬¼ì²é">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="SqlCmd" value="GetVchBok"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÎÞ´ËÖ§¸¶Áî</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Case>
+			<Case value="0">
+				<Switch expression="$VchSts">
+					<Case value="0">
+						<Set>ChkFlg=1</Set>
+<!--
+						<Set>VchSts=1</Set>
+						<Set>DtlSts=1</Set>
+						<Quote name="ProUpdVchBok"/>
+						<Quote name="ProUpdVchDtl"/>
+-->
+						<Break/>
+					</Case>
+					<Case value="1">
+						<Break/>
+					</Case>
+					<Case value="2">
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=PFA999</Set>
+						<Set>RspMsg=¸ÃÖ§¸¶ÁîÒÑÊ¹ÓÃ</Set>
+						<Exec func="PUB:RollbackWork" error="IGNORE"/>
+						<Return/>
+					</Case>
+					<Default>
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=PFA999</Set>
+						<Set>RspMsg=¸ÃÖ§¸¶ÁîÒÑ±»³·Ïú»òÍË»Ø</Set>
+						<Exec func="PUB:RollbackWork" error="IGNORE"/>
+						<Return/>
+					</Default>
+				</Switch>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Ö§¸¶Áî¡¾,$AVchNo,¡¿ÐÅÏ¢Òì³£)</Set>
+				<Exec func="PUB:RollbackWork" error="IGNORE"/>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+
+
+	<Macro name="ProBokChk" desc="¼ÇÕÊ×´Ì¬¼ì²é">
+		<Exec func="PUB:ReadRecord">
+			<Arg name="sql" value="ChkOrgSts"/>
+		</Exec>
+		<If condition="OR(INTCMP($SgnFlg,4,0),INTCMP($BokFlg,4,0))">
+			<Set>MsgTyp=E</Set>
+			<Set>RspCod=PFA999</Set>
+			<Set>RspMsg=STRCAT(Íøµã¡¾,$NodNo,¡¿Î´Ç©µ½»òÏµÍ³ÔÝÊ±²»ÔÊÐíÕÊÎñ´¦Àí)</Set>
+			<Return/>
+		</If>
+	</Macro>
+
+
+	<Macro name="ProJnlChk" desc="Á÷Ë®×´Ì¬¼ì²éÍ¬²½">
+		<Switch expression="$HTxnSt">
+			<Case value="S">     <!--¸ÃÇé¿öËÆºõ²»»á³öÏÖ£¬Ö»ÓÐÇ°ÖÃ½»Ò×Õý³£Íê³É¶øÇ°¶ËÃ»ÊÕµ½Ó¦´ð-->
+				<Set>RspCod=000000</Set>
+				<Set>MsgTyp=N</Set>
+				<Set>RspMsg=Ô­½»Ò×ÒÑ³É¹¦</Set>
+				<Return/>
+			</Case>
+			<Case value="T"/>
+			<Case value="U">
+				<Exec func="PUB:CallHostOther" error="IGNORE">
+					<Arg name="HTxnCd" value="458980"/>
+					<Arg name="ObjSvr" value="SHSTPUB1"/>
+				</Exec>
+				<Switch expression="$MsgTyp">
+					<Case value="E">
+						<Switch expression="$HRspCd">
+							<Case value="AG8001"/>   <!--¸ÃÇ°ÖÃÁ÷Ë®ºÅ²»´æÔÚ-->
+							<Case value="AG8981"/>   <!--¸ÃÇ°ÖÃÁ÷Ë®ºÅ²»´æÔÚ-->
+							<Case value="SC6129">    <!--Ô­½»Ò×²»´æÔÚ-->
+								<Set>HTxnSt=F</Set>
+								<Set>TxnSts=F</Set>
+								<Set>TTxnSt=F</Set>
+								<Exec func="PUB:ExecSql">
+									<Arg name="sql" value="UpdTxnJnl"/><!--¸üÐÂÁ÷Ë®±íÎªÊ§°Ü-->
+								</Exec>
+								<Break/>
+							</Case>
+							<Default>     <!--ÆäËû´íÎó(·ÇÔ­½»Ò×²»´æÔÚ)-->
+								<Set>MsgTyp=E</Set>
+								<Set>RspCod=$HRspCd</Set>
+								<Return/>
+							</Default>
+						</Switch>
+						<Break/>
+					</Case>
+					<Case value="N">
+						<If condition="$CrcSts=Y">  <!--½»Ò××´Ì¬ÎªÄ¨ÕË,¸ÃÇé¿ö³öÏÖ¿ÉÄÜÒ²²»´ó-->
+							<Set>HTxnSt=C</Set>
+							<Set>TxnSts=C</Set>
+							<Set>TTxnSt=C</Set>
+							<Set>ActSts=3</Set>
+							<Exec func="PUB:ExecSql">
+								<Arg name="sql" value="UpdTxnJnl"/>
+							</Exec>
+							<Break/>
+						</If>
+						<Else>
+							<Set>HTxnSt=S</Set>
+							<Set>TxnSts=S</Set>
+							<Set>TTxnSt=S</Set>
+							<Exec func="PUB:ExecSql">
+								<Arg name="sql" value="UpdTxnJnl"/>
+							</Exec>
+							<Set>VchSts=2</Set>
+							<Set>ChkFlg=1</Set>
+							<Set>DtlSts=2</Set>
+							<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬-->
+							<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+							<Exec func="PUB:CommitWork" error="IGNORE"/>
+							<Return/>
+						</Else>
+						<Break/>
+					</Case>
+					<Default>
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=PFA999</Set>
+						<Set>RspMsg=STRCAT(²éÑ¯Ö÷»úÁ÷Ë®¡¾,$OLogNo,¡¿Ê§°Ü)</Set>
+						<Return/>
+					</Default>
+				</Switch>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(Ö§¸¶Áî¡¾,$AVchNo,¡¿Á÷Ë®×´Ì¬¡¾,$HTxnSt,¡¿´í)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+
+	<Macro name="ProGenHstDat" desc="Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý">    <!--HpcFlg=1¸¶¿î¹ÒÕÊ£¬HpcFlg=0ÊÕ¿î¹ÒÕÊ-->
+		<Exec func="PUB:IsExistNode">
+			<Arg name="FieldName" value="HpcFlg"/>
+		</Exec>
+		<If condition="~RetCod=1">
+			<Exec func="PFA:GenHostGroupData">
+				<Arg name="HpcFlg" value="$HpcFlg"/>
+			</Exec>
+		</If>
+	</Macro>
+
+
+	<Macro name="ProOutBok" desc="¸¶¿î¼ÇÕÊºê">
+		<Set>BokId=$TlrId</Set>
+		<Quote name="ProBokChk"/>  <!--¼ì²éÊÇ·ñ¿ÉÒÔ¼ÇÕÊ-->
+		<Exec func="PUB:Lock">     <!--¶ÔÖ§¸¶ÁîÆ¾Ö¤ÐÅÏ¢¼ÓËø-->
+			<Arg name="RecKey" value="STRCAT(PFA,$PfaSub,SUBSTR($ActDat,1,4),$AVchNo)"/>
+			<Arg name="TimOut" value="10"/>
+			<Arg name="AutoUnlock" value="yes"/>
+		</Exec>
+		<Quote name="ChkVchBok"/>
+		<Exec func="PUB:ReadRecord" error="IGNORE"><!--²éÑ¯Á÷Ë®±íÊÇ·ñÒÑ´æÔÚ-->
+			<Arg name="SqlCmd" value="ChkTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<Quote name="ProJnlChk"/>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Quote name="ProSubBal"/>  <!--¿Û¼õÖ§¸¶¶î¶È-->
+				<Exec func="PUB:GetLogNo"/>
+				<Set>ActSts=1</Set>
+				<Set>CcyCod=CNY</Set>
+				<Set>TLogNo=DELBOTHSPACE($BusLog)</Set>
+				<Exec func="PUB:InsertJournal"/>
+				<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+				<Exec func="PUB:CallHostOther" error="IGNORE">
+					<Arg name="HTxnCd" value="$HTxnCd"/>
+					<Arg name="ObjSvr" value="SHSTPUB1"/>
+				</Exec>
+				<Switch expression="~RetCod">
+					<Case value="0"> <!--½»Ò×³É¹¦-->
+						<Set>MsgTyp=N</Set>
+						<Set>RspCod=000000</Set>
+						<Break/>
+					</Case>
+					<Case value="-1">  <!--ÉÏËÍÖ÷»ú³¬Ê±-->
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=PFA999</Set>
+						<Set>RspMsg=ÓëÖ÷»úÍ¨Ñ¶³¬Ê±,Çë²éÑ¯ºóÄ¨ÕÊ</Set>
+						<Set>TckNo=$OTckNo</Set>
+						<Exec func="PUB:UpdateJournal"/>
+						<Return/>
+					</Case>
+					<Default>
+						<Set>RspCod=$HRspCd</Set>
+						<Set>RspMsg=ÉÏËÍÖ÷»úÊ§°Ü</Set>
+						<Set>TckNo=$OTckNo</Set>
+						<Exec func="PUB:UpdateJournal"/>
+						<Set>AddFlg=1</Set>
+						<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+						<Set>VchSts=0</Set>
+						<Set>ChkFlg=0</Set>
+						<Set>DtlSts=0</Set>
+						<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"0-µÇ¼Ç"-->
+						<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"0-µÇ¼Ç"-->
+						<Return/>
+					</Default>
+				</Switch>
+				<Set>TTxnSt=S</Set>
+				<Exec func="PUB:UpdateJournal"/>
+				<Set>VchSts=1</Set>
+				<Set>ChkFlg=1</Set>
+				<Set>DtlSts=1</Set>
+				<Set>BokTck=$TckNo</Set>
+				<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+				<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+				<Exec func="PUB:CommitWork" error="IGNORE"/>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿×ÊÁÏÊ§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+
+	<Macro name="ProOutChk" desc="¸¶¿î¸´ºËºê">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="sql" value="GetTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<If condition="$ActSts=2">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬ÒÑ¸´ºË</Set>
+					<Return/>
+				</If>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÎÞ´ËÁ÷Ë®</Set>
+				<Return/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿Êý¾Ý¿â²Ù×÷Ê§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+		<If condition="STRLEN(TRIM($PrvDat,right))&gt;0">
+			<Exec func="PFA:ParsePrvData" >
+				<Arg name="Args" value="PrvDat"/>
+			</Exec>
+		</If>
+		<Set>ONodNo=$NodNo</Set>
+		<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+		<Exec func="PUB:CallHostOther">
+			<Arg name="HTxnCd" value="$HTxnCd"/>
+			<Arg name="ObjSvr" value="SHSTPUB1"/>
+		</Exec>
+		<If condition="$RspCod=SC6084">   <!--½»Ò×ÒÑÈ·ÈÏ6084-->
+			<Set>MsgTyp=N</Set>
+			<Set>NodNo=$ONodNo</Set>
+		</If>
+		<If condition="$MsgTyp!=N">
+			<Return/>
+		</If>
+		<Set>ActSts=2</Set>
+		<Set>TckNo=$OTckNo</Set>
+		<Exec func="PUB:ExecSql">
+			<Arg name="sql" value="UpdTxnJnl"/>
+		</Exec>
+		<Set>VchSts=2</Set>
+		<Set>DtlSts=2</Set>
+		<Set>ChkId=$TlrId</Set>
+		<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+		<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+	</Macro>
+
+
+	<Macro name="ProOutCan" desc="¸¶¿îÄ¨ÕÊºê">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="sql" value="GetTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<If condition="IS_NOEQUAL_STRING($ClrSts,0)">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=¸Ã±ÊÒµÎñÒÑÇåËã£¬²»ÄÜÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<If condition="$ActSts=3">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬²»ÐèÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<Else>
+					<Switch expression="$HTxnSt">
+						<Case value="T"/>
+						<Case value="S">
+							<Break/>
+						</Case>
+						<Default>
+							<Set>MsgTyp=E</Set>
+							<Set>RspCod=PFA999</Set>
+							<Set>RspMsg=Æ¾Ö¤×´Ì¬²»ÐèÄ¨ÕÊ</Set>
+							<Return/>
+						</Default>
+					</Switch>
+				</Else>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÎÞ´ËÁ÷Ë®</Set>
+				<Return/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿Êý¾Ý¿â²Ù×÷Ê§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+		<If condition="STRLEN(TRIM($PrvDat,right))&gt;0">
+			<Exec func="PFA:ParsePrvData" >
+				<Arg name="Args" value="PrvDat"/>
+			</Exec>
+		</If>
+		<Set>LogNo=$OLogNo</Set>
+		<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+		<If condition="IS_EQUAL_STRING($HTxnCd,045129)">
+			<Exec func="PFA:GenHostGroupFilData">
+				<Arg name="RecNum" value="$RecNum" desc="¼ÇÂ¼Êý"/>
+				<Arg name="MaxRec" value="10"  desc="×î´ó±ÊÊý"/>
+			</Exec>
+		</If>
+		<Exec func="PUB:CallHostAcc">
+			<Arg name="HTxnCd" value="$HTxnCd"/>
+			<Arg name="ObjSvr" value="SHSTPUB1"/>
+		</Exec>
+		<If condition="$RspCod=SC6034">     <!--½»Ò×ÒÑÄ¨ÕÊ6034-->
+			<Set>MsgTyp=N</Set>
+		</If>
+		<If condition="$MsgTyp!=N">
+			<Return/>
+		</If>
+		<Set>HTxnSt=C</Set>
+		<Set>TxnSts=C</Set>
+		<Set>TTxnSt=C</Set>
+		<Set>ActSts=3</Set>
+		<Set>NTckNo=$TckNo</Set>   <!--±£Áô·Ç»á¼ÆÁ÷Ë®ºÅ-->
+		<Set>TckNo=$OTckNo</Set>
+		<Exec func="PUB:ExecSql">
+			<Arg name="SqlCmd" value="UpdTxnJnl"/>
+		</Exec>
+		<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+		<Set>VchSts=0</Set>
+		<Set>ChkFlg=0</Set>
+		<Set>DtlSts=0</Set>
+		<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬-->
+		<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+		<Set>TckNo=$NTckNo</Set>   <!--»Ö¸´·Ç»á¼ÆÁ÷Ë®ºÅ-->
+	</Macro>
+
+
+	<Macro name="ProInBok" desc="ÊÕ¿î¼ÇÕÊºê">
+	  <Quote name="ProBokChk"/>  <!--¼ì²éÊÇ·ñ¿ÉÒÔ¼ÇÕÊ-->
+		<Exec func="PUB:Lock">     <!--¶ÔÖ§¸¶ÁîÆ¾Ö¤ÐÅÏ¢¼ÓËø-->
+			<Arg name="RecKey" value="STRCAT(PFA,$PfaSub,SUBSTR($ActDat,1,4),$AVchNo)"/>
+			<Arg name="TimOut" value="10"/>
+			<Arg name="AutoUnlock" value="yes"/>
+		</Exec>
+		<Quote name="ChkVchBok"/>  <!--¼ì²éÖ§¸¶ÁîÆ¾Ö¤¿ÉÓÃ-->
+		<Quote name="ProChkBal"/>  <!--¼ì²éÖ§¸¶¶î¶ÈÊÇ·ñ´æÔÚ-->
+		<Exec func="PUB:ReadRecord" error="IGNORE"><!--²éÑ¯Á÷Ë®±íÊÇ·ñÒÑ´æÔÚ-->
+			<Arg name="SqlCmd" value="ChkTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<Quote name="ProJnlChk"/>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Exec func="PUB:GetLogNo"/>
+				<Set>Fee=0</Set>
+				<Set>CcyCod=CNY</Set>
+				<Set>ActSts=1</Set>
+				<Set>TLogNo=DELBOTHSPACE($BusLog)</Set>
+				<Exec func="PUB:InsertJournal"/>
+				<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+				<Exec func="PUB:CallHostOther" error="IGNORE">
+				<Arg name="HTxnCd" value="$HTxnCd"/>
+				<Arg name="ObjSvr" value="SHSTPUB1"/>
+				</Exec>
+				<Switch expression="~RetCod">
+					<Case value="0"> <!--½»Ò×³É¹¦-->
+						<Set>MsgTyp=N</Set>
+						<Set>RspCod=000000</Set>
+						<Break/>
+					</Case>
+					<Case value="-1">  <!--ÉÏËÍÖ÷»ú³¬Ê±-->
+						<Set>MsgTyp=E</Set>
+						<Set>RspCod=PFA999</Set>
+						<Set>RspMsg=ÓëÖ÷»úÍ¨Ñ¶³¬Ê±,Çë²éÑ¯ºóÄ¨ÕÊ</Set>
+						<Set>TckNo=$OTckNo</Set>
+						<Exec func="PUB:UpdateJournal"/>
+						<Return/>
+					</Case>
+					<Default>
+						<Set>RspCod=$HRspCd</Set>
+						<Set>RspMsg=ÉÏËÍÖ÷»úÊ§°Ü</Set>
+						<Set>TckNo=$OTckNo</Set>
+						<Exec func="PUB:UpdateJournal"/>
+						<Return/>
+					</Default>
+				</Switch>
+				<Exec func="PUB:UpdateJournal"/>
+				<Set>VchSts=1</Set>
+				<Set>ChkFlg=1</Set>
+				<Set>DtlSts=1</Set>
+				<Set>BokTck=$TckNo</Set>
+				<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬-->
+				<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+				<Exec func="PUB:CommitWork" error="IGNORE"/>
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿×ÊÁÏÊ§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+
+
+	<Macro name="ProInChk" desc="ÊÕ¿î¸´ºËºê">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="sql" value="GetTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<If condition="$ActSts=2">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬ÒÑ¸´ºË</Set>
+					<Return/>
+				</If>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÎÞ´ËÁ÷Ë®</Set>
+				<Return/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿Êý¾Ý¿â²Ù×÷Ê§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+		<If condition="STRLEN(TRIM($PrvDat,right))&gt;0">
+			<Exec func="PFA:ParsePrvData" >
+				<Arg name="Args" value="PrvDat"/>
+			</Exec>
+		</If>
+		<Set>ONodNo=$NodNo</Set>
+		<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+		<Exec func="PUB:CallHostOther">
+			<Arg name="HTxnCd" value="$HTxnCd"/>
+			<Arg name="ObjSvr" value="SHSTPUB1"/>
+		</Exec>
+		<If condition="$RspCod=SC6084">   <!--½»Ò×ÒÑÈ·ÈÏ6084-->
+			<Set>MsgTyp=N</Set>
+			<Set>NodNo=$ONodNo</Set>
+		</If>
+		<If condition="$MsgTyp!=N">
+			<Return/>
+		</If>
+		<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+		<Set>ActSts=2</Set>
+		<Set>TckNo=$OTckNo</Set>
+		<Exec func="PUB:ExecSql">
+			<Arg name="sql" value="UpdTxnJnl"/>
+		</Exec>
+		<Set>VchSts=2</Set>
+		<Set>DtlSts=2</Set>
+		<Set>ChkId=$TlrId</Set>
+		<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+		<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+	</Macro>
+
+
+	<Macro name="ProInCan" desc="ÊÕ¿îÄ¨ÕÊºê">
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="sql" value="GetTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0">
+				<If condition="IS_NOEQUAL_STRING($ClrSts,0)">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=¸Ã±ÊÒµÎñÒÑÇåËã£¬²»ÄÜÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<If condition="$ActSts=3">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬²»ÐèÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<Else>
+					<Switch expression="$HTxnSt">
+						<Case value="T"/>
+						<Case value="S">
+							<Break/>
+						</Case>
+						<Default>
+							<Set>MsgTyp=E</Set>
+							<Set>RspCod=PFA999</Set>
+							<Set>RspMsg=Æ¾Ö¤×´Ì¬²»ÐèÄ¨ÕÊ</Set>
+							<Return/>
+						</Default>
+					</Switch>
+				</Else>
+				<Break/>
+			</Case>
+			<Case value="-2">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÎÞ´ËÁ÷Ë®</Set>
+				<Return/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿Êý¾Ý¿â²Ù×÷Ê§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+		<Quote name="ProSubBal"/>  <!--¿Û¼õÖ§¸¶¶î¶È-->
+		<If condition="STRLEN(TRIM($PrvDat,right))&gt;0">
+			<Exec func="PFA:ParsePrvData" >
+				<Arg name="Args" value="PrvDat"/>
+			</Exec>
+		</If>
+		<Set>LogNo=$OLogNo</Set>
+		<Quote name="ProGenHstDat"/>  <!--Éú³ÉÖ÷»úÆäËû¹ÒÕÊ½Ó¿ÚÊý¾Ý-->
+		<Exec func="PUB:CallHostAcc" error="IGNORE">
+			<Arg name="HTxnCd" value="$HTxnCd"/>
+			<Arg name="ObjSvr" value="SHSTPUB1"/>
+		</Exec>
+		<If condition="$RspCod=SC6034">     <!--½»Ò×ÒÑÄ¨ÕÊ6034-->
+			<Set>MsgTyp=N</Set>
+		</If>
+		<If condition="$MsgTyp!=N">
+			<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+			<Return/>
+		</If>
+		<Set>HTxnSt=C</Set>
+		<Set>TxnSts=C</Set>
+		<Set>TTxnSt=C</Set>
+		<Set>ActSts=3</Set>
+		<Set>NTckNo=$TckNo</Set>   <!--±£Áô·Ç»á¼ÆÁ÷Ë®ºÅ-->
+		<Set>TckNo=$OTckNo</Set>
+		<Exec func="PUB:ExecSql">
+			<Arg name="SqlCmd" value="UpdTxnJnl"/>
+		</Exec>
+		<Set>VchSts=0</Set>
+		<Set>ChkFlg=0</Set>
+		<Set>DtlSts=0</Set>
+		<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬-->
+		<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+		<Set>TckNo=$NTckNo</Set>   <!--»Ö¸´·Ç»á¼ÆÁ÷Ë®ºÅ-->
+	</Macro>
+
+
+
+	<Macro name="451720"> <!--µç×ÓÇþµÀ¼ÇÕËÔ¤´¦Àí-->
+		<Set>HTxnCd=451720</Set>
+		<Set>CrpCod=9999999999</Set>
+		<Set>ActNo=$PayAct</Set>
+		<Set>CDFlg1=D</Set>
+		<Set>Smr=$VchSmr</Set>
+		<Set>BilDat=$VchDat</Set>
+		<Set>PayPsw=$Pin</Set>
+		<Set>ActBk2=$BrNo</Set>
+		<Set>ActBr2=$ActNod</Set>
+		<Set>ActSq2=$ActSqn</Set>
+		<Set>CDFlg2=C</Set>
+		<Set>InAmt=$TxnAmt</Set>
+		<Set>ActBk3=$BrNo</Set>
+		<Set>ActBr3=$ActNod</Set>
+		<Set>ActSq3=$ActSqn</Set>
+		<Set>AccMod=1</Set>
+		<Set>ActSts2=2</Set>
+		<Set>ActFlg=2</Set>
+		<Set>Fee=0</Set>
+		<Set>CcyCod=CNY</Set>
+		<Exec func="PFA:GenPrvData"> 
+			<Arg name="Args" value="BusTyp"  desc=" "/>
+			<Arg name="Args" value="CrpCod"  desc=" "/>
+			<Arg name="Args" value="ActNo"   desc=" "/>
+			<Arg name="Args" value="CDFlg1"  desc=" "/>
+			<Arg name="Args" value="VchTyp"  desc=" "/>
+			<Arg name="Args" value="VchNo"   desc=" "/>
+			<Arg name="Args" value="TxnAmt"  desc=" "/>
+			<Arg name="Args" value="BilDat"  desc=" "/>
+			<Arg name="Args" value="PayPsw"  desc=" "/>
+			<Arg name="Args" value="ActBk2"  desc=" "/>
+			<Arg name="Args" value="ActBr2"  desc=" "/>
+			<Arg name="Args" value="ActSq2"  desc=" "/>
+			<Arg name="Args" value="CDFlg2"  desc=" "/>
+			<Arg name="Args" value="InAmt"   desc=" "/>
+			<Arg name="Args" value="ActBk3"  desc=" "/>
+			<Arg name="Args" value="ActBr3"  desc=" "/>
+			<Arg name="Args" value="ActSq3"  desc=" "/>
+			<Arg name="Args" value="Smr"     desc=" "/>
+			<Arg name="Args" value="AccMod"  desc=" "/>
+			<Arg name="Args" value="ActSts2" desc=" "/>
+			<Arg name="Args" value="ActFlg"  desc=" "/>
+			<Arg name="Args" value="HSubCd"  desc=" "/>
+		</Exec>
+	</Macro>
+
+
+
+	<Macro name="ProThdBok" desc="ÌØÉ«ÒµÎñ¼ÇÕÊºê">
+		<Quote name="ProSubBal"/>  <!--¿Û¼õÖ§¸¶¶î¶È-->
+		<Set>ActSts=1</Set>
+		<Set>CcyCod=CNY</Set>
+		<Switch expression="$HSubCd">
+			<Case value="001">
+				<Set>BusTyp=PFA53</Set>
+				<Quote name="451720"/>  <!--CDµ½26201-->
+			<Break/>
+			</Case>
+			<Case value="002">
+				<Set>BusTyp=PFA60</Set>
+				<Quote name="451720"/>  <!--CDµ½22301-->
+			<Break/>
+			</Case>
+			<Case value="003">
+				<Set>BusTyp=PFA51</Set>
+				<Quote name="451720"/>  <!--CDµ½52101-->
+			<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÊäÈëµÄÖ÷»ú½»Ò××ÓÂë²»ÕýÈ·</Set>
+				<Return/>
+			</Default>
+		</Switch>
+		<Exec func="PUB:InsertJournal"/>
+		<Exec func="PUB:CallHostOther" error="IGNORE">
+			<Arg name="HTxnCd" value="$HTxnCd"/>
+			<Arg name="ObjSvr" value="SHSTPUB1"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="0"> <!--½»Ò×³É¹¦-->
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Break/>
+			</Case>
+			<Case value="-1">  <!--ÉÏËÍÖ÷»ú³¬Ê±-->
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=ÓëÖ÷»úÍ¨Ñ¶³¬Ê±,Çë²éÑ¯ºóÄ¨ÕÊ</Set>
+				<Exec func="PUB:UpdateJournal"/>
+				<Return/>
+			</Case>
+			<Default>
+				<Set>RspCod=$HRspCd</Set>
+				<Set>RspMsg=ÉÏËÍÖ÷»úÊ§°Ü</Set>
+				<Exec func="PUB:UpdateJournal"/>
+				<Set>AddFlg=1</Set>
+				<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+				<Set>ChkFlg=U</Set>
+				<Set>DtlSts=U</Set>
+				<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"U-³õÊ¼"-->
+				<Exec func="PUB:ExecSql">   <!--Çå³ýÖ§¸¶µÇ¼Ç±í-->
+					<Args>
+						<Arg name="SqlCmd" value="DelVchBok" />
+					</Args>
+				</Exec>
+				<Return/>
+			</Default>
+		</Switch>
+		<Set>TTxnSt=S</Set>
+		<Set>ActSts=2</Set>
+		<Exec func="PUB:UpdateJournal"/>
+		<Set>VchSts=2</Set>
+		<Set>ChkFlg=1</Set>
+		<Set>DtlSts=2</Set>
+		<Set>BokTck=$TckNo</Set>
+		<Quote name="ProUpdVchBok"/>  <!--ÐÞ¸ÄÖ§¸¶Áî×´Ì¬Îª"2-Ê¹ÓÃ"-->
+		<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+	</Macro>
+
+
+	<Macro name="ProThdCan" desc="ÌØÉ«ÒµÎñÄ¨ÕÊºê">
+<!--¼ì²éÔ­Á÷Ë®×´Ì¬-->
+		<Exec func="PUB:ReadRecord" error="IGNORE">
+			<Arg name="sql" value="GetTxnJnl"/>
+		</Exec>
+		<Switch expression="~RetCod">
+			<Case value="-2">
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Set>RspMsg=ÎÞ´ËÁ÷Ë®</Set>
+				<Return/>
+			</Case>
+			<Case value="0">
+				<If condition="IS_EQUAL_STRING($ActSts,3)">
+					<Set>MsgTyp=N</Set>
+					<Set>RspCod=000000</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬ÒÑÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<If condition="IS_NOEQUAL_STRING($ClrSts,0)">
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=PFA999</Set>
+					<Set>RspMsg=¸Ã±ÊÒµÎñÒÑÇåËã£¬²»ÄÜÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<If condition="AND(IS_NOEQUAL_STRING($HTxnSt,S),IS_NOEQUAL_STRING($HTxnSt,T))">
+					<Set>MsgTyp=N</Set>
+					<Set>RspCod=000000</Set>
+					<Set>RspMsg=Æ¾Ö¤×´Ì¬·Ç¡¾³É¹¦¡¿¡¾³¬Ê±¡¿²»ÐèÄ¨ÕÊ</Set>
+					<Return/>
+				</If>
+				<If condition="STRLEN(TRIM($PrvDat,right))&gt;0">
+					<Exec func="PFA:ParsePrvData" >
+						<Arg name="Args" value="PrvDat"/>
+					</Exec>
+				</If>
+				<Set>LogNo=$OLogNo</Set>
+				<Exec func="PUB:CallHostAcc">
+					<Arg name="HTxnCd" value="959999"/>
+					<Arg name="ObjSvr" value="SHSTPUB1"/>
+				</Exec>
+				<If condition="$RspCod=SC6034">     <!--½»Ò×ÒÑÄ¨ÕÊ6034-->
+					<Set>MsgTyp=N</Set>
+					<Set>RspCod=000000</Set>
+				</If>
+				<If condition="$MsgTyp!=N">
+					<Set>RspCod=$HRspCd</Set>
+					<Return/>
+				</If>
+				<Set>HTxnSt=C</Set>
+				<Set>TxnSts=C</Set>
+				<Set>TTxnSt=C</Set>
+				<Set>ActSts=3</Set>
+				<Set>NTckNo=$TckNo</Set>   <!--±£Áô·Ç»á¼ÆÁ÷Ë®ºÅ-->
+				<Set>TckNo=$OTckNo</Set>
+				<Exec func="PUB:ExecSql">
+					<Arg name="SqlCmd" value="UpdTxnJnl"/>
+				</Exec>
+				<Quote name="ProAddBal"/>  <!--¼Ó»ØÖ§¸¶¶î¶È-->
+				<Set>VchSts=2</Set>
+				<Exec func="PUB:ExecSql">
+					<Args>
+						<Arg name="SqlCmd" value="DelVchBok" />
+					</Args>
+				</Exec>
+				<Set>ChkFlg=0</Set>
+				<Set>DtlSts=U</Set>
+				<Set>UseAmt=000000000000000</Set>
+				<Quote name="ProUpdVchDtl"/>  <!--ÐÞ¸ÄÖ§¸¶ÁîÃ÷Ï¸×´Ì¬-->
+				<Set>TckNo=$NTckNo</Set>   <!--»Ö¸´·Ç»á¼ÆÁ÷Ë®ºÅ-->
+				<Break/>
+			</Case>
+			<Default>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=PFA999</Set>
+				<Set>RspMsg=STRCAT(»ñÈ¡Á÷Ë®¡¾,$OLogNo,¡¿Êý¾Ý¿â²Ù×÷Ê§°Ü)</Set>
+				<Return/>
+			</Default>
+		</Switch>
+	</Macro>
+</FrontTab>

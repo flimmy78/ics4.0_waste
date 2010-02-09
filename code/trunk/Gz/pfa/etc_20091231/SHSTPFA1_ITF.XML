@@ -1,0 +1,1531 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="PUB">
+   <!--
+   Modified By XuChg_BoCom00040048_20080612_ÐÞ¸Ä½»Ò×045120,045129½Ó¿Ú
+   -->
+   
+<!--Ö÷»ú·µ»Ø¹²Í¬½Ó¿Ú-->
+	<Define>
+		<Macro name="PfaResponse">
+			<Response necessary="no">
+				<Include file="etc/HSTTOA_IIT.XML" />
+				<Switch expression="$MsgTyp">
+					<Case value="N">
+						<Item name="BillText" head_len="4" include_len="yes" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+						<Break/>
+					</Case>
+					<Case value="E">
+						<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+						<Break/>
+					</Case>
+					<Case value="A">
+						<Item name="BillText" deli_asc="-1"/>
+						<Break/>
+					</Case>
+				</Switch>
+			</Response>
+		</Macro>
+	</Define>
+<!--²ÆÕþÁãÓà¶îÕÊ»§²éÑ¯-->
+	<Transaction code="368100">
+		<Request>
+			<AddItem name="HTxnCd" value="368100" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="ActNo" length="21"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="Filer"  length=" 9"/>
+					<Item name="ActNo"  length="21"/>
+					<Item name="ActNam" length="60"/>
+					<Item name="ActFlg" offset=" 1" length="1"/>
+					<Item name="ActSts" length=" 1"/>
+					<Item name="ActTyp" length=" 2"/>
+					<Item name="ActKnd" length=" 1"/>
+					<Item name="CcyCod" length=" 3"/>
+					<Item name="CusId"  length="13"/>
+					<Item name="ActNod" length=" 6"/>
+					<Item name="ANodNm" length="36"/>
+					<Item name="AcBrNo" offset=" 1" length="6"/>
+					<Item name="EleBk"  length=" 5"/>
+					<Item name="Bal"    length="15" expression="COBOL_TO_NORMAL($Bal,15)"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÆäËû¹ÒÕÊ -->
+	<Transaction code="091010">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="091010" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Group name="InRec" repeat_name="InNum">
+				<Item name="CcyCod" length=" 3"/>
+				<Item name="CDFlg"  length=" 1"/>
+				<Item name="RBFlg"  length=" 1"/>
+				<Item name="ActNo"  length="21"/>
+				<Item name="TxnAmt" length="15"/>
+				<Item name="CclNo"  length="12"/>
+				<Item name="CclSqn" length=" 4"/>
+				<Item name="Smr"    length="60"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3"/>
+				<Item name="VchNo"  length=" 8" value='00000000'/>
+				<Item name="UdwDat" length=" 8" value='00000000'/>
+				<Item name="Pin"    length="16"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÆäËûÀà¹ÒÕÊ¸´ºË -->
+	<Transaction code="091017">
+		<Request  necessary="no">
+			<AddItem name="HTxnCd" value="091017" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo"  length=" 9"/>    <!--        -->
+			<Item name="OTckNo"   length="11"/>    <!--        -->
+			<Item name="OTTxnCd"  length=" 6"/>    <!--        -->
+			<Group name="InRec">
+				<Item name="CcyCod" length=" 3"/>
+				<Item name="CDFlg"  length=" 1"/>
+				<Item name="RBFlg"  length=" 1"/>
+				<Item name="ActNo"  length="21"/>
+				<Item name="TxnAmt" length="15"/>
+				<Item name="CclNo"  length="12"/>
+				<Item name="CclSqn" length=" 4"/>
+				<Item name="Smr"    length="60"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3"/>
+				<Item name="VchNo"  length=" 8" value='00000000'/>
+				<Item name="UdwDat" length=" 8"/>
+				<Item name="Pin"    length="16"/>          
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÆäËû¹ÒÕÊÄ¨ÕÊ -->
+	<Transaction code="091019">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="091019" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Group name="InRec" repeat_name="InNum">
+				<Item name="CcyCod" length=" 3"/>
+				<Item name="CDFlg"  length=" 1"/>
+				<Item name="RBFlg"  length=" 1"/>
+				<Item name="ActNo"  length="21"/>
+				<Item name="TxnAmt" length="15"/>
+				<Item name="CclNo"  length="12"/>
+				<Item name="CclSqn" length=" 4"/>
+				<Item name="Smr"    length="60"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3"/>
+				<Item name="VchNo"  length=" 8" value='00000000'/>
+				<Item name="UdwDat" length=" 8" value='00000000'/>
+				<Item name="Pin"    length="16"/>          
+			</Group>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="BillText" head_len="4" include_len="yes" length="34" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Item name="filer" deli_asc="-1" />
+					<DelItem name="filer"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!-- ´¿ÕËÎñ³åÕý -->
+	<Transaction code="091030">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="091030" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="CrcTyp"   length="1" desc="³åÕýÖÖÀà"/>
+			<Group name="InRec">
+				<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+				<Item name="ActNo"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+				<Item name="CDFlg"  length=" 1" desc="½è´û±êÖ¾"/>
+				<Item name="RBFlg"  length=" 1" desc="ºìÀ¶±êÖ¾"/>
+				<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+				<Item name="UdwDat" length=" 8" desc="´íÕËÈÕÆÚ"/>
+				<Item name="CclNo"  length="12" desc="ÏúÕÊºÅ"/>
+				<Item name="CclSqn" length=" 4" desc="ÏúÕË±ÊÐòºÅ"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ´¿ÕËÎñ³åÕý¸´ºË -->
+	<Transaction code="091037">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="091037" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />    <!--        -->
+			<Item name="OTckNo"  length="11" />    <!--        -->
+			<Item name="OTTxnCd" length=" 6" />    <!--        -->
+			<Item name="CrcTyp"  length=" 1" desc="³åÕýÖÖÀà"/>
+			<Group name="InRec">
+				<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+				<Item name="ActNo"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+				<Item name="CDFlg"  length=" 1" desc="½è´û±êÖ¾"/>
+				<Item name="RBFlg"  length=" 1" desc="ºìÀ¶±êÖ¾"/>
+				<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+				<Item name="UdwDat" length=" 8" desc="´íÕËÈÕÆÚ"/>
+				<Item name="CclNo"  length="12" desc="ÏúÕÊºÅ"/>
+				<Item name="CclSqn" length=" 4" desc="ÏúÕË±ÊÐòºÅ"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ´¿ÕËÎñ³åÕýÄ¨ÕÊ -->
+	<Transaction code="091039">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="091039" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="CrcTyp"  length="1" desc="³åÕýÖÖÀà"/>
+			<Group name="InRec">
+				<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+				<Item name="ActNo"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+				<Item name="CDFlg"  length=" 1" desc="½è´û±êÖ¾"/>
+				<Item name="RBFlg"  length=" 1" desc="ºìÀ¶±êÖ¾"/>
+				<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+				<Item name="UdwDat" length=" 8" desc="´íÕËÈÕÆÚ"/>
+				<Item name="CclNo"  length="12" desc="ÏúÕÊºÅ"/>
+				<Item name="CclSqn" length=" 4" desc="ÏúÕË±ÊÐòºÅ"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÏÖ½ð¸¶¿î  -->
+	<Transaction code="101200">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101200" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="DchTyp" length=" 1" desc="Ö§È¡·½Ê½"/>
+			<Item name="PayAct" length="21" desc="ÕËºÅ"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="CclCod" length="12" desc="ÏúÕËºÅ"/>
+				<Item name="VchTyp" length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+				<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+				<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+				<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+				<Item name="CshNo"  length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+				<Item name="Pps"    length=" 3" desc="ÓÃÍ¾"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÏÖ½ðÊÕ¿î  -->
+	<Transaction code="101100">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101100" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="DchTyp" length=" 1" desc="Ö§È¡·½Ê½"/>
+			<Item name="PyeAct" length="21" desc="ÕËºÅ"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="VchTyp" length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+				<Item name="TaxTyp" length=" 3" desc="Ë°µ¥ÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+				<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+				<Item name="CshNo"  length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶ÏÖ½ðÊÕ¿îÄ¨ÕÊ  -->
+	<Transaction code="101109">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101109" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" necessary="no"/>
+			<Item name="OTckNo"  length="11" necessary="no"/>
+			<Item name="OTTxnCd" length=" 6" necessary="no"/>
+			<Item name="DchTyp"  length=" 1" desc="Ö§È¡·½Ê½"/>
+			<Item name="PayAct"  length="21" desc="ÕËºÅ"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="VchTyp" length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+				<Item name="TaxTyp" length=" 3" desc="Ë°µ¥ÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+				<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+				<Item name="CshNo"  length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="BillText" head_len="4" include_len="yes" length="34" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Item name="filer" deli_asc="-1" />
+					<DelItem name="filer"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶³öÊÛÆ¾Ö¤  -->
+   <!-- Modified By XuChg_BoCom00040048_20080612_Ôö¼ÓÖ§¸¶ÃÜÂëÐÅÏ¢ -->
+   <Transaction code="045120">
+      <Request necessary="no">
+         <AddItem name="HTxnCd" value="045120" />
+         <SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+         <Include file="etc/HSTTIA_IIT.XML" />
+         <Item name="FeeTyp" length=" 1" desc="Æ¾Ö¤ÊÕ·ÑÀàÐÍ"/>
+         <Item name="ActNo"  length="21" desc="ÉêÇëÈËÕÊºÅ"/>
+         <Item name="PayAct" length="21" desc="¸¶·ÑÈËÕÊºÅ"/>
+         <Item name="CshNo"  length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+         <Group name="Rec" repeat_name="RecNum">
+            <Item name="BVchTp" length=" 3" desc="¹ºÂòÆ¾Ö¤ÖÖÀà"/>
+            <Item name="BegNo"  length=" 8" desc="ÆðÊ¼"/>
+            <Item name="EndNo"  length=" 8" desc="½áÊø"/>
+            <Item name="Count"  length=" 3" desc="ÊýÁ¿"/>
+            <Item name="TotAmt" length="15" expression="NORMAL_TO_COBOL($TotAmt,15)" desc="×Ü½ð¶î"/>
+            <Item name="WrkFee" length="15" expression="NORMAL_TO_COBOL($WrkFee,15)" desc="¹¤±¾·Ñ"/>
+            <Item name="FeeCod" length=" 4" desc="ÊÖÐø·Ñ´úÂë"/>
+            <Item name="HndFee" length="15" expression="NORMAL_TO_COBOL($HndFee,15)" desc="ÊÖÐø·Ñ"/>
+         </Group>
+         <!-- Modified By XuChg_BoCom00040048_20080612_Ôö¼ÓÖ§¸¶ÃÜÂëÐÅÏ¢ -->
+         <Item name="PinMsg"  length="50" desc="Ö§¸¶ÃÜÂëÐÅÏ¢"  value=" "/>
+      </Request>
+      <Quote name="PfaResponse"/>
+   </Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶³öÊÛÆ¾Ö¤Ä¨ÕÊ  -->
+   <!-- Modified By XuChg_BoCom00040048_20080612_Ôö¼ÓÖ§¸¶ÃÜÂëÐÅÏ¢ -->
+	<Transaction code="045129">
+		<Request>
+			<AddItem name="HTxnCd" value="045129" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="FeeTyp"  length=" 1" desc="Æ¾Ö¤ÊÕ·ÑÀàÐÍ"/>
+			<Item name="ActNo"   length="21" desc="ÉêÇëÈËÕÊºÅ"/>
+			<Item name="PayAct"  length="21" desc="¸¶·ÑÈËÕÊºÅ"/>
+			<Item name="CshNo"   length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="BVchTp" length=" 3" desc="¹ºÂòÆ¾Ö¤ÖÖÀà"/>
+				<Item name="BegNo"  length=" 8" desc="ÆðÊ¼"/>
+				<Item name="EndNo"  length=" 8" desc="½áÊø"/>
+				<Item name="Count"  length=" 3" desc="ÊýÁ¿"/>
+				<Item name="TotAmt" length="15" expression="NORMAL_TO_COBOL($TotAmt,15)" desc="×Ü½ð¶î"/>
+				<Item name="WrkFee" length="15" expression="NORMAL_TO_COBOL($WrkFee,15)" desc="¹¤±¾·Ñ"/>
+				<Item name="FeeCod" length=" 4" desc="ÊÖÐø·Ñ´úÂë"/>
+				<Item name="HndFee" length="15" expression="NORMAL_TO_COBOL($HndFee,15)" desc="ÊÖÐø·Ñ"/>
+			</Group>			
+         <!-- Modified By XuChg_BoCom00040048_20080612_Ôö¼ÓÖ§¸¶ÃÜÂëÐÅÏ¢ -->
+         <Item name="PinMsg"  length="50" desc="Ö§¸¶ÃÜÂëÐÅÏ¢"  value=" "/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ²ÆÕþ´úÀíÖ§¸¶×ªÕË¸¶¿î   -->
+	<Transaction code="101300">
+		<Request>
+			<AddItem name="HTxnCd" value="101300" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="PayAct" length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="PayNam" length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="VchTyp" length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct" length="21" desc="×ªÈëÕÊºÅ"/>
+			<Item name="CasTra" length=" 1" value="0" desc="×ªÈë±êÖ¾"/>
+			<Item name="PyeNam" length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"    length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="PayAct" length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+					<Item name="PayAct" length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+					<Item name="PyeAct" length="21" desc="×ªÈëÕÊºÅ"/>
+					<Item name="PyeNam" length="60" desc="×ªÈë»§Ãû"/>
+					<Item name="TxnAmt" length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+					<Item name="BillText" head_len="4" include_len="yes" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!--  ½»»»Ìá»ØÊÕ·½  ÍËÆ± -->
+	<Transaction code="343110">
+		<Request>
+			<AddItem name="HTxnCd" value="343110" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="BVchTp" length=" 2" desc="BEÒµÎñÖÖÀà"/>
+			<Item name="ChgCod" length="10" desc="½»»»ºÅ"/>
+			<Item name="TrnDat" length=" 8" desc="ÈÕÆÚ"/>
+			<Item name="ClrNum" length="10" desc="½»»»ºÅ"/>
+			<Item name="ClrSce" length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod" length=" 3" desc="»õ±ÒÖÖÀà"/>
+			<Item name="AreCd"  length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="TotCnl" length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="TotAmt" length="15" expression="NORMAL_TO_COBOL($TotAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="BalAmt" length="15" expression="NORMAL_TO_COBOL($BalAmt,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="ActNo"  length="21" desc="Ô­ÍÐ¸¶ÕËºÅ"/>
+			<Item name="ActNam" length="60" desc="Ô­ÍÐ¸¶»§Ãû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="PyeAct" length="32" desc="Ô­ÊÕ¿îÕÊºÅ"/>
+			<Item name="PyeNam" length="60" desc="Ô­ÊÕ¿îÃû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RtnRsn" length=" 2" desc="ÍËÆ±ÀíÓÉ"/>
+			<Item name="TBkFlg" length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<!--Item name="BillText" head_len="4" include_len="yes" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/-->
+					<Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!--  ½»»»Ìá»ØÊÕ·½ ÍËÆ±¸´ºË   -->
+	<Transaction code="343117">
+		<Request>
+			<AddItem name="HTxnCd" value="343117" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" />   <!--        -->
+	    <Item name="OTckNo"  length="11" />   <!--        -->
+	    <Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="BVchTp"  length=" 1" desc="BEÒµÎñÖÖÀà"/>
+			<Item name="ChgCod"  length=" 3" desc="½»»»ºÅ"/>
+			<Item name="TrnDat"  length=" 8" desc="ÈÕÆÚ"/>
+			<Item name="ClrNum"  length=" 8" desc="½»»»ºÅ"/>
+			<Item name="ClrSce"  length=" 5" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÖÖÀà"/>
+			<Item name="AreCd"   length="21" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="TotCnl"  length="12" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="TotAmt"  length="15" expression="NORMAL_TO_COBOL($TotAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="BalAmt"  length="15" expression="NORMAL_TO_COBOL($BalAmt,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="ActNo"   length="21" desc="Ô­ÍÐ¸¶ÕËºÅ"/>
+			<Item name="ActNam"  length="60" desc="Ô­ÍÐ¸¶»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="PyeAct"  length="21" desc="Ô­ÊÕ¿îÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="Ô­ÊÕ¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RtnRsn"  length=" 2" desc="ÍËÆ±ÀíÓÉ"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!--  ½»»»Ìá»ØÊÕ·½ ÍËÆ±Ä¨ÕÊ  -->
+	<Transaction code="343119">
+		<Request>
+			<AddItem name="HTxnCd" value="343119" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="BVchTp"  length=" 1" desc="BEÒµÎñÖÖÀà"/>
+			<Item name="ChgCod"  length=" 3" desc="½»»»ºÅ"/>
+			<Item name="TrnDat"  length=" 8" desc="ÈÕÆÚ"/>
+			<Item name="ClrNum"  length=" 8" desc="½»»»ºÅ"/>
+			<Item name="ClrSce"  length=" 5" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÖÖÀà"/>
+			<Item name="AreCd"   length="21" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="TotCnl"  length="12" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="TotAmt"  length="15" expression="NORMAL_TO_COBOL($TotAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="BalAmt"  length="15" expression="NORMAL_TO_COBOL($BalAmt,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="ActNo"   length="21" desc="Ô­ÍÐ¸¶ÕËºÅ"/>
+			<Item name="ActNam"  length="60" desc="Ô­ÍÐ¸¶»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="PyeAct"  length="21" desc="Ô­ÊÕ¿îÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="Ô­ÊÕ¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RtnRsn"  length=" 2" desc="ÍËÆ±ÀíÓÉ"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<!--Item name="BillText" head_len="4" include_len="yes" length="34" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/-->
+					<Item name="BillText" head_len="4" include_len="yes" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÐÅµç»ã -->
+	<Transaction code="341120">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341120" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PstTyp"  length=" 1" desc="ÓÊµç·ÑÖÖÀà"/>
+			<Item name="PstFee"  length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="PstFee1" length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="HndFee"  length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="HndFee1" length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÐÅµç»ã ¸´ºË -->
+	<Transaction code="341127">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341127" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PstTyp"  length=" 1" desc="ÓÊµç·ÑÖÖÀà"/>
+			<Item name="PstFee"  length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="PstFee1" length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="HndFee"  length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="HndFee1" length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÐÅµç»ã Ä¨ÕÊ-->
+	<Transaction code="341129">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341129" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PstTyp"  length=" 1" desc="ÓÊµç·ÑÖÖÀà"/>
+			<Item name="PstFee"  length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="PstFee1" length="15" desc="ÓÊµç·Ñ½ð¶î"/>
+			<Item name="HndFee"  length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="HndFee1" length="15" desc="ÊÖÐø·Ñ½ð¶î"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="BillText" head_len="4" include_len="yes" length="34" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Item name="filer" deli_asc="-1" />
+					<DelItem name="filer"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ Ö§Æ±/´û¼ÇÆ¾Ö¤ -->
+	<Transaction code="341110">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341110" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÆäËû -->
+	<Transaction code="341200">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341200" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="ÁãÓà¶îÕÊºÅ"/>
+			<Item name="ActCod"  length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam"  length="60" desc="¿Û¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2"  length="32" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNm2"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ChgFlg"  length=" 3" desc="ÊµÊ±½»»»ÒµÎñÖÖÀà"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/> 
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÆäËû¸´ºË  -->
+	<Transaction code="341207">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341207" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="ÁãÓà¶îÕÊºÅ"/>
+			<Item name="ActCod"  length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam"  length="60" desc="¿Û¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2"  length="32" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNm2"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ChgFlg"  length=" 3" desc="ÊµÊ±½»»»ÒµÎñÖÖÀà"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/> 
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Response necessary="no">
+	  	<Include file="etc/HSTTOA_IIT.XML" />
+	  	<Switch expression="$MsgTyp">
+	  		<Case value="N">
+	  			<Item name="BillText" head_len="4" include_len="yes" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+	  			<Break/>
+	  		</Case>
+	  		<Case value="E">
+	  			<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+	  			<Break/>
+	  		</Case>
+	  		<Case value="A">
+	  			<Item name="BillText" deli_asc="-1"/>
+	  			<Break/>
+	  		</Case>
+	  	</Switch>
+		</Response>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ ÆäËûÄ¨ÕÊ -->
+	<Transaction code="341209">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341209" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" necessary="no"/>
+			<Item name="OTckNo"  length="11" necessary="no"/>
+			<Item name="OTTxnCd" length=" 6" necessary="no"/>
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="ÁãÓà¶îÕÊºÅ"/>
+			<Item name="ActCod"  length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam"  length="60" desc="¿Û¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2"  length="32" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNm2"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ChgFlg"  length=" 3" desc="ÊµÊ±½»»»ÒµÎñÖÖÀà"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitFlg"  length=" 1" desc="×ª»ã±êÖ¾"/>
+			<Item name="RitPla"  length="60" desc="»ãÈëµØµã"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="RitBnk"  length=" 6" desc="»ãÈëÐÐºÅ"/>
+			<Item name="StnCod"  length=" 5" desc="ÊÕ±¨ÖÐÐÄºÅ"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/> 
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="BillText" head_len="4" include_len="yes" length="34" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+					<Item name="filer" deli_asc="-1" />
+					<DelItem name="filer"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ Ò»½è¶à´û -->
+	<Transaction code="341170">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341170" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="InNo"   length=" 3" desc="ÄÉÈë³¡´Î"/>
+			<Item name="CtyFlg" length=" 1" desc="Í¬³ÇÊÕ¸¶±êÖ¾"/>
+			<Item name="BeTyp"  length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="AreCd"  length=" 6" desc="½»»»ÇøÓò"/>
+			<Item name="ActNo"  length="21" desc="¸¶¿îÕËºÅ"/>
+			<Item name="ActCod" length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam" length="60" desc="¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp" length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo" length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+			<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL(AMTDELZERO($TxnAmt),15)" desc="¸¶¿î½ð¶î"/>
+			<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="RecNum" length=" 2" desc="ÊÕ·½Æ±¾ÝÕÅÊý"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+				<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL(AMTDELZERO($TxnAmt),15)" desc="Æ±¾Ý½ð¶î"/>
+				<Item name="ClrNum" length="10" desc="ÊÕ¿îÐÐ½»»»ºÅ"/>
+				<Item name="PyeAct" length="32" desc="ÊÕ¿îÕËºÅ"/>
+				<Item name="PyeNam" length="60" desc="ÊÕ¿îÃû³Æ"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+			<Group name="Rec1" repeat_name="RecNum1">
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+				<Item name="TxnAmt" length="15" expression="NORMAL_TO_COBOL(AMTDELZERO($TxnAmt),15)" desc="Æ±¾Ý½ð¶î"/>
+				<Item name="ClrNum" length="10" desc="ÊÕ¿îÐÐ½»»»ºÅ"/>
+				<Item name="PyeAct" length="32" desc="ÊÕ¿îÕËºÅ"/>
+				<Item name="PyeNam" length="60" desc="ÊÕ¿îÃû³Æ"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+			<Item name="PrvDat1" deliasc="-1" />
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ Ò»½è¶à´û ¸´ºË -->
+	<Transaction code="341177">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341177" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="InNo"    length=" 3" desc="ÄÉÈë³¡´Î"/>
+			<Item name="CtyFlg"  length=" 1" desc="Í¬³ÇÊÕ¸¶±êÖ¾"/>
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓò"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÕËºÅ"/>
+			<Item name="ActCod"  length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="¸¶¿î½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="RecNum"  length=" 2" desc="ÊÕ·½Æ±¾ÝÕÅÊý"/>
+			<Group name="Rec" repeat_name="RecNum1">
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+				<Item name="TxnAmt" length="15" desc="Æ±¾Ý½ð¶î"/>
+				<Item name="ClrNum" length="10" desc="ÊÕ¿îÐÐ½»»»ºÅ"/>
+				<Item name="PyeAct" length="32" desc="ÊÕ¿îÕËºÅ"/>
+				<Item name="PyeNam" length="60" desc="ÊÕ¿îÃû³Æ"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+			<!--Item name="PrvDat" deliasc="-1" /-->
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ Ò»½è¶à´û Ä¨ÕÊ -->
+	<Transaction code="341179">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341179" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length="09" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length="06" />   <!--        -->
+			<Item name="InNo"    length=" 3" desc="ÄÉÈë³¡´Î"/>
+			<Item name="CtyFlg"  length=" 1" desc="Í¬³ÇÊÕ¸¶±êÖ¾"/>
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓò"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÕËºÅ"/>
+			<Item name="ActCod"  length="12" desc="¹ÒÕË±àºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="¸¶¿î½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="RecNum"  length=" 2" desc="ÊÕ·½Æ±¾ÝÕÅÊý"/>
+			<Group name="Rec" repeat_name="RecNum1">
+				<Item name="VchTyp" length=" 3" desc="Æ±¾ÝÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ±¾ÝºÅÂë"/>
+				<Item name="TxnAmt" length="15" desc="Æ±¾Ý½ð¶î"/>
+				<Item name="ClrNum" length="10" desc="ÊÕ¿îÐÐ½»»»ºÅ"/>
+				<Item name="PyeAct" length="32" desc="ÊÕ¿îÕËºÅ"/>
+				<Item name="PyeNam" length="60" desc="ÊÕ¿îÃû³Æ"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+			<!--Item name="PrvDat" deliasc="-1" /-->
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí×ªÕË¸¶¿î¸´ºË -->
+	<Transaction code="101307">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101307" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="PayAct"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="PayNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="VchTyp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"   length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>b
+			<Item name="PyeAct"  length="30" desc="×ªÈëÕÊºÅ"/>
+			<Item name="CasTra"  length=" 1" value="0" desc="×ªÈë±êÖ¾"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí×ªÕË¸¶¿îÄ¨ÕÊ -->
+	<Transaction code="101309">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101309" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" necessary="no"/>
+			<Item name="OTckNo"  length="11" necessary="no"/>
+			<Item name="OTTxnCd" length=" 6" necessary="no"/>
+			<Item name="PayAct"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="PayNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="VchTyp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"   length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>b
+			<Item name="PyeAct"  length="30" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀíÏÖ½ð¸¶¿îÄ¨ÕÊ -->
+	<Transaction code="101209">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="101209" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" necessary="no"/>
+			<Item name="OTckNo"  length="11" necessary="no"/>
+			<Item name="OTTxnCd" length=" 6" necessary="no"/>
+			<Item name="DchTyp"  length=" 1" desc="Ö§È¡·½Ê½"/>
+			<Item name="ActNo"   length="21" desc="ÕËºÅ"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Group name="Rec" repeat_name="RecNum">
+				<Item name="CclCod" length="12" desc="ÏúÕËºÅ"/>
+				<Item name="VchTyp" length=" 3" desc="Æ¾Ö¤ÖÖÀà"/>
+				<Item name="VchNo"  length=" 8" desc="Æ¾Ö¤ºÅÂë"/>
+				<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+				<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+				<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+				<Item name="CshNo"  length=" 3" desc="ÏÖ½ð·ÖÎöºÅ"/>
+				<Item name="Pps"    length=" 3" desc="ÓÃÍ¾"/>
+				<Item name="Smr"    length="60" desc="ÕªÒª"/>
+				<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			</Group>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³ö Ö§Æ±/´û¼ÇÆ¾Ö¤¸´ºË -->
+	<Transaction code="341117">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341117" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+<!-- ²ÆÕþ´úÀí½»»»Ìá³öÊÕ·½ Ö§Æ±/´û¼ÇÆ¾Ö¤Ä¨ÕÊ -->
+	<Transaction code="341119">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="341119" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" necessary="no"/>
+			<Item name="OTckNo"  length="11" necessary="no"/>
+			<Item name="OTTxnCd" length=" 6" necessary="no"/>
+			<Item name="BeTyp"   length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="PyeAct1" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ClrNum"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="TBkNam"  length="60" desc="¶Ô·½ÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>
+			<Item name="RaeDat"  length=" 8" desc="Ìá³öÈÕÆÚ"/>
+			<Item name="RaeCnt"  length=" 3" desc="Ìá³ö³¡´Î"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+
+	<Transaction code="345340">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="345340" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="BusTyy" length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="OppExc" length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="ActDat" length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+			<Item name="OurExc" length="10" desc="±¾½»»»ºÅ"/>
+			<Item name="ExcSce" length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Item name="AreCd"  length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ItlCnt" length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="ItlAmt" length="15" expression="COBOL_TO_NORMAL($ItlAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="ItlSup" length="15" expression="COBOL_TO_NORMAL($ItlSup,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="OrgCid" length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+			<Item name="ActNo"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam" length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct" length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam" length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp" length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo" length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt" length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Smr"    length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="TBkFlg" length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>	 
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+    
+	<Transaction code="345347">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="345347" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="BusTyy"  length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="OppExc"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="ActDat"  length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+			<Item name="OurExc"  length="10" desc="±¾½»»»ºÅ"/>
+			<Item name="ExcSce"  length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ItlCnt"  length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="ItlAmt"  length="15" expression="COBOL_TO_NORMAL($ItlAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="ItlSup"  length="15" expression="COBOL_TO_NORMAL($ItlSup,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="OrgCid"  length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct"  length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>	 
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+    
+	<Transaction code="345349">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="345349" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="BusTyy"  length=" 2" desc="ÒµÎñÖÖÀà"/>
+			<Item name="OppExc"  length="10" desc="¶Ô·½½»»»ºÅ"/>
+			<Item name="ActDat"  length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+			<Item name="OurExc"  length="10" desc="±¾½»»»ºÅ"/>
+			<Item name="ExcSce"  length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+			<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="ItlCnt"  length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+			<Item name="ItlAmt"  length="15" expression="COBOL_TO_NORMAL($ItlAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+			<Item name="ItlSup"  length="15" expression="COBOL_TO_NORMAL($ItlSup,15)" desc="Ê£Óà½ð¶î"/>
+			<Item name="OrgCid"  length=" 9"  desc="¿ª»§Ê¶±ðÎ»"/>
+			<Item name="ActNo"   length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="ActNam"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="PyeAct"  length="32" desc="×ªÈëÕÊºÅ"/>
+			<Item name="PyeNam"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="SVchTp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="SVchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="TxnAmt"  length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Smr"     length="60" desc="ÕªÒª"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="TBkFlg"  length=" 1" desc="¿ç·ÖÐÐ±êÖ¾"/>	 
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+
+	<Transaction code="345300">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="345300" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="DcFlg"  length=" 1" desc="ÊÕ¸¶±êÖ¾"/>
+			<Item name="ActDat" length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+			<Item name="AreCd"  length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="OurExc" length="10" desc="±¾½»»»ºÅ"/>
+			<Item name="ExcSce" length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="OppExc" length="10" desc="¼ìÑéºÅ"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Item name="BusTyy" length=" 2" desc="ÒµÎñÖÖÀà"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="AAAAAA"  length="09" desc="ÒµÎñÖÖÀà"/>
+					<Item name="BusTyy"  length=" 2" desc="ÒµÎñÖÖÀà"/>
+					<Item name="OppExc"  length="10" desc="¼ìÑéºÅ"/>
+					<Item name="ActDat"  length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+					<Item name="DcFlg"   length=" 1" desc="ÊÕ¸¶±êÖ¾"/>
+					<Item name="OurExc"  length="10" desc="±¾½»»»ºÅ"/>
+					<Item name="ExcSce"  length=" 3" desc="½»»»³¡´Î"/>
+					<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+					<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+					<Item name="ItlCnt"  length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+					<Item name="ItlAmt"  length="15" expression="COBOL_TO_NORMAL($ItlAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+					<Item name="ItlSup"  offset=" 1" length="15" expression="COBOL_TO_NORMAL($ItlSup,15)" desc="Ê£Óà½ð¶î"/>
+					<Item name="OrgCid"  offset=" 1" length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+					<Item name="OrgCid1" length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+
+	<Transaction code="343100">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="343100" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="DcFlg"  length=" 1" desc="ÊÕ¸¶±êÖ¾"/>
+			<Item name="ActDat" length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+			<Item name="AreCd"  length=" 6" desc="½»»»ÇøÓòºÅ"/>
+			<Item name="OurExc" length="10" desc="±¾½»»»ºÅ"/>
+			<Item name="ExcSce" length=" 3" desc="½»»»³¡´Î"/>
+			<Item name="OppExc" length="10" desc="¼ìÑéºÅ"/>
+			<Item name="CcyCod" length=" 3" desc="±ÒÖÖ"/>
+			<Item name="BusTyy" length=" 2" desc="ÒµÎñÖÖÀà"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="AAAAAA"  length="09" desc="ÒµÎñÖÖÀà"/>
+					<Item name="BusTyy"  length=" 2" desc="ÒµÎñÖÖÀà"/>
+					<Item name="OppExc"  length="10" desc="¼ìÑéºÅ"/>
+					<Item name="ActDat"  length=" 8" desc="»á¼ÆÈÕÆÚ"/>
+					<Item name="DcFlg"   length=" 1" desc="ÊÕ¸¶±êÖ¾"/>
+					<Item name="OurExc"  length="10" desc="±¾½»»»ºÅ"/>
+					<Item name="ExcSce"  length=" 3" desc="½»»»³¡´Î"/>
+					<Item name="CcyCod"  length=" 3" desc="±ÒÖÖ"/>
+					<Item name="AreCd"   length=" 6" desc="½»»»ÇøÓòºÅ"/>
+					<Item name="ItlCnt"  length=" 4" desc="ÀÛ¼Æ±ÊÊý"/>
+					<Item name="ItlAmt"  length="15" expression="COBOL_TO_NORMAL($ItlAmt,15)" desc="ÀÛ¼Æ½ð¶î"/>
+					<Item name="ItlSup"  offset=" 1" length="15" expression="COBOL_TO_NORMAL($ItlSup,15)" desc="Ê£Óà½ð¶î"/>
+					<Item name="OrgCid"  offset=" 1" length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+					<Item name="OrgCid1" length=" 9" desc="¿ª»§Ê¶±ðÎ»"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+
+	<Transaction code="321200">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="321200" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="PayKnd" length=" 1" desc="Ö§¸¶·½Ê½"/>
+			<Item name="VchTyp" length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat" length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="BnkCd1" length=" 5" desc="¸¶¿îÈËÐÐºÅ"/>
+			<Item name="BnkNm1" length="36" desc="¸¶¿îÈËÐÐÃû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo1" length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="CclCd1" length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="ActNm1" length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2" length="32" desc="Ô­¸¶¿îÕÊºÅ"/>
+			<Item name="ActNm2" length="60" desc="Ô­¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="BnkCd2" length=" 5" desc="½ÓÊÕÐÐÐÐºÅ"/>
+			<Item name="RitChl" length=" 1" desc="»ã¿îÏßÂ·"/>
+			<Item name="BnkNm2" length="36" desc="½ÓÊÕÐÐÐÐÃû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo3" length="21" desc="×ªÈëÕÊºÅ"/>
+			<Item name="ActNm3" length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="CcyCod" length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+			<Item name="Pin"    length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="ActNo4" length="21" desc="¸¶·ÑÕÊºÅ"/>
+			<Item name="CclCd3" length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="PriFlg" length=" 1" desc="¼Ó¼±±êÖ¾"/>
+			<Item name="FeeFlg" length=" 1" desc="ÊÕ·Ñ±êÖ¾"/>
+			<Item name="NChFlg" length=" 1" desc="ÎÞ¶Ò»»ÊÖÐø·Ñ±êÖ¾"/>
+			<Item name="FeeCd1" length=" 4" desc="ÊÖÐø·Ñ´úÂë"/>
+			<Item name="FeeCd2" length=" 4" desc="ÓÊµç·Ñ´úÂë"/>
+			<Item name="Amt1"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt2"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt3"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt4"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt5"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt6"   length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="PpsCod" length=" 1" desc="ÓÃÍ¾Âë"/>
+			<Item name="Pps"    length="60" desc="ÓÃÍ¾"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="HngFlg" length=" 1" desc="ÊÇ·ñ¹ÒÕÊ"/>
+			<Item name="ActNm4" length="60" desc="ÊÕ¿îÈËÃû³Æ1"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="InbCd"  length=" 5" desc="·¢±¨ÐÐÐÐºÅ"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+
+	<Transaction code="321207">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="321207" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="PayKnd"  length=" 1" desc="Ö§¸¶·½Ê½"/>
+			<Item name="VchTyp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="BnkCd1"  length=" 5" desc="¸¶¿îÈËÐÐºÅ"/>
+			<Item name="BnkNm1"  length="36" desc="¸¶¿îÈËÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo1"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="CclCd1"  length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="ActNm1"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2"  length="32" desc="Ô­¸¶¿îÕÊºÅ"/>
+			<Item name="ActNm2"  length="60" desc="Ô­¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="BnkCd2"  length=" 5" desc="½ÓÊÕÐÐÐÐºÅ"/>
+			<Item name="RitChl"  length=" 1" desc="»ã¿îÏßÂ·"/>
+			<Item name="BnkNm2"  length="36" desc="½ÓÊÕÐÐÐÐÃû"/>
+			<Item name="ActNo3"  length="21" desc="×ªÈëÕÊºÅ"/>
+			<Item name="ActNm3"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="TxnAmt"  length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="ActNo4"  length="21" desc="¸¶·ÑÕÊºÅ"/>
+			<Item name="CclCd3"  length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="PriFlg"  length=" 1" desc="¼Ó¼±±êÖ¾"/>
+			<Item name="FeeFlg"  length=" 1" desc="ÊÕ·Ñ±êÖ¾"/>
+			<Item name="NChFlg"  length=" 1" desc="ÎÞ¶Ò»»ÊÖÐø·Ñ±êÖ¾"/>
+			<Item name="FeeCd1"  length=" 4" desc="ÊÖÐø·Ñ´úÂë"/>
+			<Item name="FeeCd2"  length=" 4" desc="ÓÊµç·Ñ´úÂë"/>
+			<Item name="Amt1"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt2"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt3"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt4"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt5"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt6"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="PpsCod"  length=" 1" desc="ÓÃÍ¾Âë"/>
+			<Item name="Pps"     length="60" desc="ÓÃÍ¾"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="HngFlg"  length=" 1" desc="ÊÇ·ñ¹ÒÕÊ"/>
+			<Item name="ActNm4"  length="60" desc="ÊÕ¿îÈËÃû³Æ1"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="InbCd"   length=" 5" desc="×Ö·ûÐÍ-5"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+
+	<Transaction code="321209">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="321209" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="OHLogNo" length=" 9" />   <!--        -->
+			<Item name="OTckNo"  length="11" />   <!--        -->
+			<Item name="OTTxnCd" length=" 6" />   <!--        -->
+			<Item name="PayKnd"  length=" 1" desc="Ö§¸¶·½Ê½"/>
+			<Item name="VchTyp"  length=" 3" desc="½áËãÆ¾Ö¤ÖÖÀà"/>
+			<Item name="VchNo"  length=" 8" desc="½áËãÆ¾Ö¤±àºÅ"/>
+			<Item name="UdwDat"  length=" 8" desc="Ç©·¢ÈÕÆÚ"/>
+			<Item name="BnkCd1"  length=" 5" desc="¸¶¿îÈËÐÐºÅ"/>
+			<Item name="BnkNm1"  length="36" desc="¸¶¿îÈËÐÐÃû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo1"  length="21" desc="¸¶¿îÈËÕÊºÅ"/>
+			<Item name="CclCd1"  length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="ActNm1"  length="60" desc="¸¶¿îµ¥Î»Ãû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="ActNo2"  length="32" desc="Ô­¸¶¿îÕÊºÅ"/>
+			<Item name="ActNm2"  length="60" desc="Ô­¸¶¿îÃû³Æ"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="BnkCd2"  length=" 5" desc="½ÓÊÕÐÐÐÐºÅ"/>
+			<Item name="RitChl"  length=" 1" desc="»ã¿îÏßÂ·"/>
+			<Item name="BnkNm2"  length="36" desc="½ÓÊÕÐÐÐÐÃû"/>
+			<Item name="ActNo3"  length="21" desc="×ªÈëÕÊºÅ"/>
+			<Item name="ActNm3"  length="60" desc="×ªÈë»§Ãû"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="CcyCod"  length=" 3" desc="»õ±ÒÀàÐÍ"/>
+			<Item name="TxnAmt"  length="15" expression="COBOL_TO_NORMAL($TxnAmt,15)" desc="½ð¶î"/>
+			<Item name="Pin"     length="16" desc="Ö§¸¶ÃÜÂë"/>
+			<Item name="ActNo4"  length="21" desc="¸¶·ÑÕÊºÅ"/>
+			<Item name="CclCd3"  length="12" desc="ÏúÕË±àºÅ"/>
+			<Item name="PriFlg"  length=" 1" desc="¼Ó¼±±êÖ¾"/>
+			<Item name="FeeFlg"  length=" 1" desc="ÊÕ·Ñ±êÖ¾"/>
+			<Item name="NChFlg"  length=" 1" desc="ÎÞ¶Ò»»ÊÖÐø·Ñ±êÖ¾"/>
+			<Item name="FeeCd1"  length=" 4" desc="ÊÖÐø·Ñ´úÂë"/>
+			<Item name="FeeCd2"  length=" 4" desc="ÓÊµç·Ñ´úÂë"/>
+			<Item name="Amt1"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt2"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt3"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt4"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt5"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="Amt6"    length="15" desc="ÊÖÐø·Ñ"/>
+			<Item name="PpsCod"  length=" 1" desc="ÓÃÍ¾Âë"/>
+			<Item name="Pps"     length="60" desc="ÓÃÍ¾"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="HngFlg"  length=" 1" desc="ÊÇ·ñ¹ÒÕÊ"/>
+			<Item name="ActNm4"  length="60" desc="ÊÕ¿îÈËÃû³Æ1"/>
+			<Item name="CTRL_B"  length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="InbCd"   length=" 5" desc="×Ö·ûÐÍ-5"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+
+
+	<Transaction code="171140" desc="´û¼Ç¿¨»¹¿î">
+		<Request necessary="no">
+			<AddItem name="HTxnCd" value="171140" />
+			<SwitchCode name="HTxnCd" new_name="CCSCod" tab_name="TID_CSW" col_name="TxnCod"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<Item name="CardNo" length="19" desc="¿¨ºÅ"/>
+			<Item name="EtrMod" length=" 1" value="0" desc="ÊäÈë·½Ê½"/>  <!-- 0¡¢ÊÖ¹¤  1¡¢Ë¢¿¨-->
+			<Item name="CcyCod" length=" 3" value="CNY" desc="±ÒÖÖ"/>
+			<Item name="CcyTyp" length=" 1" value=" " desc="³®»ã±êÖ¾"/>
+			<Item name="TxnAmt" length="15" desc="½ð¶î"/>
+			<Item name="AccMod" length=" 1" value="1" desc="»¹¿î·½Ê½"/>  <!-- 0¡¢ÏÖ½ð  1¡¢ÄÚ²¿ÕË-->
+			<Item name="CanAct" length="21" desc="ÏúÕÊÕËºÅ"/>
+			<Item name="CclNo"  length="12" desc="ÏúÕËºÅ"/>
+			<Item name="CshNo"  length=" 3" value="001" desc="ÏÖ½ð·ÖÎöºÅ"/>
+			<Item name="IdType" length=" 2" desc="´æ¿îÈËÖ¤¼þÖÖÀà"/>
+			<Item name="IdNo"   length="30" desc="´æ¿îÈËÖ¤¼þºÅÂë"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="CusNam" length="30" desc="´æ¿îÈËÃû³Æ"/>
+			<Item name="CTRL_B" length=" 1" fill_asc="2" necessary="no"/>
+			<Item name="Rsv"    length=" 6" desc="±£Áô×Ö¶Î"/>
+		</Request>
+		<Quote name="PfaResponse"/>
+	</Transaction>
+</Application>

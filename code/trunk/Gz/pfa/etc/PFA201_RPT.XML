@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="PFA201.log">
+  <VarDef>
+    <String alias="RptHead" pos="1"/>
+    <String alias="PfaSub"  pos="2"/>
+    <String alias="BCusId"  pos="3"/>
+    <String alias="RegDat"  pos="4"/>
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select QuoId, SubCod, SubNam, PrjCod, PrjNam, AmtTyp, DptCod, ActDat, Mon, ActNo, BCusNm,
+                       case when TxnFlg='0' then bigint(QuoAmt) when TxnFlg='1' then (-1)*bigint(QuoAmt) end QuoAmt
+                  from PfaQuoBok%s
+                 where PfaSub='%s' and BCusId='%s' and ChkDat='%s' and QuoSts in ('1','2')">
+        <FieldList>$PfaSub|$PfaSub|$BCusId|$RegDat|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type="field">
+      <Field sum="QUOAMT" sum_alias="TotQuoAmt"/>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="30" pagesum="YES">
+    <ReportHeader>
+      <Para label="01" alias="$RptHead"/>
+      <Para label="02" alias="$BCUSNM"/>
+      <Para label="03" alias="$RegDat"/>
+      <Para label="04" alias="$ACTNO"/>
+      <Para label="05" alias="$BCUSID"/>
+      <Format>
+
+
+
+                                                               #
+
+#:
+
+    ¹óµ¥Î»¡¾#¡¿µÄ²ÆÕþÊÚÈ¨Ö§¸¶¶î¶ÈÒÑ¾­²ÆÕþ¾ÖºË×¼£¬ÌØÓèÍ¨Öª¡£
+
+ÁãÓà¶îÕÊ»§ÕËºÅ£º#                                                                                                                                     µ¥Î»£ºÔª
+ÁãÓà¶îµ¥Î»±àÂë£º#
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Format>
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©Ó©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§                 Ô¤Ëã¿ÆÄ¿(¹¦ÄÜ·ÖÀà)                 ©§                      Ô¤ËãÏîÄ¿                      ©§        ©§        ©§            ©§                ©§
+©Ç©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï×Ê½ðÀ´Ô´©§Ö¸±êÀ´Ô´©§  Ö¸±ê±àÂë  ©§  ÊÚÈ¨Ö§¸¶¶î¶È  ©§
+©§  ±àÂë    ©§                Ãû³Æ                    ©§  ±àÂë    ©§                Ãû³Æ                    ©§        ©§        ©§            ©§                ©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$SUBCOD"/>
+      <Para label="02" alias="SUBSTR($SUBNAM,1,40)"/>
+      <Para label="03" alias="$PRJCOD"/>
+      <Para label="04" alias="SUBSTR($PRJNAM,1,40)"/>
+      <Para label="05" alias="$AMTTYP"/>
+      <Para label="06" alias="$DPTCOD"/>
+      <Para label="07" alias="$QUOID"/>
+      <Para label="08" alias="AMTFMT($QUOAMT)" spread="left"/>
+      <Format>
+©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§#         ©§#                                       ©§#         ©§#                                       ©§#       ©§#       ©§#           ©§               #©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTTOCAP($TOTQUOAMT)" spread="left" />
+      <Para label="02" alias="AMTFMT($TOTQUOAMT)" spread="left" />
+      <Format>
+©Ç©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ                                                ©§½ð¶î(´óÐ´)                                         #©§½ð¶î£¨Ð¡Ð´£©                                     #©§
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+
+                                                                                                                 ÒøÐÐ(Ç©ÕÂ)£º
+
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

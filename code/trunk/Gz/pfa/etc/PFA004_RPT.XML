@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡²ÆÕþµ÷ÕûÖ§¸¶Áî´«Æ± -->
+<Application dbconnect="YES" trclog="PFA004.log">
+	<VarDef>
+		<String alias="PfaSub" pos="1"/>
+		<String alias="BCusId" pos="2"/>
+		<String alias="BCusNm" pos="3"/>
+		<String alias="FCusNm" pos="4"/>
+		<String alias="AVchNo" pos="5"/>
+		<String alias="AVchCd" pos="6"/>
+		<String alias="AddCon" pos="7"/>
+		<String alias="PrtDat" pos="8"/>
+		<String alias="TlrId"  pos="9"/>
+    <String alias="NodNo"  pos="10"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="TVCHTP">
+			<Convert value="0" msg="Õý³£"/>
+			<Convert value="1" msg="ÏÞ¶î"/>
+			<Convert value="2" msg="µ÷Õû"/>
+			<DEFAULT msg="Òì³£Æ¾Ö¤£¬ÇëÁªÏµ¼¼ÊõÈËÔ±"/>	
+		</Item>
+		<Item alias="OIFLAG">
+			<Convert value="O" msg="Ö§³ö"/>
+			<Convert value="R" msg="ÍË»Ø"/>
+			<Convert value="I" msg="Ö÷¶¯ÊÕ¿î"/>
+			<DEFAULT msg="Òì³££¬ÇëÁªÏµ¼¼ÊõÈËÔ±"/>	
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select VchDat, AVchCd,QuoId,TVchTp,OIFlag,PayAct,PayNam,PayBNm,PyeAct,PyeNam,PyeBNm,DtlAmt,SubCod,EConTp,PrjCod,DptCod
+									from PfaVchDtl001
+								 where PfaSub='%s' and Year=substr('%s',1,4) and BCusId='%s' and DtlSts='U'
+									 and ( AVchNo='%s' or '%s'='' ) and ( AVchCd='%s' or '%s'='' ) and %s">
+				<FieldList>$PfaSub|$PrtDat|$BCusId|$AVchNo|$AVchNo|$AVchCd|$AVchCd|$AddCon|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine pagerows="2">
+		<Iterative line="1">
+			<Para label="01" alias="$NodNo"/>
+			<Para label="02" alias="$PrtDat"/>
+			<Para label="03" alias="$VCHDAT"/>
+			<Para label="04" alias="$AVCHCD"/>
+			<Para label="05" alias="$QUOID"/>
+			<Para label="06" alias="$TVCHTP" convert="yes"/>
+			<Para label="07" alias="$OIFLAG" convert="yes"/>
+			<Para label="08" alias="SUBSTR($PAYNAM,1,40)"/>
+			<Para label="09" alias="SUBSTR($PYENAM,1,40)"/>
+			<Para label="10" alias="$PAYACT"/>
+			<Para label="11" alias="$PYEACT"/>
+			<Para label="12" alias="SUBSTR($PAYBNM,1,40)"/>
+			<Para label="13" alias="SUBSTR($PYEBNM,1,40)"/>
+			<Para label="14" alias="AMTTOCAP($DTLAMT)"/>
+			<Para label="15" alias="AMTFMT($DTLAMT)"/>
+			<Para label="16" alias="$BCUSNM"/>
+			<Para label="17" alias="$FCUSNM"/>
+			<Para label="18" alias="$DTLSMR"/>
+			<Para label="19" alias="$SUBCOD"/>
+			<Para label="20" alias="$ECONTP"/>
+			<Para label="21" alias="$PRJCOD"/>
+			<Para label="22" alias="$DPTCOD"/>
+			<Para label="23" alias="$TlrId"/>
+			<Format>
+
+
+
+                                       ¹ã¶«Ê¡²ÆÕþÊÚÈ¨Ö§¸¶Æ¾Ö¤
+
+ ÍøµãºÅ£º#                                                                            ´òÓ¡ÈÕÆÚ£º#
+©³©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§Ö§¸¶ÁîÈÕÆÚ©§#                                       ©§ÊÚÈ¨Æ¾Ö¤ºÅ©§#                                       ©§
+©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©Ï
+©§¼Æ»®  ±àÂë©§#                                       ©§Æ¾Ö¤  ÐÔÖÊ©§#             ©§ÊÕÖ§·½Ïò©§#             ©§
+©Ç©¥©×©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©×©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©Ï
+©§¸¶©§È«  ³Æ©§#                                       ©§ÊÕ©§È«  ³Æ©§#                                       ©§
+©§  ©Ç©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï  ©Ç©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§¿î©§ÕË  ºÅ©§#                                       ©§¿î©§ÕË  ºÅ©§#                                       ©§
+©§  ©Ç©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï  ©Ç©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ÈË©§¿ª»§ÐÐ©§#                                       ©§ÈË©§¿ª»§ÐÐ©§#                                       ©§
+©Ç©¥©Û©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©Û©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§½ð¶î  ´óÐ´©§#                                       ©§½ð¶î  Ð¡Ð´©§£¤#                                     ©§
+©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§»ù²ã  µ¥Î»©§#                                       ©§Ò»¼¶  µ¥Î»©§#                                       ©§
+©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§          ©§#                                       ©§¿ÆÄ¿  ±àÂë©§#                                       ©§
+©§          ©§                                        ©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§          ©§                                        ©§¾­¼Ã  ·ÖÀà©§#                                       ©§
+©§ÓÃ      Í¾©§                                        ©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§          ©§                                        ©§ÏîÄ¿  ±àÂë©§#                                       ©§
+©§          ©§                                        ©Ç©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§          ©§                                        ©§ÒµÎñ  ´¦ÊÒ©§#                                       ©§
+©»©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+            »á¼ÆÖ÷¹Ü£º            È·ÈÏ£º            ¸´ºË£º            µÇ¼Ç£º            ÖÆÆ±£º#
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

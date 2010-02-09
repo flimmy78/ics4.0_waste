@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application dbconnect="YES" trclog="PFT101.log">
+  <VarDef>
+    <String alias="DatFil" pos="1"/>
+  </VarDef>
+  <DataSource object="file" filename="$DatFil"/>
+  <FormatDefine pagerows="40" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$BnkDat"/>
+      <Para label="02" alias="$TotNum"/>
+      <Para label="03" alias="$ClrDat"/>
+      <Para label="04" alias="$ErrNum"/>
+      <Para label="05" alias="$BRtnCd"/>
+      <Format>
+                                          ÍË¿âÍË»Ø´íÎóÇåµ¥
+  ÒøÐÐÌá½»ÈÕÆÚ£º#                                                                   ×Ü±ÊÊý£º#
+  ETS ÇåËãÈÕÆÚ£º#                                                                 ´íÎó±ÊÊý£º#
+  ÅúÁ¿°ü·µ»ØÂë£º#
+©³©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©·
+©§ ÊÕÐÐÐÐÐÐºÅ ©§ÒøÐÐ´¦ÀíÈÕÆÚ©§ ÒøÐÐ½»Ò×Ê¶±ðºÅ ©§         ÕËºÅ         ©§         ½ð¶î         ©§´íÎó´úÂë©§
+©Ç©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$RcvBNo"/>
+      <Para label="02" alias="$BokDat"/>
+      <Para label="03" alias="$BTxnId"/>
+      <Para label="04" alias="$RcvAct"/>
+      <Para label="05" alias="AMTFMT($TxnAmt)" spread="left"/>
+      <Para label="06" alias="$TRtnCd"/>
+      <Format>
+©§#           ©§#           ©§#               ©§#                     ©§                     #©§#       ©§
+      </Format> 
+    </Iterative>
+    <TableFooter>
+      <Para label="01" alias="$TlrId"/>
+      <Para label="02" alias="$ActDat"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¿
+  ´òÓ¡¹ñÔ±£º#                                                                    ´òÓ¡ÈÕÆÚ£º#                                                                                                                           ´úÀíÒøÐÐ£¨¸ÇÕÂ£©
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

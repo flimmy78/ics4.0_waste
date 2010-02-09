@@ -1,0 +1,180 @@
+# This file contains rules which are shared between multiple Makefiles.
+# database for DB2
+
+# 操作系统
+OS_SYSTEM       = _AIX_SYSTEM_
+
+# 数据模型
+DATA_MODE	= 64
+
+# 开发环境根目录
+TOPDIR		= /app/ics/src
+# 开发环境私有工作目录，
+WORKDIR		= $(TOPDIR)/$(MODULE)
+# 发布版本目录
+PRODUCTDIR = ${TOPDIR}/ICS$(OS_SYSTEM)$(DATA_MODE)
+
+# 开发环境公共头文件存放路径
+PUBINCDIR	= $(TOPDIR)/public/def
+# 开发环境公共静态库存放路径
+PUBLIBDIR	= $(TOPDIR)/public/lib$(DATA_MODE)
+# 开发环境公共执行程序存放路径
+PUBBINDIR	= $(TOPDIR)/public/bin
+# 开发环境公共配置文件存放路径
+# PUBETCDIR	= $(TOPDIR)/public/etc
+
+# 开发环境私有头文件存放路径
+PRIINCDIR	= $(WORKDIR)/def
+# 开发环境私有静态库存放路径
+PRILIBDIR	= $(WORKDIR)/lib
+# 开发环境私有动态库存放路径
+PRIDLLDIR	= $(WORKDIR)/dll
+# 开发环境私有执行程序存放路径
+PRIBINDIR	= $(WORKDIR)/bin
+# 开发环境私有配置文件存放路径
+PRIETCDIR	= $(WORKDIR)/etc
+
+# 用户自定义头文件存放路径
+USERINCDIR	= $(WORKDIR)/def
+# 用户自定义静态库存放路径
+# USERLIBDIR	= $(WORKDIR)/lib
+# 用户自定义动态库存放路径
+# USERDLLDIR	= $(WORKDIR)/dll
+# 用户自定义执行程序存放路径
+# USERBINDIR	= $(WORKDIR)/bin
+# 用户自定义配置文件存放路径
+# USERETCDIR	= $(WORKDIR)/etc
+
+# 指定DB2头文件搜索路径
+DB2INCDIR 	= -I/app/ics/db2iics/sqllib/include
+# 指定DB2库文件搜索路径和链接库
+DB2LIBDIR 	= -L/app/ics/db2iics/sqllib/lib$(DATA_MODE)
+DB2LIBS 	= -ldb2 
+DB2HOME		= /app/ics/db2iics
+
+# 指定SNA头文件搜索路径
+SNAINCDIR 	= -I/usr/include/sna
+# 指定SNA库文件搜索路径和链接库
+SNALIBDIR	= -L/usr/lib/sna
+SNALIBS		= 
+
+# 指定MQ头文件搜索路径
+MQINCDIR 	= -I/usr/mqm/inc
+# 指定MQ库文件搜索路径和链接库
+MQLIBDIR	= -L/usr/mqm/lib$(DATA_MODE)
+MQLIBS		= -lmqm_r 
+
+# DB2预编译器
+HISUN_CPRE	= $(PUBBINDIR)/hisunprep_db2
+DB2CPRE		= $(PUBBINDIR)/embprep
+
+# C/C++ 编译器
+CC			= xlc_r -q$(DATA_MODE) 
+AR			= ar -X$(DATA_MODE) 
+
+# 生成export文件
+HISUN_EXPMAKE	= $(PUBBINDIR)/hisunMakeExport -p -100 -bglink:/lib/glink.o -bM:SRE
+HISUN_COMBINED	= $(PUBBINDIR)/hisunCombinedExportFile
+LIBCC       = /usr/vacpp/bin/makeC++SharedLib_r -p -100 -bglink:/lib/glink.o -bM:SRE
+VERSION_TMP_LIB	= _get_version.o
+MakeVersion	= sh $(PUBBINDIR)/makeVersion.sh
+
+DB2CFG		= db2front 
+
+# 指定公共头文件路径
+PUBINCL 	= -I$(PUBINCDIR) -D$(OS_SYSTEM)
+# 指定公共库文件路径和链接库
+#PUBLIBS 	= -L${PUBLIBDIR} -lhiqpair -lhietf -lhixml -lexpat -lhibase -lhidll -lhithd -lhimempool -lhidsm -lhiicspub -liconv -lhilgr
+PUBLIBS		= -lhiqpair -lhidba -lhimmg -lhietf -lhixml -lhilgr -lhidll -lhithd -lhimempool \
+		   -lhidsm -lhiicspub -lhidecrypt -lexpat -lhibase -liconv -lpthread -lm
+
+# 指定私有头文件路径
+PRIINCL		= -I$(PRIINCDIR)
+# 指定私有库文件路径和链接库
+PRILIBS		= -L$(PRILIBDIR)
+
+# 指定用户自定义头文件路径
+USERINCL	= -I$(USERINCDIR)
+
+# 指定所有头文件路径
+ALLINCL		= $(USERINCL) $(PRIINCL) $(PUBINCL) $(DB2INCL) 
+# 指定所有库文件路径和链接库
+ALLLIBS		= $(PRILIBS) $(USERLIBS) -L$(PUBLIBDIR) $(PUBLIBS) $(MQLIBDIR)
+
+# 用户自定义参数
+#USERFLAG	= -DXXX
+# C/C++ 多线程编译参数
+CTFLAGS		= -D_THREAD_SAFE -qcpluscmt -g $(USERFLAG)
+# C/C++ 编译参数和头文件路径
+CCFLAGS 	= $(CTFLAGS) -c $(ALLINCL) #-qinfo=pro
+# C/C++ 数据库编译库，用户编译可执行程序时使用
+#CPFLAGS 	= $(DB2INCL) $(DB2LIBS)
+# C/C++ 可执行程序编译参数
+EXFLAGS		= $(CTFLAGS) $(ALLINCL) $(ALLLIBS)
+# cpre 编译参数
+CPREFLAGS	= $(CPREINCL) 
+# 动态库编译参数
+# LIBCCFLAGS 	= $(SNAFLAGS) -g $(ALLLIBS) 
+# LIBCCFLAGS 	= $(SNAFLAGS) -g $(ALLLIBS) $(DB2LIBS) -qmkshrobj -G 
+LIBCCFLAGS 	= $(SNAFLAGS) $(ALLLIBS) -qmkshrobj -G 
+
+.SUFFIXES: .cp .c .o .so .a
+
+.cp.so:
+	$(MakeVersion) $*.so $(DATA_MODE) $(OS_SYSTEM)
+	test -d $(PRIDLLDIR) || mkdir -p $(PRIDLLDIR)
+	$(HISUN_CPRE) $*.cp $*.sqc $(ALLINCL)
+	$(DB2CPRE) $* $(DB2CFG)
+	test -d ../bnd/ || mkdir ../bnd/
+	mv $*.bnd ../bnd/
+#	rm $*.sqc
+	$(CC) $(CCFLAGS) $*.c
+	rm $*.c
+	echo $(LIBCCFLAGS)
+#	$(HISUN_EXPMAKE) $(LIBCCFLAGS) -o $@ $*.o -e $*.exp
+#	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $*.o $(VERSION_TMP_LIB) -bE:$*.exp
+	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $*.o $(VERSION_TMP_LIB)
+#	rm $*.exp
+
+.cp.o:
+	$(HISUN_CPRE) $*.cp $*.sqc $(ALLINCL)
+	$(DB2CPRE) $* $(DB2CFG)
+	test -d ../bnd/ || mkdir ../bnd/
+	mv $*.bnd ../bnd/
+#	rm $*.sqc
+	$(CC) $(CCFLAGS) $*.c
+	rm $*.c
+#	$(HISUN_EXPMAKE) $(LIBCCFLAGS) -o $@ $*.o -e $*.exp
+
+.c.so:
+	$(MakeVersion) $*.so $(DATA_MODE) $(OS_SYSTEM)
+	test -d $(PRIDLLDIR) || mkdir -p $(PRIDLLDIR)
+	$(CC) $(CCFLAGS) $<
+#	$(HISUN_EXPMAKE) $(LIBCCFLAGS) -o $@ $*.o -e $*.exp
+#	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $*.o $(VERSION_TMP_LIB) -bE:$*.exp
+	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $*.o $(VERSION_TMP_LIB)
+	rm $*.o
+#	rm $*.exp
+
+.c.o:
+	$(CC) $(CCFLAGS) $< -o $@
+#	$(HISUN_EXPMAKE) $(LIBCCFLAGS) -o $@ $*.o -e $*.exp
+
+.o.a:
+	test -d $(PRILIBDIR) || mkdir -p $(PRILIBDIR)
+	$(AR) -rv $(PRILIBDIR)/$@ $?
+
+.o.so:
+	$(MakeVersion) $*.so $(DATA_MODE) $(OS_SYSTEM)
+	test -d $(PRIDLLDIR) || mkdir -p $(PRIDLLDIR)
+#	$(LIBCC) $(LIBCCFLAGS) $(DB2INCL) -o $@ $?
+#	$(HISUN_COMBINED) tmpxxx.exp $?
+#	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? -bE:tmpxxx.exp
+	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? $(VERSION_TMP_LIB)
+#	rm tmpxxx.exp
+
+.c.a:
+	$(CC) $(CCFLAGS) $< -o $*.o
+	test -d $(PRILIBDIR) || mkdir -p $(PRILIBDIR)
+	$(AR) -rv $(PRILIBDIR)/$@ $*.o
+

@@ -1,0 +1,22 @@
+DEVDIR   = /app/ics/src
+MODULE    = Gz/cbs
+
+include $(RULES_MAKEFILE)
+
+USERLIBS    =   -bloadmap:xx -lbptrandata -lhibase -lbponlbs -lhidbt -lbpdb -lhipex -lhidbpool -lhicrc -lhirdo -lhisaf -lhidbbase -lhiafp -lhimon
+USERFLAG    = -D_HI_VARARGS -DDEBUG
+
+DLLNAME1    = pre_cbs.so
+OBJNAME1    = pre_cbs.cp
+
+ALL     = $(DLLNAME1)
+
+all: $(ALL) install clean
+
+$(DLLNAME1): $(OBJNAME1)
+
+install:
+	cp -f ../dll/pre_cbs.so /app/ics/dll
+
+clean:
+	-rm *.o pre_cba.c  xx pre_cbs.exp pre_cbs.sqc

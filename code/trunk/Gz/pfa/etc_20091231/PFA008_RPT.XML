@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐ¹«Îñ¿¨»¹¿îÇåµ¥ -->
+<Application dbconnect="YES" trclog="PFA008.log">
+	<VarDef>
+		<String alias="PfaSub" pos="1"/>
+		<String alias="Year"   pos="2"/>
+		<String alias="AVchCd" pos="3"/>
+		<String alias="PrtNod" pos="4"/>
+		<String alias="PrtTlr" pos="5"/>
+		<String alias="PrtDat" pos="6"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="DTLSTS">
+			<Convert value="U" msg="³õÊ¼"/>
+			<Convert value="0" msg="·¢ËÍ"/>
+			<Convert value="1" msg="È·ÈÏ"/>
+			<Convert value="2" msg="±¨Ïú"/>
+			<Convert value="S" msg="³É¹¦"/>
+			<Convert value="F" msg="Ê§°Ü"/>
+			<DEFAULT msg="Î´Öª"/>	
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select DtlSts, CardNo, CardNm, TxnDat,BokDat, DtlAmt, BokAmt, MerNam	from PfaCrdDtl
+								where PfaSub='%s' and Year='%s' and AVchCd='%s' order by DtlSts, CardNo">
+				<FieldList>$PfaSub|$Year|$AVchCd|</FieldList>
+			</Sql>
+		</Iterative>
+		<SubTotal type="field" groupby="DTLSTS|">
+			<Field fmtseq="1" field="DTLSTS">
+				<Sum sum="DTLAMT" sum_alias="SubDtlAmt" count="SubNum"/>
+				<Sum sum="BOKAMT" sum_alias="SubBokAmt"/>
+			</Field>
+		</SubTotal>
+		<Summed type="field">
+			<Field sum="DTLAMT" sum_alias="TotDtlAmt" count="TotNum"/>
+			<Field sum="BOKAMT" sum_alias="TotBokAmt"/>
+		</Summed>
+	</DataSource>
+
+	<FormatDefine pagerows="45" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$AVchCd"/>
+			<Para label="02" alias="$PAGESUM"/>
+			<Para label="03" alias="$PAGENUM"/>
+			<Format>
+                                                                                           ½»Í¨ÒøÐÐ¹«Îñ¿¨»¹¿îÇåµ¥ 
+                                                                     ==========================================================
+  ÊÚÈ¨Ö§¸¶ºÅ£º#                                                                                                                                       ¹² # Ò³     µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©·
+©§     ¹«ÎñÔ±¿¨ºÅ     ©§ ³Ö¿¨ÈËÐÕÃû ©§Ïû·ÑÈÕÆÚ©§      Ïû·Ñ½ð¶î      ©§                        Ïû·ÑÉÌ¼ÒÃû³Æ                        ©§±¨ÏúÈÕÆÚ©§      ±¨Ïú½ð¶î      ©§±¨Ïú×´Ì¬©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$CARDNO"/>
+			<Para label="02" alias="$CARDNM"/>
+			<Para label="03" alias="$TXNDAT"/>
+			<Para label="04" alias="AMTFMT($DTLAMT)" spread="left"/>
+			<Para label="05" alias="$MERNAM"/>
+			<Para label="06" alias="$BOKDAT"/>
+			<Para label="07" alias="AMTFMT($BOKAMT)" spread="left"/>
+			<Para label="08" alias="$DTLSTS" convert="yes"/>
+			<Format>
+©§#                   ©§#           ©§#       ©§                   #©§#                                                           ©§#       ©§                   #©§#       ©§
+			</Format>
+		</Iterative>
+		<SubTotal fmtseq="1">
+			<Para label="01" alias="$SubNum" spread="left"/>
+			<Para label="02" alias="AMTFMT($SubDtlAmt)" spread="left"/>
+			<Para label="03" alias="AMTFMT($SubBokAmt)" spread="left"/>
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+©§Ð¡¼Æ£º      	                   ±ÊÊý£º    #©§                   #©§                                                                      ©§                   #©§        ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+			</Format>
+		</SubTotal>
+		<Summed>
+			<Para label="01" alias="$TotNum" spread="left"/>
+			<Para label="02" alias="AMTFMT($TotDtlAmt)" spread="left"/>
+			<Para label="03" alias="AMTFMT($TotBokAmt)" spread="left"/>
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º      	                   ±ÊÊý£º    #©§                   #©§                                                                      ©§                   #©§        ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©Ï
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Para label="01" alias="$PrtNod"/>
+			<Para label="02" alias="$PrtTlr"/>
+			<Para label="03" alias="$PrtDat"/>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¿
+  ´òÓ¡Íøµã£º#                                                            ´òÓ¡¹ñÔ±ºÅ£º#                                                            ´òÓ¡ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

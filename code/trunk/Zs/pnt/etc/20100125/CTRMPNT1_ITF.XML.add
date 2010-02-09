@@ -1,0 +1,429 @@
+20,31d19
+<    <Table name="ZS_TCrpCd" file="etc/PNT_CSW.XML">
+<       <Column name="pTCrpCd" sort="no"/>
+<       <Column name="TCrpCd" sort="no"/>
+<     </Table>
+< 		<Table name="ZS_BankCd" file="etc/PNT_CSW.XML">
+<       <Column name="pBankCd" sort="no"/>
+<       <Column name="BankCd" sort="no"/>
+<     </Table>
+< 		<Table name="ZS_CAgtNo" file="etc/PNT_CSW.XML">
+<       <Column name="pCAgtNo" sort="no"/>
+<       <Column name="CAgtNo" sort="no"/>
+<     </Table>
+33d20
+< 		
+124c111
+<   <Transaction service="461518" code="461518" timeout="30" log_switch='1' desc="非税系统问题账务打印">
+---
+>   <Transaction service="461518" code="461518" timeout="30" log_switch='0' desc="非税系统问题账务打印">
+182,590d168
+<   <Transaction service="461561" code="461561" timeout="30" log_switch='1' desc="非税费用缴纳查询">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="pTCrpCd" length="20" expression="DELSPACE($pTCrpCd,both)" desc="执收单位编码"/>
+< 			<SwitchCode name="pTCrpCd" new_name="TCrpCd"  tab_name="ZS_TCrpCd"  col_name="pTCrpCd"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="CrcCod" length=" 5" expression="DELSPACE($CrcCod,both)" desc="号码校验码"/>
+< 			<AddItem name="pBankCd" length="9"  expression="DELSPACE($pTCrpCd,both)" desc="银行编号"/>
+< 			<SwitchCode name="pBankCd" new_name="BankCd"  tab_name="ZS_BankCd"  col_name="pBankCd"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C61"/>	
+< 						<Item name="RtnCod" length="3" desc="第三方返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 						<If condition="IS_EQUAL_STRING($RtnCod,100)">
+< 							<Item name="TCrpCd" length="20" desc="执收单位编码"/>
+< 							<Item name="TVchId" length="50" desc="缴款通知书号码"/>
+< 							<Item name="TBilTp" length="6" desc="票据类型编码"/>
+< 							<Item name="BilAmt" length="16" expression="MUL($BilAmt,100)" desc="应收总金额"/>
+< 							<Item name="PenAmt" length="16" expression="MUL($PenAmt,100)" desc="应收总滞纳金"/>
+< 							<Item name="BankCd" length="9" desc="银行编码"/>
+< 						</If>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<    <Transaction service="461562" code="461562" timeout="30" log_switch='1' desc="非税缴纳查询票据号">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C62"/>	
+< 							<Item name="TBilNo" length="20" desc="票据号码"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461563" code="461563" timeout="30" log_switch='1' desc="非税费用第三方缴费">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 			<Item name="TBilNo" length="20" expression="DELSPACE($TBilNo,both)" desc="票据号码"/>
+< 			<Item name="BilAmt" length="16" expression="AMTSIMPLEFMT($BilAmt)" desc="应收总金额"/>
+< 			<Item name="FulCrc" length="5"  expression="DELSPACE($FulCrc,both)" desc="全书校验码"/>
+< 			<Item name="PenAmt" length="16" expression="AMTSIMPLEFMT($PenAmt)" desc="应收总滞纳金"/>
+< 			<Item name="ActTyp" length="1" expression="DELSPACE($ActTyp,both)" desc="缴费方式"/>
+< 			<Item name="BankCd" length="9" desc="银行编码"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C63"/>	
+< 						<Item name="RtnCod" length="3" desc="第三方返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461564" code="461564" timeout="30" log_switch='1' desc="非税费用缴纳">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 			<Item name="TBilNo" length="20" expression="DELSPACE($TBilNo,both)" desc="票据号码"/>
+< 			<Item name="CrcCod" length=" 5" expression="DELSPACE($CrcCod,both)" desc="号码校验码"/>
+< 			<Item name="FulCrc" length="5" expression="DELSPACE($FulCrc,both)" desc="全书校验码"/>
+< 			<Item name="BilAmt" length="16" expression="DELSPACE($BilAmt,both)" desc="应收总金额"/>
+< 			<Item name="PenAmt" length="16" expression="DELSPACE($PenAmt,both)" desc="应收总滞纳金"/>
+< 			<Item name="ActTyp" length="1" expression="DELSPACE($ActTyp,both)" desc="缴费方式"/>
+< 			<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)" desc="记帐帐号"/>
+< 			<Item name="BankCd" length="9" desc="银行编码"/>
+< 			<AddItem name="pCAgtNo" length="20" expression="DELSPACE($TCrpCd,both)" desc="单位编号转扣收帐号"/>
+< 			<SwitchCode name="pCAgtNo" new_name="CAgtNo"  tab_name="ZS_CAgtNo"  col_name="pCAgtNo"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C64"/>	
+< 						<Item name="RtnCod" length="3" desc="主机扣帐返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 						<Item name="TCrpCd" length="20" desc="执收单位编码"/>
+< 						<Item name="TVchId" length="50" desc="缴款通知书号码"/>
+< 						<Item name="TBilTp" length="6" desc="票据类型编码"/>
+< 						<Item name="TBilNo" length="20" desc="票据号码"/>
+< 						<Item name="CrcCod" length=" 5" desc="号码校验码"/>
+< 						<Item name="FulCrc" length="5"  desc="全书校验码"/>
+< 						<Item name="BilAmt" length="16"  expression="AMTSIMPLEFMT($BilAmt)" desc="应收总金额"/>
+< 						<Item name="PenAmt" length="16"  expression="AMTSIMPLEFMT($PenAmt)" desc="应收总滞纳金"/>
+< 						<Item name="ActTyp" length="1"  desc="缴费方式"/>
+< 						<Item name="ActNo"  length="21" desc="记帐帐号"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461565" code="461565" timeout="30" log_switch='1' desc="非税费用缴纳确认">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 			<Item name="TBilNo" length="20" expression="DELSPACE($TBilNo,both)" desc="票据号码"/>
+< 			<Item name="CrcCod" length=" 5" expression="DELSPACE($CrcCod,both)" desc="号码校验码"/>
+< 			<Item name="FulCrc" length="5" expression="DELSPACE($FulCrc,both)" desc="全书校验码"/>
+< 			<Item name="BilAmt" length="16" expression="AMTSIMPLEFMT($BilAmt)" desc="应收总金额"/>
+< 			<Item name="PenAmt" length="16" expression="AMTSIMPLEFMT($PenAmt)" desc="应收总滞纳金"/>
+< 			<Item name="ActTyp" length="1" expression="DELSPACE($ActTyp,both)" desc="缴费方式"/>
+< 			<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)" desc="记帐帐号"/>
+< 			<Item name="BankCd" length="9" desc="银行编码"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C64"/>	
+< 						<Item name="RtnCod" length="3" desc="第三方返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 						<If condition="IS_EQUAL_STRING($RtnCod,100)">
+< 							<Item name="TCrpCd" length="20" desc="执收单位编码"/>
+< 							<Item name="TVchId" length="50" desc="缴款通知书号码"/>
+< 							<Item name="TBilTp" length="6" desc="票据类型编码"/>
+< 							<Item name="TBilNo" length="20" desc="票据号码"/>
+< 							<Item name="CrcCod" length=" 5" desc="号码校验码"/>
+< 							<Item name="FulCrc" length="5"  desc="全书校验码"/>
+< 							<Item name="BilAmt" length="16"  desc="应收总金额"/>
+< 							<Item name="PenAmt" length="16"  desc="应收总滞纳金"/>
+< 							<Item name="ActTyp" length="1"  desc="缴费方式"/>
+< 							<Item name="ActNo"  length="21" desc="记帐帐号"/>
+< 						</If>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461566" code="461566" timeout="30" log_switch='1' desc="柜面非税费用第三方冲正">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 			<Item name="TBilNo" length="20" expression="DELSPACE($TBilNo,both)" desc="票据号码"/>
+< 			<AddItem name="TCanCel"  length="100" value="主机记帐失败需要冲正" desc="冲正原因"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C66"/>	
+< 						<Item name="RtnCod" length="3" desc="主机扣帐返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461567" code="461567" timeout="30" log_switch='1' desc="非税费用缴纳">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C67"/>	
+< 						<Item name="RtnCod" length="3" desc="主机扣帐返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461568" code="461568" timeout="30" log_switch='1' desc="非税费用缴纳">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="pTCrpCd" length="20" expression="DELSPACE($pTCrpCd,both)" desc="执收单位编码"/>
+< 			<SwitchCode name="pTCrpCd" new_name="TCrpCd"  tab_name="ZS_TCrpCd"  col_name="pTCrpCd"/>
+<       <Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+<       <Item name="BilAmt" length="16" expression="DELSPACE($BilAmt,both)" desc="应收总金额"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C68"/>	
+< 						<Item name="CrcCod" length=" 5" desc="号码校验码"/>
+< 						<Item name="FulCrc" length="5"  desc="全书校验码"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461574" code="461574" timeout="30" log_switch='1' desc="非税费用缴纳">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="TCrpCd" length="20" expression="DELSPACE($TCrpCd,both)" desc="执收单位编码"/>
+< 			<Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<Item name="TBilTp" length="6" expression="DELSPACE($TBilTp,both)" desc="票据类型编码"/>
+< 			<Item name="TBilNo" length="20" expression="DELSPACE($TBilNo,both)" desc="票据号码"/>
+< 			<Item name="CrcCod" length=" 5" expression="DELSPACE($CrcCod,both)" desc="号码校验码"/>
+< 			<Item name="FulCrc" length="5" expression="DELSPACE($FulCrc,both)" desc="全书校验码"/>
+< 			<Item name="BilAmt" length="16" expression="DELSPACE($BilAmt,both)" desc="应收总金额"/>
+< 			<Item name="PenAmt" length="16" expression="DELSPACE($PenAmt,both)" desc="应收总滞纳金"/>
+< 			<Item name="ActTyp" length="1" expression="DELSPACE($ActTyp,both)" desc="缴费方式"/>
+< 			<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)" desc="记帐帐号"/>
+< 			<Item name="BankCd" length="9" desc="银行编码"/>
+< 			<AddItem name="pCAgtNo" length="20" expression="DELSPACE($TCrpCd,both)" desc="单位编号转扣收帐号"/>
+< 			<SwitchCode name="pCAgtNo"  new_name="CAgtNo"  tab_name="ZS_CAgtNo"  col_name="pCAgtNo"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C64"/>	
+< 						<Item name="RtnCod" length="3" desc="主机扣帐返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 						<Item name="TCrpCd" length="20" desc="执收单位编码"/>
+< 						<Item name="TVchId" length="50" desc="缴款通知书号码"/>
+< 						<Item name="TBilTp" length="6" desc="票据类型编码"/>
+< 						<Item name="TBilNo" length="20" desc="票据号码"/>
+< 						<Item name="CrcCod" length=" 5" desc="号码校验码"/>
+< 						<Item name="FulCrc" length="5"  desc="全书校验码"/>
+< 						<Item name="BilAmt" length="16" expression="AMTSIMPLEFMT($BilAmt)"  desc="应收总金额"/>
+< 						<Item name="PenAmt" length="16" expression="AMTSIMPLEFMT($PenAmt)"  desc="应收总滞纳金"/>
+< 						<Item name="ActTyp" length="1"  desc="缴费方式"/>
+< 						<Item name="ActNo"  length="21" desc="记帐帐号"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>
+< 
+<   <Transaction service="461588" code="461588" timeout="30" log_switch='1' desc="柜面缴费查询">
+< 		<Request>
+< 			<Include file="etc/TRMTIA_IIT.XML"/>
+< 			<Item name="pTCrpCd" length="20" expression="DELSPACE($pTCrpCd,both)" desc="执收单位编码"/>
+< 			<SwitchCode name="pTCrpCd" new_name="TCrpCd"  tab_name="ZS_TCrpCd"  col_name="pTCrpCd"/>
+<       <Item name="TVchId" length="50" expression="DELSPACE($TVchId,both)" desc="缴款通知书号码"/>
+< 			<AddItem name="pBankCd" length="9"  expression="DELSPACE($pTCrpCd,both)" desc="银行编号"/>
+< 			<SwitchCode name="pBankCd" new_name="BankCd"  tab_name="ZS_BankCd"  col_name="pBankCd"/>
+< 		</Request>
+< 		<Response necessary="no">
+< 			<Include file="etc/TRMTOA_IIT.XML"/>
+< 			<Switch expression="$MsgTyp">
+< 				<Case value="N">
+< 					<PackItem name="TmpDat">
+< 						<Item name="ApFmt"  length="5"  value="46C88"/>	
+< 						<Item name="RtnCod" length="3" desc="主机扣帐返回码"/>
+< 						<Item name="RspMsg" length="60" desc="返回码中文"/>
+< 						<Item name="TCrpCd" length="20" desc="执收单位编码"/>
+< 						<Item name="TVchId" length="50" desc="缴款通知书号码"/>
+< 						<Item name="TBilTp" length="6" desc="票据类型编码"/>
+< 						<Item name="TBilNo" length="20" desc="票据号码"/>
+< 						<Item name="FulCrc" length="5"  desc="全书校验码"/>
+< 						<Item name="BilAmt" length="16" desc="应收总金额"/>
+< 						<Item name="PenAmt" length="16" desc="应收总滞纳金"/>
+< 						<Item name="ActTyp" length="1"  desc="缴费方式"/>
+< 						<Item name="ActNo"  length="21" desc="记帐帐号"/>
+< 						<Item name="TTxnSt"  length="1" desc="第三方交易状态"/>
+< 						<Item name="TxnSts"  length="1" desc="交易状态"/>
+< 						<Item name="HTxnSt"  length="1" desc="主机交易状态"/>
+< 					</PackItem>
+< 					<Item name="TmpDat" head_len="4" include_len="yes"/>
+< 					<Break/>
+< 				</Case>
+< 				<Case value="W"/>
+< 				<Case value="E">
+<           <Include file="etc/ERRFMT_IIT.XML"/>
+<           <Break/>
+<         </Case>				
+< 				<Case value="A">
+< 					<Item name="BillText" deli_asc="-1"/>
+< 					<Break/>
+< 				</Case>
+< 			</Switch>
+< 		</Response>
+< 	</Transaction>

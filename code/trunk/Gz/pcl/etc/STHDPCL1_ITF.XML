@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Application name="PCL" timeout='120'>
+  <Transaction code="462323" log_switch="1" desc="¼äÁªPOSÎÄ¼þ½ÓÊÕ">
+    <Request>
+      <Item name="PclCod" length=" 4" value="ABCD" desc="´¦Àí´úÂë"/>
+      <Item name="ClrDat" length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <Item name="LstFNm" length="20" desc="ÉÌ»§ºÅÎÄ¼þÃû"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="RspMsg" length="60" expression="TRIM($RspMsg,all)" desc="´¦ÀíÊ§°ÜÔ­Òò"/>
+      <Item name="DatFNm" length="20" expression="TRIM($DatFNm,all)" desc="·µ»ØÃ÷Ï¸ÎÄ¼þÃû"/>
+      <Item name="TotNum" length=" 6" expression="ADDCHAR(TRIM($TotNum,all),6,0,1)" desc="×Ü±ÊÊý"/>
+      <Item name="TotAmt" length="15" expression="ADDCHAR(TRIM($TotAmt,all),15,0,1)" desc="×Ü½ð¶î"/>
+    </Response>
+  </Transaction>
+</Application>

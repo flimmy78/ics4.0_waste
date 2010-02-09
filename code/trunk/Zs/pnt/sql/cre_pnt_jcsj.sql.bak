@@ -1,0 +1,243 @@
+drop table PntSfxm;
+drop table Pntdwxx;
+drop table PntDwxm;
+drop table PntPjlx;
+drop table PntPjff;
+drop table PntXmpj;
+drop table PntQyxx;
+drop table PntPjNum;
+
+drop table PntSfxmtmp;
+drop table Pntdwxxtmp;
+drop table PntDwxmtmp;
+drop table PntPjlxtmp;
+drop table PntPjfftmp;
+drop table PntXmpjtmp;
+drop table PntQyxxtmp;
+
+--收费项目信息
+create table PntSfxm
+(
+	BrNo          char(6)    not null,
+--分行号
+	PrjCod        char(14)   not null,
+--收费项目编码
+  PrjNam        char(200)  not null,
+--收费项目名称
+  SubCod        char(9)    default '',
+--预算科目编码
+  SubNam        char(100)  default '',
+--预算科目名称
+  SfxmSts       char(1)    not null
+--状态
+  
+);
+
+--单位信息
+create table PntDwxx
+(
+	BrNo          char(6)    not null,
+--分行号
+  TCrpCd        char(30)   not null,
+--单位编码
+  TCrpNm        char(100)  not null,
+--单位名称
+  DwxxSts       char(1)    not null
+--状态
+);
+
+--单位项目信息
+create table PntDwxm
+(
+	BrNo          char(6)    not null,
+--分行号
+  TCrpCd        char(30)   not null,
+--单位编码
+	PrjCod        char(14)    not null
+--收费项目编码
+);
+
+--票据类型信息
+create table PntPjlx
+(
+	BrNo          char(6)    not null,
+--分行号
+	TBilTp        char(8)    not null,
+--票据类型编码
+	TBilNm        char(50)   not null,
+--票据类型名称
+  PjlxSts       char(1)    not null
+--状态(0表示禁用,1为启用)
+
+);
+
+--票据发放信息
+create table PntPjff
+(
+	BrNo          char(6)    not null,
+--分行号
+	TBilTp        char(8)    not null,
+--票据类型编码
+  TBilStar      char(20)   not null,
+--票据起始号码
+  TBilEnd       char(20)   not null,
+--票据终止号码
+  TBilTot       char(10)   not null,
+-- 票据份数
+  TBilNum       char(10)   default '',
+--票据使用份数
+  TBilNo        char(20)   default '',
+--票据号码
+  TBilSts       char(1)    default ''
+--票据状态(1为未分解,2为已分解)
+ 
+);
+
+--票据号码
+create table PntPjNum
+(
+  TBilTp        char(8)    default '',
+--票据类型编码
+  TBilNo        char(20)   default '',
+--票据号码
+  TBilSts       char(1)    default ''
+);
+
+--项目票据信息表
+create table PntXmpj
+(
+	BrNo          char(6)    not null,
+--分行号
+	PrjCod        char(14)    not null,
+--收费项目编码
+	TBilTp        char(8)    not null
+--票据类型编码
+
+);
+
+--区域信息
+create table PntQyxx
+(
+	BrNo          char(6)    not null,
+--分行号
+  AreaNo        char(12)   not null,
+--区域编码
+  AreaNm        char(50)   not null
+--区域名称
+
+);
+
+
+--收费项目信息临时表
+create table PntSfxmtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+	PrjCod        char(14)   not null,
+--收费项目编码
+  PrjNam        char(200)  not null,
+--收费项目名称
+  SubCod        char(9)    default '',
+--预算科目编码
+  SubNam        char(100)  default '',
+--预算科目名称
+  SfxmSts       char(1)    not null
+--状态
+ 
+);
+
+--单位信息临时表
+create table PntDwxxtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+  TCrpCd        char(30)   not null,
+--单位编码
+  TCrpNm        char(100)  not null,
+--单位名称
+  DwxxSts       char(1)    not null
+--状态
+
+);
+
+--单位项目信息临时表
+create table PntDwxmtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+  TCrpCd        char(30)   default '',
+--单位编码
+	PrjCod        char(14)    not null
+--收费项目编码
+
+);
+
+--票据类型信息临时表
+create table PntPjlxtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+	TBilTp        char(8)    not null,
+--票据类型编码
+	TBilNm        char(50)   not null,
+--票据类型名称
+  PjlxSts       char(1)    not null
+--状态(0表示禁用,1为启用)
+
+);
+
+--票据发放信息临时表
+create table PntPjfftmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+	TBilTp        char(8)    not null,
+--票据类型编码
+  TBilStar      char(20)   not null,
+--票据起始号码
+  TBilEnd       char(20)   not null,
+--票据终止号码
+  TBilTot       char(10)   not null
+-- 票据份数
+
+);
+
+
+--项目票据信息表临时表
+create table PntXmpjtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+	PrjCod        char(14)    not null,
+--收费项目编码
+	TBilTp        char(8)    not null
+--票据类型编码
+
+);
+
+--区域信息临时表
+create table PntQyxxtmp
+(
+	BrNo          char(6)    not null,
+--分行号
+  SynChType     char(1)    not null,
+--同步数据类型
+  AreaNo        char(12)   not null,
+--区域编码
+  AreaNm        char(50)   not null
+--区域名称
+
+);
+

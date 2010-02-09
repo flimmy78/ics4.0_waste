@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÊ¡¼¯ÖÐÆ½Ì¨ÍøÒø¿ÛÊÕ·ÑÓÃÇåµ¥ -->
+<Application dbconnect="YES" trclog="CBS014.log">
+	<VarDef>
+		<String alias="FeeSts" pos="1"/>
+		<String alias="TxnMon" pos="2"/>
+		<String alias="BrNo"   pos="3"/>
+		<String alias="NodNo"  pos="4"/>
+		<String alias="BokDat" pos="5"/>
+		<String alias="TlrId"  pos="6"/>
+		<String alias="PrtDat" pos="7"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="FEESTS">
+			<Convert value="U" msg="³õÊ¼"/>
+			<Convert value="S" msg="¼ÇÕÊ³É¹¦"/>
+			<Convert value="T" msg="¼ÇÕÊ³¬Ê±"/>
+			<Convert value="E" msg="¼ÇÕÊÊ§°Ü"/>
+		</Item>
+	</MsgConvert>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select TckNo,HRspCd,DrAct,DrNam,ActDat,bigint(TxnNum) TxnNum,FeeAmt,PstAmt from CbsNetFee
+								 where FeeSts='%s' and TxnMon='%s' and NodNo='%s' and BrNo='%s' and ActDat='%s' order by TckNo">
+				<FieldList>$FeeSts|$TxnMon|$NodNo|$BrNo|$BokDat|</FieldList>
+			</Sql>
+		</Iterative>
+		<Summed type="field">
+			<Field sum="FEEAMT" sum_alias="TotFeeAmt" count="TotNum"/>
+			<Field sum="PSTAMT" sum_alias="TotPstAmt"/>
+		</Summed>   
+	</DataSource>
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$BrNo"/>
+			<Para label="02" alias="$FEESTS" convert="yes"/>
+			<Para label="03" alias="$PAGESUM"/>
+			<Para label="04" alias="$PAGENUM"/>
+			<Format>
+                                                         ½»Í¨ÒøÐÐÊ¡¼¯ÖÐÆ½Ì¨ ÍøÒø¿ÛÊÕ·ÑÓÃÇåµ¥
+                                                   ==========================================================
+	·Ö  ÐÐ  ºÅ: #
+	×´      Ì¬£º#                                                                                                    ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©·
+©§¿ÛÊÕÈÕÆÚ©§       ¿ÛÊÕÕËºÅ       ©§                          ¿ÛÊÕÕË»§                          ©§ ¿ÛÊÕ±ÊÊý ©§      ×ª»ã·Ñ      ©§ »á¼ÆÁ÷Ë®ºÅ ©§
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$ACTDAT"/>
+			<Para label="02" alias="DELBOTHSPACE($DRACT)"/>
+			<Para label="03" alias="$DRNAM"/>
+			<Para label="04" alias="$TXNNUM" spread="left"/>
+			<Para label="05" alias="AMTFMT(ADD($FEEAMT,$PSTAMT))" spread="left"/>
+			<Para label="06" alias="$TCKNO"/>
+			<Format>
+©§#       ©§#                     ©§#                                                           ©§         #©§                 #©§#           ©§
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="$TotNum" spread="left"/>
+			<Para label="02" alias="AMTFMT(ADD($TotFeeAmt,$TotPstAmt))" spread="left"/>
+			<Format>
+©Ç©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º      	                                                                      ¿ÛÊÕ»§Êý£º           #©§                 #©§            ©§
+©Ç©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Para label="01" alias="$TlrId"/>
+			<Para label="02" alias="$PrtDat"/>
+			<Format>
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¿
+                                ´òÓ¡¹ñÔ±ºÅ£º#                                                            ´òÓ¡ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

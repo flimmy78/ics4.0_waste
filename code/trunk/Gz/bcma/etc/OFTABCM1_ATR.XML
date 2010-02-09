@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<Region>
+  <Server name="OFTABCM1" type="OTA" trace="Yes" ip="_LOCAL_IP">
+    <DBConnectionPool dbname="DB1">
+    <PoolSize>2</PoolSize>
+    </DBConnectionPool>
+    <ThreadPool>
+     <MinWorkerThreads>40</MinWorkerThreads>
+     <MaxWorkerThreads>40</MaxWorkerThreads>
+    </ThreadPool>
+    <ProcessMemoryManager>
+      <BlockSize>102400</BlockSize><!--ÄÚ´æ¿é´óÐ¡(×Ö½Ú)-->
+      <PoolInitSize>16</PoolInitSize><!--ÄÚ´æ³Ø³õÊ¼´óÐ¡(¿é)-->
+      <PoolMaxSize>1024</PoolMaxSize><!--ÄÚ´æ³Ø×î´ó´óÐ¡(¿é)-->
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+        <PageSize>64</PageSize><!--Ò³´óÐ¡(×Ö½Ú)-->
+        <MaxBlocks>10</MaxBlocks ><!--ÔÊÐíÉêÇëµÄ×î´ó¿éÊý-->
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+    <DllPriDataCtrl dllfile="dll/pltmain.so" initfunc="initOnlineSvr" donefunc="closeOnlineSvr">
+     <Para name="file">etc/OFTABCM1_CTL.XML</Para>
+    </DllPriDataCtrl>
+    <QueuePair name="LeftQueuePair">
+     <QueueLength>100</QueueLength>
+     <RequestProcessor dllfile="dll/pltmain.so" dbapplication="YES">
+       <Entry>
+         <MessageType>OTHERS</MessageType>
+              <ProcessModule>onlineMainCtrl</ProcessModule>
+          </Entry>
+        </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+    </QueuePair>
+  </Server>
+</Region>

@@ -1,0 +1,27 @@
+MODULE		= GzLcl/rty
+
+include $(RULES_MAKEFILE)
+
+USERLIBS	= -bloadmap:xx -lbptrandata -lhibase -lbponlbs -lhidbt -lbpdb -lhipex -lhidbpool -lhicrc -lhirdo -lhidbbase -lhiafp -lhimon -lhiatlpub -lsqnmng -lmd5
+
+USERFLAG	= -D_HI_VARARGS -DDEBUG
+
+DLLNAME1	= rty.so
+OBJNAME1	= rty.cp
+
+ALL		= $(DLLNAME1) 
+
+all: $(ALL) install clean
+
+$(DLLNAME1): $(OBJNAME1) 
+
+install:
+	cp -f ../dll/rty.so  $(HOME)/dll
+	cp -f ../bnd/rty.bnd  $(HOME)/bnd
+
+	db2 connect to db2front
+	db2 bind $(HOME)/bnd/cbs.bnd
+	db2 disconnect db2front
+
+clean:
+	-rm *.o *.c  xx *.exp *.sqc

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="PntFmt.log" err_file="PntFmt.err">
+	<CodeSwitching>
+		<Table name="HisBrToBrNo" file="etc/PFA_CSW.XML">
+			<Column name="HisBr"  sort="no"/>
+			<Column name="BrNo"  sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+	<Process name="WTZWHEAD" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+	</Process>
+
+	<Process name="WTZWTITLE" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="WorkDt" desc="½Ú¶Î±êÊ¶(ÊÕ¿îÈÕÆÚ)"/>
+		<Item name="TitNum" desc="½Ú¶Î±ÊÊý"/>
+	</Process>
+
+	<Process name="WTZWDATA" deli_str="|" desc="ÊÕ¿îÎÊÌâÕËÎñÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TBilTp" desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+		<Item name="TBilNo" desc="Æ±¾ÝºÅÂë"/>
+		<Item name="TError" desc="´íÎóÔ­Òò"/>
+	</Process>
+
+
+
+	<Process name="FCCZHEAD" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TxnDat" desc="·Ö³ÉÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" desc="×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="FCCZTITLE" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="CityCd" desc="½Ú¶Î±êÊ¶(ÐÐÕþÇøÓò±àÂë)"/>
+		<Item name="TitNum" desc="½Ú¶Î±ÊÊý"/>
+		<Item name="TitAmt" desc="·Ö³É×Ü½ð¶î"/>
+		<Item name="ActNam" desc="ÕË»§Ãû³Æ"/>
+		<Item name="ActBnk" desc="ÕË»§ËùÔÚÒøÐÐ"/>
+		<Item name="ActNo"  desc="ÕËºÅ"/>
+	</Process>
+
+	<Process name="FCCZDATA" deli_str="|" desc="²ÆÕþ×¨»§·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TCrpNm" desc="Ö´ÊÕµ¥Î»Ãû³Æ"/>
+		<Item name="PrjCod" desc="ÊÕ·ÑÏîÄ¿±àÂë"/>
+		<Item name="PrjNam" desc="ÊÕ·ÑÏîÄ¿Ãû³Æ"/>
+		<Item name="DtlAmt" desc="·Ö³É½ð¶î"/>
+	</Process>
+
+
+
+	<Process name="FCGKHEAD" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TxnDat" desc="·Ö³ÉÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" desc="×Ü½ð¶î"/>
+	</Process>
+
+	<Process name="FCGKTITLE" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(½Ú¶ÎÍ·)">
+		<Item name="CityCd" desc="½Ú¶Î±êÊ¶(ÐÐÕþÇøÓò±àÂë)"/>
+		<Item name="TitNum" desc="½Ú¶Î±ÊÊý"/>
+		<Item name="TitAmt" desc="·Ö³É×Ü½ð¶î"/>
+		<Item name="ActNam" desc="ÕË»§Ãû³Æ"/>
+		<Item name="ActBnk" desc="ÕË»§ËùÔÚÒøÐÐ"/>
+		<Item name="ActNo"  desc="ÕËºÅ"/>
+	</Process>
+
+	<Process name="FCGKDATA" deli_str="|" desc="¹ú¿â·Ö³ÉÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÌå)">
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TCrpNm" desc="Ö´ÊÕµ¥Î»Ãû³Æ"/>
+		<Item name="PrjCod" desc="ÊÕ·ÑÏîÄ¿±àÂë"/>
+		<Item name="PrjNam" desc="ÊÕ·ÑÏîÄ¿Ãû³Æ"/>
+		<Item name="DtlAmt" desc="·Ö³É½ð¶î"/>
+	</Process>
+
+
+
+	<Process name="PLKSHEAD" deli_str="|" desc="ÅúÁ¿¿ÛÊÕÖ¸ÁîÐÅÏ¢ÎÄ¼þ(ÎÄ¼þÍ·)">
+		<Item name="BchNo"  desc="Åú´ÎºÅ"/>
+		<Item name="BankCd" desc="ÒøÐÐ±àÂë"/>
+		<Item name="TCrpCd" desc="Ö´ÊÕµ¥Î»±àÂë"/>
+		<Item name="TxnDat" desc="ÈÕÆÚ"/>
+		<Item name="TotNum" desc="×Ü±ÊÊý"/>
+		<Item name="TotAmt" desc="×Ü½ð¶î"/>
+	</Process>
+
+<!--zs0312add-->
+	<Process name="SFXM"  desc="ÊÕ·ÑÏîÄ¿ÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|" >
+		<Item name="NodeID"     desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum"    desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999" desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="Prjcod"     desc="ÏîÄ¿±àÂë"/>
+	  <Item name="PrjNam"     desc="ÏîÄ¿Ãû³Æ"/>
+	  <Item name="Subcod"     desc="Ô¤Ëã¿ÆÄ¿±àÂë"/>
+	  <Item name="SubNam"     desc="Ô¤Ëã¿ÆÄ¿Ãû³Æ"/>
+	  <Item name="SfxmSts"    desc="×´Ì¬"/> 
+	 </Data>
+	</Process>
+	
+	<Process name="DWXX" desc="µ¥Î»ÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"       value="484999" desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TCrpCd"     desc="µ¥Î»±àÂë"/>
+	  <Item name="TCrpNm"     desc="µ¥Î»Ãû³Æ"/>
+	  <Item name="DwxxSts"    desc="×´Ì¬"/> 
+	 </Data>
+	</Process>
+	
+	<Process name="DWXM"  desc="µ¥Î»ÏîÄ¿ÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999"    desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TCrpCd"     desc="µ¥Î»±àÂë"/>
+	  <Item name="Prjcod"     desc="ÏîÄ¿±àÂë"/>
+	 </Data>
+	</Process>	
+
+	<Process name="PJLX"  desc="Æ±¾ÝÀàÐÍÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999"    desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+	  <Item name="TBilNm"     desc="Æ±¾ÝÀàÐÍÃû³Æ"/>
+	  <Item name="PjlxSts"    desc="×´Ì¬"/> 
+	 </Data>
+	</Process>		
+	
+	<Process name="PJFF"  desc="Æ±¾Ý·¢·ÅÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/>
+	  <Item name="TBilStar"   desc="Æ±¾ÝÆðÊ¼ºÅÂë"/>
+	  <Item name="TBilEnd"    desc="Æ±¾ÝÖÕÖ¹ºÅÂë"/>
+	  <Item name="TBilTot"    desc="Æ±¾Ý·ÝÊý"/>
+	  <AddItem name="TBilNum" value="0" desc="Æ±¾ÝÊ¹ÓÃ·ÝÊý"/> 
+	 </Data>
+	</Process>	
+
+	<Process name="XMPJ"  desc="ÏîÄ¿Æ±¾ÝÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="PrjCod"     desc="ÏîÄ¿±àÂë"/>
+	  <Item name="TBilTp"     desc="Æ±¾ÝÀàÐÍ±àÂë"/> 
+	 </Data>
+	</Process>
+	
+	<Process name="QYXX"  desc="ÇøÓòÐÅÏ¢ÎÄ¼þ">
+	 <Head deli_str="|">
+		<Item name="NodeID"  desc="½Ú¶Î±êÊ¶"/>
+		<Item name="NodeNum" desc="½Ú¶ÎÊý¾ÝÐÐÊý"/>
+	 </Head>
+	 <Data deli_str="|">
+	  <AddItem name="BrNo"    value="484999"   desc="·ÖÐÐºÅ"/>
+	  <Item name="SynChType"  desc="Êý¾ÝÍ¬²½ÀàÐÍÀàÐÍ"/>
+	  <Item name="AreaNo"     desc="ÇøÓò±àÂë"/>
+	  <Item name="AreaNm"     desc="ÇøÓòÃû³Æ"/>
+	 </Data>
+	</Process>	
+	
+</BATCH>

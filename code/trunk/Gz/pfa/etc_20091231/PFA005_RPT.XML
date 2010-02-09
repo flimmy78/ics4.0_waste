@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐÊÚÈ¨Ö§¸¶¡¶Ê¡¼¶²ÆÕþÊÚÈ¨Ö§¸¶Ö§³öÈÕ±¨±í¡·-->
+<Application dbconnect="YES" trclog="PFA005.log">
+	<VarDef>
+		<String alias="DatFil" pos="1"/>
+	</VarDef>
+	<Summed type="field">
+		<Field sum="OutAmt" sum_alias="TotOutAmt"/>
+		<Field sum="InAmt"  sum_alias="TotInAmt"/>
+		<Field sum="TotAmt" sum_alias="TotSumAmt"/>
+	</Summed>
+	<DataSource object="file" filename="$DatFil"/>
+  <FormatDefine pagerows="20" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="SUBSTR($BegDat,1,4)"/>
+      <Para label="02" alias="SUBSTR($BegDat,5,2)"/>
+      <Para label="03" alias="SUBSTR($BegDat,7,2)"/>
+      <Format>
+
+						                                                     Ê¡¼¶²ÆÕþÊÚÈ¨Ö§¸¶Ö§³öÈÕ±¨±í 
+
+						                                                       #    Äê#  ÔÂ#  ÈÕ   
+
+  ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐ:(¸ÇÕÂ)¡¡¡¡¡¡¡¡¡¡                                            ¡¡¡¡¡¡                                                                                   µ¥Î»:Ôª 
+©³©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§Ðò©§          »ù²ãÔ¤Ëãµ¥Î»          ©§         Ô¤Ëã¿ÆÄ¿(¹¦ÄÜ·ÖÀà)       ©§           Ô¤ËãÏîÄ¿             ©§        ÒµÎñ´¦ÊÒ        ©§                 ±¾ÈÕÖ§³ö                 ©§
+©§  ©Ç©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©Ï
+©§  ©§   ±àÂë   ©§        Ãû³Æ        ©§    ±àÂë    ©§      Ãû³Æ          ©§    ±àÂë    ©§      Ãû³Æ        ©§  ±àÂë  ©§     Ãû³Æ     ©§±¾ÈÕÖ§³ö½ð¶î©§±¾ÈÕÍËÆ±½ð¶î©§±¾ÈÕ×ÜÖ§³ö½ð¶î©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$SEQNO"/>
+      <Para label="02" alias="$BCUSID"/>
+      <Para label="03" alias="SUBSTR($BCUSNM,1,20)"/>
+      <Para label="04" alias="$SUBCOD"/>
+      <Para label="05" alias="SUBSTR($SUBNAM,1,20)"/>
+      <Para label="06" alias="$PRJCOD"/>
+      <Para label="07" alias="SUBSTR($PRJNAM,1,20)"/>
+      <Para label="08" alias="$DPTCOD"/>
+      <Para label="09" alias="SUBSTR($DPTNAM,1,18)"/>
+      <Para label="10" alias="AMTFMT($OUTAMT)" spread="left"/>
+      <Para label="11" alias="AMTFMT($INAMT)"  spread="left"/>
+      <Para label="12" alias="AMTFMT($SUMAmt)" spread="left"/>
+      <Format>
+©Ç©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+©§# ©§#         ©§#                   ©§#           ©§#                   ©§#           ©§#                 ©§#       ©§#             ©§           #©§           #©§             #©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTFMT($TOTOUTAMT)" spread="left"/>
+      <Para label="02" alias="AMTFMT($TOTINAMT)"  spread="left"/>
+      <Para label="03" alias="AMTFMT($TOTSUMAMT)" spread="left"/>
+      <Format>
+©Ç©¥©Û©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ     	                                                                                                                          ©§           #©§           #©§             #©§
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Para label="01" alias="$CurNum"/>
+      <Para label="02" alias="$TotNum"/>
+      <Para label="03" alias="$TlrId"/>
+      <Format>
+©»©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¿
+
+	            ±¾ÈÕ±ÊÊý£º#                  ±¾ÔÂÀÛ¼Æ±ÊÊý£º#
+				¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡                 ¸´ºË£º                                  ÖÆ±í: #
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
