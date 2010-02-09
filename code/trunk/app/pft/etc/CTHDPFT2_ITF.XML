@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="PFT" server="OFRTPFT1" timeout='30'>
+  <GetTxnCode>
+    <Item type="fixed" offset="0" length="5"/>
+  </GetTxnCode>
+  <CodeSwitching>
+    <Table name="ThdCodToTxnCod" file="etc/PFT_CSW.XML">
+      <Column name="ThdCod" sort="no"/>
+      <Column name="TxnCod" sort="no"/>
+    </Table>
+  </CodeSwitching>
+
+  <Define>
+    <Macro name="PftFilItf" desc="ÎÄ¼þÍ¨Ñ¶½Ó¿Ú">
+      <Request>
+        <Item name="ImCod" length="5"/>
+        <Item name="KpCol" length="4"/>
+        <Item name="ImLen" length="8"/>
+        <If condition="IS_NOEQUAL_STRING($ImCod,sover)">
+          <Item name="ImBod" deli_asc="-1"/>
+        </If>
+        <SwitchCode name="ImCod" new_name="TxnCod" tab_name="ThdCodToTxnCod" col_name="ThdCod"/>
+        <AddHead head_name="STC" name="TxnCod"/>
+      </Request>
+      <Response necessary="no"> 
+        <Item name="ImCod" length="5" />
+        <Item name="KpCol" length="4" />
+        <Item name="ImLen" length="8" />
+        <Item name="ImBod" length="4" />
+      </Response>
+    </Macro>
+  </Define>
+
+  <Transaction code="login" log_switch="1">
+    <Quote name="PftFilItf"/>
+  </Transaction>
+
+  <Transaction code="shead" log_switch="1">
+    <Quote name="PftFilItf"/>
+  </Transaction>
+
+  <Transaction code="sfreq" log_switch="1">
+    <Quote name="PftFilItf"/>
+  </Transaction>
+
+  <Transaction code="sfile" log_switch="1">
+    <Quote name="PftFilItf"/>
+  </Transaction>
+
+  <Transaction code="sover" log_switch="1">
+    <Quote name="PftFilItf"/>
+  </Transaction>
+</Application>

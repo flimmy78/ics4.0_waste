@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<Application name="ISF" server="OFRTISF1" timeout="30">
+   <LibDeclare>
+    <Library name="YCT"  value="dll/yct.so" />
+  </LibDeclare>
+  <CodeSwitching>
+    <Table name="GZ_AppNm"  file="etc/LSH_CSW_441999.XML">
+      <Column name="AppNm"   sort="no"/>
+      <Column name="CAgtNo"  sort="no"/>
+    </Table>
+  </CodeSwitching>  
+  <Define>
+		<Macro  name="YCT_Head">    <!-- Ñò³ÇÍ¨Í³Ò»ÅäÖÃ -->
+			<AddItem name="MACKEY"			length="8"		value="12345678" />
+		</Macro>
+	</Define>  
+  <GetTxnCode>
+    <Item type="fixed" length="6" offset="8"/>
+  </GetTxnCode>
+ 
+  <Transaction code="Z09031" service="482157" log_switch="1" trace="yes"> <!-- Î´¼¤»îÇ©Ô¼·´À¡ -->
+    <Request>
+		<Item name="Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"			length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"	length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"			length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="contact_no"		length="20"/>	  <!-- ºÏÍ¬±àºÅ -->
+		<Item name="Rev_card1"			length="10"/>	  <!-- Î´¼¤»îÑò³ÇÍ¨¿¨ºÅ1 -->
+		<Item name="Rev_card2"			length="10"/>	  <!-- Î´¼¤»îÑò³ÇÍ¨¿¨ºÅ2 -->
+		<Item name="Rev_card3"			length="10"/>	  <!-- Î´¼¤»îÑò³ÇÍ¨¿¨ºÅ3 -->
+		<Item name="YCT_MAC"		length="8"/>	  <!-- MAC -->
+		<AddItem name="Send_Type"	length="4"		value="0310"/>			<!-- ·µ»Ø±¨ÎÄÀàÐÍ -->
+		<AddItem name="Send_Len"		length="4"		value="0069"/>			<!-- ·µ»Ø±¨ÎÄ³¤¶È -->
+		<AddItem name="Send_Code"	length="6"		value="Z09031"/>		<!-- ·µ»Ø¹ý³Ì´úÂë -->
+		<AddItem name="bank_acc"	expression="$ActNo"/>		<!-- ÒøÐÐÕÊºÅ -->
+		<Quote  name="YCT_Head"/>
+	</Request>
+	<Response necessary="no">
+		<Item name="Send_Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Send_Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Send_Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"				length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"		length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"				length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="ret_code"			length="2"/>      <!-- ÏìÓ¦´úÂë -->
+		<Item name="YCTMAC"				length="8"/>	  <!-- MAC -->
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="Z01051" service="482158" log_switch="1" trace="yes"> <!-- Ñò³ÇÍ¨»®¿î -->
+    <Request>
+		<Item name="Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"			length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="Trans_Amount"	length="12"/>     <!-- ½»Ò×½ð¶î -->
+		<Item name="TransDateTime"	length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"			length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="card"			length="10"/>	  <!-- Ñò³ÇÍ¨¿¨ºÅ -->
+		<Item name="YCT_MAC"		length="8"/>	  <!-- MAC -->
+		<AddItem name="RsFld1"		length="4"		expression="$Type" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld2"		length="6"		expression="$Code" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld3"		length="14"		expression="$TransDateTime" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="ThdKey"		length="12"		expression="$sys_no" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TCUSID"		length="10"		expression="$card" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TXNAMT"      length="14"	    expression="$Trans_Amount"/>        <!-- ÒµÎñÁ÷Ë®±íÔÚÖÐµÄ½»Ò×½ð¶î -->
+		<AddItem name="Send_Type"	length="4"		value="0410"/>			<!-- ·µ»Ø±¨ÎÄÀàÐÍ -->
+		<AddItem name="Send_Len"	length="4"		value="0079"/>			<!-- ·µ»Ø±¨ÎÄ³¤¶È -->
+		<AddItem name="Send_Code"	length="6"		value="Z01051"/>		<!-- ·µ»Ø¹ý³Ì´úÂë -->
+		<AddItem name="AppNm"  value="GZ_YCT"/>   <!--µ¥Î»ÀàÐÍ-->
+		<Quote  name="YCT_Head"/>
+		<SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>
+	</Request>
+	<Response necessary="no">
+		<Item name="Send_Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Send_Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Send_Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"				length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"		length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"				length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="ret_code"			length="2"/>      <!-- ÏìÓ¦´úÂë -->
+		<Item name="card"				length="10"/>		  <!-- Ñò³ÇÍ¨¿¨ºÅ -->
+		<Item name="YCTMAC"				length="8"/>	  <!-- MAC -->
+    </Response>
+  </Transaction>
+
+   <Transaction code="Z02011" service="482155" log_switch="1" trace="yes"> <!-- Ñò³ÇÍ¨ÍË¿î -->
+    <Request>
+		<Item name="Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"			length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="Trans_Amount"	length="12"/>     <!-- ½»Ò×½ð¶î -->
+		<Item name="TransDateTime"	length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"			length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="card"			length="10"/>	  <!-- Ñò³ÇÍ¨¿¨ºÅ -->
+		<Item name="YCT_MAC"		length="8"/>	  <!-- MAC -->
+		<AddItem name="RsFld1"		length="4"		expression="$Type" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld2"		length="6"		expression="$Code" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld3"		length="14"		expression="$TransDateTime" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="ThdKey"		length="12"		expression="$sys_no" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TCUSID"		length="10"		expression="$card" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TXNAMT"      length="14"	    expression="$Trans_Amount"/>        <!-- ÒµÎñÁ÷Ë®±íÔÚÖÐµÄ½»Ò×½ð¶î -->
+		<AddItem name="Send_Type"	length="4"		value="0510"/>			<!-- ·µ»Ø±¨ÎÄÀàÐÍ -->
+		<AddItem name="Send_Len"		length="4"		value="0079"/>			<!-- ·µ»Ø±¨ÎÄ³¤¶È -->
+		<AddItem name="Send_Code"	length="6"		value="Z02011"/>		<!-- ·µ»Ø¹ý³Ì´úÂë -->
+		<Quote  name="YCT_Head"/>
+	</Request>
+	<Response necessary="no">
+		<Item name="Send_Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Send_Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Send_Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"				length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"		length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"				length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="ret_code"			length="2"/>      <!-- ÏìÓ¦´úÂë -->
+		<Item name="card"				length="10"/>		  <!-- Ñò³ÇÍ¨¿¨ºÅ -->
+		<Item name="YCTMAC"				length="8"/>	  <!-- MAC -->
+    </Response>
+  </Transaction>
+
+  <Transaction code="Z0A011" service="482156" log_switch="1" trace="yes"> <!-- Ñò³ÇÍ¨»®¿î³åÕý -->
+    <Request>
+		<Item name="Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"			length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"	length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"			length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="Old_Type"		length="4"/>	  <!-- Ô­½»Ò×ÀàÐÍ -->
+		<Item name="Old_Code"		length="6"/>	  <!-- Ô­¹ý³Ì´úÂë -->
+		<Item name="Old_sys_no"		length="12"/>	  <!-- Ô­½»Ò×ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="Old_TransDateTime"		length="14"/>	  <!-- Ô­½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="YCT_MAC"		length="8"/>	  <!-- MAC -->
+		<AddItem name="RsFld1"		length="4"		expression="$Type" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld2"		length="6"		expression="$Code" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld3"		length="14"		expression="$TransDateTime" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="ThdKey"		length="12"		expression="$sys_no" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TCusNm"		length="36"		expression="STRCAT($Old_Type,$Old_Code,$Old_sys_no,$Old_TransDateTime)" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="Send_Type"	length="4"		value="0610"/>			<!-- ·µ»Ø±¨ÎÄÀàÐÍ -->
+		<AddItem name="Send_Len"	length="4"		value="0069"/>			<!-- ·µ»Ø±¨ÎÄ³¤¶È -->
+		<AddItem name="Send_Code"	length="6"		value="Z0A011"/>		<!-- ·µ»Ø¹ý³Ì´úÂë -->
+		<Quote  name="YCT_Head"/>
+	</Request>
+	<Response necessary="no">
+		<Item name="Send_Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Send_Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Send_Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"				length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"		length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"				length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="ret_code"			length="2"/>      <!-- ÏìÓ¦´úÂë -->
+		<Item name="YCTMAC"				length="8"/>	  <!-- MAC -->
+    </Response>
+  </Transaction>
+
+    <Transaction code="Z0A021" service="482154" log_switch="1" trace="yes"> <!-- Ñò³ÇÍ¨ÍË¿î³åÕý -->
+    <Request>
+		<Item name="Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"			length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"	length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"			length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="Old_Type"		length="4"/>	  <!-- Ô­½»Ò×ÀàÐÍ -->
+		<Item name="Old_Code"		length="6"/>	  <!-- Ô­¹ý³Ì´úÂë -->
+		<Item name="Old_sys_no"		length="12"/>	  <!-- Ô­½»Ò×ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="Old_TransDateTime"		length="14"/>	  <!-- Ô­½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="YCT_MAC"		length="8"/>	  <!-- MAC -->
+		<AddItem name="RsFld1"		length="4"		expression="$Type" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld2"		length="6"		expression="$Code" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="RsFld3"		length="14"		expression="$TransDateTime" />		<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="ThdKey"		length="12"		expression="$sys_no" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="TCusNm"		length="36"		expression="STRCAT($Old_Type,$Old_Code,$Old_sys_no,$Old_TransDateTime)" />				<!-- ÉèÖÃafetxnjnl -->
+		<AddItem name="Send_Type"	length="4"		value="0710"/>			<!-- ·µ»Ø±¨ÎÄÀàÐÍ -->
+		<AddItem name="Send_Len"	length="4"		value="0069"/>			<!-- ·µ»Ø±¨ÎÄ³¤¶È -->
+		<AddItem name="Send_Code"	length="6"		value="Z0A021"/>		<!-- ·µ»Ø¹ý³Ì´úÂë -->
+		<Quote  name="YCT_Head"/>
+	</Request>
+	<Response necessary="no">
+		<Item name="Send_Type"			length="4" />     <!-- ±¨ÎÄÀàÐÍ -->
+		<Item name="Send_Len"			length="4"/>      <!-- ±¨ÎÄ³¤¶È -->
+		<Item name="Send_Code"			length="6"/>      <!-- ¹ý³Ì´úÂë -->
+		<Item name="ActNo"				length="19"/>     <!-- ÒøÐÐÕÊºÅ -->
+		<Item name="TransDateTime"		length="14"/>     <!-- ½»Ò×ÈÕÆÚÊ±¼ä -->
+		<Item name="sys_no"				length="12"/>     <!-- ÏµÍ³²Î¿¼ºÅ -->
+		<Item name="ret_code"			length="2"/>      <!-- ÏìÓ¦´úÂë -->
+		<Item name="YCTMAC"				length="8"/>	  <!-- MAC -->
+    </Response>
+  </Transaction>
+
+</Application>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Öéº£ÊÐ²Æ¾Ö£¨»òÍòÉ½²Æ¾Ö£©ÐÐÕþÊÕ·Ñ±¾ÍøµãÔþÕÊµ¥ -->
+<Application  dbconnect="YES" trclog="RPTCAD_001.trc">
+  <VarDef>
+    <String alias="CrgTyp" name="$CrgTyp"/>
+    <String alias="NodNo"  name="$NodNo" />
+    <String alias="ActDat" name="$PrtDat" />
+    <String alias="CcyCod" name="$CcyCod" />
+    <String alias="Smr"    name="$Smr" /> 
+  </VarDef>
+  <MsgConvert>
+    <Item alias="CrgWay">
+      <Convert value="0" msg="ÏÖ½ð"/>
+      <Convert value="1" msg="×ªÕË"/>
+    </Item>
+    <Item alias="RecSts">
+      <Convert value="1" msg="³É¹¦"/>
+      <Convert value="C" msg="Ä¨ÕË"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select * from cadjnldtl where NodNo='%s' and ActDat='%s' and CcyCod='%s' and CrgTyp='%s' and RecSts='1' and CrgWay in ('0','1')" >
+        <FieldList>$NodNo|$ActDat|$CcyCod|$CrgTyp|</FieldList>
+      </Sql> 
+    </Iterative>
+    <Summed type="sql" >
+      <Sql sql="select COALESCE(sum(CAST(ItmAmt AS BIGINT)),0) TotAmt 
+         from cadjnldtl  where NodNo='%s' and ActDat='%s' and CcyCod='%s' and CrgTyp='%s' and RecSts='1' and CrgWay in ('0','1')" >
+        <FieldList>$NodNo|$ActDat|$CcyCod|$CrgTyp|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="20" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$Smr"/>
+      <Para label="02" alias="$TlrId"/>      
+      <Para label="03" alias="SUBSTR($ActDat,1,4)"/>
+      <Para label="04" alias="SUBSTR($ActDat,5,2)"/>
+      <Para label="05" alias="SUBSTR($ActDat,7,2)"/>
+      <Para label="06" alias="$CcyCod"/>
+      <Format>
+                                       #
+					  		
+    Íøµã£º#                                          #    Äê#  ÔÂ#  ÈÕ                 ±ÒÖÖ£º#
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©×©¥©¥©·
+©§¹ñ Ô± ºÅ©§ Á÷  Ë®  ºÅ ©§Ð¡ÐòºÅ©§Æ¾Ö¤ÖÖÀà©§ Æ¾  Ö¤  ºÅ  Âë ©§ ÊÕ·Ñ±àÂë ©§              ½É¿îÈËÃû³Æ                  ©§   ½ð        ¶î   ©§ÏÖ×ª©§×´Ì¬©§ 
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$TlrId"	spread="mid"/>
+      <Para label="02" alias="$TckNo"	spread="mid"/>
+      <Para label="03" alias="$VchSeq"	spread="mid"/>
+      <Para label="04" alias="$RcpTyp"	spread="mid"/>
+      <Para label="05" alias="$RcpNo"	spread="mid"/>
+      <Para label="06" alias="$CrgCod"	spread="mid"/>
+      <Para label="07" alias="$CusNam"	spread="mid"/>
+      <Para label="08" alias="AMTFMT($ItmAmt)"	spread="mid"/>
+      <Para label="09" alias="$CrgWay"	spread="mid"  convert="YES"/>
+      <Para label="10" alias="$RecSts"	spread="mid"  convert="YES"/>
+      <Format>
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©ï©¥©¥©Ï
+©§#       ©§#           ©§#     ©§#       ©§#               ©§#         ©§#                                         ©§#                 ©§#   ©§#   ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTFMT($TotAmt)"  spread="right" />
+      <Format>
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©ß©¥©¥©¿
+                                                                                      ºÏ¼Æ£º#                                                                                        
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>

@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name='MTHDTIP1' type='MCA' trace='no' ip="_LOCAL_IP">
+    <ThreadPool>
+      <MinWorkerThreads>4</MinWorkerThreads>
+      <MaxWorkerThreads>4</MaxWorkerThreads>
+    </ThreadPool>
+	<!-- DllPriDataCtrl ECN -->
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecncliasync.so" initfunc="initChannel" donefunc="closeChannel">
+     <!-- 
+      <Para name='HstIp'>_IP</Para>
+      <Para name='HstPrt'>_OUT_PORT</Para>
+     -->
+      <Para name="IpLstFil">etc/CTRMPUB1_IPD.XML</Para>
+      <Para name='PreLen'>8</Para>
+     </DllPriDataCtrl>
+    <DllPriDataCtrl name='AFP' dllfile='dll/xmldataparser.so' initfunc='initDataParser' donefunc='closeDataParser'>
+      <Para name='parserFil1'>etc/MTHDTIP5_ITF.XML</Para>
+    </DllPriDataCtrl>
+
+	<!-- Connection ECN -->
+    <Connection type="LEFT">
+        <Entrance name="MTHDTIP1" type="TCP">
+           <ListenerModule name="serverShortAsyncIn" dllfile="dll/ecncliasync.so">
+           	  <Para name="MsgTyp">PLTIN0</Para>
+           	  <Para name="Port">_IN_PORT</Para>
+           </ListenerModule>
+        </Entrance>
+     </Connection>
+    <QueuePair name='LeftQueuePair'>
+      <QueueLength>1</QueueLength>
+      <RequestProcessor dllfile='dll/xmldataparser.so' dbapplication='NO'>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile='dll/ecncliasync.so' dbapplication='NO'>
+        <Entry> 
+           <MessageType>PLTIN0</MessageType> 
+           <ProcessModule>serverShortAsyncOut</ProcessModule>
+         </Entry> 
+      </ResponseProcessor>
+    </QueuePair>
+    <QueuePair name='RightQueuePair'>
+      <QueueLength>1</QueueLength>
+      <RequestProcessor dllfile="dll/ecncliasync.so" dbapplication="NO">
+         <Entry> 
+           <MessageType>PLTOUT</MessageType> 
+           <ProcessModule>serverShortAsyncOut</ProcessModule>
+         </Entry>  
+       </RequestProcessor> 
+      <ResponseProcessor dllfile='dll/xmldataparser.so' dbapplication='NO'>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>
+

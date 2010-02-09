@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP10_RPT.trc" dbconnect="YES">
+  <!--Modified By zhq_BoCom00041319_20080702_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨ÒµÎñÁ¿Í³¼ÆÔÂ±¨)-->
+  <VarDef>
+    <String alias="StaDat"    name="$StaDat"/> <!--Ñ¡ÔñÈÕÆÚ-->
+    <String alias="Year"      name="$Year"/>   <!--Ñ¡ÔñÄê·Ý-->
+    <String alias="LstDat"    name="$LstDat"/> <!--ÉÏ¸öÔÂ·Ý-->
+    <String alias="BrkNo"     name="$BrkNo"/>  <!--·ÖÐÐºÅ-->
+    <String alias="ONodNo"    name="$ONodNo"/> <!--»ú¹¹ºÅ--> 
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+     <Sql sql="SELECT a.NodNo,a.SMR,COALESCE(c.YearCnt,0) YearCnt,COALESCE(b.MonthCnt,0) MonthCnt,COALESCE(d.LastCnt,0) LastCnt,COALESCE(c.YearAmt,0) YearAmt,COALESCE(b.MonthAmt,0) MonthAmt,COALESCE(d.LastAmt,0)  LastAmt
+               FROM (SELECT NodNo,SMR FROM puborginf WHERE RIGHT(RTRIM(NodNo),3) ='999') a 
+               LEFT OUTER JOIN  (SELECT OBrkNo,COUNT(*) MonthCnt,SUM(CAST (TxnAmt AS BIGINT)) MonthAmt FROM tiptxnbok WHERE BilSts='1' and LEFT(WrkDat,6)='%s' GROUP BY OBrkNo) b ON a.NodNo=b.OBrkNo  
+               LEFT OUTER JOIN  (SELECT OBrkNo,COUNT(*) YearCnt, SUM(CAST (TxnAmt AS BIGINT)) YearAmt  FROM tiptxnbok WHERE BilSts='1' and LEFT(WrkDat,4)='%s' GROUP BY OBrkNo) c ON a.NodNo=c.OBrkNo 
+               LEFT OUTER JOIN  (SELECT OBrkNo,COUNT(*) LastCnt, SUM(CAST (TxnAmt AS BIGINT)) LastAmt  FROM tiptxnbok WHERE BilSts='1' and LEFT(WrkDat,6)='%s' GROUP BY OBrkNo) d ON a.NodNo=d.OBrkNo  
+               WHERE a.NodNo NOT IN ('315999','312999') ORDER BY a.NodNo">
+        <FieldList>$StaDat|$Year|$LstDat|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine >
+    <Iterative line="1">
+      <Para label="01" alias="$BrkNo"                   spread="right"/>
+      <Para label="02" alias="$ONodNo"                  spread="right"/>
+      <Para label="03" alias="$NodNo"                   spread="right"/>
+      <Para label="04" alias="$SMR"                     spread="right"/>
+      <Para label="05" alias="$YearCnt"                 spread="left"/>
+      <Para label="06" alias="$MonthCnt"                spread="left"/>
+      <Para label="07" alias="SUB($MonthCnt,$LastCnt)"  spread="left"/>
+      <Para label="08" alias="AMTADDDOT($YearAmt)"                 spread="left"/>
+      <Para label="09" alias="AMTADDDOT($MonthAmt)"                spread="left"/>
+      <Para label="10" alias="AMTADDDOT(SUB($MonthAmt,$LastAmt))"  spread="left"/>
+      <Format>
+ICM002:#:#:000:01:#:#:#:#:#:#:#:#
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
+

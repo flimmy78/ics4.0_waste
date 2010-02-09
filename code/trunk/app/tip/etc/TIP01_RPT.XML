@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP01_RPT.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="RBnkNo"          name="$RBnkNo"/>
+    <String alias="PBnkNo"          name="$PBnkNo"/>
+    <String alias="ChkDat"          name="$ChkDat"/>
+    <String alias="ChkOrd"          name="$ChkOrd"/>
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+      <Sql sql="SELECT OrgCod,EntDat,TraNo,ActNo,TxnAmt FROM tipchkrec WHERE RBnkNo='%s' AND PBnkNo='%s' AND ChkDat='%s' AND ChkOrd='%s' AND ChkSts='2' ORDER BY TraNo">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type ="sql">
+      <Sql sql="SELECT coalesce(COUNT(*),0) PbENum,coalesce(SUM(CAST(TxnAmt AS BIGINT)),0) PbEAmt FROM tipchkrec WHERE RBnkNo='%s' AND PBnkNo='%s' AND ChkDat='%s' AND ChkOrd='%s' AND ChkSts='2'">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                             ÈËÐÐ¶à¼ÇÂ¼
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$PAGESUM" spread="left"/>
+      <Para label="02" alias="$PAGENUM" spread="left"/>
+      <Format>
+                                                                                ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§    Õ÷ÊÕ»ú¹Ø    ©§   Î¯ÍÐÈÕÆÚ   ©§   ½»Ò×Á÷Ë®ºÅ   ©§               ÕËºÅ               ©§       ½ð¶î       ©§
+©Ä©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$OrgCod" spread="mid"/>
+      <Para label="02" alias="$EntDat" spread="mid"/>
+      <Para label="03" alias="$TraNo" spread="right"/>
+      <Para label="04" alias="$ActNo" spread="mid"/>
+      <Para label="05" alias="AMTFMT($TxnAmt)" spread="left"/>
+      <Format>
+©§       #        ©§      #       ©§   #            ©§                #                 ©§                 #©§
+      </Format>
+    </Iterative>
+    <Summed line="1">
+      <Para label="01" alias="$PbENum" spread="right"/>
+      <Para label="02" alias="AMTFMT($PbEAmt)" spread="right"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+    ±ÊÊý×Ü¼Æ: #                 ½ð¶î×Ü¼Æ: #                                                                 
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>
+

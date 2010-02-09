@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Region>
+  <Server name='MMQMTIP1' type='MCA' trace='no' ip="_LOCAL_IP">
+    <ThreadPool>
+      <MinWorkerThreads>100</MinWorkerThreads>
+      <MaxWorkerThreads>100</MaxWorkerThreads>
+    </ThreadPool>
+	<!-- DllPriDataCtrl ECN -->
+    <DllPriDataCtrl name="CMQ" dllfile="dll/cmq_tips.so" initfunc="initMQClient" donefunc="closeMQClient">
+       <Para name="QueueServer">QM_TIPS_601100000010_01</Para>
+       <Para name="RecvQName">PBC.601100000010.ONLINE.OUT</Para>
+       <Para name="SendQName">PBC.Ext.ONLINE.IN</Para>
+       <Para name="MessageType">PLTIN0</Para>
+       <Para name="DefaultExpireTime">300</Para><!--Î»0.1s-->
+     </DllPriDataCtrl>
+    <DllPriDataCtrl name='AFP' dllfile='dll/ca_afp/xmldataparser.so' initfunc='initDataParser' donefunc='closeDataParser'>
+      <Para name='parserFil1'>etc/MTHDTIP1_ITF.XML</Para>
+      <Para name='parserFil2'>etc/MTHDTIP2_ITF.XML</Para>
+      <Para name='parserFil3'>etc/MTHDTIP3_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name='CA1' dllfile='dll/ca_afp/pre_tips.so' initfunc='tips_init' donefunc='NULL'>
+      <Para name='work_path'>/app/ics/etc/cert</Para>
+      <Para name='ca_filename'>041@0123456789012345678@Ä£ÄâÒøÐÐ@12345679.pfx</Para>
+      <Para name='ca_root_cer_name'>¸ùÖ¤Êé.p7b</Para>
+      <Para name='ca_passwd'>111111</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name='CA2' dllfile='dll/ca_afp/spe_tips.so' initfunc='tips_init' donefunc='NULL'>
+      <Para name='work_path'>/app/ics/etc/cert</Para>
+      <Para name='ca_filename'>041@0123456789012345678@Ä£ÄâÒøÐÐ@12345679.pfx</Para>
+      <Para name='ca_passwd'>111111</Para>
+    </DllPriDataCtrl>
+	<!-- Connection ECN -->
+    <Connection type="LEFT">
+        <Entrance name="MMQMTIP1" type="MQ">
+           <ListenerModule name="MQClientIn" dllfile="dll/cmq_tips.so">
+           </ListenerModule>
+        </Entrance>
+     </Connection>
+    <QueuePair name='LeftQueuePair'>
+      <RequestProcessor dllfile='dll/ca_afp/xmldataparser.so' dbapplication='NO'>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile='dll/cmq_tips.so' dbapplication='NO'>
+        <Entry> 
+           <MessageType>PLTIN0</MessageType> 
+           <ProcessModule>MQSend</ProcessModule>
+         </Entry> 
+      </ResponseProcessor>
+    </QueuePair>
+    <QueuePair name='RightQueuePair'>
+      <!-- RightQueuePair.RequestProcessor ECN -->
+      <RequestProcessor dllfile="dll/cmq_tips.so" dbapplication="NO">
+         <Entry> 
+           <MessageType>PLTOUT</MessageType> 
+           <ProcessModule>MQSend</ProcessModule>
+         </Entry>  
+       </RequestProcessor> 
+      <ResponseProcessor dllfile='dll/ca_afp/xmldataparser.so' dbapplication='NO'>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>
+

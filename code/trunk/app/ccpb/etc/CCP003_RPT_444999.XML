@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ´óÖÐ×¨½É·Ñ¸÷ÇþµÀÈ«ÐÐ»ã×Üµ¥ -->
+<Application  dbconnect="YES" trclog="RPTCCP_003.trc">
+  <VarDef>
+    <String alias="QryDat" name="$QryDat" />
+  </VarDef>
+  <MsgConvert>
+    <Item alias="TxnSts">
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <Convert value="C" msg="ÍË·Ñ»ò³åÕý"/>
+    </Item>  	
+    <Item alias="TxnCnl">
+      <Convert value="TRM" msg="¹ñÃæ"/>
+      <Convert value="MME" msg="×ÔÖúÍ¨"/>
+      <Convert value="WEB" msg="ÍøÒø"/>
+    </Item>    
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select TxnSts,TxnCnl,coalesce(COUNT(*),0) TxnCnlCcpCnt,COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TxnCnlSumAmt
+           from ccptxnjnl   where ActDat='%s' and TxnSts in ('S','C')  and TxnCnl in ('TRM','MME','WEB') group by TxnSts,TxnCnl" >
+        <FieldList>$QryDat|</FieldList>
+      </Sql>
+    </Iterative>    
+    <Summed type="sql">
+      <Sql sql="select COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotAmt
+           from ccptxnjnl   where ActDat='%s' and TxnSts='S' and TxnCnl in ('TRM','MME','WEB')">
+        <FieldList>$QryDat|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <!--FormatDefine pagerows="10" pagesum="YES"-->
+  <FormatDefine>
+    <TableHeader>
+      <Para label="01" alias="SUBSTR($QryDat,1,4)"/>
+      <Para label="02" alias="SUBSTR($QryDat,5,2)"/>
+      <Para label="03" alias="SUBSTR($QryDat,7,2)"/>
+      <Format>
+					        ´óÖÐ×¨½É·Ñ¸÷ÇþµÀÈ«ÐÐ»ã×Üµ¥
+
+            #    Äê#  ÔÂ#  ÈÕ              Êý¾Ý·¶Î§£ºÖéº£·ÖÐÐ
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥            
+  ³É¹¦±êÖ¾        ÇþµÀ        ±ÊÊý                     ½ð¶î
+      </Format>
+    </TableHeader>
+    
+    <Iterative line="4">
+      <Para label="01" alias="$TxnSts"      spread="mid" convert="YES"/>    <!--±êÖ¾£º³É¹¦ »ò Ä¨ÕË-->
+      <Para label="02" alias="$TxnCnl"      spread="mid" convert="YES"/>    <!--ÇþµÀ  ¹ñÃæ¡¢×ÔÖúÍ¨»òÍøÒø-->
+      <Para label="03" alias="$TxnCnlCcpCnt"      spread="right"/>    <!--»ã×Ü±ÊÊý-->
+      <Para label="04" alias="AMTSIMPLEFMT($TxnCnlSumAmt)"    spread="left"/>    <!--»ã×Ü½ð¶î-->
+      <Format>
+ #           #                   #                           #
+      </Format>
+    </Iterative>
+    <Summed line="2">
+      <Para label="01" alias="AMTSIMPLEFMT($TotAmt)" spread="left"/>
+      <Format>
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      	½»Ò×³É¹¦½ð¶îºÏ¼Æ£º              #
+      </Format>
+    </Summed>
+  </FormatDefine>
+
+</Application>  

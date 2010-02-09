@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ´óÖÐ×¨ÊÕ·ÑÔþÕËµ¥ -->
+<Application  dbconnect="YES" trclog="RPTCCP_001.trc">
+  <VarDef>
+    <String alias="QNodNo"  name="$QNodNo" />
+    <String alias="QryDat" name="$QryDat" />
+  </VarDef>
+  <MsgConvert>
+    <Item alias="CrgWay">
+      <Convert value="0" msg="ÏÖ½ð"/>
+      <Convert value="1" msg="×ªÕË"/>
+    </Item>
+    <Item alias="RecSts">
+      <Convert value="1" msg="³É¹¦"/>
+      <Convert value="C" msg="Ä¨ÕË"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select * from ccpjnldtl where NodNo='%s' and ActDat='%s' and RecSts='1'  and CrgWay in ('0','1') order by ShlCod" >
+        <FieldList>$QNodNo|$QryDat|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type="sql" >
+      <Sql sql="select COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) SumAmt
+           from ccpjnldtl   where NodNo='%s' and ActDat='%s' and RecSts='1'  and CrgWay in ('0','1')" >
+        <FieldList>$QNodNo|$QryDat|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="10" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="SUBSTR($QryDat,1,4)"/>
+      <Para label="02" alias="SUBSTR($QryDat,5,2)"/>
+      <Para label="03" alias="SUBSTR($QryDat,7,2)"/>
+      <Para label="04" alias="$QNodNo"/>
+      <Format>
+					        ´óÖÐ×¨ÊÕ·ÑÔþÕËµ¥
+
+                                           #    Äê#  ÔÂ#  ÈÕ              Íøµã£º#
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©×©¥©¥©·
+©§¹ñ Ô± ºÅ©§ Á÷  Ë®  ºÅ ©§   ´úÂë   ©§ Ñ§  Éú ©§     Ñ§ÔÓ·Ñ   ©§    ×¡ËÞ·Ñ    ©§  ÊµÏ°ÊµÑé·Ñ  ©§    ±¨¿¼·Ñ    ©§    ÖØÐÞ·Ñ    ©§     ÆäËü     ©§      ºÏ¼Æ    ©§    ÊÕ¾ÝºÅÂë    ©§×´Ì¬©§ÏÖ×ª©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$TlrId"	spread="mid"/>
+      <Para label="02" alias="$TckNo"	spread="mid"/>
+      <Para label="03" alias="$ShlCod"	spread="mid"/>
+      <Para label="04" alias="$CusNam"	/>
+      <Para label="05" alias="AMTFMT($TxnAt1)"	spread="mid"/>
+      <Para label="06" alias="AMTFMT($TxnAt2)"	spread="mid"/>
+      <Para label="07" alias="AMTFMT($TxnAt3)"	spread="mid"/>
+      <Para label="08" alias="AMTFMT($TxnAt4)"	spread="mid"/>
+      <Para label="09" alias="AMTFMT($TxnAt5)"	spread="mid"/>
+      <Para label="10" alias="AMTFMT($TxnAt6)"	spread="mid"/>
+      <Para label="11" alias="AMTFMT($TxnAmt)"	spread="mid"/>
+      <Para label="12" alias="$RcpNo"	spread="mid"/>
+      <Para label="13" alias="$RecSts"	spread="mid"  convert="YES"/>
+      <Para label="14" alias="$CrgWay"	spread="mid"  convert="YES"/>
+      <Format>
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©ï©¥©¥©Ï
+©§#       ©§#           ©§#         ©§#       ©§#             ©§#             ©§#             ©§#             ©§#             ©§#             ©§#             ©§#               ©§#   ©§#   ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTFMT($SumAmt)"  spread="right" />
+      <Format>
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©ß©¥©¥©¿
+                                                                                      ±¾ÈÕ½ð¶îºÏ¼Æ£º#
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>

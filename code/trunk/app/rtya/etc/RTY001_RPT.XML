@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ãÖÝ·ÖÐÐ¼à¿ØÕÊ»§¿çÐÐ×ªÕÊÊÕ¿îÃ÷Ï¸Ìá½»·¿¹Ü¾ÖÊ§°ÜÇåµ¥ -->
+<Application  dbconnect="YES" trclog="RTY001.trc">
+	<VarDef>
+		<String alias="PrtTlr"       pos="1"/>        <!--ÖÆ±í¹ñÔ±-->
+		<String alias="PrtDat"       pos="2"/>        <!--´òÓ¡ÈÕÆÚ-->
+	</VarDef>
+	<MsgConvert>
+		<Item alias="Status">
+			<Convert value="S" msg="³É¹¦"/>
+			<Convert value="F" msg="Ê§°Ü"/>
+			<Convert value="1" msg="ÈÏÖ¤´í"/>
+			<Convert value="9" msg="Ê§°Ü"/>
+			<Convert value="U" msg="Ô¤¼Ç×´Ì¬"/>
+			<DEFAULT msg="Î´Öª×´Ì¬"/>
+		</Item>
+	</MsgConvert>
+
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select BkAct,PayNo,InDat,InAmt,IfOsd,VchNo,BusLog,Status from rtyactdtl
+					where Status!='S' and IfOsd='1'" >
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine pagerows="45" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$PAGESUM"/>
+			<Para label="02" alias="$PAGENUM"/>
+			<Format>
+                               ½»Í¨ÒøÐÐ ¹ãÖÝ·ÖÐÐ¼à¿ØÕÊ»§¿çÐÐ×ªÕÊÊÕ¿îÃ÷Ï¸Ìá½»Ê§°ÜÇåµ¥
+                              ==========================================================
+                                                                                    ¹²  #  Ò³       µÚ  #  Ò³   
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©·
+©§       ¼à¿ØÕÊºÅ       ©§   ½É¿îÍ¨ÖªÊé±àºÅ     ©§ÊÕ¿îÈÕÆÚ©§      ÊÕ¿î½ð¶î        ©§    ´«Æ±ºÅ    ©§   ÒµÎñÁ÷Ë®ºÅ   ©§ ×´Ì¬ ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©Ï
+			</Format>							  																																																								
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$BkAct"          spread="mid" />
+			<Para label="02" alias="$PayNo"          spread="mid" />
+			<Para label="03" alias="$InDat"          spread="mid" />
+			<Para label="04" alias="AMTFMT($InAmt)"  spread="left" />
+			<Para label="05" alias="$VchNo"          spread="mid" />
+			<Para label="06" alias="$BusLog"         spread="mid" />
+			<Para label="07" alias="$Status"         spread="mid" convert="YES"/>
+			<Format>
+©§#                     ©§#                     ©§#       ©§                     #©§#             ©§#               ©§#     ©§ 
+			</Format>
+		</Iterative>
+		<TableFooter>
+			<Para label="01" alias="$PrtTlr"/>
+			<Para label="02" alias="$PrtDat"/>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¿
+                               ´òÓ¡¹ñÔ±ºÅ£º#                                                ´òÓ¡ÈÕÆÚ£º#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

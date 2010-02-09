@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TIP" server="OFRTTIP1" pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term">
+  
+  <!--CodeSwitching>
+    <Table name="BkNo" file="etc/EDI_CSW.XML">
+      <Column name="Item37" sort="yes"/>
+      <Column name="TlrId1" sort="no"/>
+    </Table>
+    <Table name="CtyCod" file="etc/EDI_CSW.XML">
+      <Column name="Item26" sort="yes"/>
+      <Column name="TlrId2" sort="no"/>
+    </Table>
+    <Table name="CcyCod" file="etc/EDI_CSW.XML">
+      <Column name="Host" sort="yes"/>
+      <Column name="Front" sort="yse"/>
+    </Table>
+    <Table name="RetCod" file="etc/EDI_CSW.XML">
+      <Column name="Item01" sort="yes"/>
+      <Column name="RetCod" sort="no"/>
+    </Table>
+  </CodeSwitching-->
+  
+  <!--IFSSÍ¨Öª¶ÔÕË½»Ò×-->
+    <Transaction service="915856" code="915856" log_switch="1" >
+      <Request>
+         <Include file="etc/TRMTIA_IIT.XML"/>
+         <Item name="BalFil"         length="40" offset="4" expression="DELBOTHSPACE($BalFil)"/><!--ÎÄ¼þÃû-->
+         <Item name="NoUse"          length="51"/>
+      </Request>
+      <Response necessary="no">
+         <Include file="etc/TRMTOA_IIT.XML"/>
+         <Item name="RspMsg"         length="38"/>
+      </Response>
+    </Transaction>
+</Application>

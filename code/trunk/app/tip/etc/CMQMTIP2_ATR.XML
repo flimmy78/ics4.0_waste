@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name='CMQMTIP2' type='CCA' trace='no' ip="_LOCAL_IP">
+    <ThreadPool>
+      <MinWorkerThreads>20</MinWorkerThreads>
+      <MaxWorkerThreads>20</MaxWorkerThreads>
+    </ThreadPool>
+	<!-- DllPriDataCtrl ECN -->
+    <DllPriDataCtrl name="CMQ" dllfile="dll/cmq_tips.so" initfunc="initMQClient" donefunc="closeMQClient">
+       <Para name="QueueServer">QM_TIPS_601100000010_01</Para>
+       <Para name="RecvQName">PBC.601100000010.BATCH.OUT</Para>
+       <Para name="SendQName">PBC.EXT.BATCH.IN</Para>
+       <Para name="MessageType">PLTIN0</Para>
+       <Para name="DefaultExpireTime">300</Para><!--µ¥Î»0.1s-->
+     </DllPriDataCtrl>
+    <DllPriDataCtrl name='AFP' dllfile='dll/xmldataparser.so' initfunc='initDataParser' donefunc='closeDataParser'>
+      <Para name='parserFil1'>etc/MTHDTIP1_ITF.XML</Para>
+      <Para name='parserFil2'>etc/MTHDTIP2_ITF.XML</Para>
+      <Para name='parserFil3'>etc/MTHDTIP3_ITF.XML</Para>
+      <Para name='parserFil4'>etc/MTHDTIP4_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name='CA1' dllfile='dll/ca_afp/pre_tips.so' initfunc='tips_init' donefunc='NULL'>
+        <Para name='ip'>182.119.171.22</Para><!--±¾»úIP-->
+        <Para name='port'>43330</Para><!--·þÎñÆ÷¼àÌý¶Ë¿Ú ¼ûcastart.shÖÐµÄÅäÖÃ-->
+        <Para name='timeout'>10</Para> <!--³¬Ê±Ê±¼ä-->
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name='CA2' dllfile='dll/ca_afp/spe_tips.so' initfunc='tips_init' donefunc='NULL'>
+        <Para name='ip'>182.119.171.22</Para><!--±¾»úIP-->
+        <Para name='port'>43331</Para><!--·þÎñÆ÷¼àÌý¶Ë¿Ú ¼ûcastart.shÖÐµÄÅäÖÃ-->
+        <Para name='timeout'>10</Para> <!--³¬Ê±Ê±¼ä-->
+    </DllPriDataCtrl>
+
+	<!-- Connection ECN -->
+    <Connection type="LEFT">
+        <Entrance name="CMQMTIP2" type="MQ">
+           <ListenerModule name="MQClientIn" dllfile="dll/cmq_tips.so">
+           </ListenerModule>
+        </Entrance>
+     </Connection>
+    <QueuePair name='LeftQueuePair'>
+      <QueueLength>5</QueueLength>
+      <RequestProcessor dllfile='dll/xmldataparser.so' dbapplication='NO'>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile='dll/cmq_tips.so' dbapplication='NO'>
+        <Entry> 
+           <MessageType>PLTIN0</MessageType> 
+           <ProcessModule>MQSend</ProcessModule>
+         </Entry> 
+      </ResponseProcessor>
+    </QueuePair>
+    <QueuePair name='RightQueuePair'>
+    	<QueueLength>5</QueueLength>
+    	<ResponseProcessor dllfile='dll/xmldataparser.so' dbapplication='NO'>
+        <Entry> 
+           <MessageType>PLTIN0</MessageType> 
+           <ProcessModule>dataParser</ProcessModule>
+         </Entry> 
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>
+

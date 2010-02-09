@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="CCPBATCH_DEBUG.log"  err_file="CCPBATCH_DEBUG.err">
+	
+	  <CodeSwitching>
+    <Table name="CnlDes" file="etc/SRFA_CSW_444999.XML">
+      <Column name="TxnCnl" sort="no"/>
+      <Column name="CnlDes" sort="no"/>
+    </Table>
+  </CodeSwitching>
+	
+  <!--½»Ò×Ã÷Ï¸¸ñÊ½-->
+  <Process name="Format1">
+    <Group name="Rec" repeat_name="RecNum">	
+      <Item name="VchSeq"    length="4"    />  <!--´«Æ±ÐòºÅ  -->
+      <Item name="VchSts"    length="1"    />  <!--´«Æ±×´Ì¬  -->
+      <Item name="VchSig"    length=" 1"   />  <!--½è»õ·½±êÖ¾ D½è£»C»õ -->
+      <Item name="ActNo"     length="21"   />  <!--ÕËºÅ      -->
+      <Item name="TxnAmt"    length="15"/>  <!--½ð¶î        -->
+      <Item name="EndLine"  length=" 1" necessary="no" fill_asc="10"/>
+     </Group>
+  </Process>  
+  <Process name="Format2" sqn_flag="Y" sqn_node_name="RecNo">
+    <Data>
+      <Item name="VchSeq"    length="4"    />  <!--´«Æ±ÐòºÅ  -->
+      <Item name="VchSts"    length="1"    />  <!--´«Æ±×´Ì¬  -->
+      <Item name="VchSig"    length=" 1"   />  <!--½è»õ·½±êÖ¾ D½è£»C»õ -->
+      <Item name="ActNo"     length="21"   />  <!--ÕËºÅ      -->
+      <Item name="TxnAmt"    length="15"   deli_asc="10"/>  <!--½ð¶î        -->
+    </Data>
+  </Process>
+
+  <Process name="srfxzsjnl">   <!--È«ÐÐÐÐÕþÊÂÒµÊÕ·ÑÊý¾Ý -->
+    <Data>
+      <Item name="SrfCod"  length="7"/>   <!--ÊÕ·Ñ´úÂë-->
+      <Item name="SrfAmt"  expression="ADDCHAR($SrfAmt,11,0,1)"/>   <!--ÊÕ·Ñ½ð¶îºÏ¼Æ-->
+      <Item name="SrfCnt"  expression="ADDCHAR($SrfCnt,5,0,1)"/>   <!--ÊÕ·Ñ±ÊÊýºÏ¼Æ-->
+    </Data>
+  </Process>
+
+
+  <Process name="srfxzsjnl2">   <!--È«ÐÐÐÐÕþÊÂÒµÊÕ·ÑÊý¾Ý -->
+    <Data>
+      <Item name="SrfCod"  length="7"/>   <!--ÊÕ·Ñ´úÂë-->
+      <Item name="SrfCnt"  expression="ADDCHAR($SrfCnt,30, ,1)"/>   <!--ÊÕ·Ñ±ÊÊýºÏ¼Æ-->
+      <Item name="SrfAmt"  expression="ADDCHAR(AMTSIMPLEFMT($SrfAmt),29, ,1)"/>   <!--ÊÕ·Ñ½ð¶îºÏ¼Æ-->
+    </Data>
+    <End>
+      <Item name="Tmp3"/>
+    </End>
+  </Process>
+
+
+  <Process name="srftxnjnl">   <!--È«ÐÐÐÐÕþÊÂÒµÊÕ·ÑÊý¾Ý -->
+    <Data>
+      <SwitchCode name="TxnCnl" new_name="CnlDes" tab_name="CnlDes" col_name="TxnCnl"/>
+      <Item name="CnlDes"  length="12"/>   <!--ÊÕ·Ñ´úÂë-->
+      <Item name="CnlCnt"  expression="ADDCHAR($CnlCnt,25, ,1)"/>   <!--ÇþµÀÊÕ·Ñ±ÊÊýºÏ¼Æ-->
+      <Item name="CnlAmt"  expression="ADDCHAR(AMTSIMPLEFMT($CnlAmt),29, ,1)"/>   <!--ÇþµÀÊÕ·Ñ½ð¶îºÏ¼Æ-->
+    </Data>
+    <End>
+      <AddItem name="AAA" value=""/>
+      <Item name="AAA"    expression="STRCAT(ºÏ¼Æ,ADDCHAR($SumCnt,33, ,1),ADDCHAR(AMTSIMPLEFMT($SumAmt),29, ,1))"    deli_asc="10"/>
+      <Item name="Tmp3"/>
+      <Item name="AAA"    deli_asc="10"/>
+      <Item name="AAA"    deli_asc="10"/>
+      <Item name="AAA"    deli_asc="10"/>
+      <Item name="AAA"    deli_asc="10"/>
+    </End>
+  </Process>
+    
+</BATCH>
+

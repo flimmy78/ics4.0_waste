@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--ÈËÐÐ½»Ò×Çåµ¥-->
+<Application trclog="tiprpt.log" dbconnect="YES">
+  <VarDef>
+      <String alias="QryDat"    name="$QryDat"/>      
+      <String alias="BrkNo"     name="$BrkNo"/>
+      <String alias="BrkNam"    name="$BrkNam"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="PayMod"><!--ÄÉË°ÀàÐÍ-->
+      <Convert value="0" msg="ÊµÊ±¿ÛË°"/>
+      <Convert value="1" msg="ÅúÁ¿¿ÛË°"/>
+      <Convert value="2" msg="ÒøÐÐ¶Ë½É¿î"/>      
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+    <Item alias="PayTyp"><!--Ö§¸¶·½Ê½-->
+      <Convert value="0" msg="ÏÖ½ð"/>
+      <Convert value="1" msg="¶Ô¹«»îÆÚ"/>      
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+    <Item alias="ChkSts"><!--¶ÔÕË×´Ì¬-->
+      <Convert value="0" msg="Î´¶ÔÕË"/>
+      <Convert value="1" msg="¶ÔÕË³É¹¦"/>
+      <Convert value="2" msg="ÎÒÐÐ¶àÕË"/>
+      <Convert value="3" msg="ÒªËØ²»·û"/>      
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+    <Item alias="RknSts"><!--ÇåËã×´Ì¬-->
+      <Convert value="0" msg="Î´ÇåËã"/>
+      <Convert value="1" msg="ÒÑÇåËã"/>      
+      <Convert value="2" msg="ÇåËãÊ§°Ü"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+     <Iterative>        
+       <Sql sql="select * from tiptxnbok where WrkDat='%s' and BilSts = '1' and CBrkNo='%s'">
+         <FieldList>$QryDat|$BrkNo|</FieldList>
+       </Sql>    
+     </Iterative>  
+     <Summed type ="sql">
+       <Sql sql="select count(*) TOTCNT, SUM(CAST(TxnAmt AS BIGINT)) TOTAMT from tiptxnbok where WrkDat='%s' and BilSts = '1' and CBrkNo='%s'">
+         <FieldList>$QryDat|$BrkNo|</FieldList>
+       </Sql>          
+     </Summed>
+  </DataSource>
+  <FormatDefine pagerows="25" pagesum="YES">
+    <ReportHeader>
+          <Para label="01" alias="$WrkDat"/>
+          <Para label="02" alias="$CBrkNo"/>   
+          <Para label="03" alias="$BrkNam"/>   
+          <Para label="04" alias="$PAGESUM" spread="left"/>
+          <Para label="05" alias="$PAGENUM" spread="left"/>       
+          <Format> 
+                                                        ²ÆË°¿â½»Ò×Çåµ¥ 
+
+              ÈËÐÐ¹¤×÷ÈÕÆÚ£º#            ¹ú¿â¹ØÁªÐÐÐÐºÅ£º#                ¹ú¿â¹ØÁªÐÐÐÐÃû: #                                                 ¹² # Ò³     µÚ # Ò³
+              
+      </Format>
+        </ReportHeader>
+    <TableHeader>       
+       <Format>                                                        
+   Õ÷ÊÕ»ú¹Ø    Î¯ÍÐÈÕÆÚ   ÈËÐÐÁ÷Ë®ºÅ   ÄÉË°ÀàÐÍ    ÅúÁ¿ÈËÐÐ°üºÅ   ¸¶¿î·½Ê½            ÕËºÅ                 ½ð¶î       »á¼ÆÈÕÆÚ   »á¼ÆÁ÷Ë®ºÅ  ºË¶Ô×´Ì¬  ÇåËã×´Ì¬       Ë°Æ±ºÅÂë          ÄÉË°ÈË±àºÅ      
+       </Format>
+    </TableHeader>
+    <Iterative line="1">
+          <Para label="01" alias="$OrgCod"/>
+          <Para label="02" alias="$EntDat"/>
+          <Para label="03" alias="$TraNo"/>
+          <Para label="04" alias="$PayMod" convert="YES"/>
+          <Para label="05" alias="$SPckNo"/>
+          <Para label="06" alias="$PayTyp" convert="YES"/>           
+          <Para label="07" alias="$ActNo"/>
+          <Para label="08" alias="AMTFMT($TxnAmt)" spread="left"/> 
+          <Para label="09" alias="$ActDat"/> 
+          <Para label="10" alias="$TckNo" />
+          <Para label="11" alias="$ChkSts" convert="YES"/>
+          <Para label="12" alias="$RknSts" convert="YES"/>
+          <Para label="13" alias="$TaxVID"/>
+          <Para label="14" alias="$TCusId"/>          
+          <Format>
+#              #           #           #           #              #           #                                  #    #           #            #         #        #       #      
+      </Format> 
+    </Iterative>
+    
+    <Summed line="1">
+      <Para label="01" alias="$TOTCNT" spread="right"/>
+      <Para label="02" alias="AMTFMT($TOTAMT)" spread="right"/>
+      <Format>
+    ±ÊÊý×Ü¼Æ: #                 ½ð¶î×Ü¼Æ: #                                                                 
+      </Format>
+    </Summed>                    
+  </FormatDefine>
+</Application>

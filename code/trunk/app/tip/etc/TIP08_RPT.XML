@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP08_RPT.trc" dbconnect="YES">
+  <!-- Added By zhq_BoCom00041319_20080702_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨¶Ô¹«¿Í»§Ç©Ô¼½ø¶È±í)--> 
+  <VarDef>
+    <String alias="StaDat"   name="$StaDat"/>  <!--ÆðÊ¼ÈÕÆÚ-->
+    <String alias="EndDat"   name="$EndDat"/>  <!--½ØÖÁÈÕÆÚ-->
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+      <Sql sql="SELECT  a.SeqNo SeqNo,a.NodNo NodNo,a.smr SMR,COALESCE(b.Total,0) Total ,COALESCE(c.SubTotal,0) SubTotal 
+                FROM (SELECT RANK() OVER(ORDER BY NodNo) SeqNo,NodNo,SMR FROM puborginf WHERE RIGHT(NodNo,3) ='999')  a  
+                LEFT OUTER JOIN  (SELECT BrkNo,COUNT(*) Total FROM tipcusagr WHERE Status='0' AND VrySts='1' GROUP BY BrkNo ) b 
+                ON  a.NodNo = b.BrkNo  
+                LEFT OUTER JOIN  (SELECT BrkNo,COUNT(*) SubTotal FROM tipcusagr WHERE Status='0' AND VrySts='1' AND LEFT(RecTm,8) BETWEEN '%s' AND '%s' GROUP BY BrkNo ) c 
+                ON  a.NodNo = c.BrkNo 
+                WHERE a.NodNo NOT IN ('315999','312999')  ORDER BY a.NodNo ">
+        <FieldList>$StaDat|$EndDat|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                       ½»Í¨ÒøÐÐ½ÉË°Í¨¶Ô¹«¿Í»§Ç©Ô¼½ø¶È±í
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="LEFTSTR($StaDat,4)"  spread="left"/>
+      <Para label="02" alias="SUBSTR($StaDat,5,2)" spread="left"/>
+      <Para label="03" alias="RIGHTSTR($StaDat,2)" spread="left"/>
+      <Para label="04" alias="LEFTSTR($EndDat,4)"  spread="left"/>
+      <Para label="05" alias="SUBSTR($EndDat,5,2)" spread="left"/>
+      <Para label="06" alias="RIGHTSTR($EndDat,2)" spread="left"/>
+      <Para label="07" alias="$PAGESUM" spread="left"/>
+      <Para label="08" alias="$PAGENUM" spread="left"/>
+      <Format>
+                                                        #Äê #ÔÂ #ÈÕ ÖÁ #Äê #ÔÂ #ÈÕ
+                                                                                                                       ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§  ÐòºÅ  ©§   ·ÖÐÐºÅ   ©§·ÖÐÐÃû³Æ                                                                        ©§Ç©Ô¼¶Ô¹«¿Í»§×ÜÊý©§±¾ÆÚÐÂÔöÇ©Ô¼¶Ô¹«¿Í»§Êý©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$SeqNo"    spread="left"/>
+      <Para label="02" alias="$NodNo"    spread="right"/>
+      <Para label="03" alias="$SMR"      spread="right"/>
+      <Para label="04" alias="$Total"    spread="left"/>
+      <Para label="05" alias="$SubTotal" spread="left"/>
+      <Format>
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§     #  ©§   #        ©§#                                                                               ©§         #      ©§           #          ©§
+      </Format>
+    </Iterative>
+    <TableFooter>
+      <Format> 
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
+

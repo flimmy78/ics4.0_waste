@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TIP"  server="OFRTTIP2" timeout="100">
+	 <!--Modified by sundx at 20090713 for cq76417 ¸ù¾Ýv2.1½Ó¿ÚÐÞ¸ÄÏà¹ØÏîµÄ¿ÉÑ¡ÏîÊôÐÔ-->
+   <GetTxnCode type="xml">
+      <Item value="CFX.HEAD.MsgNo"/>
+   </GetTxnCode>
+   
+   <CodeSwitching>
+      <Table name="VCResult" file="etc/TIP_CSW.XML">
+         <Column name="RspCod"  sort="no"/>
+         <Column name="Result"  sort="no"/>
+      </Table>
+   </CodeSwitching>
+   <Define>
+      <Macro name="ReadHead">
+         <ReadElement name="HEAD">
+            <ReadElement name="SRC"      ETF_name="SRC"/>
+            <ReadElement name="DES"      ETF_name="DES"/>
+            <ReadElement name="MsgNo"    ETF_name="MsgNo"/>
+            <ReadElement name="MsgID"    ETF_name="MsgId"/>
+            <ReadElement name="MsgRef"   ETF_name="MsgRef"/>
+		        <ReadElement name="WorkDate" ETF_name="WorkDate" necessary="no"/>
+		        <ReadElement name="Reserve"  ETF_name="Reserve" necessary="no"/>
+         </ReadElement>
+      </Macro>
+      <Macro name="WriteHead">
+         <WriteElement name="HEAD">
+	         <WriteElement name="VER"      ETF_name="VER" value="1.0"/>
+           <WriteElement name="SRC"      ETF_name="SRC"/>
+           <WriteElement name="DES"      ETF_name="DES"/>
+		       <WriteElement name="APP"      ETF_name="APP" value="TIPS"/>
+           <WriteElement name="MsgNo"    ETF_name="MsgNo"/>
+           <WriteElement name="MsgID"    ETF_name="MsgId"/>
+           <WriteElement name="MsgRef"   ETF_name="MsgRef"/>
+		       <WriteElement name="WorkDate" ETF_name="WorkDate" necessary="no"/>
+		       <WriteElement name="Reserve"  ETF_name="Reserve" necessary="no"/>
+         </WriteElement>
+      </Macro>
+      <Macro name="9120ToPBC"><!--Í¨ÓÃÓ¦´ð-->
+         <WriteElement name="MsgReturn9120">
+            <WriteElement name="OriMsgNo"    ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+            <!--SwitchCode name="RspCod" new_name="Result" tab_name="Cod2Res" col_name="RspCod"/-->
+            <WriteElement name="Result"      ETF_name="Result"/><!--´¦Àí½á¹û-->
+            <WriteElement name="AddWord"     ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->                    
+            <WriteElement name="Information" ETF_name="Info" necessary="no"/>
+         </WriteElement>
+      </Macro>
+      <Macro name="9121ToPBC"><!--Í¨ÓÃÈ·ÈÏÓ¦´ð-->
+        <WriteElement name="MsgReturn9121">
+            <WriteElement name="OriMsgNo"       ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+            <WriteElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­·¢Æð»ú¹¹´úÂë-->
+            <WriteElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+            <WriteElement name="OriRequestNo"   ETF_name="ReqNo"/><!--Ô­Ö¸ÁîÐòºÅ-->
+            <!--SwitchCode name="RspCod" new_name="Result" tab_name="Cod2Res" col_name="RspCod"/-->
+            <WriteElement name="Result"         ETF_name="Result"/><!--´¦Àí½á¹û-->
+            <WriteElement name="AddWord"        ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->  			
+        </WriteElement>
+      </Macro>
+   </Define>
+      
+   <Transaction service="915161" code="2201" desc="ÉÌÒµÒøÐÐ°ìÀíÖ§¸¶ »®¿îÉêÇë" log_switch="1" >
+      <Request>
+         <ReadElement name="CFX">
+         <Quote name="ReadHead"/>
+         <ReadElement name="MSG">
+            <ReadElement name="BatchHead2201">
+               <ReadElement name="AgtBnk" ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+               <ReadElement name="OrgCod" ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+               <ReadElement name="TreCod" ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+               <ReadElement name="EntDat" ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+               <ReadElement name="PackNo" ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+               <ReadElement name="AllNum" ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+               <!--ReadElement name="AllAmt" ETF_name="AllAmt" expression="ADDCHAR(AMTPOWER($AllAmt,2),15,0,1)"/--><!--×Ü½ð¶î-->
+               <ReadElement name="AllAmt" ETF_name="AllAmt"/>
+               <ReadElement name="VouTyp" ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+               <ReadElement name="PayMod" ETF_name="PayMod"/><!--Ö§¸¶·½Ê½-->
+            </ReadElement>
+            <ReadGroupElement name="Bill2201" ETF_name="Bill2201" repeat_name="AllNum"> <!--²¦¿îÐÅÏ¢-->
+               <ReadElement name="TraNo"  ETF_name="TraNo"/><!--½»Ò×Á÷Ë®ºÅ-->
+               <ReadElement name="VouNo"  ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+               <ReadElement name="VouDat" ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+               <ReadElement name="PyrAct" ETF_name="PyrAct"/><!--¸¶¿îÈËÕËºÅ-->
+               <ReadElement name="PyrNam" ETF_name="PyrNam"/><!--¸¶¿îÈË»§Ãû-->
+               <ReadElement name="PyrAdr" ETF_name="PyrAdr" necessary="no"/><!--¸¶¿îÈËµØÖ·-->
+               <ReadElement name="RAccNo" ETF_name="RAccNo"/><!--ÊÕ¿îÈËÕËºÅ-->
+               <ReadElement name="RAccNm" ETF_name="RAccNm"/><!--ÊÕ¿îÈË»§Ãû-->
+               <ReadElement name="RAccAd" ETF_name="RAccAd" necessary="no"/><!--ÊÕ¿îÈËµØÖ·-->
+               <ReadElement name="RBnkNo" ETF_name="RBnkNo"/><!--ÊÕ¿î¿ª»§ÐÐºÅ-->
+               <ReadElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->
+               <ReadElement name="BdgTyp" ETF_name="BdgTyp"/><!--Ô¤ËãÖÖÀà-->
+               <ReadElement name="TrmSgn" ETF_name="TrmSgn"/><!--ÕûÀíÆÚ±êÖ¾-->
+               <ReadElement name="OfYear" ETF_name="OfYear"/><!--ËùÊôÄê¶È-->
+               <ReadElement name="TxnAmt" ETF_name="TxnAmt"/><!--½»Ò×½ð¶î-->
+               <ReadElement name="StIfNm" ETF_name="StIfNm"/><!--Í³¼ÆÐÅÏ¢ÌõÊý-->
+               <ReadGroupElement name="Detail2201" ETF_name="Detail2201" repeat_name="StIfNm"> <!--Ã÷Ï¸ÐÅÏ¢-->
+                  <ReadElement name="SeqNo"  ETF_name="SeqNo"/><!--ÐòºÅ-->
+                  <ReadElement name="BdgCod" ETF_name="BdgCod"/><!--Ô¤Ëãµ¥Î»´úÂë-->
+                  <ReadElement name="FSbCod" ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+                  <ReadElement name="ESbCod" ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+                  <ReadElement name="TraAmt" ETF_name="TraAmt"/><!--Ã÷Ï¸½ð¶î-->
+                  <ReadElement name="ActPop" ETF_name="ActPop"  /><!--ÕË»§ÐÔÖÊ-->
+               </ReadGroupElement> 
+            </ReadGroupElement>
+            </ReadElement>
+         </ReadElement>      
+      </Request>
+      <Response>         
+      </Response>
+   </Transaction>
+   
+   <Transaction service="915161" code="2202" desc="Ö§¸¶ÎÞ£¨ÓÐ£©Ö½Æ¾Ö¤ÍË¿îÇëÇó" log_switch="1" >
+      <Request>
+         <ReadElement name="CFX">
+         <Quote name="ReadHead"/>
+         <ReadElement name="MSG">
+            <ReadElement name="Head2202"><!--ÅúÁ¿Í·-->
+               <ReadElement name="OrgCod"        ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+               <ReadElement name="TreCod"        ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+               <ReadElement name="AgtBnk"        ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+               <ReadElement name="EntDat"        ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+               <ReadElement name="PackNo"        ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+               <ReadElement name="AllNum"        ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+               <ReadElement name="AllAmt"        ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+               <ReadElement name="VouTyp"        ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+               <ReadElement name="PayMod"        ETF_name="PayMod"/><!--Ö§³ö·½Ê½-->
+            </ReadElement>
+            <ReadGroupElement name="Bill2202"   ETF_name="Bill2202" repeat_name="AllNum"><!--ÍË¿îÐÅÏ¢-->
+               <ReadElement name="TraNo"         ETF_name="TraNo"/><!--½»Ò×Á÷Ë®ºÅ-->
+               <ReadElement name="VouNo"         ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+               <ReadElement name="VouDat"       ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+               <ReadElement name="OTraNo"        ETF_name="OTraNo" necessary="no"/><!--Ô­½»Ò×Á÷Ë®ºÅ-->
+               <ReadElement name="OEntDt"        ETF_name="OEntDt" necessary="no"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+               <ReadElement name="OVouNo"        ETF_name="OVouNo"/><!--Ô­Æ¾Ö¤±àºÅ-->
+               <ReadElement name="OVouDt"        ETF_name="OVouDt"/><!--Ô­Æ¾Ö¤ÈÕÆÚ-->
+               <ReadElement name="OActNo"        ETF_name="OActNo"/><!--Ô­¸¶¿îÈËÕËºÅ-->
+               <ReadElement name="OPyNam"        ETF_name="OPyNam"/><!--Ô­¸¶¿îÈËÃû³Æ-->
+               <ReadElement name="ORAcNo"        ETF_name="ORAcNo"/><!--Ô­ÊÕ¿îÈËÕËºÅ-->
+               <ReadElement name="ORAcNm"        ETF_name="ORAcNm"/><!--Ô­ÊÕ¿îÈËÃû³Æ-->
+               <ReadElement name="PayDNo"        ETF_name="PayDNo"/><!--Ö§¸¶½»Ò×ÐòºÅ-->
+               <ReadElement name="PMsgNo"        ETF_name="PMsgNo"/><!--Ö§¸¶±¨ÎÄ±àºÅ-->
+               <ReadElement name="PEntDt"        ETF_name="PEntDt"/><!--Ö§¸¶Î¯ÍÐÈÕÆÚ-->
+               <ReadElement name="PSndBk"        ETF_name="PSndBk"/><!--Ö§¸¶·¢ÆðÐÐÐÐºÅ-->
+               <ReadElement name="BdgTyp"        ETF_name="BdgTyp"/><!--Ô¤ËãÖÖÀà-->
+               <ReadElement name="TrmSgn"        ETF_name="TrmSgn"/><!--ÕûÀíÆÚ±êÖ¾-->
+               <ReadElement name="OfYear"        ETF_name="OfYear"/><!--ËùÊôÄê¶È-->
+               <ReadElement name="TxnAmt"        ETF_name="TxnAmt"/><!--½»Ò×½ð¶î-->
+               <ReadElement name="StIfNm"        ETF_name="StIfNm"/><!--Í³¼ÆÐÅÏ¢ÌõÊý-->
+               <ReadGroupElement name="Detail2202" ETF_name="Detail2202" repeat_name="StIfNm"><!--Ã÷Ï¸ÐÅÏ¢-->
+                  <ReadElement name="SeqNo"          ETF_name="SeqNo"/><!--ÐòºÅ-->
+                  <ReadElement name="BdgCod"         ETF_name="BdgCod"/><!--Ô¤Ëãµ¥Î»´úÂë-->
+                  <ReadElement name="FSbCod"         ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+                  <ReadElement name="ESbCod"         ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+                  <ReadElement name="TraAmt"         ETF_name="TraAmt"/><!--Ã÷Ï¸½ð¶î-->
+                  <ReadElement name="ActPop"         ETF_name="ActPop"/><!--ÕË»§ÐÔÖÊ-->
+               </ReadGroupElement>
+            </ReadGroupElement>
+            </ReadElement>
+         </ReadElement>
+      </Request>
+      <Response>
+         
+      </Response>   
+   </Transaction>
+   
+   <Transaction service="915161" code="2200" desc="ÉÌÒµÒøÐÐ°ìÀíÖ§¸¶ ²¦¸¶Ô¤Ëãµ¥Î»´¦Àí½á¹û" log_switch="1" >
+      <Request>      
+      <ReadElement name="CFX">
+        <Quote name="ReadHead"/>
+        <ReadElement name="MSG">
+          <ReadElement name="BatchHead2200">
+            <ReadElement name="AgtBnk"      ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+            <ReadElement name="OrgCod"      ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+            <ReadElement name="TreCod"      ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+            <ReadElement name="EntDat"      ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+            <ReadElement name="PackNo"      ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+            <ReadElement name="OPakNo"      ETF_name="OPakNo"/><!--Ô­°üÁ÷Ë®ºÅ-->
+            <ReadElement name="OEntDt"      ETF_name="OEntDt"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+            <ReadElement name="AllNum"      ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+            <ReadElement name="AllAmt"      ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+            <ReadElement name="VouTyp"      ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+            <ReadElement name="PayMod"      ETF_name="PayMod"/><!--Ö§¸¶·½Ê½-->
+          </ReadElement>
+          <ReadGroupElement name="Bill2200" ETF_name="Bill2200" repeat_name="AllNum"> <!--²¦¿îÐÅÏ¢-->
+            <ReadElement name="PayOrd"      ETF_name="PayOrd"/><!--Ö§¸¶ÁîºÅ-->
+            <ReadElement name="VouNo"       ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+            <ReadElement name="VouDat"      ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+            <ReadElement name="OTraNo"      ETF_name="OTraNo"/><!--Ô­½»Ò×Á÷Ë®ºÅ-->
+            <ReadElement name="PaySta"      ETF_name="PaySta"/><!--Ö§¸¶×´Ì¬-->
+            <ReadElement name="Desc"        ETF_name="Desc" necessary="no"/><!--ËµÃ÷-->
+            <ReadElement name="AllNum"      ETF_name="AllNum"/><!--½»Ò×±ÊÊý-->
+            <ReadElement name="AllAmt"      ETF_name="AllAmt"/><!--½»Ò×½ð¶î-->
+            <ReadElement name="SucNum"      ETF_name="SucNum"/><!--³É¹¦±ÊÊý-->
+            <ReadElement name="SucAmt"      ETF_name="SucAmt"/><!--³É¹¦½ð¶î-->
+            <ReadGroupElement name="Detail2200" ETF_name="Detail2200" repeat_name="TxnNum"> <!--Ã÷Ï¸ÐÅÏ¢-->
+              <ReadElement name="SeqNo"         ETF_name="SeqNo"/><!--ÐòºÅ-->
+              <ReadElement name="SOrgCd"        ETF_name="SOrgCd"/><!--Ò»¼¶Ô¤Ëãµ¥Î»´úÂë-->
+              <ReadElement name="GOrgCd"        ETF_name="GOrgCd"/><!--»ù²ãÔ¤Ëãµ¥Î»´úÂë-->
+              <ReadElement name="AddWord"       ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->
+              <ReadElement name="FSbCod"        ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+              <ReadElement name="ESbCod"        ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+              <ReadElement name="Amt"           ETF_name="Amt"/><!--Ã÷Ï¸½ð¶î-->
+              <ReadElement name="PRsult"        ETF_name="PRsult"/><!--²¦¸¶½á¹û-->
+              <ReadElement name="PayDat"        ETF_name="PayDat" necessary="no" /><!--´úÀíÒøÐÐ¸¶¿îÈÕÆÚ-->
+            </ReadGroupElement> 
+          </ReadGroupElement>
+        </ReadElement>
+       </ReadElement>
+    </Request>
+    <Response>       
+    </Response>
+   </Transaction>
+   
+   <Transaction code="3143" desc="ÉÌÒµÒøÐÐ°ìÀíÖ§¸¶ ¹ú¿â×Ê½ðÇåËã´¦Àí½á¹û" log_switch="1" >
+    <Request>      
+      <WriteElement name="CFX">
+        <Quote name="WriteHead"/>
+        <WriteElement name="MSG">
+          <WriteElement name="BatchHead3143">
+            <WriteElement name="TreCod" ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+            <WriteElement name="OrgCod" ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+            <WriteElement name="AgtBnk" ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+            <WriteElement name="EntDat" ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+            <WriteElement name="PackNo" ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+            <WriteElement name="OPakNo" ETF_name="OPakNo"/><!--Ô­°üÁ÷Ë®ºÅ-->
+            <WriteElement name="OEntDt" ETF_name="OEntDt"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+            <WriteElement name="AllNum" ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+            <!--WriteElement name="AllAmt" ETF_name="AllAmt" expression="ADDCHAR(AMTPOWER($AllAmt,2),15,0,1)"/--><!--×Ü½ð¶î-->
+            <WriteElement name="AllAmt" ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+            <WriteElement name="VouTyp" ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+            <WriteElement name="PayMod" ETF_name="PayMod"/><!--Ö§¸¶·½Ê½-->
+          </WriteElement>
+          <WriteGroupElement name="Bill3143" ETF_name="Bill3143" repeat_name="AllNum">
+            <WriteElement name="VouNo"  ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+            <WriteElement name="VouDat" ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+            <WriteElement name="OTraNo" ETF_name="OTraNo"/><!--Ô­½»Ò×Á÷Ë®ºÅ-->           
+            <WriteElement name="PayDNo" ETF_name="PayDNo" necessary="no"/><!--Ö§¸¶½»Ò×ÐòºÅ-->            
+            <WriteElement name="PMsgNo" ETF_name="PMsgNo"/><!--Ö§¸¶±¨ÎÄ±àºÅ-->
+            <WriteElement name="PEntDt" ETF_name="PEntDt"/><!--Ö§¸¶Î¯ÍÐÈÕÆÚ-->           
+            <WriteElement name="PSndBk" ETF_name="PSndBk"/><!--Ö§¸¶·¢ÆðÐÐÐÐºÅ-->
+            <WriteElement name="PRsult" ETF_name="PRsult"/><!--²¦¸¶½á¹û-->
+            <WriteElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ -->            
+            <WriteElement name="AccDat" ETF_name="AccDat"/><!--ÕËÎñÈÕÆÚ-->
+            <WriteElement name="TxnAmt" ETF_name="TxnAmt"/><!--½»Ò×½ð¶î-->
+          </WriteGroupElement>
+        </WriteElement>
+      </WriteElement>
+    </Request>
+    <Response>
+       <GetHead head_name="SSC" name="TRspCd"/> 
+    </Response>
+  </Transaction>
+  
+   <Transaction code="3144" desc="Ö§¸¶ÎÞ£¨ÓÐ£©Ö½Æ¾Ö¤ÍË¿î»ØÖ´" log_switch="1" >
+      <Request>      
+      <WriteElement name="CFX">
+         <Quote name="WriteHead"/>
+         <WriteElement name="MSG">
+            <WriteElement name="BatchHead3144"><!--ÅúÁ¿Í·-->
+               <WriteElement name="AgtBnk"   ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+               <WriteElement name="OrgCod"   ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+               <WriteElement name="TreCod"   ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+               <WriteElement name="EntDat"   ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+               <WriteElement name="PackNo"   ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+               <WriteElement name="OEntDt"   ETF_name="OEntDt"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+               <WriteElement name="OPakNo"   ETF_name="OPakNo"/><!--Ô­°üÁ÷Ë®ºÅ-->
+               <WriteElement name="AllNum"   ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+               <WriteElement name="AllAmt"   ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+               <WriteElement name="VouTyp"   ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+               <WriteElement name="PayMod"   ETF_name="PayMod"/><!--Ö§³ö·½Ê½-->
+            </WriteElement>
+            <WriteGroupElement name="BatchReturn3144"  ETF_name="BatchReturn3144" repeat_name="AllNum"><!--»ØÖ´ÐÅÏ¢-->               
+               <WriteElement name="VouNo"    ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+               <WriteElement name="VouDat"   ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+               <WriteElement name="OVouNo"   ETF_name="OVouNo"/><!--Ô­Æ¾Ö¤±àºÅ-->
+               <WriteElement name="OVouDt"   ETF_name="OVouDt"/><!--Ô­Æ¾Ö¤ÈÕÆÚ-->
+               <WriteElement name="OTraNo"   ETF_name="OTraNo"/><!--Ô­½»Ò×Á÷Ë®ºÅ-->
+               <WriteElement name="Accdat"   ETF_name="Accdat"/><!--ÕËÎñÈÕÆÚ-->
+               <WriteElement name="TxnAmt"   ETF_name="TxnAmt"/><!--½»Ò×½ð¶î-->
+               <WriteElement name="Result"   ETF_name="Result"/><!--´¦Àí½á¹û-->
+               <WriteElement name="Desc"     ETF_name="Desc" necessary="no"/><!--ËµÃ÷-->
+            </WriteGroupElement>
+         </WriteElement>
+      </WriteElement>
+    </Request>
+    <Response>
+       <GetHead head_name="SSC" name="TRspCd"/>
+    </Response>
+  </Transaction> 
+  
+  <Transaction code="5111" desc="Ö§¸¶Áî" log_switch="1" >
+     <Request>      
+       <WriteElement name="CFX">
+          <Quote name="WriteHead"/>
+          <WriteElement name="MSG">
+             <WriteElement name="BatchHead5111">
+                <WriteElement name="OrgCod" ETF_name="OrgCod"/><!--²ÆÕþ»ú¹Ø´úÂë-->
+                <WriteElement name="AgtBnk" ETF_name="AgtBnk"/><!--´úÀíÒøÐÐÐÐºÅ-->
+                <WriteElement name="TreCod" ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+                <WriteElement name="EntDat" ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+                <WriteElement name="PackNo" ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+                <WriteElement name="AllNum" ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+                <WriteElement name="AllAmt" ETF_name="AllAmt" expression="ADDCHAR(AMTPOWER($AllAmt,2),15,0,1)"/><!--×Ü½ð¶î-->
+                <WriteElement name="VouTyp" ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->
+                <WriteElement name="PayMod" ETF_name="PayMod"/><!--Ö§¸¶·½Ê½-->
+             </WriteElement>
+             <WriteGroupElement name="Bill5111" ETF_name="Bill5111" repeat_name="AllNum">
+                <WriteElement name="TraNo"   ETF_name="TraNo"/><!--½»Ò×Á÷Ë®ºÅ-->
+                <WriteElement name="PayOrd"  ETF_name="PayOrd"/><!--Ö§¸¶Áî-->
+                <WriteElement name="VouNo"   ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+                <WriteElement name="VouDat"  ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+                <WriteElement name="PyrAct"  ETF_name="PyrAct"/><!--¸¶¿îÈËÕËºÅ-->
+                <WriteElement name="PyrNam"  ETF_name="PyrNam"/><!--¸¶¿îÈË»§Ãû-->
+                <WriteElement name="PyrAdr"  ETF_name="PyrAdr" necessary="no"/><!--¸¶¿îÈËµØÖ·-->
+                <WriteElement name="RAccNo"  ETF_name="RAccNo"/><!--ÊÕ¿îÈËÕËºÅ-->
+                <WriteElement name="RAccNm"  ETF_name="RAccNm"/><!--ÊÕ¿îÈË»§Ãû-->
+                <WriteElement name="RAccAd"  ETF_name="RAccAd" necessary="no"/><!--ÊÕ¿îÈËµØÖ·-->
+                <WriteElement name="RBnkNo"  ETF_name="RBnkNo"/><!--ÊÕ¿î¿ª»§ÐÐºÅ-->
+                <WriteElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->
+                <WriteElement name="BdgTyp"  ETF_name="BdgTyp"/><!--Ô¤ËãÖÖÀà-->
+                <WriteElement name="BAdmTy"  ETF_name="BAdmTy" necessary="no"/><!--Ô¤Ëã¹ÜÀíÀàÐÍ-->
+                <WriteElement name="TrmSgn"  ETF_name="TrmSgn"/><!--ÕûÀíÆÚ±êÖ¾-->
+                <WriteElement name="OfYear"  ETF_name="OfYear"/><!--ËùÊôÄê¶È-->
+                <WriteElement name="Amt"     ETF_name="Amt" expression="ADDCHAR(AMTPOWER($Amt,2),15,0,1)"/><!--½»Ò×½ð¶î-->
+                <WriteElement name="BalMod"  ETF_name="BalMod" necessary="no"/><!--½áËã·½Ê½-->
+                <WriteElement name="Resv1"   ETF_name="Resv1" necessary="no"/><!--Ô¤Áô×Ö¶Î1-->
+                <WriteElement name="Resv2"   ETF_name="Resv2" necessary="no"/><!--Ô¤Áô×Ö¶Î2-->
+                <WriteElement name="StIfNm"  ETF_name="StIfNm"/><!--Í³¼ÆÐÅÏ¢ÌõÊý-->
+                <WriteGroupElement name="Detail5111" ETF_name="Detail5111" repeat_name="StIfNm">
+                   <WriteElement name="SeqNo"  ETF_name="SeqNo"/><!--ÐòºÅ-->
+                   <WriteElement name="SOrgCd" ETF_name="SOrgCd "/><!--Ò»¼¶Ô¤Ëãµ¥Î»´úÂë-->
+                   <WriteElement name="SOrgNm" ETF_name="SOrgNm" necessary="no"/><!--Ò»¼¶Ô¤Ëãµ¥Î»Ãû³Æ-->
+                   <WriteElement name="GOrgCd" ETF_name="GOrgCd"/><!--»ù²ãÔ¤Ëãµ¥Î»´úÂë-->
+                   <WriteElement name="GOrgNm" ETF_name="GOrgNm" necessary="no"/><!--»ù²ãÔ¤Ëãµ¥Î»Ãû³Æ-->
+                   <WriteElement name="FSbCod" ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+                   <WriteElement name="FSbNam" ETF_name="FSbNam" necessary="no"/><!--¹¦ÄÜÀà¿ÆÄ¿Ãû³Æ-->
+                   <WriteElement name="ESbCod" ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+                   <WriteElement name="ESbNam" ETF_name="ESbNam" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿Ãû³Æ-->
+                   <WriteElement name="Amt"    ETF_name="Amt" expression="ADDCHAR(AMTPOWER($Amt,2),15,0,1)"/><!--Ã÷Ï¸½ð¶î-->   
+                </WriteGroupElement> 
+             </WriteGroupElement>
+          </WriteElement>
+       </WriteElement>
+    </Request>
+    <Response>
+       <GetHead head_name="SSC" name="TRspCd"/>
+    </Response>
+  </Transaction>
+  
+  <Transaction code="5102" desc="Ö±½ÓÖ§¸¶¶î¶ÈÎÞ£¨ÓÐ£©Ö½Æ¾Ö¤ÇëÇó" log_switch="1" >
+    <Request>
+      <WriteElement name="CFX">
+         <Quote name="WriteHead"/>
+         <WriteElement name="MSG">
+            <WriteElement name="BatchHead5102"><!--ÅúÁ¿Í·-->            
+               <WriteElement name="TreCod"         ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+               <WriteElement name="BilOrg"         ETF_name="BilOrg"/><!--³öÆ±µ¥Î»-->
+               <WriteElement name="BankNo"         ETF_name="BankNo"/><!--×ª·¢ÒøÐÐÐÐºÅ-->
+               <WriteElement name="EntDat"         ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+               <WriteElement name="PackNo"         ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+               <WriteElement name="AllNum"         ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+               <WriteElement name="AllAmt"         ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+               <WriteElement name="VouTyp"         ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->              
+               <WriteGroupElement name="Bill5102"  ETF_name="Bill5102">              
+                  <WriteElement name="TraNo"       ETF_name="TraNo"/><!--½»Ò×Á÷Ë®ºÅ-->
+                  <WriteElement name="VouNo"       ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+                  <WriteElement name="VouDat"      ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+                  <WriteElement name="SumAmt"      ETF_name="SumAmt"/><!--ºÏ¼Æ½ð¶î-->
+                  <WriteElement name="BdgTyp"      ETF_name="BdgTyp"/><!--Ô¤ËãÖÖÀà-->
+                  <WriteElement name="OfYear"      ETF_name="OfYear"/><!--ËùÊôÄê¶È-->
+                  <WriteElement name="RraOrg"      ETF_name="RraOrg"/><!--¾­°ìµ¥Î»-->
+                  <WriteElement name="AmtKnd"      ETF_name="AmtKnd"/><!--¶î¶ÈÖÖÀà-->
+                  <WriteElement name="StIfNm"      ETF_name="StIfNm"/><!--Í³¼ÆÐÅÏ¢ÌõÊý-->               
+                  <WriteGroupElement name="Detail5102" ETF_name="Detail5102">
+                     <WriteElement name="SeqNo"        ETF_name="SeqNo"/><!--ÐòºÅ-->
+                     <WriteElement name="BdgCod"       ETF_name="BdgCod"/><!--Ô¤Ëãµ¥Î»´úÂë-->
+                     <WriteElement name="FSbCod"       ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+                     <WriteElement name="ESbCod"       ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+                     <WriteElement name="Amt"          ETF_name="Amt"/><!--·¢Éú¶î-->
+                  </WriteGroupElement>   
+               </WriteGroupElement>
+            </WriteElement>
+         </WriteElement>  
+      </WriteElement>
+    </Request>
+    <Response>   
+       <GetHead head_name="SSC" name="TRspCd"/>  
+    </Response>
+  </Transaction>
+  
+  <Transaction code="5103" desc="ÊÚÈ¨Ö§¸¶¶î¶ÈÎÞ£¨ÓÐ£©Ö½Æ¾Ö¤ÇëÇó" log_switch="1" >
+    <Request>
+      <WriteElement name="CFX">
+        <Quote name="WriteHead"/>
+        <WriteElement name="MSG">
+           <WriteElement name="BatchHead5103"><!--ÅúÁ¿Í·-->            
+              <WriteElement name="TreCod"         ETF_name="TreCod"/><!--¹ú¿âÖ÷Ìå´úÂë-->
+              <WriteElement name="BilOrg"         ETF_name="BilOrg"/><!--³öÆ±µ¥Î»-->
+              <WriteElement name="BankNo"         ETF_name="BankNo" necessary="no"/><!--×ª·¢ÒøÐÐÐÐºÅ-->
+              <WriteElement name="EntDat"         ETF_name="EntDat"/><!--Î¯ÍÐÈÕÆÚ-->
+              <WriteElement name="PackNo"         ETF_name="PackNo"/><!--°üÁ÷Ë®ºÅ-->
+              <WriteElement name="AllNum"         ETF_name="AllNum"/><!--×Ü±ÊÊý-->
+              <WriteElement name="AllAmt"         ETF_name="AllAmt"/><!--×Ü½ð¶î-->
+              <WriteElement name="VouTyp"         ETF_name="VouTyp"/><!--Ö§³öÆ¾Ö¤ÀàÐÍ-->              
+              <WriteGroupElement name="Bill5103"  ETF_name="Bill5103">              
+                 <WriteElement name="TraNo"       ETF_name="TraNo"/><!--½»Ò×Á÷Ë®ºÅ-->
+                 <WriteElement name="VouNo"       ETF_name="VouNo"/><!--Æ¾Ö¤±àºÅ-->
+                 <WriteElement name="VouDat"      ETF_name="VouDat"/><!--Æ¾Ö¤ÈÕÆÚ-->
+                 <WriteElement name="SumAmt"      ETF_name="SumAmt"/><!--ºÏ¼Æ½ð¶î-->
+                 <WriteElement name="BdgCod"      ETF_name="BdgCod"/><!--Ô¤Ëãµ¥Î»´úÂë-->
+                 <WriteElement name="BdgTyp"      ETF_name="BdgTyp"/><!--Ô¤ËãÖÖÀà-->
+                 <WriteElement name="OfYear"      ETF_name="OfYear"/><!--ËùÊôÄê¶È-->
+                 <WriteElement name="OfMon"       ETF_name="OfMon"/><!--ËùÊôÔÂ¶È-->
+                 <WriteElement name="RraOrg"      ETF_name="RraOrg"/><!--¾­°ìµ¥Î»-->
+                 <WriteElement name="AmtKnd"      ETF_name="AmtKnd"/><!--¶î¶ÈÖÖÀà-->
+                 <WriteElement name="StIfNm"      ETF_name="StIfNm"/><!--Í³¼ÆÐÅÏ¢ÌõÊý-->               
+                 <WriteGroupElement name="Detail5103" ETF_name="Detail5103">
+                    <WriteElement name="SeqNo"        ETF_name="SeqNo"/><!--ÐòºÅ-->                    
+                    <WriteElement name="FSbCod"       ETF_name="FSbCod"/><!--¹¦ÄÜÀà¿ÆÄ¿´úÂë-->
+                    <WriteElement name="ESbCod"       ETF_name="ESbCod" necessary="no"/><!--¾­¼ÃÀà¿ÆÄ¿´úÂë-->
+                    <WriteElement name="Amt"          ETF_name="Amt"/><!--·¢Éú¶î-->
+                    <WriteElement name="ActPop"       ETF_name="ActPop"/><!--ÕË»§ÐÔÖÊ-->
+                 </WriteGroupElement>   
+              </WriteGroupElement>
+           </WriteElement>
+        </WriteElement>  
+      </WriteElement>
+    </Request>
+    <Response> 
+       <GetHead head_name="SSC" name="TRspCd"/>    
+    </Response>
+  </Transaction>
+  
+  <Transaction code="9120" desc="Í¨ÓÃÓ¦´ð" log_switch="1" >
+     <Request>
+        <WriteElement name="CFX">
+           <Quote name="WriteHead"/>
+           <WriteElement name="MSG">
+              <Quote name="9120ToPBC"/>
+           </WriteElement>
+        </WriteElement>        
+     </Request>
+     <Response>
+        <GetHead head_name="SSC" name="TRspCd"/>
+     </Response>
+   </Transaction>  
+    
+   <Transaction code="9121" desc="Í¨ÓÃÓ¦´ð" log_switch="1" >
+        <Request>
+           <WriteElement name="CFX">
+              <Quote name="WriteHead"/>
+              <WriteElement name="MSG">
+                 <Quote name="9121ToPBC"/>
+              </WriteElement>
+           </WriteElement>
+        </Request>
+        <Response>
+           <GetHead head_name="SSC" name="TRspCd"/>
+        </Response>
+  </Transaction>
+</Application>

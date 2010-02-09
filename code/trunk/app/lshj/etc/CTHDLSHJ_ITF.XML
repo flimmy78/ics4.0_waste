@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LSHJ" server="OFTALSHJ" timeout='1800'>
+  <GetTxnCode>
+    <Item type="fixed" offset="0" length="6"/>
+  </GetTxnCode>
+
+   <Transaction code="482156" service="482156" log_switch="1" desc="ÔÁÍ¨¿¨¶ÔÕÊ">
+    <Request>
+    	<Item name="TxCode" length="6" desc="½»Ò×Âë"/>
+			<Item name="RtnDat" length="8" desc="ÇåËãÈÕÆÚ"/>
+    </Request>
+    <Response necessary="no">
+			<Item name="RspCod" length="6" desc="´¦Àí´úÂë"/>
+    </Response>
+  </Transaction>
+</Application>

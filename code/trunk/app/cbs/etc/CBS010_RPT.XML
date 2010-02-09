@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ½ðÈÚÒµÎñÆ½Ì¨ÈÕÖÕ¶ÔÕÊ²î´íÇåµ¥-->
+<Application dbconnect="YES" trclog="CBS010.log">
+	<VarDef>
+		<String alias="DatFil" pos="1"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="OIFLAG">
+			<Convert value="0" msg="ÍùÕÊ"/>
+			<Convert value="1" msg="À´ÕÊ"/>
+			<DEFAULT msg="Î´Öª"/>
+		</Item>
+	</MsgConvert>
+	<DataSource object="file" filename="$DatFil"/>
+	<FormatDefine pagerows="40" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$RPTHEAD"/>
+			<Para label="02" alias="$TXNKND"/>
+			<Para label="03" alias="$CLRDAT"/>
+			<Para label="04" alias="$PAGENUM"/>
+			<Para label="05" alias="$PAGESUM"/>
+      <Format>
+						                                              ¹ã¶«Ê¡½ðÈÚÒµÎñÆ½Ì¨ÏµÍ³¡¾#¡¿
+                                             ==========================================================
+  ÒµÎñÖÖÀà£º#                 ÇåËãÈÕÆÚ£º# ¡¡                                            ¡¡¡¡¡¡                                                     µÚ   #  Ò³       ¹²  #  Ò³
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§ÍùÀ´±êÖ¾©§·¢±¨ÈÕÆÚ©§Æ¾Ö¤Ìá½»ºÅ©§ ·¢ÆðÐÐÐÐºÅ ©§          ·¢ÆðÈËÕÊºÅ          ©§                    ·¢ÆðÈËÃû³Æ                    ©§      ½»Ò×½ð¶î      ©§       ¶ÔÕÊ½á¹û       ©§
+©§        ©§        ©§          ©§ ½ÓÊÕÐÐÐÐºÅ ©§          ½ÓÊÕÈËÕÊºÅ          ©§                    ½ÓÊÕÈËÃû³Æ                    ©§                 ½»Ò×±¸×¢                   ©§
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï 
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$OIFLAG" convert="yes" spread="mid"/>
+      <Para label="02" alias="$SNDDAT"/>
+      <Para label="03" alias="$VCHID"/>
+      <Para label="04" alias="$SNDBNO"/>
+      <Para label="05" alias="$SNDACT"/>
+      <Para label="06" alias="$SNDNM"/>
+      <Para label="07" alias="AMTFMT($TXNAMT)" spread="left"/>
+      <Para label="08" alias="$RESULT"/>
+      <Para label="09" alias="$ROPNBK"/>
+      <Para label="10" alias="$RCVACT"/>
+      <Para label="11" alias="$RCVNM"/>
+      <Para label="12" alias="$SMR"/>
+      <Format>
+©§#       ©§#       ©§#         ©§#           ©§#                             ©§#                                                 ©§                   #©§#                     ©§
+©§        ©§        ©§          ©§#           ©§#                             ©§#                                                 ©§#                                           ©§
+      </Format>
+    </Iterative>
+    <TableFooter>
+      <Format>
+©»©¥©¥©¥©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="CADBATCH_DEBUG.log"  err_file="CADBATCH_DEBUG.err">
+  <!--½»Ò×Ã÷Ï¸¸ñÊ½-->
+  <Process name="Format1">
+    <Group name="Rec" repeat_name="RecNum">	
+      <Item name="VchSeq"    length="4"    />  <!--´«Æ±ÐòºÅ  -->
+      <Item name="VchSts"    length="1"    />  <!--´«Æ±×´Ì¬  -->
+      <Item name="VchSig"    length=" 1"   />  <!--½è»õ·½±êÖ¾ D½è£»C»õ -->
+      <Item name="ActNo"     length="21"   />  <!--ÕËºÅ      -->
+      <Item name="CcyCod"    length="3"   />   <!--»õ±Ò´úÂë      -->
+      <Item name="TxnAmt"    length="15"/>  <!--½ð¶î        -->
+      <Item name="EndLine"  length=" 1" necessary="no" fill_asc="10"/>
+     </Group>
+  </Process>  
+  <Process name="Format2" sqn_flag="Y" sqn_node_name="RecNo">
+    <Data>
+      <Item name="VchSeq"    length="4"    />  <!--´«Æ±ÐòºÅ  -->
+      <Item name="VchSts"    length="1"    />  <!--´«Æ±×´Ì¬  -->
+      <Item name="VchSig"    length=" 1"   />  <!--½è»õ·½±êÖ¾ D½è£»C»õ -->
+      <Item name="ActNo"     length="21"   />  <!--ÕËºÅ      -->
+      <Item name="CcyCod"    length="3"   />   <!--»õ±Ò´úÂë      -->
+      <Item name="TxnAmt"    length="15"   deli_asc="10"/>  <!--½ð¶î        -->
+    </Data>
+  </Process>
+  <Process name="QueryFmt">
+    <Data>
+      <Item name="NodNo"    length="6"   deli_asc="10"  />  <!--»ú¹¹ºÅ  -->
+    </Data>
+  </Process>
+  <Process name="InputFmt">
+    <Data>
+      <Item name="NodNo"    length="6"   deli_asc="10"  />  <!--»ú¹¹ºÅ  -->
+      <AddItem name="TxnDat" expression="$QryDat"   />  <!--ÈÕÆÚ -->
+    </Data>
+  </Process>
+</BATCH>
+

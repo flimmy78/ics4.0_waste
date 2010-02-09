@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP11_RPT.trc" dbconnect="YES">
+  <!--Added By zhq_BoCom00041319_20080702_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨Ç©Ô¼¶Ô¹«´ó¿Í»§ÐÅÏ¢»ã×Ü±í)-->
+  <VarDef>
+    <String alias="Year"      name="$Year"/>   <!--Ñ¡ÔñÄê·Ý-->
+    <String alias="BrkNo"     name="$BrkNo"/>  <!--·ÖÐÐºÅ-->
+    <String alias="ONodNo"    name="$ONodNo"/> <!--»ú¹¹ºÅ--> 
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+     <Sql sql="SELECT c.BrkNo BrNo,c.BrkNam,b.ActNo,c.ActNam,a.TotalAmt,a.ToTalCnt,(CASE WHEN LEFT(b.RecTm,4) ='%s' THEN 'ÊÇ' ELSE '·ñ' END) Flag 
+               FROM (SELECT COUNT(*) TotalCnt ,COALESCE(SUM(CAST (TxnAmt AS BIGINT)),0) TotalAmt, ActNo FROM tiptxnbok WHERE BilSts='1' AND LEFT(WrkDat,4)='%s' GROUP BY ActNo) a ,
+                    (SELECT ActNo,MIN(RecTm) RecTm FROM tipcusagr WHERE Status='0' AND VrySts='1' GROUP BY ActNo) b ,
+                    (SELECT a.BrkNo,a.BrkNam,b.ActNo,b.RecTm,b.ActNam FROM tipbrkinf a ,tipcusagr b WHERE b.Status='0' AND b.VrySts='1' AND a.BrkNo =b.BrkNo) c
+               WHERE a.ActNo = b.ActNo AND b.ActNo = c.ActNo AND b.RecTm =c.RecTm AND CAST(a.TotalAmt AS BIGINT) > 300000000
+               ORDER BY a.TotalAmt DESC ">
+        <FieldList>$Year|$Year|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine>
+    <Iterative line="1">
+      <Para label="01" alias="$BrkNo"      spread="right"/>
+      <Para label="02" alias="$ONodNo"     spread="right"/>
+      <Para label="03" alias="$BrNo"       spread="right"/>
+      <Para label="04" alias="$BrkNam"     spread="right"/>
+      <Para label="05" alias="$ActNo"      spread="right"/>
+      <Para label="06" alias="$ActNam"     spread="right"/>
+      <Para label="07" alias="AMTADDDOT($TotalAmt)"   spread="left"/>
+      <Para label="08" alias="$ToTalCnt"   spread="left"/>
+      <Para label="09" alias="$Flag"       spread="left"/>
+      <Format>
+ICM003:#:#:000:01:#:#:#:#:#:#:#
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
+

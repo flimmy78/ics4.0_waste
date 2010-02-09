@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP02_RPT.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="RBnkNo"          name="$RBnkNo"/>
+    <String alias="PBnkNo"          name="$PBnkNo"/>
+    <String alias="ChkDat"          name="$ChkDat"/>
+    <String alias="ChkOrd"          name="$ChkOrd"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="PayMod">
+      <Convert value="0" msg="ÊµÊ±¿ÛË°"/>
+      <Convert value="1" msg="ÅúÁ¿¿ÛË°"/>
+      <Convert value="2" msg="ÒøÐÐ¶Ë½É¿î"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql"> 
+    <Iterative>
+      <Sql sql="SELECT OrgCod,EntDat,TraNo,PayMod,ActNo,TxnAmt,ActDat,TckNo FROM tiptxnbok WHERE RBnkNo='%s' AND PBnkNo='%s' AND ChkDat='%s' AND ChkOrd='%s' AND ChkSts='2' ORDER BY TraNo">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type ="sql">
+      <Sql sql="SELECT coalesce(COUNT(*),0) TpENum,coalesce(SUM(CAST(TxnAmt AS BIGINT)),0) TpEAmt FROM tiptxnbok WHERE RBnkNo='%s' AND PBnkNo='%s' AND ChkDat='%s' AND ChkOrd='%s' AND ChkSts='2'">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                             ÎÒÐÐ¶à¼ÇÂ¼
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$PAGESUM" spread="left"/>
+      <Para label="02" alias="$PAGENUM" spread="left"/>
+      <Format>
+                                                                                                                    ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©·
+©§    Õ÷ÊÕ»ú¹Ø    ©§   Î¯ÍÐÈÕÆÚ   ©§   ½»Ò×Á÷Ë®ºÅ   ©§    ÄÉË°ÀàÐÍ    ©§               ÕËºÅ               ©§       ½ð¶î       ©§   »á¼ÆÈÕÆÚ   ©§  »á¼ÆÁ÷Ë®ºÅ  ©§
+©Ä©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$OrgCod" spread="mid"/>
+      <Para label="02" alias="$EntDat" spread="mid"/>
+      <Para label="03" alias="$TraNo" spread="right"/>
+      <Para label="04" alias="$PayMod" convert="YES" spread="mid"/>
+      <Para label="05" alias="$ActNo" spread="mid"/>
+      <Para label="06" alias="AMTFMT($TxnAmt)" spread="left"/>
+      <Para label="07" alias="$ActDat" spread="mid"/>
+      <Para label="08" alias="$TckNo" spread="right"/>
+      <Format>
+©§       #        ©§      #       ©§   #            ©§       #        ©§                #                 ©§                 #©§      #       ©§ #            ©§
+      </Format>
+    </Iterative>
+    <Summed line="1">
+      <Para label="01" alias="$TpENum" spread="right"/>
+      <Para label="02" alias="AMTFMT($TpEAmt)" spread="right"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¿
+    ±ÊÊý×Ü¼Æ: #                 ½ð¶î×Ü¼Æ: #                                                                 
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>
+

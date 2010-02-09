@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Öéº£ÊÐ²Æ¾Ö£¨»òÍòÉ½²Æ¾Ö£©ÐÐÕþÊÕ·ÑÇåµ¥ÔþÕÊ -->
+<Application  dbconnect="YES" trclog="RPTCAD_002.trc">
+  <VarDef>
+    <String alias="CrgTyp" name="$CrgTyp"/>	<!--ÊÕ·ÑÖÖÀà-->
+    <String alias="CcyCod" name="$CcyCod"/>	<!--»õ±Ò´úÂë-->
+    <String alias="INodNo" name="$INodNo"/>	<!--ÍøµãºÅ-->
+    <String alias="CrgCod" name="$CrgCod"/>	<!--ÊÕ·Ñ´úÂë-->
+    <String alias="BgnDat" name="$BgnDat"/>	<!--ÆðÊ¼ÈÕÆÚ-->
+    <String alias="EndDat" name="$EndDat"/>	<!--ÖÕÖ¹ÈÕÆÚ-->
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select NodNo,ActDat,RcpNo,TckNo,VchSeq,CrgCod,ItmAmt,CrgItm,RecSts,CrgWay,TlrId
+        from cadjnldtl where NodNo='%s' and ActDat>='%s' and '%s'>=ActDat and CcyCod='%s' and CrgCod like '%s%%'  and CrgWay in ('0','1')" >
+        <FieldList>$INodNo|$BgnDat|$EndDat|$CcyCod|$CrgCod|</FieldList>
+      </Sql>  
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="10" pagesum="YES">
+    <TableHeader>
+      <Format>
+©³©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©×©¥©¥©×©¥©¥©¥©¥©·
+©§Íø  µã©§ ÈÕ  ÆÚ ©§  ÊÕ ¾Ý ±à ºÅ   ©§  Á÷ Ë® ºÅ  ©§Ð¡ÐòºÅ©§ÊÕ·Ñ±àÂë©§    ½ð    ¶î    ©§        ½É¿îÃû³Æ        ©§×´Ì¬©§ÏÖ×ª©§ ¹ñÔ±ºÅ ©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$NodNo"	spread="mid"/>
+      <Para label="02" alias="$ActDat"	spread="mid"/>
+      <Para label="03" alias="$RcpNo"	spread="mid"/>
+      <Para label="04" alias="$TckNo"	spread="mid"/>
+      <Para label="05" alias="$VchSeq"	spread="mid"/>
+      <Para label="06" alias="$CrgCod"	spread="mid"/>
+      <Para label="07" alias="AMTFMT($ItmAmt)"	spread="mid"/>
+      <Para label="08" alias="$CrgItm"	spread="mid"/>
+      <Para label="09" alias="$RecSts"	spread="mid"/>
+      <Para label="10" alias="$CrgWay"	spread="mid"/>
+      <Para label="11" alias="$TlrId"	spread="mid"/>
+      <Format>
+©Ç©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©ï©¥©¥©ï©¥©¥©¥©¥©Ï
+©§#     ©§   #    ©§#               ©§#           ©§#     ©§#       ©§#               ©§#                       ©§#   ©§#   ©§#       ©§
+      </Format>
+    </Iterative>
+  <TableFooter>
+      <Format>
+©»©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©ß©¥©¥©ß©¥©¥©¥©¥©¿
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

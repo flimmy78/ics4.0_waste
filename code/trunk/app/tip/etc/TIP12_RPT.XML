@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP12_RPT.trc" dbconnect="YES">
+  <!--Added By zhq_BoCom00041319_20080702_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨Ç©Ô¼¶Ô¹«¿Í»§ÐÅÏ¢Ã÷Ï¸±í)--> 
+  <VarDef>
+    <String alias="Year"      name="$Year"/>   <!--Ñ¡ÔñÄê·Ý-->
+    <String alias="BrkNo"     name="$BrkNo"/>  <!--·ÖÐÐºÅ-->
+    <String alias="ONodNo"    name="$ONodNo"/> <!--»ú¹¹ºÅ--> 
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+     <Sql sql="SELECT b.BrkNo BrNo,b.BrkNam,b.ActNo,b.ActNam,a.TotalAmt,a.ToTalCnt,b.OrgCod,c.OrgNam,b.AgrNo,b.TCusId,b.TCusNm,(CASE WHEN LEFT(b.RecTm,4) ='%s' THEN 'ÊÇ' ELSE '·ñ' END) Flag 
+               FROM (SELECT COUNT(*) TotalCnt ,COALESCE(SUM(CAST (TxnAmt AS BIGINT)),0) TotalAmt, MIN(RecTm) RecTm,TCusId,OrgCod 
+                     FROM (SELECT a.TxnAmt,b.RecTm,b.TCusId,b.OrgCod FROM tiptxnbok a,tipcusagr b  WHERE a.BilSts='1' AND LEFT(a.WrkDat,4)='%s' AND  b.Status='0' AND b.VrySts='1' AND a.TCusId =b.TCusId AND a.OrgCod =b.OrgCod) c
+                     GROUP BY TCusId ,OrgCod) a ,
+                    (SELECT a.BrkNo,a.BrkNam,b.ActNo,b.RecTm,b.ActNam,b.OrgCod,b.AgrNo,b.TCusId,b.TCusNm FROM tipbrkinf a ,tipcusagr b WHERE a.BrkNo =b.BrkNo AND a.BrkNo='%s' AND b.Status='0' AND b.VrySts='1') b,tiporginf c
+               WHERE a.TCusId =b.TCusId AND a.OrgCod =b.OrgCod AND b.OrgCod=c.OrgCod ORDER BY b.ActNo,a.TotalAmt DESC">
+        <FieldList>$Year|$Year|$BrkNo|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine >
+    <Iterative line="1">
+      <Para label="01" alias="$BrkNo"    spread="right"/>
+      <Para label="02" alias="$ONodNo"   spread="right"/>
+      <Para label="03" alias="$BrNo"     spread="right"/>
+      <Para label="04" alias="$BrkNam"   spread="right"/>
+      <Para label="05" alias="$ActNo"    spread="right"/>
+      <Para label="06" alias="$ActNam"   spread="right"/>
+      <Para label="07" alias="AMTADDDOT($TotalAmt)" spread="left"/>
+      <Para label="08" alias="$ToTalCnt" spread="left"/>
+      <Para label="09" alias="$OrgCod"   spread="right"/>
+      <Para label="10" alias="$OrgNam"   spread="right"/>
+      <Para label="11" alias="$AgrNo"    spread="right"/>
+      <Para label="12" alias="$TCusId"   spread="right"/>
+      <Para label="13" alias="$TCusNm"   spread="right"/>
+      <Para label="14" alias="$Flag"     spread="left"/>
+      <Format>
+ICM004:#:#:000:01:#:#:#:#:#:#:#:#:#:#:#:#
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
+

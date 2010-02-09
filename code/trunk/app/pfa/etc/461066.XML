@@ -1,0 +1,475 @@
+  <Transaction code="PFA1201" desc="授权支付凭证" timeout="300">
+    <Quote name="PfaSqlLst"/>
+    <DynSentence name="ChkExist">
+      <Sentence>
+        select 'Y' YN FROM TABLE(VALUES(1)) AS anony where EXISTS ( select 'Y' from %s where %s )
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="ChkData">
+      <Sentence>
+        select count(%s) DbNum, sum(bigint(%s)) DbAmt from %s where %s
+      </Sentence>
+      <Fields>ColNam|ColNam|TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="DelData">
+      <Sentence>
+        delete from %s where %s
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="UpdData">
+      <Sentence>
+        update %s set DtlSts='U' where %s
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Set>NodNo=441800</Set>
+      <Quote name="InitTran"/>
+      <Quote name="ChkSubCfg"/>
+      <Set>Cnt=1</Set>
+      <Set>DtlAmtSum=0</Set>
+      <Set>DtlSts=R</Set>
+      <While condition="INTCMP($Cnt,2,$CurNum)">
+        <Delete>ROOT.TTxnId</Delete>
+        <Delete>ROOT.DtlKey</Delete>
+        <Delete>ROOT.AVchCd</Delete>
+        <Delete>ROOT.MdAVCd</Delete>
+        <Delete>ROOT.SubCod</Delete>
+        <Delete>ROOT.DtlAmt</Delete>
+        <Delete>ROOT.TBusTp</Delete>
+        <Delete>ROOT.DptCod</Delete>
+        <Delete>ROOT.BCusId</Delete>
+        <Delete>ROOT.EConTp</Delete>
+        <Delete>ROOT.AmtKnd</Delete>
+        <Delete>ROOT.PyeAct</Delete>
+        <Delete>ROOT.PyeBNm</Delete>
+        <Delete>ROOT.PyeNam</Delete>
+        <Delete>ROOT.VchDat</Delete>
+        <Delete>ROOT.PayAct</Delete>
+        <Delete>ROOT.PayBNm</Delete>
+        <Delete>ROOT.BCusId</Delete>
+        <Delete>ROOT.PrjCod</Delete>
+        <Delete>ROOT.DtlSmr</Delete>
+        <Delete>ROOT.VchNo</Delete>
+        <Delete>ROOT.QuoId</Delete>
+        <Set>TTxnId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_TTxnId)</Set>
+        <Set>DtlKey_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_DtlKey)</Set>
+        <Set>AVchCd_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_AVchCd)</Set>
+        <Set>MdAVCd_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_MdAVCd)</Set>
+        <Set>SubCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_SubCod)</Set>
+        <Set>DtlAmt_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_DtlAmt)</Set>
+        <Set>TBusTp_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_TBusTp)</Set>
+        <Set>DptCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_DptCod)</Set>
+        <Set>BCusId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_BCusId)</Set>
+        <Set>EConTp_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_EConTp)</Set>
+        <Set>AmtKnd_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_AmtKnd)</Set>
+        <Set>PyeAct_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PyeAct)</Set>
+        <Set>PyeBNm_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PyeBNm)</Set>
+        <Set>PyeNam_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PyeNam)</Set>
+        <Set>VchDat_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_VchDat)</Set>
+        <Set>PayAct_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PayAct)</Set>
+        <Set>PayBNm_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PayBNm)</Set>
+        <Set>BCusId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_BCusId)</Set>
+        <Set>PrjCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PrjCod)</Set>
+        <Set>DtlSmr_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_DtlSmr)</Set>
+        <Set>VchNo_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_VchNo)</Set>
+        <Set>QuoId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoId)</Set>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$TTxnId_Nam"/>
+          <Arg name="DestName" value="ROOT.TTxnId"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DtlKey_Nam"/>
+          <Arg name="DestName" value="ROOT.DtlKey"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$AVchCd_Nam"/>
+          <Arg name="DestName" value="ROOT.AVchCd/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$MdAVCd_Nam"/>
+          <Arg name="DestName" value="ROOT.MdAVCd/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$SubCod_Nam"/>
+          <Arg name="DestName" value="ROOT.SubCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DtlAmt_Nam"/>
+          <Arg name="DestName" value="ROOT.DtlAmt/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$TBusTp_Nam"/>
+          <Arg name="DestName" value="ROOT.TBusTp/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DptCod_Nam"/>
+          <Arg name="DestName" value="ROOT.DptCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$BCusId_Nam"/>
+          <Arg name="DestName" value="ROOT.BCusId/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$EConTp_Nam"/>
+          <Arg name="DestName" value="ROOT.EConTp/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$AmtKnd_Nam"/>
+          <Arg name="DestName" value="ROOT.AmtKnd/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PyeAct_Nam"/>
+          <Arg name="DestName" value="ROOT.PyeAct/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PyeBNm_Nam"/>
+          <Arg name="DestName" value="ROOT.PyeBNm/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PyeNam_Nam"/>
+          <Arg name="DestName" value="ROOT.PyeNam/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$VchDat_Nam"/>
+          <Arg name="DestName" value="ROOT.VchDat/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PayAct_Nam"/>
+          <Arg name="DestName" value="ROOT.PayAct/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PayBNm_Nam"/>
+          <Arg name="DestName" value="ROOT.PayBNm/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$BCusId_Nam"/>
+          <Arg name="DestName" value="ROOT.BCusId/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PrjCod_Nam"/>
+          <Arg name="DestName" value="ROOT.PrjCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DtlSmr_Nam"/>
+          <Arg name="DestName" value="ROOT.DtlSmr/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$VchNo_Nam"/>
+          <Arg name="DestName" value="ROOT.VchNo/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoId_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoId/>
+        </Exec>
+        <Set>Cnt=ADD($Cnt,1)</Set>
+        <Set>DtlAmtSum=ADD($DtlAmtSum,$ROOT.DtlAmt)</Set>
+<!--检查重复性-->
+        <Set>SqlStr=STRCAT( PfaSub=',$PfaSub,' and Year=',$Year,' and VchKey=',$VchKey,' )</Set>
+        <Set>TblNam=$VchDtlTbl</Set>
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="ChkExist"/>
+          </Args>
+        </Exec>
+        <If condition="~RetCod=-1">
+          <Set>RspMsg=STRCAT(查询数据表【,$TblNam,】失败)</Set>
+          <Continue/>
+        </If>
+        <If condition="~RetCod=0">
+          <Set>RspMsg=记录重复</Set>
+          <Continue/>
+        </If>
+        <Exec func="PUB:InsertRecord" error="IGNORE">
+          <Arg name="TblNam" value="TOLOWER($TblNam)"/>
+        </Exec>
+        <If condition="~RetCod!=0">
+          <Set>RspMsg=STRCAT(插入数据表【,$TblNam,】失败)</Set>
+          <Continue/>
+        </If>
+      </While>
+      <Exec func="PUB:CommitWork"/>
+<!--判断当前数据包明细核对-->
+      <If condition="INTCMP($CurAmt,4,$DtlAmtSum)">
+        <Exec func="PUB:RollbackWork"/>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=PFA999</Set>
+        <Set>RspMsg=STRCAT(数据包【,$TPkgNo,】第【,$CURPACKNO,】包总金额与明细金额汇总不符)</Set>
+        <Return/>
+      <If>
+<!--判断数据全部接收完成【子包总数=当前包序号】-->
+      <If condition="INTCMP($SubNum,3,$CurSeq)">
+        <Set>ColNam=DtlAmt</Set>
+        <Set>TblNam=$VchDtlTbl</Set>
+        <Set>SqlStr=STRCAT( PfaSub=',$PfaSub,' and Year=',$Year,' and TPkgNo=',$TPkgNo,' )</Set>
+        <Exec func="PUB:ReadRecord">
+          <Args>
+            <Arg name="SqlCmd" value="ChkData"/>
+          </Args>
+        </Exec>
+        <If condition="OR(INTCMP($DbNum,4,$TotNum),INTCMP($DbAmt,4,$TotAmt))">
+          <Exec func="PUB:ExecSql" error="IGNORE">
+            <Args>
+              <Arg name="SqlCmd" value="DelData"/>
+            </Args>
+          </Exec>
+          <Set>MsgTyp=E</Set>
+           <Set>RspCod=PFA999</Set>
+          <Set>RspMsg=STRCAT(数据包【,$TPkgNo,】总分核对不符)</Set>
+           <Return/>
+        <If>
+<!--更新为最终状态-->
+        <Exec func="PUB:ExecSql">
+          <Args>
+            <Arg name="SqlCmd" value="UpdData"/>
+          </Args>
+        </Exec>
+      <If>
+      <Set>MsgTye=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="PFA1202" desc="授权支付总帐对帐结果" timeout="300">
+    <FlowCtrl>
+      <Set>NodNo=441800</Set>
+      <Quote name="InitTran"/>
+      <Quote name="ChkSubCfg"/>
+      <Exec func="PUB:InsertRecord" error="IGNORE">
+        <Arg name="TblNam" value="pfavchchk001"/>
+        <Arg name="GrpNam" value="Rec"/>
+        <Arg name="FldLst" value="TActDt|TPkgNo|PfaSub|"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Exec func="PUB:RollbackWork" error="IGNORE"/>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=PFA999</Set>
+        <Set>RspMsg=授权支付总帐对帐结果入库失败</Set>
+				<Set>TRtnCd=990002</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="PFA1203" desc="授权支付明晰支出对帐结果" timeout="300">
+    <FlowCtrl>
+      <Set>NodNo=441800</Set>
+      <Quote name="InitTran"/>
+      <Quote name="ChkSubCfg"/>
+      <Exec func="PUB:InsertRecord" error="IGNORE">
+        <Arg name="TblNam" value="pfavchchk001"/>
+        <Arg name="GrpNam" value="Rec"/>
+        <Arg name="FldLst" value="TActDt|TPkgNo|PfaSub|"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Exec func="PUB:RollbackWork" error="IGNORE"/>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=PFA999</Set>
+        <Set>RspMsg=授权支付总帐对帐结果入库失败</Set>
+				<Set>TRtnCd=990002</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="PFA1204" desc="授权支付额度通知单" timeout="300">
+    <Quote name="PfaSqlLst"/>
+    <DynSentence name="ChkExist">
+      <Sentence>
+        select 'Y' YN FROM TABLE(VALUES(1)) AS anony where EXISTS ( select 'Y' from %s where %s )
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="ChkData">
+      <Sentence>
+        select count(%s) DbNum, sum(bigint(%s)) DbAmt from %s where %s
+      </Sentence>
+      <Fields>ColNam|ColNam|TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="DelData">
+      <Sentence>
+        delete from %s where %s
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+    <DynSentence name="UpdData">
+      <Sentence>
+        update %s set QuoSts='U' where %s
+      </Sentence>
+      <Fields>TblNam|SqlStr|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Set>NodNo=441800</Set>
+      <Quote name="InitTran"/>
+      <Quote name="ChkSubCfg"/>
+      <Set>Cnt=1</Set>
+      <Set>QuoAmtSum=0</Set>
+      <Set>QuoSts=R</Set>
+      <While condition="INTCMP($Cnt,2,$CurNum)">
+        <Delete>ROOT.TTxnId</Delete>
+        <Delete>ROOT.QuoKey</Delete>
+        <Delete>ROOT.AQuoCd</Delete>
+        <Delete>ROOT.QuoId</Delete>
+        <Delete>ROOT.QuoSmr</Delete>
+        <Delete>ROOT.SubCod</Delete>
+        <Delete>ROOT.DptCod</Delete>
+        <Delete>ROOT.BCusId</Delete>
+        <Delete>ROOT.EConTp</Delete>
+        <Delete>ROOT.QuoDat</Delete>
+        <Delete>ROOT.QuoAmt</Delete>
+        <Delete>ROOT.QuoMon</Delete>
+        <Delete>ROOT.PrjCod</Delete>
+        <Delete>ROOT.Year</Delete>
+        <Delete>ROOT.AmtKnd</Delete>
+        <Set>TTxnId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_TTxnId)</Set>
+        <Set>QuoKey_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoKey)</Set>
+        <Set>AQuoCd_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_AQuoCd)</Set>
+        <Set>QuoId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoId)</Set>
+        <Set>QuoSmr_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoSmr)</Set>
+        <Set>SubCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_SubCod)</Set>
+        <Set>DptCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_DptCod)</Set>
+        <Set>BCusId_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_BCusId)</Set>
+        <Set>EConTp_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_EConTp)</Set>
+        <Set>QuoDat_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoDat)</Set>
+        <Set>QuoAmt_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoAmt)</Set>
+        <Set>QuoMon_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_QuoMon)</Set>
+        <Set>PrjCod_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_PrjCod)</Set>
+        <Set>Year_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_Year)</Set>
+        <Set>AmtKnd_Nam=STRCAT(ROOT.Rec_,$Cnt,.Sub_AmtKnd)</Set>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$TTxnId_Nam"/>
+          <Arg name="DestName" value="ROOT.TTxnId"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoKey_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoKey"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$AQuoCd_Nam"/>
+          <Arg name="DestName" value="ROOT.AQuoCd/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoId_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoId/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoSmr_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoSmr/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$SubCod_Nam"/>
+          <Arg name="DestName" value="ROOT.SubCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DptCod_Nam"/>
+          <Arg name="DestName" value="ROOT.DptCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$BCusId_Nam"/>
+          <Arg name="DestName" value="ROOT.BCusId/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$EConTp_Nam"/>
+          <Arg name="DestName" value="ROOT.EConTp/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoDat_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoDat/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoAmt_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoAmt/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$QuoMon_Nam"/>
+          <Arg name="DestName" value="ROOT.QuoMon/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$PrjCod_Nam"/>
+          <Arg name="DestName" value="ROOT.PrjCod/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$Year_Nam"/>
+          <Arg name="DestName" value="ROOT.Year/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$AmtKnd_Nam"/>
+          <Arg name="DestName" value="ROOT.AmtKnd/>
+        </Exec>
+        <Set>Cnt=ADD($Cnt,1)</Set>
+        <Set>QuoAmtSum=ADD($QuoAmtSum,$ROOT.QuoAmt)</Set>
+<!--检查重复性-->
+        <Set>SqlStr=STRCAT( PfaSub=',$PfaSub,' and Year=',$Year,' and QuoKey=',$QuoKey,' )</Set>
+        <Set>TblNam=$QuoBokTbl</Set>
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="ChkExist"/>
+          </Args>
+        </Exec>
+        <If condition="~RetCod=-1">
+          <Set>RspMsg=STRCAT(查询数据表【,$TblNam,】失败)</Set>
+          <Continue/>
+        </If>
+        <If condition="~RetCod=0">
+          <Set>RspMsg=记录重复</Set>
+          <Continue/>
+        </If>
+        <Exec func="PUB:InsertRecord" error="IGNORE">
+          <Arg name="TblNam" value="TOLOWER($TblNam)"/>
+        </Exec>
+        <If condition="~RetCod!=0">
+          <Set>RspMsg=STRCAT(插入数据表【,$TblNam,】失败)</Set>
+          <Continue/>
+        </If>
+      </While>
+      <Exec func="PUB:CommitWork"/>
+<!--判断当前数据包明细核对-->
+      <If condition="INTCMP($CurAmt,4,$QuoAmtSum)">
+        <Exec func="PUB:RollbackWork"/>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=PFA999</Set>
+        <Set>RspMsg=STRCAT(数据包【,$TPkgNo,】第【,$CURPACKNO,】包总金额与明细金额汇总不符)</Set>
+        <Return/>
+      <If>
+<!--判断数据全部接收完成【子包总数=当前包序号】-->
+      <If condition="INTCMP($SubNum,3,$CurSeq)">
+        <Set>ColNam=QuoAmt</Set>
+        <Set>TblNam=$QuoBokTbl</Set>
+        <Set>SqlStr=STRCAT( PfaSub=',$PfaSub,' and Year=',$Year,' and TPkgNo=',$TPkgNo,' )</Set>
+        <Exec func="PUB:ReadRecord">
+          <Args>
+            <Arg name="SqlCmd" value="ChkData"/>
+          </Args>
+        </Exec>
+        <If condition="OR(INTCMP($DbNum,4,$TotNum),INTCMP($DbAmt,4,$TotAmt))">
+          <Exec func="PUB:ExecSql" error="IGNORE">
+            <Args>
+              <Arg name="SqlCmd" value="DelData"/>
+            </Args>
+          </Exec>
+          <Set>MsgTyp=E</Set>
+           <Set>RspCod=PFA999</Set>
+          <Set>RspMsg=STRCAT(数据包【,$TPkgNo,】总分核对不符)</Set>
+           <Return/>
+        <If>
+<!--更新为最终状态-->
+        <Exec func="PUB:ExecSql">
+          <Args>
+            <Arg name="SqlCmd" value="UpdData"/>
+          </Args>
+        </Exec>
+      <If>
+      <Set>MsgTye=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>

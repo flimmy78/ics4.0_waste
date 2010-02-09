@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+   <Server name="OFRTTIP1" type="OTA" ip="_LOCAL_IP" trace="yes">
+      <DBConnectionPool dbname="DB1">
+         <PoolSize>5</PoolSize>
+      </DBConnectionPool>
+      <ThreadPool>
+         <MinWorkerThreads>40</MinWorkerThreads>
+         <MaxWorkerThreads>40</MaxWorkerThreads>
+      </ThreadPool>
+      <DllPriDataCtrl dllfile="dll/pltmain.so" initfunc="initOnlineSvr" donefunc="closeOnlineSvr">
+         <Para name="file1">etc/OFRTTIP1_CTL.XML</Para><!--TIPS-->
+      </DllPriDataCtrl>
+      <QueuePair name="LeftQueuePair">
+         <QueueLength>100</QueueLength>
+         <RequestProcessor dllfile="dll/pltmain.so" dbapplication="YES">
+            <Entry>
+               <MessageType>ONLRCV</MessageType>
+               <ProcessModule>onlineRecoveryCtl</ProcessModule>
+            </Entry>
+            <Entry>
+               <MessageType>OTHERS</MessageType>
+               <ProcessModule>onlineMainCtrl</ProcessModule>
+            </Entry>
+         </RequestProcessor>
+      </QueuePair>
+      <QueuePair name="RightQueuePair" />
+   </Server>
+</Region>

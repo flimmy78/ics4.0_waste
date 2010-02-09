@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="SPE" server="OFRTSPE1" trace="yes">
+  <GetTxnCode>
+    <Item type="fixed" offset="0" length="6"/>
+  </GetTxnCode>
+
+  <Transaction code="465912" service="465912" log_switch="1" timeout="30">
+    <Request>
+		  <Item name="TTxnCd" length="6"/>
+			<Item name="APVchN" length="30"/>
+    </Request>
+    <Response necessary="no">
+    </Response>
+  </Transaction>
+
+  <Transaction code="882310" service="882310" log_switch="1" timeout="30">
+    <Request>
+		  <Item name="TTxnCd" length="6"/>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Item name="CardNo" length="19" expression="DELSPACE($CardNo,both)" desc="¿¨ºÅ"/>
+			<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)"  desc="ÕËºÅ"/>
+			<Item name="BegDat" length=" 8" desc="¿ªÊ¼ÈÕÆÚ"/>
+			<Item name="EndDat" length=" 8" desc="½áÊøÈÕÆÚ"/>
+    </Request>
+    <Response necessary="no">
+    </Response>
+  </Transaction>
+
+
+
+</Application>

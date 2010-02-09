@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="LSHA_RPT_441999.trc">
+  <VarDef>
+    <String alias="CAgtNo"  pos="1"/>
+    <String alias="TxnDat"  pos="2"/>
+    <String alias="PNodNo"  pos="3"/>
+    <String alias="PTlrId"  pos="4"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="RSFLD2">
+      <Convert value="Z01051" msg="»®¿î½»Ò×"/>
+      <Convert value="Z02011" msg="ÍË¿î½»Ò×"/>
+      <DEFAULT msg="ÎÞ´Ë½»Ò×"/>
+    </Item>
+    <Item alias="HTxnSt">
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <DEFAULT msg="¿ÉÒÉ,Çë²éÑ¯"/>
+    </Item>
+  </MsgConvert>
+ 
+  <DataSource object="sql">
+    <Iterative>
+       <Sql sql="select ActNo,TCUSID,TxnAmt,HTxnSt,TckNo,LogNo,FTXNTM,RSFLD2 from afetxnjnl where ActDat ='%s' and CAgtNo in('%s','4410001102') and HTxnSt='S' and TTxnst IN ('S','T') order by RSFLD2">
+       <FieldList>$TxnDat|$CAgtNo|</FieldList>
+	   </Sql>
+    </Iterative>
+    <SubTotal type="field" groupby="RSFLD2|">
+			<Field fmtseq="1"  field="RSFLD2">
+				<Sum sum="TXNAMT" sum_alias="SubAmt" count="CntAmt"/>
+			</Field>
+		</SubTotal>
+		<Summed type="field">
+			<Field sum="TXNAMT" sum_alias="sumamt" count="TotCnt"/>
+		</Summed>   
+
+  </DataSource>
+  <FormatDefine pagerows="41" pagesum="YES">
+    <TableHeader line="1">
+       <Para label="01"  alias="Ñò³ÇÍ¨×Ô¶¯³äÖµ" spread="right" ></Para>
+       <Para label="02"  alias="SUBSTR($TxnDat,1,4)" spread="right" ></Para>
+       <Para label="03"  alias="SUBSTR($TxnDat,5,2)" spread="right"></Para>
+       <Para label="04"  alias="SUBSTR($TxnDat,7,2)" spread="right"></Para>
+       <Para label="05"  alias="$PAGESUM" spread="mid"></Para>
+       <Para label="06"  alias="$PAGENUM" spread="mid"></Para>
+       <Format>
+                                   ¹ãÖÝ½»ÐÐ´úÀíÒµÎñÏµÍ³Çåµ¥
+
+                                  ÒµÎñÀàÐÍ:#             ÈÕÆÚ:     #Äê  #ÔÂ  #ÈÕ     ¹² # Ò³     µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©·
+©§  ½»Ò×ÈÕÆÚ        ©§     ½É·ÑÏîÄ¿     ©§            ÕÊºÅ      ©§  ½»Ò×ÀàÐÍ  ©§      Ñò³ÇÍ¨¿¨ºÅ      ©§  Ç°ÖÃÁ÷Ë®ºÅ  ©§  »á¼ÆÁ÷Ë®ºÅ  ©§    ½ð¶î      ©§   ½»Ò××´Ì¬   ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+       <Para label="01" alias="SUBSTR($FTXNTM,1,8)" spread="right"></Para>
+       <Para label="02" alias="Ñò³ÇÍ¨×Ô¶¯³äÖµ" spread="right"></Para>
+       <Para label="03" alias="$ActNo"  spread="right"></Para>
+       <Para label="04" alias="$RSFLD2" convert="YES"  spread="right"></Para>
+       <Para label="05" alias="$TCUSID"  spread="right"></Para>
+       <Para label="06" alias="DELBOTHSPACE($LogNo)"  spread="right"></Para>
+       <Para label="07" alias="DELBOTHSPACE($TckNo)"  spread="right"></Para>
+       <Para label="08" alias="AMTFMT($TxnAmt)" spread="left"></Para>   
+       <Para label="09" alias="$HTxnSt"  convert="YES" spread="right" ></Para>
+       <Format>
+©§#                 ©§#                 ©§#                     ©§#           ©§ #                    ©§#             ©§#             ©§             #©§#             ©§
+       </Format>
+    </Iterative>
+    <SubTotal fmtseq="1">
+			<Para label="01" alias="AMTDELZERO($CntAmt)" spread="right" />
+      <Para label="02" alias="AMTFMT($SubAmt)"   spread="right" />
+			<Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§Ð¡¼Æ                                                                        ±ÊÊý:   #                              ½ð¶î£º            #                              ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</SubTotal>
+    <Summed line='1'>
+       <Para label="01" alias="$TotCnt"         spread="left"></Para>
+       <Para label="02" alias="AMTFMT($sumamt)" spread="left"></Para>
+       <Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ ºÏ¼Æ                                                 ±ÊÊý:   #                              ½ð¶î£º            #                                                    ©§
+©§                                                                                                                                                                    ©§
+       </Format>
+    </Summed>
+    <TableFooter line="1">
+       <Para label="01" alias="$PNodNo" spread="right"></Para>
+       <Para label="02" alias="$PTlrId" spread="right"></Para>
+       <Para label="03" alias="GETDATETIME(YYYY-MM-DD)" spread="left"></Para>
+       <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+	                  ´òÓ¡²¿ÃÅ£º#           ´òÓ¡¹ñÔ±£º#          ´òÓ¡ÈÕÆÚ£º#
+       </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

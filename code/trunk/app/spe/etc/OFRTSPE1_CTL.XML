@@ -1,0 +1,804 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="SPE" code="488" trace="yes">
+  <ConfigDeclare>
+    <Config name="SPECSW" value="etc/SPE_CSW.XML"/>
+    <Config name="BatFormat" value="etc/SPE_FMT.XML"/>
+  </ConfigDeclare>
+
+  <TableDeclare>
+    <Table name="SpeNodInf" value="SpeNodInf"/>
+    <Table name="SpeTxnInf" value="SpeTxnInf"/>
+    <Table name="SpeTxnDtl" value="SpeTxnDtl"/>
+  </TableDeclare>
+
+  <BusDefDeclare>
+    <Busdef name="AplCls" value="223"/>
+    <Busdef name="RptDir" value="dat/term/send/"/>
+  </BusDefDeclare>
+
+  <Define>
+    <Include file="etc/SPE_MCR.XML"/>
+  </Define>
+
+  <Transaction code="488801" desc="ÎÄ¼þ´«ËÍ">
+    <FlowCtrl>
+      <Quote name="InitProc"/>
+      <Set>SrcFil=STRCAT(GETENV(WORKDIR),/dat/term/recv/,$FilNam)</Set>
+      <Set>ObjFil=STRCAT(GETENV(WORKDIR),/dat/bep/thd/,$FilNam)</Set>
+      <Exec func="PUB:CopyFile">
+        <Arg name="SrcFil" value="$SrcFil"/>
+        <Arg name="ObjFil" value="$ObjFil"/>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=½»Ò×³É¹¦</Set>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="488802" desc="Ö§¸¶´ó¶îÊý¾ÝÌáÈ¡">
+    <DynSentence name="DelBankNo">  <!-- ÇåÀí¼ÇÂ¼ -->
+      <Sentence>
+        delete from PmsBankNo441
+      </Sentence>
+    </DynSentence>
+    <DynSentence name="InsBankNo">  <!-- ²úÉúÐÂÐÐºÅ±í -->
+      <Sentence>
+        insert into PmsBankNo441 select * from PmsBankNo where Status='1'
+      </Sentence>
+    </DynSentence>
+    <DynSentence name="GetBrNo">  <!-- »ñÈ¡·ÖÐÐºÅ -->
+      <Sentence>
+        select substr(ftpid,4,3)||'999' BrNo from pubftpcfg where substr(FtpId,1,3)='SPE' and substr(FtpId,4,3)!='BWW'
+      </Sentence>
+    </DynSentence>
+
+    <FlowCtrl>
+<!--È«Ï½´ó¶îÖ§¸¶Êý¾Ý¡¢ÍøµãºÅÌáÈ¡-->
+      <Exec func="PUB:OpenCursor">
+        <Arg name="sql" value="GetBrNo"/>
+      </Exec>
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE"/>
+        <If condition="~RetCod=100">
+          <Break/>
+        </If>
+        <Set>OIDate=CALCDATE($ActDat,-,d,1)</Set>
+        <If condition="IS_EQUAL_STRING($BrNo,999999)">  <!--È«Ï½-->
+          <Set>MinAmt=000000010000000</Set>
+          <Set>Mode=0</Set>
+          <Set>LclFil=PmsAccBok</Set>
+          <Set>ObjFil=$LclFil</Set>
+          <System command="PmsDatGet.sh" error="IGNORE">
+            <Arg name="ActDat" value="$OIDate"/>
+            <Arg name="BrNo"   value="$BrNo"/>
+            <Arg name="MinAmt" value="$MinAmt"/>
+            <Arg name="Mode"   value="$Mode"/>
+            <Arg name="LclFil" value="$LclFil"/>
+          </System>
+          <Set>BrNo=441999</Set>
+          <Set>FtpIdNm=SPE999</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+          <Set>LclFil=CbsTxnJnl</Set>
+          <Set>ObjFil=STRCAT($LclFil,.,$OIDate)</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+          <Set>LclFil=CimOrgTbl</Set>
+          <Set>ObjFil=$LclFil</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+          <Set>LclFil=PubNodInf</Set>
+          <Set>ObjFil=STRCAT($LclFil,.,$OIDate)</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+          <Set>FtpIdNm=SPEBWW</Set>
+          <Set>LclFil=PfaCrdInf</Set>
+          <Set>ObjFil=STRCAT($LclFil,.,$OIDate)</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+          <Set>LclFil=PfaCrdTxn</Set>
+          <Set>ObjFil=STRCAT($LclFil,.,$OIDate)</Set>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+        </If>
+        <Else>
+          <Set>MinAmt=000000000000000</Set>
+          <Set>Mode=1</Set>
+          <Set>ObjFil=STRCAT(Pms,SUBSTR($BrNo,1,3),_,$OIDate,.txt)</Set>
+          <Set>LclFil=$ObjFil</Set>
+          <Set>FtpIdNm=STRCAT(SPE,SUBSTR($BrNo,1,3))</Set>
+          <System command="PmsDatGet.sh" error="IGNORE">
+            <Arg name="ActDat" value="$OIDate"/>
+            <Arg name="BrNo"   value="$BrNo"/>
+            <Arg name="MinAmt" value="$MinAmt"/>
+            <Arg name="Mode"   value="$Mode"/>
+            <Arg name="LclFil" value="$LclFil"/>
+          </System>
+          <Exec func="PUB:FtpPut" error="IGNORE">
+            <Arg name="FtpId" value="$FtpIdNm"/>
+          </Exec>
+        </Else>
+      </While>
+      <Exec func="PUB:CloseCursor" error="IGNORE"/>
+<!--¸üÐÂ×ÔÖúÍ¨ÐÐºÅ±í-->
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="DelBankNo"/>
+        </Args>
+      </Exec>
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="InsBankNo"/>
+        </Args>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=½»Ò×³É¹¦</Set>
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="488803">
+    <DynSentence name="QuerySql">  <!-- ²éÑ¯¿Í»§Àà±ð -->
+      <Sentence>
+        select cutp,snum from SpeCusInf where cunb='%s'
+      </Sentence>
+      <Fields>cunb</Fields>
+    </DynSentence>
+    <DynSentence name="updsnum">  <!-- ÐÞ¸Ä²éÑ¯´ÎÊý -->
+      <Sentence>
+        update SpeCusInf set snum=snum+1 where cunb='%s'
+      </Sentence>
+      <Fields>cunb</Fields>
+    </DynSentence>
+    <DynSentence name="GetNodInf">  <!-- »ñÈ¡¹ÜÀíÔ±ÐÅÏ¢ -->
+      <Sentence>
+        select NodNam, MagNam, MagLvl, UniNo, MobTel from SpeNodInf where NodNo='%s' and Sts='0' and MagLvl not in ( '0','Z' )
+      </Sentence>
+      <Fields>NodNo|</Fields>
+    </DynSentence>
+    <DynSentence name="GetTlrInf">  <!-- »ñÈ¡²Ù×÷¹ñÔ±ÐÅÏ¢ -->
+      <Sentence>
+        select TlrNam from CimTlrTbl where TlrId='%s'
+      </Sentence>
+      <Fields>TlrId|</Fields>
+    </DynSentence>
+    <Attributes>
+      <Attribute name="nodatabase" value="2"/>  <!--ÉèÖÃÊý¾Ý¿âÈ«³ÌÁ¬½Ó-->
+    </Attributes>
+    <FlowCtrl>
+      <Quote name="InitProc"/>
+<!--Í³¼ÆÍøµãÒµÎñ-->
+      <Exec func="PUB:InsertRecord">
+        <Arg name="TblNam" value="SpeTxnInf"/>
+      </Exec>
+      <Exec func="PUB:QueryInGroup" error="IGNORE">
+        <Arg name="SqlCmd" value="QuerySql"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>MsgTyp=E</Set>
+      </If>
+      <Else>
+        <Exec func="PUB:ExecSql">
+          <Arg name="SqlCmd" value="updsnum"/>
+        </Exec>
+        <Set>MsgTyp=N</Set>
+        <Set>RspCod=000000</Set>
+      </Else>
+      <Exec func="PUB:PutResponse"/>
+<!--ÅÐ¶Ï¿Í»§µÄ¼¶±ð-->
+      <Delete>CusId</Delete>
+      <Set>ChkPin=1</Set>
+      <Set>ChkLst=1</Set>
+      <Exec func="PUB:CallHostAcc">
+        <Arg name="HTxnCd" value="011855"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=$HRspCd</Set>
+        <Return/>
+      </If>
+      <If condition="INTCMP($SvrLvl,2,55)">
+<!--»ñÈ¡¹ñÔ±Ãû³Æ-->
+        <Exec func="PUB:ReadRecord">
+          <Args>
+            <Arg name="SqlCmd" value="GetTlrInf" />
+          </Args>
+        </Exec>
+<!--»ñÈ¡¿Í»§¼¶±ð-->
+        <Exec func="PUB:CodeSwitching" error="IGNORE">
+          <Arg name="DatSrc"  value="SPECSW"/>
+          <Arg name="SourNam" value="SvrLvl"/>
+          <Arg name="DestNam" value="SvrMsg"/>
+          <Arg name="TblNam"  value="SvrLvlToSvrMsg"/>
+        </Exec>
+<!--ÉèÖÃ·¢ËÍ²ÎÊý-->
+        <Set>SndFlg=0</Set>  <!--¼´Ê±·¢ËÍ-->
+        <Set>FeeTyp=2</Set>  <!--²»ÊÕ·Ñ-->
+        <Set>ActTyp=1</Set>  <!--ÕË»§ÀàÐÍ(¶ÔË½)-->
+        <Exec func="PUB:OpenCursor">
+          <Arg name="sql" value="GetNodInf"/>
+        </Exec>
+        <While>
+          <Exec func="PUB:FetchCursor" error="IGNORE"/>
+          <If condition="~RetCod=100">
+            <Break/>
+          </If>
+<!--»ñÈ¡¹ÜÀíÔ±¼¶±ð-->
+          <Delete>MagMsg</Delete>
+          <Delete>MsgTxt</Delete>
+          <Set>SvrTim=GETDATETIME(MMÔÂDDÈÕHHÊ±MI·Ö)</Set>
+          <Exec func="PUB:CodeSwitching" error="IGNORE">
+            <Arg name="DatSrc"  value="SPECSW"/>
+            <Arg name="SourNam" value="MagLvl"/>
+            <Arg name="DestNam" value="MagMsg"/>
+            <Arg name="TblNam"  value="MagLvlToMagMsg"/>
+          </Exec>
+          <Set>MsgTxt=STRCAT($MagNam,$MagMsg,:ÄãÐÐ¹ñÔ±,$TlrNam,ÓÚ,$SvrTim,Îª,DELSPACE($CusNam,all),[,$SvrMsg,]°ìÀíÒµÎñ,£¬ÇëÓèÒÔÐ­Öú)</Set>
+          <If condition="AND(IS_EQUAL_STRING($BrNo,444999),IS_EQUAL_STRING($UniNo,0002))">
+            <Exec func="PUB:GetCommInf" error="IGNORE">
+              <Arg name="CndId" value="STRCAT(sfm_,444002)"/>
+            </Exec>
+          </If>
+          <Else>
+            <Exec func="PUB:GetCommInf" error="IGNORE">
+              <Arg name="CndId"  value="STRCAT(sfm_,$BrNo)"/>
+            </Exec>
+          </Else>
+          <If condition="~RetCod=0">
+            <Set>@MSG.OIP=$HstIp</Set>
+            <Set>@MSG.OPT=$HstPrt</Set>
+          </If>
+          <Else>
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=SPE999</Set>
+            <Set>RspCod=È¡Í¨Ñ¶ÅäÖÃ´í</Set>
+            <Exec func="PUB:CloseCursor" error="IGNORE"/>
+            <Return/>
+          </Else>
+          <Exec func="PUB:CallThirdOther" error="IGNORE">
+            <Arg name="HTxnCd" value="479113"/>
+            <Arg name="ObjSvr" value="STHDSFMA"/>
+          </Exec>
+        </While>
+        <Exec func="PUB:CloseCursor" error="IGNORE"/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="488804" desc="Íøµã¹ÜÀíÔ±×ÊÁÏÎ¬»¤">
+    <DynSentence name="GetNodInf"> <!-- ²éÑ¯ -->
+      <Sentence>
+        select NodNam ONodNam, MagNam OMagNam, MagLvl OMagLvl, UniNo OUniNo, Sts OSts from SpeNodInf where NodNo='%s' and MobTel='%s'
+      </Sentence>
+      <Fields>NodNo|MobTel|</Fields>
+    </DynSentence>
+    <DynSentence name="UpdNodInf"> <!--ÐÞ¸Ä-->
+      <Sentence>
+        NodNo='%s' and MobTel='%s'
+      </Sentence>
+      <Fields>NodNo|MobTel|</Fields>
+    </DynSentence>
+    <DynSentence name="DelNodInf"> <!--É¾³ý-->
+      <Sentence>
+        delete from SpeNodInf where NodNo='%s' and MobTel='%s'
+      </Sentence>
+      <Fields>NodNo|MobTel|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Quote name="InitProc"/>
+      <If condition="IS_NOEQUAL_STRING($Func,2)">
+        <Exec func="PUB:AddAuthReason">
+          <Arg name="AthCod" value="30" />
+          <Arg name="AthMsg" value="SPE000" />
+        </Exec>
+        <Exec func="PUB:CheckLocalAuth" >
+          <Arg name="ObjSvr" value="SHSTPUB1" />
+        </Exec>
+      </If>
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="GetNodInf" />
+        </Args>
+      </Exec>
+      <If condition="~RetCod=-1">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=SPE999</Set>
+        <Set>RspMsg=STRCAT(²éÑ¯±í¡¾SpeNodInf¡¿Ê§°Ü)</Set>
+        <Return/>
+      </If>
+      <If condition="AND(IS_NOEQUAL_STRING($Func,0), INTCMP(~RetCod,3,-2))">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=SPE999</Set>
+        <Set>RspMsg=Ö¸¶¨¼ÇÂ¼²»´æÔÚ</Set>
+        <Return/>
+      </If>
+      <Switch expression="$Func">
+        <Case value="0"> <!-- Ôö¼Ó -->
+          <If condition="~RetCod!=-2">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=SPE999</Set>
+            <Set>RspMsg=¼ÇÂ¼ÒÑ´æÔÚ</Set>
+            <Return/>
+          </If>
+          <Exec func="PUB:InsertRecord">
+            <Arg name="TblNam" value="SpeNodInf"/>
+          </Exec>
+          <Break/>
+        </Case>
+        <Case value="1"> <!-- ÐÞ¸Ä -->
+          <Exec func="PUB:UpdateRecord">
+            <Arg name="TblNam" value="SpeNodInf"/>
+            <Arg name="CndSts" value="UpdNodInf"/>
+          </Exec>
+          <Break/>
+        </Case>
+        <Case value="2"> <!-- ²éÑ¯ -->
+          <Break/>
+        </Case>
+        <Case value="3"> <!-- É¾³ý -->
+          <Exec func="PUB:ExecSql">
+            <Args>
+              <Arg name="SqlCmd" value="DelNodInf" />
+            </Args>
+          </Exec>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=SPE999</Set>
+          <Set>RspMsg=ÏµÍ³´íÎó</Set>
+          <Return/>
+        </Default>
+      </Switch>
+      <If condition="IS_NOEQUAL_STRING($Func,2)">
+        <Set>Msg=STRCAT(Íøµã¹ÜÀíÔ±×ÊÁÏÎ¬»¤:¹¦ÄÜ[,$Func,]ÊÖ»úÀàÐÍ[,$UniNo,]ÊÖ»úºÅ[,$Mobel,]¹ÜÀíÔ±Ãû³Æ[,$MagNam,])</Set>
+        <Set>NoteInfo=STRCAT($Msg,¼¶±ð[,$MagLvl,]×´Ì¬[,$Status,]Íøµã[,$NodNo,]¹ñÔ±[,$TlrId,])</Set>
+        <Exec func="PUB:CallHostOther">
+          <Arg name="HTxnCd" value="455130" />
+          <Arg name="ObjSvr" value="SHSTPUB1"/>
+        </Exec>
+      </If>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=½»Ò×³É¹¦</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="488805" desc="²éÑ¯Íøµã×´Ì¬²¢·¢ËÍ¶ÌÐÅ">
+    <DynSentence name="GetNodNo">    <!--È¡·ÖÐÐËùÓÐÍøµã-->
+      <Sentence>
+        select NodNo,substr(Smr,9,52) NodNam from PubOrgInf where substr(NodNo,4,3) not in ('999','900')
+      </Sentence>
+    </DynSentence>
+    <DynSentence name="GetTlrId">    <!--È¡ÐéÄâ¹ñÔ±-->
+      <Sentence>
+        select DumTlr TlrId from pubdumtlr fetch first 1 rows only
+      </Sentence>
+    </DynSentence>
+    <DynSentence name="GetNodInf">  <!-- »ñÈ¡¹ÜÀíÔ±ÐÅÏ¢ -->
+      <Sentence>
+        select MagNam, MagLvl, UniNo, MobTel from SpeNodInf where NodNo='%s' and MagLvl in ('0','1','2','Z') and Sts='0'
+      </Sentence>
+      <Fields>NodNo|</Fields>
+    </DynSentence>
+    <Attributes>
+      <Attribute name="nodatabase" value="2"/>  <!--ÉèÖÃÊý¾Ý¿âÈ«³ÌÁ¬½Ó-->
+      <Attribute name="noresponse" value="1"/>
+    </Attributes>
+    <FlowCtrl>
+<!--¹«¹²ÐÅÏ¢-->
+      <Set>ActNo=0</Set>
+      <Set>CusId=0</Set>
+<!--»ñÈ¡²éÑ¯¹ñÔ±-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="GetTlrId" />
+      </Exec>
+<!--±éÀúÍøµã±í-->
+      <Exec func="PUB:OpenCursor" error="IGNORE">
+        <Arg name="SqlCmd" value="GetNodNo" />
+        <Arg name="CursorName" value="CURSOR_1"/>
+      </Exec>
+<!--Ñ­»··¢ËÍÉÏÖ÷»ú²éÑ¯Íøµã×´Ì¬½»Ò× -->
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE">
+          <Arg name="CursorName" value="CURSOR_1"/>
+        </Exec>
+        <If condition="~RetCod=100">
+          <Break/>
+        </If>
+<!--·¢ËÍÉÏÖ÷»ú²éÑ¯·ÖÐÐ×´Ì¬½»Ò× -->
+        <Set>TTxnCd=034130</Set>
+        <Set>OrgNo=$NodNo</Set>
+        <Exec func="PUB:CallHostOther">
+          <Arg name="HTxnCd" value="034130" />
+          <Arg name="ObjSvr" value="SHSTPUB1" />
+        </Exec>
+        <If condition="AND(IS_EQUAL_STRING($HRspCd,SC0000),IS_EQUAL_STRING($OrgSts,N))">
+          <Set>NodNo=$OrgNo</Set>  <!--»Ö¸´ÍøµãºÅ-->
+          <Set>BrNo=$OrgBk</Set>   <!--»ñÈ¡·ÖÐÐºÅ¹©·¢ËÍ¶ÌÐÅÊ¹ÓÃ-->
+          <Set>SndFlg=0</Set>  <!--¼´Ê±·¢ËÍ-->
+          <Set>FeeTyp=2</Set>  <!--²»ÊÕ·Ñ-->
+          <Set>ActTyp=1</Set>  <!--ÕË»§ÀàÐÍ(¶ÔË½)-->
+          <Exec func="PUB:OpenCursor">
+            <Arg name="sql" value="GetNodInf"/>
+            <Arg name="CursorName" value="CURSOR_2"/>
+          </Exec>
+          <While>
+            <Delete>MagMsg</Delete>
+            <Delete>MsgTxt</Delete>
+            <Exec func="PUB:FetchCursor" error="IGNORE">
+              <Arg name="CursorName" value="CURSOR_2"/>
+            </Exec>
+            <If condition="~RetCod=100">   <!--×îºó·¢¸ø·ÖÐÐ²Æ»á´¦³¤-->
+              <Set>NodNo=$OrgBk</Set>
+              <Exec func="PUB:ReadRecord" error="IGNORE">
+                <Args>
+                  <Arg name="SqlCmd" value="GetNodInf" />
+                </Args>
+              </Exec>
+              <If condition="INTCMP(~RetCod,3,0)">
+                <Quote name="SndMsg"/>
+              </If>
+              <Break/>
+            </If>
+            <Quote name="SndMsg"/>
+          </While>
+          <Exec func="PUB:CloseCursor" error="IGNORE">
+            <Arg name="CursorName" value="CURSOR_2"/>
+          </Exec>
+        </If>
+      </While>
+      <Exec func="PUB:CloseCursor" error="IGNORE">
+        <Arg name="CursorName" value="CURSOR_1"/>
+      </Exec>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="465912" desc="">
+    <FlowCtrl>
+      <Set>BrNo=445999</Set>
+      <Set>EleBk=63457</Set>
+      <Exec func="PUB:CallThirdOther" error="IGNORE">
+      <Arg name="TxnCod" value="363419"/>
+        <Arg name="ObjSvr" value="STHDFAP2"/>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="488806" desc="½»Ò×Ã÷Ï¸ÎÄ¼þ">
+    <DynSentence name="DelTxnDtl">  <!-- ÇåÀí¼ÇÂ¼ -->
+      <Sentence>
+        delete from SpeTxnDtl where CardNo='%s' or ActNo='%s'
+      </Sentence>
+      <Fields>CardNo|ActNo|</Fields>
+    </DynSentence>
+    <DynSentence name="GetTxnDtl">  <!-- ¶ÁÈ¡¼ÇÂ¼ -->
+      <Sentence>
+        select * from SpeTxnDtl where CardNo='%s' or ActNo='%s' order by TxnDat, TxnTim
+      </Sentence>
+      <Fields>CardNo|ActNo|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Quote name="InitProc"/>
+      <If condition="IS_NOEQUAL_STRING(SUBSTR($NodNo,4,3),900)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=SPE999</Set>
+        <Set>RspMsg=¸Ã½»Ò×Ö»ÄÜÓÉ²ÎÊýÖÐÐÄ²Ù×÷</Set>
+        <Return/>
+      </If>
+      <If condition="INTCMP(DIFFDATE($BegDat,$EndDat),6,92)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=SPE999</Set>
+        <Set>RspMsg=ÆðÊ¼ÈÕÆÚºÍÖÕÖ¹ÈÕÆÚÖ®¼ä²»ÄÜ³¬¹ý92Ìì</Set>
+        <Return/>
+      </If>
+<!--
+      <Exec func="PUB:AddAuthReason">
+        <Arg name="AthCod" value="77"/>
+        <Arg name="AthMsg" value="SPE000"/>
+      </Exec>
+      <Exec func="PUB:CheckLocalAuth" >
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+-->
+      <Exec func="PUB:Lock">
+        <Arg name="RecKey" value="STRCAT($BrNo,$AplCls,$TxnCod)"/>
+        <Arg name="AutoUnlock" value="yes"/>
+      </Exec>
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="DelTxnDtl"/>
+        </Args>
+      </Exec>
+<!--·¢ÀúÊ·¿â²éÑ¯½»Ò×Ã÷Ï¸-->
+      <If condition="IS_EQUAL_STRING($CusTyp,1)">  <!--¶ÔË½-->
+        <Set>ThdCod=882310</Set>
+      </If>
+      <Else>
+        <Set>ThdCod=882230</Set>
+      </Else>
+      <While>
+        <Exec func="PUB:DeleteGroup">
+          <Arg name="GroupName" value="Rec"/>
+        </Exec>
+        <Delete>LogNo</Delete>
+        <Delete>FSysId</Delete>
+        <If condition="IS_EQUAL_STRING($TIATyp,P)">
+          <Set>PagIdx=080000</Set>
+        </If>
+        <Exec func="PUB:GetLogNo"/>
+        <Exec func="PUB:CallHostOther" error="IGNORE">
+          <Arg name="TTxnCd" value="$ThdCod"/>
+          <Arg name="ObjSvr" value="STHDHIS1"/>
+        </Exec>
+        <If condition="INTCMP(~RetCod,3,0)">
+          <Exec func="PUB:InsertRecord" error="IGNORE">
+            <Arg name="TblNam" value="SpeTxnDtl"/>
+            <Arg name="GrpNam" value="Rec"/>
+            <Arg name="FldLst" value="ActNo|CardNo|"/>
+          </Exec>
+          <If condition="INTCMP(~RetCod,4,0)">
+            <Exec func="PUB:RollbackWork" error="IGNORE" />
+            <Exec func="PUB:Unlock">
+              <Arg name="RecKey" value="STRCAT($BrNo,$AplCls,$TxnCod)"/>
+            </Exec>
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=SPE999</Set>
+            <Set>RspMsg=²éÑ¯Ã÷Ï¸´íÎó</Set>
+            <Return/>
+          </If>
+          <If condition="INTCMP($ErrFld,3,6402)"> <!--6402±êÖ¾²éÑ¯½áÊø-->
+            <Break/>
+          </If>
+          <Else>
+            <Set>TIATyp=P</Set>
+          </Else>
+        </If>
+        <Else>
+          <Break/>
+        </Else>
+      </While>
+<!--Éú²úÊý¾ÝÎÄ¼þ-->
+      <Set>DatFil=STRCAT($CardNo,$ActNo,.,$BegDat)</Set>
+      <Set>FilNam=STRCAT(GETENV(WORKDIR),/dat/term/send/,$DatFil)</Set>
+      <Exec func="PUB:ExportFromDB">
+        <Arg name="SqlName"    value="GetTxnDtl"/>
+        <Arg name="FormatName" value="spetxndtl"/>
+        <Arg name="FileName"   value="$FilNam"/>
+        <Arg name="TableName"  value="SpeTxnDtl"/>
+      </Exec>
+      <Exec func="PUB:SendFileMessage2">
+        <Arg name="MsgTyp"  value="3"/>
+        <Arg name="ObjNod"  value="$NodNo"/>
+        <Arg name="BusTyp"  value="46"/>
+        <Arg name="AplCod"  value="$TxnCod"/>
+        <Arg name="FilNam"  value="$DatFil"/>
+        <Arg name="Summary" value="½»Ò×Ã÷Ï¸"/>
+        <Arg name="ObjTlr"  value="$TlrId"/>
+      </Exec>
+      <Exec func="PUB:Unlock">
+        <Arg name="RecKey" value="STRCAT($BrNo,$AplCls,$TxnCod)"/>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+  <Transaction code="488807" desc="¿Í»§¼¶±ð²éÑ¯">
+    <FlowCtrl>
+      <Set>TlrId=EPCLBI1</Set>
+      <Set>ChkPin=1</Set>
+      <Set>ChkLst=1</Set>
+      <Exec func="PUB:CallHostAcc">
+        <Arg name="HTxnCd" value="011855"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=$HRspCd</Set>
+        <Return/>
+      </If>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+  <Transaction code="488808" desc="¿Í»§»Øµ¥±¨±í´òÓ¡">
+<!--
+    <DynSentence name="GetOutDtl">
+      <Sentence>
+        select ActDat, TckNo, PyeAct, InsAmt, BilNo, PyeNam, ActRmk, BENELX
+          from SvrRgdRec a left join PmsBankNo b
+            on a.MRBKNo=b.BkNo
+         where a.PyrAct='%s' and ( a.ActDat between '%s' and '%s' ) and b.Status='1'
+      order by BilNo
+      </Sentence>
+      <Fields>ActNo|BgnDat|EndDat|</Fields>
+    </DynSentence>
+    <DynSentence name="GetInDtl">
+      <Sentence>
+        select PyrAct, ActDat, TckNo, InsAmt, PyrNam, ActRmk, BENELX
+          from SvrRgdRec a left join PmsBankNo b
+            on a.MSBKNo=b.BkNo
+         where a.PyeAct='%s' and ( a.ActDat between '%s' and '%s' ) and b.Status='1'
+      </Sentence>
+      <Fields>ActNo|BgnDat|EndDat|</Fields>
+    </DynSentence>
+-->
+    <DynSentence name="GetOutDtl">
+      <Sentence>
+        select ActDat, TckNo, PyeAct, InsAmt, BilNo, PyeNam, ActRmk, BENELX
+          from SvrRgdRec a left join PmsBankNo b
+            on a.MRBKNo=b.BkNo
+         where a.PyrAct='%s' and ( a.ActDat between '%s' and '%s' )
+      order by BilNo
+      </Sentence>
+      <Fields>ActNo|BgnDat|EndDat|</Fields>
+    </DynSentence>
+    <DynSentence name="GetInDtl">
+      <Sentence>
+        select PyrAct, ActDat, TckNo, InsAmt, PyrNam, ActRmk, BENELX
+          from SvrRgdRec a left join PmsBankNo b
+            on a.MSBKNo=b.BkNo
+         where a.PyeAct='%s' and ( a.ActDat between '%s' and '%s' ) 
+      </Sentence>
+      <Fields>ActNo|BgnDat|EndDat|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Quote name="InitProc"/>
+      <Set>FilNam=STRCAT(SPE001_,$OIFlag,_,$TlrId,.txt)</Set>
+      <Set>DatFil=STRCAT(GETENV(WORKDIR),/,$RptDir,/,$FilNam)</Set>
+      <Switch expression="$OIFlag">
+        <Case value="O"> <!-- Ö§³ö -->
+          <Set>GetDtl=GetOutDtl</Set>
+          <Exec func="PUB:WriteFile" error="IGNORE">
+            <Arg name="FileName" value="$DatFil"/>
+            <Arg name="OpenMode" value="w"/>
+            <Arg name="Data"   value="ÐòºÅ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="Æ±¾ÝºÅÂë"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="½»Ò×½ð¶î"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="ÊÕ¿îÈËÕËºÅ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="ÊÕ¿îÈËÃû³Æ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="ÊÕ¿îÈË¿ª»§ÐÐÃû"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="ÕªÒª"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="»á¼ÆÁ÷Ë®ºÅ"/>
+            <Arg name="ESCFMT" value="\\n"/>
+          </Exec>
+          <Break/>
+        </Case>
+        <Case value="I"> <!-- ÍË»Ø -->
+          <Set>GetDtl=GetInDtl</Set>
+          <Exec func="PUB:WriteFile" error="IGNORE">
+            <Arg name="FileName" value="$DatFil"/>
+            <Arg name="OpenMode" value="w"/>
+            <Arg name="Data"   value="ÐòºÅ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="»á¼ÆÁ÷Ë®ºÅ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="½»Ò×½ð¶î"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="¸¶¿îÈËÕËºÅ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="¸¶¿îÈËÃû³Æ"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="»ãÈëÐÐÐÐÃû"/>
+            <Arg name="ESCFMT" value="\\t"/>
+            <Arg name="ESCFMT" value="ÍËÆ±Ô­Òò"/>
+            <Arg name="ESCFMT" value="\\n"/>
+          </Exec>
+          <Break/>
+        </Case>
+      </Switch>
+      <Exec func="PUB:OpenCursor" error="IGNORE">
+        <Arg name="sql" value="$GetDtl"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=SPE999</Set>
+        <Set>RspMsg=´ò¿ªÓÎ±ê³ö´í</Set>
+        <Return/>
+      </If>
+      <Set>SeqNo=0</Set>
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE"/>
+        <If condition="~RetCod=100">
+          <Exec func="PUB:CloseCursor" error="IGNORE"/>
+          <If condition="INTCMP($SeqNo,3,0)">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=SPE999</Set>
+            <Set>RspMsg=Ã»ÓÐÂú×ãÌõ¼þµÄ¼ÇÂ¼</Set>
+            <Return/>
+          </If>
+          <Break/>
+        </If>
+				<Set>SeqNo=ADD($SeqNo,1)</Set>
+        <Switch expression="$OIFlag">
+          <Case value="O"> <!-- Ö§³ö -->
+            <Exec func="PUB:WriteFile" error="IGNORE">
+              <Arg name="FileName" value="$DatFil"/>
+              <Arg name="OpenMode" value="a+"/>
+              <Arg name="Data"   value="$SeqNo"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$BilNo"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="AMTSIMPLEFMT($InsAmt)"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$PyeAct"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$PyeNam"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$Benelx"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$ActRmk"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$TckNo"/>
+              <Arg name="ESCFMT" value="\\n"/>
+            </Exec>
+          <Break/>
+          </Case>
+          <Case value="I"> <!-- ÍË»Ø -->
+            <Exec func="PUB:WriteFile" error="IGNORE">
+              <Arg name="FileName" value="$DatFil"/>
+              <Arg name="OpenMode" value="a+"/>
+              <Arg name="Data"   value="$SeqNo"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$TckNo"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="AMTSIMPLEFMT($InsAmt)"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$PyrAct"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$PyrNam"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$Benelx"/>
+              <Arg name="ESCFMT" value="\\t"/>
+              <Arg name="Data"   value="$ActRmk"/>
+              <Arg name="ESCFMT" value="\\n"/>
+            </Exec>
+          <Break/>
+          </Case>
+        </Switch>
+      </While>
+      <Exec func="PUB:SendFileMessage2">
+        <Arg name="MsgTyp"  value="3"/>
+        <Arg name="ObjNod"  value="$NodNo"/>
+        <Arg name="BusTyp"  value="46"/>
+        <Arg name="AplCod"  value="$TxnCod"/>
+        <Arg name="FilNam"  value="$FilNam"/>
+        <Arg name="Summary" value="¿Í»§»Øµ¥"/>
+        <Arg name="ObjTlr"  value="$TlrId"/>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+</Application>

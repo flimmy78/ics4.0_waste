@@ -1,0 +1,400 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TIP" server="OFRTTIP3" pre_dll="dll/ca_afp/pre_tips.so" pre_func="tips_pre" spe_dll="dll/ca_afp/spe_tips.so" spe_func="tips_spe" timeout="30">
+<MemPool init_size="5" max_size="10"/>
+   <Include file="etc/MMQMTIP1_IIT.XML"/>
+   
+   <!-- ÏµÍ³µÇÂ¼ -->
+   <Transaction code="9006" desc="ÏµÍ³µÇÂ¼" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9006"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="LoginInfo9006">
+                  <WriteElement name="Password"       ETF_name="Passwd"/>
+                  <WriteElement name="NewPassword"    ETF_name="NPwd" necessary="no"/>
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>
+         <SaveMsgHead key_name="MsgRef" timeout="200"/><!--±£´æÏûÏ¢¼üÖµ-->
+         <AddHead head_name="CID" value="524551"/>
+      </Request>
+      <Response>
+         <ReadElement name="CFX">
+            <Quote name="ReadHead"/>
+            <ReadElement name="MSG">
+               <If condition="$MsgNo=9120">
+		            <Quote name="9120FromPBC"/>
+	               <If condition="$Result=90000"><!--³É¹¦-->
+	                  <AddItem name="TRspCd" value="000000"/>
+	               </If>
+	               <Else>
+	                  <AddItem name="TRspCd" value="999999"/>
+	                  <AddItem name="RspMsg" expression="STRCAT($Result,$AddWord)"/>
+	               </Else>
+		         </If>
+               <Else>
+                  <ReadElement name="LoginReturn9007">
+                     <ReadElement name="LoginResult" ETF_name="LogRet"/>
+                     <ReadElement name="AddWord" ETF_name="AddWrd" necessary="no"/>
+                     <ReadElement name="SysStat" ETF_name="Status"/>
+                     <If condition="$LogRet=90000">                 
+                        <AddItem name="TRspCd" value="000000"/>
+                     </If>
+                     <Else>
+                        <AddItem name="TRspCd" value="999999"/>
+                        <AddItem name="RspMsg" expression="STRCAT($LogRet,$AddWrd)"/>
+                     </Else>
+                  </ReadElement>
+               </Else>
+            </ReadElement>
+         </ReadElement>
+         <RestoreMsgHead key_name="MsgRef" timeout="200"/><!--ÌáÈ¡ÏûÏ¢¼üÖµ-->
+      </Response>
+   </Transaction>
+   <!-- ÏµÍ³ÍË³ö -->
+   <Transaction code="9008" desc="ÏµÍ³ÍË³ö" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9008"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="LogoutInfo9008">
+                  <WriteElement name="Password"       ETF_name="Passwd"/>
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>
+         <SaveMsgHead key_name="MsgRef" timeout="200"/><!--±£´æÏûÏ¢¼üÖµ-->
+         <AddHead head_name="CID" value="524551"/>
+         <AddHead head_name="EPT" value="120"/><!--ÉèÖÃÏûÏ¢ÓÐÐ§Ê±¼ä-->
+      </Request>
+      <Response>
+         <ReadElement name="CFX">
+            <Quote name="ReadHead"/>
+            <ReadElement name="MSG">
+               <If condition="$MsgNo=9120">
+		            <Quote name="9120FromPBC"/>
+	               <If condition="$Result=90000"><!--³É¹¦-->
+	                  <AddItem name="TRspCd" value="000000"/>
+	               </If>
+	               <Else>
+	                  <AddItem name="TRspCd" value="999999"/>
+	                  <AddItem name="RspMsg" expression="STRCAT($Result,$AddWord)"/>
+	               </Else>
+		         </If>
+               <Else>
+                  <ReadElement name="LogoutInfo9009">
+                     <ReadElement name="LogoutResult" ETF_name="LogRet"/>
+                     <ReadElement name="AddWord" ETF_name="AddWrd" necessary="no"/>                       
+                     <If condition="$LogRet=90000">               
+                        <AddItem name="TRspCd" value="000000"/>
+                     </If>
+                     <Else>
+                        <AddItem name="TRspCd" value="999999"/>
+                        <AddItem name="RspMsg" expression="STRCAT($LogRet,$AddWrd)"/>
+                     </Else>
+                  </ReadElement>
+		         </Else>
+            </ReadElement>
+         </ReadElement>
+         <RestoreMsgHead key_name="MsgRef" timeout="200"/><!--ÌáÈ¡ÏûÏ¢¼üÖµ-->
+      </Response>
+   </Transaction>
+   <!-- ÒøÐÐµ½ÈËÐÐÁ¬½Ó²âÊÔÇëÇó -->
+   <Transaction code="9005X" desc="ÒøÐÐµ½ÈËÐÐÁ¬½Ó²âÊÔÇëÇó" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9005"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+         </WriteElement>
+         <SaveMsgHead key_name="MsgRef" timeout="200"/><!--±£´æÏûÏ¢¼üÖµ-->
+         <AddHead head_name="CID" value="524551"/>
+         <AddHead head_name="EPT" value="120"/><!--ÉèÖÃÏûÏ¢ÓÐÐ§Ê±¼ä-->
+      </Request>
+      <Response>
+         <ReadElement name="CFX">
+            <Quote name="ReadHead"/>
+            <ReadElement name="MSG">
+               <Quote name="9120FromPBC"/>
+               <If condition="$Result=90000"><!--³É¹¦-->
+                  <AddItem name="TRspCd" value="000000"/>
+               </If>
+               <Else>
+                  <AddItem name="TRspCd" value="999999"/>
+                  <AddItem name="RspMsg" expression="STRCAT($Result,$AddWord)"/>
+               </Else>
+            </ReadElement>
+         </ReadElement>
+         <RestoreMsgHead key_name="MsgRef" timeout="200"/><!--ÌáÈ¡ÏûÏ¢¼üÖµ-->
+      </Response>
+   </Transaction>
+   <!-- ÈËÐÐµ½ÒøÐÐÁ¬½Ó²âÊÔÇëÇó -->
+   <Transaction code="9005" service="918825" desc="ÈËÐÐµ½ÒøÐÐÁ¬½Ó²âÊÔÇëÇó" log_switch="1" >
+      <Request>
+         <ReadElement name="CFX">
+            <Quote name="ReadHead"/>
+         </ReadElement>
+	      <!--ÈËÐÐÍ¬²½ÇëÇó£¬±£ÁôMsgID,CorrelId-->
+	      <GetHead head_name="MID" name="PbcMqMid"/>
+      </Request>
+      <Response>
+         <AddItem name="MsgNo" value="9120"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <Quote name="9120ToPBC"/>
+            </WriteElement>
+         </WriteElement>
+	      <!--·µ»ØÈËÐÐÍ¬²½ÏìÓ¦£¬ÉèÖÃMsgID¡¢CorrelIdÎªÔ­ÏûÏ¢CorrelId-->
+	      <AddHead head_name="CID" name="PbcMqMid"/>
+	      <AddHead head_name="EPT" value="120"/>
+      </Response>
+   </Transaction>
+   <!-- ¹ÊÕÏÍ¨Öª -->
+   <Transaction code="9102" service="915141" desc="¹ÊÕÏÍ¨Öª" log_switch="1" >
+		<Request>
+			<ReadElement name="CFX">
+				<ReadElement name="HEAD">  <!--±¨ÎÄÍ·-->
+					<ReadElement name="VER"                ETF_name="VER"/><!--°æ±¾ºÅ-->
+					<ReadElement name="SRC"                ETF_name="SrcNod"/><!--·¢Æð½Úµã´úÂë-->
+					<ReadElement name="DES"                ETF_name="DstNod"/><!--½ÓÊÕ½Úµã´úÂë-->
+					<ReadElement name="APP"                ETF_name="APP"/><!--Ó¦ÓÃÃû³Æ-->
+					<ReadElement name="MsgNo"              ETF_name="MsgNo"/><!--±¨ÎÄ±àºÅ-->
+					<ReadElement name="MsgID"              ETF_name="MsgID"/><!--±¨ÎÄ±êÊ¶ºÅ-->
+					<ReadElement name="MsgRef"             ETF_name="MsgRef"/><!--±¨ÎÄ²Î¿¼ºÅ-->
+					<ReadElement name="WorkDate"           ETF_name="WrkDat"/><!--¹¤×÷ÈÕÆÚ-->
+				</ReadElement>
+				<ReadElement name="MSG">
+					<ReadElement name="TroubleInfo9102"><!--¹ÊÕÏÍ¨ÖªÐÅÏ¢-->            
+						<ReadElement name="TroubleNode"     ETF_name="NodCod"/><!--¹ÊÕÏ½Úµã´úÂë-->
+						<ReadElement name="NodeState"       ETF_name="NodSts"/><!--½Úµã×´Ì¬-->
+						<ReadElement name="TroubleReason"   ETF_name="ErrRsn" necessary="no"/><!--¹ÊÕÏÔ­Òò-->
+					</ReadElement>
+				</ReadElement>
+			</ReadElement>  
+		</Request>
+		<Response>     
+		</Response>
+   </Transaction>
+   <!-- Ç¿ÖÆÍË³öÍ¨Öª -->
+   <Transaction code="9103" service="915142" desc="Ç¿ÖÆÍË³öÍ¨Öª" log_switch="1" >
+		<Request>
+			<ReadElement name="CFX">
+				<ReadElement name="HEAD">  <!--±¨ÎÄÍ·-->
+					<ReadElement name="VER"                ETF_name="VER"/><!--°æ±¾ºÅ-->
+					<ReadElement name="SRC"                ETF_name="SrcNod"/><!--·¢Æð½Úµã´úÂë-->
+					<ReadElement name="DES"                ETF_name="DstNod"/><!--½ÓÊÕ½Úµã´úÂë-->
+					<ReadElement name="APP"                ETF_name="APP"/><!--Ó¦ÓÃÃû³Æ-->
+					<ReadElement name="MsgNo"              ETF_name="MsgNo"/><!--±¨ÎÄ±àºÅ-->
+					<ReadElement name="MsgID"              ETF_name="MsgID"/><!--±¨ÎÄ±êÊ¶ºÅ-->
+					<ReadElement name="MsgRef"             ETF_name="MsgRef"/><!--±¨ÎÄ²Î¿¼ºÅ-->
+					<ReadElement name="WorkDate"           ETF_name="WrkDat"/><!--¹¤×÷ÈÕÆÚ-->
+				</ReadElement>
+				<ReadElement name="MSG">
+					<ReadElement name="ForceLogout9103"><!--Ç¿ÖÆÍË³öÍ¨ÖªÐÅÏ¢-->            
+						<ReadElement name="ForceQuitReason" ETF_name="FQtRsn"/><!--Ç¿ÖÆÍË³öÔ­Òò-->
+					</ReadElement>
+				</ReadElement>
+			</ReadElement>  
+		</Request>
+		<Response>     
+		</Response>
+   </Transaction>
+   <!-- Í£ÔËÆôÔËÍ¨Öª -->
+   <Transaction code="9104" service="915143" desc="Í£ÔËÍ¨Öª" log_switch="1" >
+		<Request>
+			<ReadElement name="CFX">
+				<ReadElement name="HEAD">  <!--±¨ÎÄÍ·-->
+					<ReadElement name="VER"                ETF_name="VER"/><!--°æ±¾ºÅ-->
+					<ReadElement name="SRC"                ETF_name="SrcNod"/><!--·¢Æð½Úµã´úÂë-->
+					<ReadElement name="DES"                ETF_name="DstNod"/><!--½ÓÊÕ½Úµã´úÂë-->
+					<ReadElement name="APP"                ETF_name="APP"/><!--Ó¦ÓÃÃû³Æ-->
+					<ReadElement name="MsgNo"              ETF_name="MsgNo"/><!--±¨ÎÄ±àºÅ-->
+					<ReadElement name="MsgID"              ETF_name="MsgID"/><!--±¨ÎÄ±êÊ¶ºÅ-->
+					<ReadElement name="MsgRef"             ETF_name="MsgRef"/><!--±¨ÎÄ²Î¿¼ºÅ-->
+					<ReadElement name="WorkDate"           ETF_name="WrkDat"/><!--¹¤×÷ÈÕÆÚ-->
+				</ReadElement>
+				<ReadElement name="MSG">
+					<ReadElement name="StopInfo9104"><!--Ç¿ÖÆÍË³öÍ¨ÖªÐÅÏ¢-->            
+				<ReadElement name="RunSign"   ETF_name="RunSig"/><!--Í£ÔËÆôÔË ±êÖ¾0Í£  1Æô-->
+						<ReadElement name="StopRunTime"   ETF_name="SRnTim"/><!--Í£ÔËÊ±¼ä-->
+						<ReadElement name="BackRunTime"   ETF_name="BRnTim"/><!--»Ö¸´Ê±¼ä-->
+						<ReadElement name="StopRunReason" ETF_name="SRnRsn"/><!--Í£ÔËÔ­Òò-->
+					</ReadElement>
+				</ReadElement>
+			</ReadElement>  
+		</Request>
+		<Response>     
+		</Response>
+   </Transaction>
+   <!-- ½»Ò××´Ì¬²éÑ¯ -->
+   <Transaction code="9003" desc="½»Ò××´Ì¬²éÑ¯" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9003"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="TraStatusCheck9003">
+                  <WriteElement name="SendOrgCode"    ETF_name="OrgCod"/><!--·¢Æð»ú¹¹´úÂë-->
+                  <WriteElement name="SearchType"     ETF_name="QryTyp"/><!--²éÑ¯ÀàÐÍ£º0²éÑ¯µ¥±Ê£¬1²éÑ¯ÅúÁ¿°ü-->
+                  <WriteElement name="OriMsgNo"       ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+                  <WriteElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+                  <If condition="$QryTyp=1">
+                     <WriteElement name="OriPackNo"   ETF_name="SPckNo"/><!--Ô­ÇëÇó°üÁ÷Ë®ºÅ-->
+                  </If>
+                  <Else>
+                     <WriteElement name="OriTraNo"    ETF_name="TraNo"/><!--Ô­½»Ò×Á÷Ë®ºÅ-->
+                  </Else>
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>
+         <SaveMsgHead key_name="MsgRef" timeout="200"/><!--±£´æÏûÏ¢¼üÖµ-->
+         <AddHead head_name="CID" value="524551"/>
+      </Request>
+      <Response>
+         <ReadElement name="CFX">
+            <Quote name="ReadHead"/>
+            <ReadElement name="MSG">
+               <If condition="$MsgNo=9120">
+                  <Quote name="9120FromPBC"/>
+                  <If condition="$Result=90000">
+                     <AddItem name="TRspCd" value="000000"/>
+                  </If>
+                  <Else>
+                     <AddItem name="TRspCd" value="999999"/>
+                     <AddItem name="RspMsg" expression="STRCAT($Result,$AddWord)"/>
+                  </Else>
+               </If>
+               <Else>
+						<ReadElement name="TraStatusReturn9004">
+							<ReadElement name="SendOrgCode"  ETF_name="OrgCod"/>
+							<ReadElement name="SearchType"   ETF_name="QryTyp"/>
+							<ReadElement name="OriMsgNo"     ETF_name="OMsgNo"/>
+							<ReadElement name="OriEntrustDate" ETF_name="EntDat"/>
+							<ReadElement name="OriPackNo"    ETF_name="SPckNo" necessary="no"/>
+							<ReadElement name="OriTraNo"     ETF_name="TraNo" necessary="no"/>
+							<ReadElement name="ChkDate"      ETF_name="ChkDat" necessary="no"/>
+							<ReadElement name="OpStat"       ETF_name="PBCSts"/>
+						</ReadElement>
+						<AddItem name="TRspCd" value="000000"/>
+	            </Else>
+            </ReadElement>
+         </ReadElement>
+         <RestoreMsgHead key_name="MsgRef" timeout="200"/><!--ÌáÈ¡ÏûÏ¢¼üÖµ-->
+      </Response>
+   </Transaction>
+   <!-- ¶ÔÕËÐÅÏ¢ÖØ·¢ÇëÇó-->
+   <Transaction code="9112" desc="¶ÔÕËÐÅÏ¢ÖØ·¢ÇëÇó" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9112"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="GetMsg9112">
+                     <WriteElement name="SendOrgCode"    ETF_name="PBnkNo"/>
+			         <WriteElement name="EntrustDate"    ETF_name="EntDat"/>
+			         <WriteElement name="OriPayeeBankNo" ETF_name="RBnkNo" necessary="no"/>
+			         <WriteElement name="OriChkAcctOrd"  ETF_name="ChkOrd" necessary="no"/>
+			         <WriteElement name="OriChkDate"     ETF_name="ChkDat"/>
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>
+         <AddHead head_name="CID" value="524551"/>
+         <!--ÉèÖÃÏûÏ¢ÓÐÐ§Ê±¼ä-->
+         <AddHead head_name="EPT" value="0"/>
+         <AddHead head_name="MQN" value="1"/><!--±êÊ¶¸Ã±¨ÎÄÎªÍ¨Öª±¨ÎÄ-->
+      </Request>    
+      <Response>
+         <GetHead head_name="SSC" name="TRspCd"/><!--»ñÈ¡Í¨Ñ¶·¢ËÍ³ÌÐòµÄ·¢ËÍÏìÓ¦-->
+      </Response>
+   </Transaction>
+   <!-- ÖØ·¢ºË¶Ô±¨ÎÄÇëÇó-->
+   <Transaction code="9113" desc="ÖØ·¢ºË¶Ô±¨ÎÄÉêÇë" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9113"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="GetMsg9113">
+                  <WriteElement name="SendOrgCode"  ETF_name="PBnkNo"/><!--¸¶¿îÐÐÇåËãÐÐºÅ-->
+                  <WriteElement name="EntrustDate"  ETF_name="EntDat"/><!--µ±Ç°»á¼ÆÈÕÆÚ-->
+                  <WriteElement name="OriPackMsgNo" ETF_name="OMsgNo"/><!--Ô­°ü±¨ÎÄ±àºÅ-->
+                  <WriteElement name="ChkDate"      ETF_name="ChkDat"/><!--¶ÔÕËÈÕÆÚ-->
+                  <WriteElement name="PackNo"       ETF_name="PackNo" necessary="no"/><!--Ô­°üÁ÷Ë®ºÅ-->
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>  
+         <AddHead head_name="CID" value="524551"/>
+         <AddHead head_name="MQN" value="1"/>
+      </Request>
+      <Response>
+         <GetHead head_name="SSC" name="TRspCd"/><!--»ñÈ¡Í¨Ñ¶·¢ËÍ³ÌÐòµÄ·¢ËÍÏìÓ¦-->
+      </Response>
+   </Transaction>
+   <!-- ÖØ·¢°üÃ÷Ï¸ÇëÇó-->
+   <Transaction code="9111" desc="ÖØ·¢°üÃ÷Ï¸ÉêÇë" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9111"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="GetMsg9111">
+                  <WriteElement name="SendOrgCode"    ETF_name="PBnkNo"/><!--¸¶¿îÐÐÇåËãÐÐºÅ-->
+                  <WriteElement name="EntrustDate"    ETF_name="EntDat"/><!--µ±Ç°»á¼ÆÈÕÆÚ-->
+                  <WriteElement name="OriPackMsgNo"   ETF_name="OMsgNo"/><!--Ô­°ü±¨ÎÄ±àºÅ-->
+                  <WriteElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­±¨ÎÄ·¢Æð»ú¹¹-->
+                  <WriteElement name="OriEntrustDate" ETF_name="OEntDt"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+                  <WriteElement name="OriPackNo"      ETF_name="OPckNo"/><!--Ô­°üÁ÷Ë®ºÅ-->
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>  
+         <AddHead head_name="CID" value="524551"/>
+         <AddHead head_name="MQN" value="1"/>
+      </Request>
+      <Response>
+         <GetHead head_name="SSC" name="TRspCd"/><!--»ñÈ¡Í¨Ñ¶·¢ËÍ³ÌÐòµÄ·¢ËÍÏìÓ¦-->
+      </Response>
+   </Transaction>
+   <!--ÏòÈËÐÐ·¢ËÍ×ÔÓÉ±¨ÎÄ-->
+   <Transaction code="9105toPBC" desc="ÏòÈËÐÐ·¢ËÍ×ÔÓÉ±¨ÎÄ" log_switch="1" >
+      <Request>
+         <AddItem name="MsgNo" value="9105"/>
+         <WriteElement name="CFX">
+            <Quote name="WriteHead"/>
+            <WriteElement name="MSG">
+               <WriteElement name="FreeFormat9105">
+                  <WriteElement name="SrcNodeCode"    ETF_name="SndNod"/>
+                  <WriteElement name="DesNodeCode"    ETF_name="RcvNod"/>
+                  <WriteElement name="SendOrgCode"    expression="DELSPACE($SOrgCd,both)" necessary="no"/>
+                  <WriteElement name="RcvOrgCode"     expression="DELSPACE($ROrgCd,both)" necessary="no"/>
+                  <WriteElement name="Content"        ETF_name="Content"/>
+               </WriteElement>
+            </WriteElement>
+         </WriteElement>
+         <AddHead head_name="CID" value="524551"/>
+         <AddHead head_name="MQN" value="1"/><!--±êÊ¶¸Ã±¨ÎÄÎªÍ¨Öª±¨ÎÄ-->
+      </Request>
+      <Response>
+         <GetHead head_name="SSC" name="TRspCd"/><!--»ñÈ¡Í¨Ñ¶·¢ËÍ³ÌÐòµÄ·¢ËÍÏìÓ¦-->
+      </Response>
+   </Transaction>
+   <!-- ÒøÐÐ½ÓÊÜ×ÔÓÉ±¨ÎÄ -->
+   <Transaction code="9105" service="918731" desc="½ÓÊÜÈËÐÐ×ÔÓÉ±¨ÎÄ" log_switch="1" >
+		<Request>
+			<ReadElement name="CFX">
+				<Quote name="ReadHead"/>
+				<ReadElement name="MSG">
+					<ReadElement name="FreeFormat9105">
+						<ReadElement name="SrcNodeCode"     ETF_name="SndNod"/>
+						<ReadElement name="DesNodeCode"     ETF_name="RcvNod"/>
+						<ReadElement name="SendOrgCode"     ETF_name="SOrgCd" necessary="no"/>
+						<ReadElement name="RcvOrgCode"      ETF_name="ROrgCd" necessary="no"/>
+						<ReadElement name="Content"         ETF_name="Content" expression="CGBCLEAR(DELCTRL($Content))"/>
+					</ReadElement>
+				</ReadElement>
+			</ReadElement>  
+		</Request>
+		<Response>     
+		</Response>
+   </Transaction>
+</Application>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP04_RPT.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="BrkNo"           name="$BrkNo"/>
+    <String alias="QryDat"          name="$QryDat"/>
+    <String alias="BrkNam"          name="$BrkNam"/>
+    <String alias="ActDat"          name="$ActDat"/>
+    <String alias="TlrId"           name="$TlrId"/>
+    <String alias="NodNo"           name="$NodNo"/>
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+      <Sql sql="SELECT RecTim,Content FROM tipbusnty WHERE BrkNo='%s' AND ActDat='%s' ORDER BY RecTim">
+        <FieldList>$BrkNo|$QryDat|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                         ²ÆË°¿âÒµÎñÌáÊ¾Çåµ¥     
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$BrkNo"/>
+      <Para label="02" alias="$BrkNam"/>
+      <Para label="03" alias="$ActDat"/>
+      <Para label="04" alias="$PAGESUM" spread="left"/>
+      <Para label="05" alias="$PAGENUM" spread="left"/>
+      <Format>
+  ¹ú¿â¹ØÁªÐÐºÅ: #                ÐÐÃû: #                                                          »á¼ÆÈÕÆÚ: #                                        ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+      </Format>
+    </TableHeader>
+    <Iterative line="7">
+      <Para label="01" alias="STRCAT(ADDCHAR(¼ÇÂ¼Ê±¼ä:,14, ,1),ADDCHAR($RecTim,10, ,1),)" spread="right"/>
+      <Para label="02" alias="STRCAT(ADDCHAR(¼ÇÂ¼ÄÚÈÝ:,14, ,1),[ ,DELSPACE($Content,both),]" spread="right"/>
+      <Para label="03" alias="ADDCHAR(©¥,120,©¥,1)" spread="right"/>
+      <Format>
+©§#                                                                                                                                                                         ©§
+©§#                                                                                                                                                                         ©§
+©§#                                                                                                                                                                         ©§
+      </Format>
+    </Iterative>
+    <TableFooter>
+      <Para label="01" alias="$NodNo"            spread="left"/>
+      <Para label="02" alias="$TlrId"            spread="left"/>
+      <Para label="03" alias="FMTDATE($DATE,,1)" spread="left"/>
+      <Para label="04" alias="GETDATETIME(HH:MI:SS)" spread="left"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+      ´òÓ¡Íøµã: #            ´òÓ¡¹ñÔ±: #                    ´òÓ¡ÈÕÆÚ: #                     ´òÓ¡Ê±¼ä: # 
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
+

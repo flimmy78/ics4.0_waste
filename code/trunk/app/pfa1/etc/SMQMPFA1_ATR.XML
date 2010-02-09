@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Region>
+  <Server type="SCA" trace="${ics.app.loglevel}" ip="${ics.plt.local_ip}">
+    <ThreadPool>
+      <MinWorkerThreads>20</MinWorkerThreads>
+      <MaxWorkerThreads>20</MaxWorkerThreads>
+    </ThreadPool>
+
+    <ProcessMemoryManager> <!--DZ4f9\@mFw#,M,2=6LA,=SPhEdVC-->
+      <BlockSize>102400</BlockSize><!--?i4sP!(WV=Z)-->
+      <PoolInitSize>16</PoolInitSize><!--DZ4f3X3uJ<4sP!(?i)-->
+      <PoolMaxSize>1024</PoolMaxSize><!--3XWn4s3_4g(?i)-->
+      <PoolAddStep>1</PoolAddStep>
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+      <PageSize>64</PageSize><!--R34sP!(WV=Z)-->
+      <MaxBlocks>10</MaxBlocks ><!--TJPmIjGk5DWn4s?iJ}-->
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+
+	  <!-- DllPriDataCtrl ECN -->
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecncliasync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="IpLstFil"></Para>
+      <Para name="PreLen">8</Para>
+    </DllPriDataCtrl>
+
+    <DllPriDataCtrl name="CMQ" dllfile="dll/cmq_pfa.so" initfunc="initMQClient" donefunc="closeMQClient">
+      <Para name="QueueServer">${ics.app.mq_manager}</Para>
+      <Para name="RecvQName">${ics.app.recv_q}</Para>
+      <Para name="SendQName">${ics.app.send_q}</Para>
+      <Para name="MessageType">PLTIN0</Para>
+      <Para name="DefaultExpireTime">${ics.app.mq_expire_time}</Para><!--¦Ì£¤¦Ë0.1s-->
+    </DllPriDataCtrl>                
+
+    <Connection type="LEFT">
+      <Entrance name="TCPEntrance" type="TCP">
+        <ListenerModule name="serverShortAsyncIn" dllfile="dll/ecncliasync.so">
+          <Para name="MsgTyp">PLTOUT</Para>
+          <Para name="Port">_PORT</Para>
+        </ListenerModule>
+      </Entrance>
+    </Connection>
+
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/libhub.so" dbapplication="NO">
+       <Entry>
+         <MessageType>PLTOUT</MessageType>
+         <ProcessModule>sendRequest</ProcessModule>
+       </Entry>
+      </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <RequestProcessor dllfile="dll/cmq_pfa.so" dbapplication="NO">
+        <Entry> 
+          <MessageType>PLTOUT</MessageType> 
+          <ProcessModule>MQSend</ProcessModule>
+        </Entry>  
+      </RequestProcessor> 
+    </QueuePair>
+  </Server>
+</Region>

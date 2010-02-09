@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP09_RPT.trc" dbconnect="YES">
+  <!--Added By Zhq_BoCom00041319_20080627_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨Ç©Ô¼¶Ô¹«¿Í»§Çé¿öÍ³¼ÆÔÂ±¨)--> 
+  <VarDef>
+    <String alias="StaDat"    name="$StaDat"/> <!--Ñ¡ÔñÈÕÆÚ-->
+    <String alias="Year"      name="$Year"/>   <!--Ñ¡ÔñÄê·Ý-->
+    <String alias="BrkNo"     name="$BrkNo"/>  <!--·ÖÐÐºÅ-->
+    <String alias="ONodNo"    name="$ONodNo"/> <!--»ú¹¹ºÅ--> 
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+     <Sql sql="SELECT a.NodNo NodNo,a.smr SMR,COALESCE(b.SumTotal,0) SumTotal ,COALESCE(c.MthTol,0) MthTol ,COALESCE(d.YearTol,0) YearTol
+               FROM (SELECT NodNo,SMR FROM puborginf WHERE RIGHT(NodNo,3) ='999')  a  
+               LEFT OUTER JOIN  (SELECT BrkNo,COUNT(*) SumTotal FROM tipcusagr WHERE Status='0' AND VrySts='1' GROUP BY BrkNo ) b  ON  a.NodNo = b.BrkNo  
+               LEFT OUTER JOIN  (SELECT BrkNo,COUNT(*) MthTol FROM tipcusagr WHERE Status='0' AND VrySts='1' AND LEFT(RecTm,6)='%s' GROUP BY BrkNo ) c ON  a.NodNo = c.BrkNo 
+               LEFT OUTER JOIN  (SELECT BrkNo,COUNT(*) YearTol FROM tipcusagr WHERE Status='0' AND VrySts='1' AND LEFT(RecTm,4)='%s' GROUP BY BrkNo ) d ON a.NodNo = d.BrkNo
+               WHERE a.NodNo NOT IN ('315999','312999')  ORDER BY a.NodNo ">
+        <FieldList>$StaDat|$Year|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine>
+    <Iterative line="1">
+      <Para label="01" alias="$BrkNo"    spread="right"/>
+      <Para label="02" alias="$ONodNo"   spread="right"/>
+      <Para label="03" alias="$NodNo"    spread="right"/>
+      <Para label="04" alias="$SMR"      spread="right"/>
+      <Para label="05" alias="$SumTotal" spread="left"/>
+      <Para label="06" alias="$MthTol"   spread="left"/>
+      <Para label="07" alias="$YearTol"  spread="left"/>
+      <Format>
+ICM001:#:#:000:01:#:#:#:#:#
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
+

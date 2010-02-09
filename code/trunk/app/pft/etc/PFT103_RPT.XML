@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½ÉË°×Ê½ðÍË¿âÆ¾Ö¤ -->
+<Application dbconnect="YES" trclog="PFT103.log">
+  <VarDef>
+    <String alias="RptNam" pos="1"/>
+    <String alias="MsgFmt" pos="2"/>
+    <String alias="ClrDat" pos="3"/>
+    <String alias="ClrSce" pos="4"/>
+    <String alias="BrNo"   pos="5"/>
+    <String alias="NodNo"  pos="6"/>
+    <String alias="PrtTlr" pos="7"/>
+    <String alias="PrtDat" pos="8"/>
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select RcvBNo, FskCod, RcvAct, TaxNam, TxnAmt, PrtCnt, ActDat, TckNo from pftsec203sum
+                 where MsgFmt='%s' and ClrDat='%s' and ClrSce='%s' and OpnBr='%s' and BilSts='S' ">
+        <FieldList>$MsgFmt|$ClrDat|$ClrSce|$BrNo|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+	<FormatDefine>
+		<Iterative line="1">
+      <Para label="01" alias="$RptNam" spread="mid"/>
+			<Para label="02" alias="$ACTDAT"/>
+			<Para label="03" alias="$FSKCOD"/>
+			<Para label="04" alias="$RCVACT"/>
+			<Para label="05" alias="$TAXNAM"/>
+			<Para label="06" alias="$RCVBNO"/>
+			<Para label="07" alias="AMTFMT($TXNAMT)"/>
+			<Para label="08" alias="AMTTOCAP($TXNAMT)"/>
+			<Para label="09" alias="$PRTCNT"/>
+			<Para label="10" alias="$TCKNO"/>
+			<Para label="11" alias="$NodNo"/>
+			<Para label="12" alias="$PrtTlr"/>
+			<Para label="13" alias="$PrtDat"/>
+			<Format>
+                                      ÒøË°ÁªÍø#
+
+
+
+
+
+  ÒµÎñ    ÖÖÀà£ºÍË¿âÒµÎñ                    ÈëÕËÈÕÆÚ£º#
+  
+  ÍË¿â¹ú¿â´úÂë£º#
+  ÊÕ¿îÈË  ÕËºÅ£º#
+  ÊÕ¿îÈË  Ãû³Æ£º#
+  ÊÕ¿îÈË¿ª»§ÐÐ£º#
+  
+  ÍË¿â    ½ð¶î£º£¤#
+  ½ð¶î£¨´óÐ´£©£º#
+  
+  
+  Õª        Òª£ºÇåËãÍË¿â¿îÏî£¬µÚ¡¾#¡¿´Î´òÓ¡
+  
+  
+  »á¼Æ  Á÷Ë®ºÅ£º#                           ¼ÇÕÊÍøµã£º#
+  ´òÓ¡    ¹ñÔ±£º#                           ´òÓ¡ÈÕÆÚ£º#
+  
+
+
+
+
+
+
+
+
+
+
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

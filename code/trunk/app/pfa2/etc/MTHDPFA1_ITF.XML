@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="PFA"  server="OFRTPFA2" timeout="100">
+   <GetTxnCode>
+      <Item type="fixed" offset="0" length="2"/>
+   </GetTxnCode>
+   
+   <Transaction service="PFA001" code="01" log_switch="1" >
+      <Request>
+         <Item name="TTXN_CD" length="2"/>
+         <Item name="AC_NO"   length="21"/>
+      </Request>
+      <Response>         
+      </Response>
+   </Transaction>
+</Application>

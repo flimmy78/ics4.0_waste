@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Region>
+<!-- for ICS 3.0
+  <Server name="MTHDPFA1" type="MCA" trace="yes" ip="_LOCAL_IP">
+-->
+<!-- for ICS 4.0
+-->
+  <Server type="MCA" trace="${ics.plt.loglevel}" ip="${ics.plt.local_ip}">
+    <ThreadPool>
+       <MinWorkerThreads>4</MinWorkerThreads>
+       <MaxWorkerThreads>4</MaxWorkerThreads>
+    </ThreadPool>
+
+    <ProcessMemoryManager> <!--DZ4f9\@mFw#,M,2=6LA,=SPhEdVC-->
+      <BlockSize>102400</BlockSize><!--?i4sP!(WV=Z)-->
+      <PoolInitSize>16</PoolInitSize><!--DZ4f3X3uJ<4sP!(?i)-->
+      <PoolMaxSize>1024</PoolMaxSize><!--3XWn4s3_4g(?i)-->
+      <PoolAddStep>1</PoolAddStep>
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+        <PageSize>64</PageSize><!--R34sP!(WV=Z)-->
+        <MaxBlocks>10</MaxBlocks ><!--TJPmIjGk5DWn4s?iJ}-->
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+
+  <!-- DllPriDataCtrl ECN -->
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecncliasync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="IpLstFil"></Para>
+      <Para name="PreLen">8</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrasync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HostIp">_HOST_IP</Para>   <!--ICS 4.0²ÎÊý-->
+      <Para name="HostPort">_HOST_PORT</Para>   <!--ICS 4.0²ÎÊý-->
+      <Para name="PreLen">8</Para>
+    </DllPriDataCtrl>
+
+    <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="parserFil1">etc/MTHDPFA1_ITF.XML</Para>
+    </DllPriDataCtrl>
+
+  <!-- Connection ECN -->
+    <Connection type="LEFT">
+      <Entrance name="MTHDPFA1" type="TCP">
+        <ListenerModule name="serverShortAsyncIn" dllfile="dll/ecncliasync.so">
+          <Para name="MsgTyp">PLTIN0</Para>
+          <Para name="Port">_IN_PORT</Para>
+        </ListenerModule>
+      </Entrance>
+    </Connection>
+    <QueuePair name="LeftQueuePair">
+      <QueueLength>1</QueueLength>
+      <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile="dll/ecncliasync.so" dbapplication="NO">
+        <Entry> 
+           <MessageType>PLTIN0</MessageType> 
+           <ProcessModule>serverShortAsyncOut</ProcessModule>
+         </Entry> 
+      </ResponseProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <QueueLength>1</QueueLength>
+      <RequestProcessor dllfile="dll/ecnsvrasync.so" dbapplication="NO">
+         <Entry> 
+           <MessageType>PLTOUT</MessageType> 
+           <ProcessModule>clientShortAsyncOut</ProcessModule>
+         </Entry>  
+       </RequestProcessor> 
+      <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>

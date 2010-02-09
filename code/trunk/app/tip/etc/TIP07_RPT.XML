@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP07_RPT.log" dbconnect="YES">
+  <VarDef>
+    <String alias="RBnkNo"          name="$RBnkNo"/>
+    <String alias="PBnkNo"          name="$PBnkNo"/>
+    <String alias="ChkDat"          name="$ChkDat"/>
+    <String alias="ChkOrd"          name="$ChkOrd"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="PayMod">
+      <Convert value="0" msg="ÊµÊ±¿ÛË°"/>
+      <Convert value="1" msg="ÅúÁ¿¿ÛË°"/>
+      <Convert value="2" msg="ÒøÐÐ¶Ë½É¿î"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql"> 
+    <Iterative>
+       <Sql sql="select ActNo,POBkNo,TraNo from tiptxnbok where OrgCod='%s' and CreTlr='%s'">
+         <FieldList>$OrgCod|</FieldList>
+       </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                          ½»Í¨ÒøÐÐµç×Ó½ÉË°¸¶¿îÆ¾Ö¤
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$" spread="left"/>
+      <Format>
+                                                Æ¾Ö¤×ÖºÅ£º#
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$OrgCod" spread="left"/>
+      <Para label="02" alias="$ActNo" spread="left"/>
+      <Para label="03" alias="$POBkNo" spread="left"/>
+      <Para label="04" alias="$BActNo" spread="mid"/>
+      <Para label="05" alias="AMTFMT($BTxnAmt)" spread="left"/>
+      <Para label="06" alias="$PayMod" convert="YES" spread="mid"/>
+      <Para label="07" alias="$AActNo" spread="mid"/>
+      <Para label="08" alias="AMTFMT($ATxnAmt)" spread="left"/>
+      <Para label="09" alias="$ActDat" spread="mid"/>
+      <Para label="10" alias="$TckNo" spread="right"/>
+      <Format>
+         ×ªÕÊÈÕÆÚ£º#
+¸¶¿îÈËÐÐºÅ£º#                       ¸¶¿îÈË¿ª»§ÒøÐÐ£º#
+¸¶¿îÈËÃû³Æ£º#
+Õ÷ÊÕ»ú¹ØÃû³Æ£º#                        ÊÕ¿î¹ú¿â£¨ÒøÐÐ£©Ãû³Æ£º#
+Ð¡Ð´£¨ºÏ¼Æ£©½ð¶î£º#                    ½É¿îÊé½»Ò×Á÷Ë®ºÅ£º#
+´óÐ´£¨ºÏ¼Æ£©½ð¶î£º#
+Ë°£¨·Ñ£©ÖÖÃû³Æ£º                        ËùÊôÈÕÆÚ£º                 Êµ½É½ð¶î£º
+ #                         #                      #
+
+
+
+
+      </Format>
+    </Iterative>
+    <ReportFooter>
+        <Para label="01" alias="$TOTCNT" />
+        <Para label="02" alias="AMTFMT($TOTAMT)" />
+        <Para label="03" alias="$TxnDat" />
+        <Format>
+»á¼ÆÁ÷Ë®ºÅ£º#                          ÊÚÈ¨£º#        ¸´ºË£º#        ¼ÇÕÊ£º#     
+        </Format>
+    </ReportFooter>
+  </FormatDefine>
+</Application>
+

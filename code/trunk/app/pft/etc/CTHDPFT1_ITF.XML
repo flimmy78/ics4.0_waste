@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="PFT" server="OFRTPFT1" timeout='120'>
+  <GetTxnCode>
+    <Item type="fixed" offset="248" length="2"/>
+  </GetTxnCode>
+  <CodeSwitching>
+    <Table name="TTxnTpToTxnCod" file="etc/PFT_CSW.XML">
+      <Column name="TTxnTp" sort="no"/>
+      <Column name="TxnCod" sort="no"/>
+    </Table>
+    <Table name="RspCodToRtnCod" file="etc/PFT_CSW.XML">
+      <Column name="RspCod" sort="no"/>
+      <Column name="RtnCod" sort="no"/>
+    </Table>
+  </CodeSwitching>
+
+  <Define>
+    <Macro name="Bok_Req">
+      <Item name="MsgFmt"  length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="TCrpCd"  length="11" expression="DELBOTHSPACE($TCrpCd)" desc="Õ÷ÊÕ»ú¹Ø´úÂë"/>
+      <Item name="TActDt"  length=" 8" desc="Õ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="TLogNo"  length="16" desc="Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ"/>
+      <Item name="RcvBNo"  length="11" expression="DELBOTHSPACE($RcvBNo)" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+      <Item name="BnkNam"  length="40" desc="¾­ÊÕ´¦ÒøÐÐÃû³Æ"/>
+      <Item name="MActDt"  length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="TxnId"   length="16" desc="½»Ò×Ê¶±ðºÅ"/>
+      <Item name="ActNam"  length="60" desc="¸¶¿îÈËÃû³Æ"/>
+      <Item name="TActTp"  length=" 1" desc="ÕÊ»§ÀàÐÍ"/>
+      <Item name="Reserv"  length="60" desc="Ô¤ÁôÓò"/>
+      <Item name="FskCod"  length="11" desc="ÊÕ¿î¹ú¿â´úÂë"/>
+      <Item name="TTxnTp"  length=" 2" desc="½»Ò×ÀàÐÍ"/>
+      <Item name="OTActDt" length=" 8" desc="¶ÔÕÕÕ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="OTLogNo" length="16" desc="¶ÔÕÕÁ÷Ë®ºÅ"/>
+      <Item name="SndAct"  length="35" desc="ÊÕ¿îÕÊºÅ"/>
+      <Item name="RcvAct"  length="35" expression="DELBOTHSPACE($RcvAct)" desc="¸¶¿îÕÊºÅ"/>
+      <Item name="ThdAmt"  length="15" desc="½»Ò×½ð¶î"/>
+      <AddItem name="TxnAmt" length="15" expression="FABSAMT($ThdAmt,15)" desc="½»Ò×½ð¶î"/>
+      <Item name="TPayTp"  length=" 1" desc="½É¿î·½Ê½´úÂë"/>
+      <Item name="ClrDat"  length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <Item name="RtnCod"  length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="ExdLen"  length=" 4" desc="À©Õ¹ÒªËØ³¤¶È"/>
+    </Macro>
+    <Macro name="Bok_Res">
+      <Item name="MsgFmt"  length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="TCrpCd"  length="11" desc="Õ÷ÊÕ»ú¹Ø´úÂë"/>
+      <Item name="TActDt"  length=" 8" desc="Õ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="TLogNo"  length="16" desc="Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ"/>
+      <Item name="RcvBNo"  length="11" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+      <Item name="BnkNam"  length="40" desc="¾­ÊÕ´¦ÒøÐÐÃû³Æ"/>
+      <Item name="MActDt"  length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="TxnId"   length="16" expression="$LogNo" desc="½»Ò×Ê¶±ðºÅ"/>
+      <Item name="ActNam"  length="60" desc="¸¶¿îÈËÃû³Æ"/>
+      <Item name="TActTp"  length=" 1" desc="ÕÊ»§ÀàÐÍ"/>
+      <Item name="Reserv"  length="60" desc="Ô¤ÁôÓò"/>
+      <Item name="FskCod"  length="11" desc="ÊÕ¿î¹ú¿â´úÂë"/>
+      <Item name="TTxnTp"  length=" 2" desc="½»Ò×ÀàÐÍ"/>
+      <Item name="OTActDt" length=" 8" desc="¶ÔÕÕÕ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="OTLogNo" length="16" desc="¶ÔÕÕÁ÷Ë®ºÅ"/>
+      <Item name="SndAct"  length="35" desc="ÊÕ¿îÕÊºÅ"/>
+      <Item name="RcvAct"  length="35" desc="¸¶¿îÕÊºÅ"/>
+      <Item name="ThdAmt"  length="15" desc="½»Ò×½ð¶î"/>
+      <Item name="TPayTp"  length=" 1" desc="½É¿î·½Ê½´úÂë"/>
+      <Item name="ClrDat"  length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <SwitchCode name="RspCod" tab_name="RspCodToRtnCod" col_name="RspCod" new_name="RtnCod"/>
+      <Item name="RetCod"  length=" 6" expression="STRCAT(00,$RtnCod)" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="ExdLen"  length=" 4" desc="À©Õ¹ÒªËØ³¤¶È"/>
+    </Macro>
+  </Define>
+
+
+
+  <Transaction code="1 " server="OFRTPFT1" service="465961" log_switch="1" timeout="30" desc="¹ãÖÝ½ÉË°¿Û¿î">
+    <Request delimiter_type="fixed">
+      <Quote name="Bok_Req"/>
+      <AddItem name="ClrSce" value="0" desc="ÇåËã³¡´Î"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="Bok_Res"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="2 " server="OFRTPFT1" service="465962" log_switch="1" timeout="30" desc="¹ãÖÝ½ÉË°³åÕý">
+    <Request delimiter_type="fixed">
+      <Quote name="Bok_Req"/>
+      <AddItem name="ClrSce" value="0" desc="ÇåËã³¡´Î"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="Bok_Res"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="10" server="OFRTPFT1" service="465963" log_switch="1" timeout="120" desc="¹ãÖÝ½ÉË°¶ÔÕË">
+    <Request delimiter_type="fixed">
+      <Quote name="Bok_Req"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="Bok_Res"/>
+    </Response>
+  </Transaction>
+</Application>

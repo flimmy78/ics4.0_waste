@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP03_RPT.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="RBnkNo"          name="$RBnkNo"/>
+    <String alias="PBnkNo"          name="$PBnkNo"/>
+    <String alias="ChkDat"          name="$ChkDat"/>
+    <String alias="ChkOrd"          name="$ChkOrd"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="PayMod">
+      <Convert value="0" msg="ÊµÊ±¿ÛË°"/>
+      <Convert value="1" msg="ÅúÁ¿¿ÛË°"/>
+      <Convert value="2" msg="ÒøÐÐ¶Ë½É¿î"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql"> 
+    <Iterative>
+      <Sql sql="SELECT a.OrgCod,a.EntDat,a.TraNo,b.ActNo as BActNo,b.TxnAmt as BTxnAmt,a.PayMod,a.ActNo as AActNo,a.TxnAmt as ATxnAmt,a.ActDat,a.TckNo FROM tiptxnbok a,tipchkrec b WHERE a.RBnkNo='%s' AND a.PBnkNo='%s' AND a.ChkDat='%s' AND a.ChkOrd='%s' AND a.ChkSts='3' AND b.OrgCod=a.OrgCod AND b.EntDat=a.EntDat AND b.TraNo=a.TraNo ORDER BY a.TraNo">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type ="sql">
+      <Sql sql="SELECT coalesce(COUNT(*),0) NumCnt,coalesce(SUM(CAST(a.TxnAmt AS BIGINT)),0) PEAmt,coalesce(SUM(CAST(b.TxnAmt AS BIGINT)),0) TEAmt FROM tipchkrec a,tiptxnbok b WHERE b.RBnkNo='%s' AND b.PBnkNo='%s' AND b.ChkDat='%s' AND b.ChkOrd='%s' AND b.ChkSts='3' AND a.OrgCod=b.OrgCod AND a.EntDat=b.EntDat AND a.TraNo=b.TraNo">
+        <FieldList>$RBnkNo|$PBnkNo|$ChkDat|$ChkOrd|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                          Ã÷Ï¸ÒªËØ²»·û¼ÇÂ¼
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$PAGESUM" spread="left"/>
+      <Para label="02" alias="$PAGENUM" spread="left"/>
+      <Format>
+                                                                                                                                                                            ¹² # Ò³    µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©Ó©¥©¥©¥©¥©¥©¥©¥©·
+©§    Õ÷ÊÕ»ú¹Ø    ©§   Î¯ÍÐÈÕÆÚ   ©§   ½»Ò×Á÷Ë®ºÅ   ©§             ÈËÐÐÕËºÅ             ©§     ÈËÐÐ½ð¶î     ©§    ÄÉË°ÀàÐÍ    ©§             ÎÒÐÐÕËºÅ             ©§     ÎÒÐÐ½ð¶î     ©§   »á¼ÆÈÕÆÚ   ©§  »á¼ÆÁ÷Ë®ºÅ  ©§
+©Ä©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$OrgCod" spread="mid"/>
+      <Para label="02" alias="$EntDat" spread="mid"/>
+      <Para label="03" alias="$TraNo" spread="right"/>
+      <Para label="04" alias="$BActNo" spread="mid"/>
+      <Para label="05" alias="AMTFMT($BTxnAmt)" spread="left"/>
+      <Para label="06" alias="$PayMod" convert="YES" spread="mid"/>
+      <Para label="07" alias="$AActNo" spread="mid"/>
+      <Para label="08" alias="AMTFMT($ATxnAmt)" spread="left"/>
+      <Para label="09" alias="$ActDat" spread="mid"/>
+      <Para label="10" alias="$TckNo" spread="right"/>
+      <Format>
+©§       #        ©§      #       ©§   #            ©§                #                 ©§                 #©§       #        ©§                #                 ©§                 #©§      #       ©§ #            ©§
+      </Format>
+    </Iterative>
+    <Summed line="1">
+      <Para label="01" alias="$NumCnt" spread="right"/>
+      <Para label="02" alias="AMTFMT($PEAmt)" spread="right"/>
+      <Para label="03" alias="AMTFMT($TEAmt)" spread="right"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¿
+    ±ÊÊý×Ü¼Æ: #                 ÈËÐÐ½ð¶î×Ü¼Æ: #                   ÎÒÐÐ½ð¶î×Ü¼Æ: #                                              
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>
+

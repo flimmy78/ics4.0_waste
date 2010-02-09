@@ -1,0 +1,987 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="CBS" server="OFRTCBS3" pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term" timeout="300">
+<!--created by wishman -->
+	<Define>
+<!--Í¨ÓÃ»ØÓ¦-->
+		<Macro name="COMMON_RES">
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+					<Break/>
+				</Case>
+				<Case value="W"/>
+				<Case value="E">
+					<PackItem name="TMP">
+						<Item name="ApCode" length="2" value="SC"/> 
+						<Item name="OFmtCd" length="3" value="D04"/>
+						<Item name="RspCod" length="6"/>
+						<Item name="InPos"  length="4" value="0001"/>
+						<Item name="RspMsg" length="56" />
+					</PackItem>
+					<Item name="TMP" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Macro>
+    <!--²éÑ¯²é¸´ä¯ÀÀ-->
+		<Macro name="465833_REQ">
+		 <If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"   length="6"/>
+		 </If>
+		 <Else>
+			<Item name="SndDat" length="8"  expression="DELSPACE($SndDat,both)" /> <!--Î¯ÍÐÈÕÆÚ-->
+      <Item name="OIFlag" length="1" /> <!--ÍùÀ´±êÖ¾-->
+		  <Item name="QryTyp" length="3" /> <!--²éÑ¯ÀàÐÍ-->
+      <Item name="MatFlg" length="1" /> <!--²é¸´×´Ì¬-->
+  		<Item name="SOpnBk" length="12" expression="DELSPACE($SOpnBk,both)" /> <!--·¢ÆðÐÐºÅ-->
+	  	<Item name="ROpnBk" length="12" expression="DELSPACE($ROpnBk,both)" /> <!--½ÓÊÕÐÐºÅ-->
+      <Item name="ReqSeq" length="8" expression="DELSPACE($ReqSeq,both)" /> <!--²éÑ¯±àºÅ-->
+      <Item name="DeaNod" length="6" expression="DELSPACE($DeaNod,both)" /> <!--´¦ÀíÍøµã-->
+      <Item name="BrCd" length="6" expression="DELSPACE($BrCd,both)" />     <!--ËùÊô·ÖÐÐ-->
+		</Else>
+		</Macro>
+		<Macro name="465833_RES">
+		 <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+			<PackItem name="TmpDat">
+			 <Item name="ApCode"  length="2" value="32"/>
+			 <Item name="OFmtCd"  length="3" value="Z01"/>
+			 <Item name="PageNo"  length="4" value="0001"/>
+			 <Item name="VarSize" length="1" value="3"/>
+			 <Item name="Ttl"     head_len="3" value="²éÑ¯²é¸´ä¯ÀÀ"/>
+			 <Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+			 <Group name="Rec" repeat_name="RecNum">
+				<PackItem name="TmpNam">
+  			 <Item name="SndDat" length="8"  /> <!--Î¯ÍÐÈÕÆÚ   -->
+  			 <Item name="QryTyp" length="3"  /> <!--²éÑ¯±êÊ¶   -->
+  			 <Item name="OIFlag" length="1"  /> <!--ÍùÀ´±êÖ¾   -->
+  			 <Item name="MatFlg" length="1"  /> <!--Æ¥Åä±êÊ¶   -->
+  			 <Item name="BrNo"   length="6"  /> <!--½»Ò×·ÖÐÐ   -->
+  			 <Item name="SOpnBk" length="12"  /> <!--·¢ÆðÐÐºÅ   -->
+  			 <Item name="ROpnBk" length="12"  /> <!--½ÓÊÕÐÐºÅ   -->
+  			 <Item name="ReqSeq" length="8"  /> <!--²éÑ¯±àºÅ   -->
+  			 <Item name="RspSeq" length="8"  /> <!--²é¸´±àºÅ   -->
+  			 <Item name="DeaNod" length="6"  /> <!--´¦ÀíÍøµã   -->
+  			 <Item name="DeaTlr" length="7"  /> <!--´¦Àí¹ñÔ±   -->
+  			 <Item name="DeaDat" length="8"  /> <!--´¦ÀíÊ±¼ä   -->
+  			 <Item name="PTraKnd" length="4"  /> <!--Ô­½»Ò×ÀàÐÍ -->
+  			 <Item name="PSndDat" length="8"  /> <!--Ô­Î¯ÍÐÈÕÆÚ -->
+  			 <Item name="PTxnAmt" length="15"  /> <!--Ô­½»Ò×½ð¶î -->
+  			 <Item name="PCcyCod" length="3"  /> <!--Ô­½»Ò×±ÒÖÖ -->
+  			 <Item name="PVchId" length="8"  /> <!--Ô­Æ¾Ö¤ºÅ   -->
+  			 <Item name="PPayAct" length="35"  /> <!--Ô­¸¶¿îÕÊºÅ -->
+  			 <Item name="PPayNam" length="60"  /> <!--Ô­¸¶¿îÃû³Æ -->
+  			 <Item name="PGatAct" length="35"  /> <!--Ô­ÊÕ¿îÕÊºÅ -->
+  			 <Item name="PGatNam" length="60"  /> <!--Ô­ÊÕ¿îÃû³Æ -->
+  			 <Item name="ReqSmr" length="120"  /> <!--²éÑ¯±¸×¢   -->
+  			 <Item name="RspSmr" length="120"  /> <!--»Ø¸´±¸×¢   -->
+				</PackItem>
+				<Item name="TmpNam"   head_len="3"/>
+		   </Group>
+			</PackItem>
+			<Item name="TmpDat" head_len="4" include_len="yes"/>
+		 </If>
+		 <Else>
+			<Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+		 </Else>
+		</Macro>
+
+    <!--¶ÔÕÊ»ã×ÜÐÅÏ¢ä¯ÀÀ-->
+		<Macro name="465835_REQ">
+		 <If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"   length="6"/>
+		 </If>
+		 <Else>
+			<Item name="CTraKnd" length="4"  expression="DELSPACE($CTraKnd,both)"/> <!--½»Ò×ÀàÐÍ-->
+			<Item name="DBrCd"   length="12" expression="DELSPACE($DBrCd,both)"  /> <!--ÇåËãÐÐºÅ-->
+			<Item name="ClrDat"  length="8"  expression="DELSPACE($ClrDat,both)" /> <!--ÇåËãÈÕÆÚ-->
+			<Item name="AreaNo"  length="4"  expression="DELSPACE($AreaNo,both)" /> <!--µØÇø´úÂë-->
+			<Item name="CcyCod"  length="3"  expression="DELSPACE($CcyCod,both)" /> <!--±ÒÖÖ-->
+		</Else>
+		</Macro>
+		<Macro name="465835_RES">
+		 <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+			<PackItem name="TmpDat">
+			 <Item name="ApCode"  length="2" value="32"/>
+			 <Item name="OFmtCd"  length="3" value="Z01"/>
+			 <Item name="PageNo"  length="4" value="0001"/>
+			 <Item name="VarSize" length="1" value="3"/>
+			 <Item name="Ttl"     head_len="3" value="¶ÔÕÊ»ã×ÜÐÅÏ¢ä¯ÀÀ"/>
+			 <Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+			 <Group name="Rec" repeat_name="RecNum">
+			  <PackItem name="TmpNam">
+			   <Item name="CTraKnd" length="4"  />  <!--½»Ò×ÀàÐÍ-->
+			   <Item name="TraTm"   length="10" />  <!--½»Ò×Ê±¼ä-->
+			   <Item name="DBrCd"   length="12" />  <!--ÇåËãÐÐºÅ-->
+			   <Item name="ClrDat"  length="8"  />  <!--ÇåËãÈÕÆÚ-->
+			   <Item name="AreaNo"  length="4"  />  <!--µØÇø´úÂë-->
+			   <Item name="CcyCod"  length="3"  />  <!--±ÒÖÖ-->
+			   <Item name="ChkFlg"  length="1"  />  <!--¶ÔÕÊ±êÊ¶-->
+			   <Item name="CreAmt"  length="15"  /> <!--ÈËÐÐ´û·½½ð¶î-->
+			   <Item name="CreCnt"  length="10"  /> <!--ÈËÐÐ´û·½±ÊÊý-->
+			   <Item name="DebAmt"  length="15"  /> <!--ÈËÐÐ½è·½½ð¶î-->
+			   <Item name="DebCnt"  length="10"  /> <!--ÈËÐÐ½è·½±ÊÊý-->
+			   <Item name="CreAmt2" length="15"  /> <!--ÒøÐÐ´û·½½ð¶î-->
+			   <Item name="CreCnt2" length="10"  /> <!--ÒøÐÐ´û·½±ÊÊý-->
+			   <Item name="DebAmt2" length="15"  /> <!--ÒøÐÐ½è·½½ð¶î-->
+			   <Item name="DebCnt2" length="10"  /> <!--ÒøÐÐ½è·½±ÊÊý-->
+			  </PackItem>
+			  <Item name="TmpNam"   head_len="3"/>
+		   </Group>
+			</PackItem>
+			<Item name="TmpDat" head_len="4" include_len="yes"/>
+		 </If>
+		 <Else>
+			<Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+		 </Else>
+		</Macro>
+
+    <!--»ã¶ÒÍ³¼Æ¼à¿ØÐÅÏ¢-->
+		<Macro name="465836_REQ">
+		 <If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"   length="6"/>
+		 </If>
+		 <Else>
+			<Item name="TxnDat"  length="8"  expression="DELSPACE($TxnDat,both)" /> <!--½»Ò×»á¼ÆÈÕÆÚ-->
+ 		  <Item name="CcyCod"  length="3"  expression="DELSPACE($CcyCod,both)" /> <!--±ÒÖÖ-->
+      <Item name="BrCd"   length="6"  /> <!--½»Ò×·ÖÐÐ   -->
+		</Else>
+		</Macro>
+		<Macro name="465836_RES">
+		 <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+			<PackItem name="TmpDat">
+			 <Item name="ApCode"  length="2" value="32"/>
+			 <Item name="OFmtCd"  length="3" value="Z01"/>
+			 <Item name="PageNo"  length="4" value="0001"/>
+			 <Item name="VarSize" length="1" value="3"/>
+			 <Item name="Ttl"     head_len="3" value="»ã¶ÒÍ³¼Æ¼à¿ØÐÅÏ¢ä¯ÀÀ"/>
+			 <Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+			 <Group name="Rec" repeat_name="RecNum">
+			  <PackItem name="TmpNam">
+			  <Item name="ActDat"  length="8"  /> <!--½»Ò×ÈÕÆÚ-->
+  			<Item name="OIFlag"  length="1"  /> <!--ÍùÀ´±êÖ¾ -->
+				<Item name="BilSts"  length="1"  /> <!--½»Ò××´Ì¬ -->
+		    <Item name="TotCnt"  length="10" /> <!--Í³¼Æ±ÊÊý-->
+			  <Item name="TotAmt"  length="15" align_mode="right" fill_asc="48"/> <!--Í³¼Æ½ð¶î-->
+			  </PackItem>
+			  <Item name="TmpNam"   head_len="3"/>
+		   </Group>
+			</PackItem>
+			<Item name="TmpDat" head_len="4" include_len="yes"/>
+		 </If>
+		 <Else>
+			<Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+		 </Else>
+		</Macro>
+
+    <!--ÈÕÖÕ»ã×Ü¶ÔÕÊ-->
+		<Macro name="465706_REQ">
+			<Item name="ClrDat" length="8"  /> <!--ÇåËãÈÕÆÚ-->
+			<Item name="DBrCd"  length="12"  /> <!--Ö±½ÓÇåËãÐÐ-->
+			<Item name="AreaNo" length="4"  /> <!--¿ªÍ¨ÇøÓò-->
+		</Macro>
+		<Macro name="465706_RES">
+		 <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+      <PackItem name="TmpDat">
+       <Item name="ApCode" length="2" value="00"/>
+       <Item name="OFmtCd" length="3" value="000"/>
+       <Item name="RspMsg" length="60"  /> <!--»ØÓ¦ÐÅÏ¢-->
+      </PackItem>
+      <Item name="TmpDat" head_len="4" include_len="yes"/>
+		 </If>
+			<Quote name="COMMON_RES"/>
+		</Macro>
+
+    <!--ÈÕÖÕÈËÐÐÃ÷Ï¸Êý¾ÝÏÂÔØ-->
+		<Macro name="465708_REQ">
+			<Item name="ClrDat" length="8"/> <!--ÇåËãÈÕÆÚ-->
+			<Item name="CTraKnd" length="4"/> <!--Ñ¡Ôñ½»Ò×ÖÖÀà-->
+		</Macro>
+		<Macro name="465708_RES">
+			<Quote name="COMMON_RES"/>
+		</Macro>
+
+    <!--·ÖÐÐÈÕÖÕÇåËã»ã×Ü´òÓ¡-->
+		<Macro name="465711_REQ">
+			<Item name="ClrDat" length="8"  /> <!--ÇåËãÈÕÆÚ-->
+			<Item name="DBrCd"  length="12"  /> <!--Ö±½ÓÇåËãÐÐ-->
+			<Item name="AreaNo" length="4"  /> <!--¿ªÍ¨ÇøÓò-->
+		</Macro>
+		<Macro name="465711_RES">
+		 <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+      <PackItem name="TmpDat">
+       <Item name="ApCode" length="2" value="00"/>
+       <Item name="OFmtCd" length="3" value="000"/>
+       <Item name="RspMsg" length="60"  /> <!--»ØÓ¦ÐÅÏ¢-->
+      </PackItem>
+      <Item name="TmpDat" head_len="4" include_len="yes"/>
+		 </If>
+			<Quote name="COMMON_RES"/>
+		</Macro>
+	</Define>
+
+	<Transaction code="465833" service="465833" timeout="30" log_switch="1" desc="²éÑ¯²é¸´ä¯ÀÀ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465833_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Quote name="465833_RES"/>
+			<Quote name="COMMON_RES"/>		
+		</Response>
+	</Transaction>
+
+  <Transaction code="465834" service="465834" log_switch="1" timeout="30" desc="²éÑ¯²é¸´¶à±Êä¯ÀÀ">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx" length="6"/>
+			</If>
+			<Else>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="1">	<!--²éÑ¯-->
+			      <Item name="SndDat" length="8"  expression="DELSPACE($SndDat,both)" /> <!--Î¯ÍÐÈÕÆÚ-->
+            <Item name="OIFlag" length="1" /> <!--ÍùÀ´±êÖ¾-->
+		        <Item name="QryTyp" length="3" /> <!--²éÑ¯ÀàÐÍ-->
+            <Item name="MatFlg" length="1" /> <!--²é¸´×´Ì¬-->
+  		      <Item name="SOpnBk" length="12" expression="DELSPACE($SOpnBk,both)" /> <!--·¢ÆðÐÐºÅ-->
+	  	      <Item name="ROpnBk" length="12" expression="DELSPACE($ROpnBk,both)" /> <!--½ÓÊÕÐÐºÅ-->
+            <Item name="ReqSeq" length="8" expression="DELSPACE($ReqSeq,both)" /> <!--²éÑ¯±àºÅ-->
+            <Item name="DeaNod" length="6" expression="DELSPACE($DeaNod,both)" /> <!--´¦ÀíÍøµã-->
+            <Item name="BrCd" length="6" expression="DELSPACE($BrCd,both)" />     <!--ËùÊô·ÖÐÐ-->
+						<Break/>
+					</Case>
+					<Case value="2">	<!--´¦Àí-->
+			      <Item name="SndDat" length="8"  expression="DELSPACE($SndDat,both)" /> <!--Î¯ÍÐÈÕÆÚ-->
+            <Item name="OIFlag" length="1" /> <!--ÍùÀ´±êÖ¾-->
+            <Item name="SndBNo" length="12" /> <!--²éÑ¯·¢ÆðÐÐ-->
+            <Item name="MsgSeq" length="16" /> <!--ÐÅÏ¢ÐòºÅ-->
+						<Break/>
+					</Case>
+				</Switch>
+			</Else>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="1">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+						<PackItem name="TmpDat">
+								<Item name="ApCode"  length="2" value="32"/>
+								<Item name="OFmtCd"  length="3" value="Z01"/>
+								<Item name="PageNo"  length="4" value="0001"/>
+								<Item name="VarSize" length="1" value="3"/>
+								<Item name="Ttl"     head_len="3" value="Åú×¢ä¯ÀÀ"/>
+								<Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+							<Group name="Rec" repeat_name="RecNum">
+								<PackItem name="TmpNam">
+  			          <Item name="SndDat" length="8"  /> <!--Î¯ÍÐÈÕÆÚ   -->
+  			          <Item name="QryTyp" length="3"  /> <!--²éÑ¯±êÊ¶   -->
+  			          <Item name="OIFlag" length="1"  /> <!--ÍùÀ´±êÖ¾   -->
+  			          <Item name="MatFlg" length="1"  /> <!--Æ¥Åä±êÊ¶   -->
+  			          <Item name="BrNo"   length="6"  /> <!--½»Ò×·ÖÐÐ   -->
+  			          <Item name="SOpnBk" length="12"  /> <!--·¢ÆðÐÐºÅ   -->
+  			          <Item name="ROpnBk" length="12"  /> <!--½ÓÊÕÐÐºÅ   -->
+  			          <Item name="ReqSeq" length="8"  /> <!--²éÑ¯±àºÅ   -->
+  			          <Item name="RspSeq" length="8"  /> <!--²é¸´±àºÅ   -->
+  			          <Item name="DeaNod" length="6"  /> <!--´¦ÀíÍøµã   -->
+  			          <Item name="DeaTlr" length="7"  /> <!--´¦Àí¹ñÔ±   -->
+  			          <Item name="DeaDat" length="8"  /> <!--´¦ÀíÊ±¼ä   -->
+  			          <Item name="PTraKnd" length="4"  /> <!--Ô­½»Ò×ÀàÐÍ -->
+  			          <Item name="PSndDat" length="8"  /> <!--Ô­Î¯ÍÐÈÕÆÚ -->
+  			          <Item name="PTxnAmt" length="15"  /> <!--Ô­½»Ò×½ð¶î -->
+  			          <Item name="PCcyCod" length="3"  /> <!--Ô­½»Ò×±ÒÖÖ -->
+  			          <Item name="PVchId" length="8"  /> <!--Ô­Æ¾Ö¤ºÅ   -->
+  			          <Item name="PPayAct" length="35"  /> <!--Ô­¸¶¿îÕÊºÅ -->
+  			          <Item name="PPayNam" length="60"  /> <!--Ô­¸¶¿îÃû³Æ -->
+  			          <Item name="PGatAct" length="35"  /> <!--Ô­ÊÕ¿îÕÊºÅ -->
+  			          <Item name="PGatNam" length="60"  /> <!--Ô­ÊÕ¿îÃû³Æ -->
+                  <Item name="SndBNo" length="12" /> <!--²éÑ¯·¢ÆðÐÐ-->
+                  <Item name="MsgSeq" length="16" /> <!--ÐÅÏ¢ÐòºÅ-->
+								</PackItem>
+								<Item name="TmpNam"   head_len="3"/>
+							</Group>
+						</PackItem>
+						<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>	
+				<Case value="2">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+  			        <Item name="SndDat" length="8"  /> <!--Î¯ÍÐÈÕÆÚ   -->
+  			        <Item name="QryTyp" length="3"  /> <!--²éÑ¯±êÊ¶   -->
+  			        <Item name="OIFlag" length="1"  /> <!--ÍùÀ´±êÖ¾   -->
+  			        <Item name="MatFlg" length="1"  /> <!--Æ¥Åä±êÊ¶   -->
+  			        <Item name="BrNo"   length="6"  /> <!--½»Ò×·ÖÐÐ   -->
+  			        <Item name="SOpnBk" length="12"  /> <!--·¢ÆðÐÐºÅ   -->
+  			        <Item name="ROpnBk" length="12"  /> <!--½ÓÊÕÐÐºÅ   -->
+  			        <Item name="ReqSeq" length="8"  /> <!--²éÑ¯±àºÅ   -->
+  			        <Item name="RspSeq" length="8"  /> <!--²é¸´±àºÅ   -->
+  			        <Item name="DeaNod" length="6"  /> <!--´¦ÀíÍøµã   -->
+  			        <Item name="DeaTlr" length="7"  /> <!--´¦Àí¹ñÔ±   -->
+  			        <Item name="DeaDat" length="8"  /> <!--´¦ÀíÊ±¼ä   -->
+  			        <Item name="PTraKnd" length="4"  /> <!--Ô­½»Ò×ÀàÐÍ -->
+  			        <Item name="PSndDat" length="8"  /> <!--Ô­Î¯ÍÐÈÕÆÚ -->
+  			        <Item name="PTxnAmt" length="15"  /> <!--Ô­½»Ò×½ð¶î -->
+  			        <Item name="PCcyCod" length="3"  /> <!--Ô­½»Ò×±ÒÖÖ -->
+  			        <Item name="PVchId"  length="8"  /> <!--Ô­Æ¾Ö¤ºÅ   -->
+  			        <Item name="PPayAct" length="35"  /> <!--Ô­¸¶¿îÕÊºÅ -->
+  			        <Item name="PPayNam" length="60"  /> <!--Ô­¸¶¿îÃû³Æ -->
+  			        <Item name="PGatAct" length="35"  /> <!--Ô­ÊÕ¿îÕÊºÅ -->
+  			        <Item name="PGatNam" length="60"  /> <!--Ô­ÊÕ¿îÃû³Æ -->
+  			        <Item name="ReqSmr"  length="120" expression="TOSBC($ReqSmr)" /> <!--²éÑ¯±¸×¢   -->
+  			        <Item name="RspSmr"  length="120"  /> <!--»Ø¸´±¸×¢   -->
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>																
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+    </Response>
+  </Transaction>
+
+	<Transaction code="465835" service="465835" timeout="30" log_switch="0" desc="¶ÔÕÊ»ã×ÜÐÅÏ¢ä¯ÀÀ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465835_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Quote name="465835_RES"/>
+		</Response>
+	</Transaction>
+
+	<Transaction code="465836" service="465836" timeout="30" log_switch="0" desc="»ã¶ÒÐÅÏ¢¼à¿Øä¯ÀÀ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465836_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Quote name="465836_RES"/>
+		</Response>
+	</Transaction>
+
+	<Transaction service="465706" code="465706" timeout="30" log_switch='1' desc="ÈÕÖÕ»ã×Ü¶ÔÕÊ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465706_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="465706_RES"/>
+		</Response>
+	</Transaction>
+
+<Transaction service="465708" code="465708" timeout="30" log_switch='1' desc="ÈËÐÐÈÕÖÕÇåËãÃ÷Ï¸Êý¾ÝÏÂÔØ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465708_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="465708_RES"/>
+		</Response>
+	</Transaction>
+
+
+<Transaction service="465711" code="465711" timeout="30" log_switch='1' desc="·ÖÐÐÇåËã»ã×Ü´òÓ¡" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="465711_REQ"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="465711_RES"/>
+		</Response>
+	</Transaction>
+
+	<Transaction code="465825" service="465825" log_switch="1" timeout="60" desc="¹ã¶«Ê¡¼¯ÖÐÊ½´úÊÕ¸¶Ð­ÒéÎ¬»¤">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="4">	<!--²éÑ¯-->
+						<Item name="AgrNo" length ="55"  expression="DELBOTHSPACE($AgrNo)"/>
+						<Item name="UsrCod" length ="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Break/>
+					</Case>
+          <Default>
+						<Item name="AutFlg"     length="1"/>
+						<Item name="AgrNo"      length="55"/>
+						<Item name="AgrTyp"     length="1"/>
+						<Item name="SBusTy"     length="5"/>
+						<Item name="SBusCh"     length="20"/>
+						<Item name="ActCls"     length="1"/>
+						<Item name="CtyCod"     length="4"/>
+						<Item name="OrgCod"     length="9" expression="ADDCHAR(DELSPACE($OrgCod,both),9,0,1)"/>
+						<Item name="PayCBnk"    length="12"/>
+						<Item name="PayCBnkNm"  length="60"/>
+						<Item name="PayOBnk"    length="12"/>
+						<Item name="PayOBnkNm"  length="60"/>
+						<Item name="PayAct"     length="32" expression="DELSPACE($PayAct,both)"/>
+						<Item name="PayNam"     length="60"/>
+						<Item name="OpnDat"    length="8"/>
+						<Item name="UsrCod"     length="18"/>
+						<Item name="UsrNam"     length="60"/>
+						<Item name="LnkNam"     length="60"/>
+						<Item name="LnkTel"     length="25"/>
+						<Item name="LnkPst"     length="6"/>
+						<Item name="LnkAdr"     length="60"/>
+						<Item name="Smr"        length="60"/>
+						<Item name="PayIdTy"    length="1"/>
+						<Item name="PayIdNo"    length="18"/>
+						<Item name="LmtAmt"     length="15" expression="ADDCHAR(DELSPACE($LmtAmt,both),15,0,1)"/>
+						<AddItem name="PayMob"  length="16"  expression="SUBSTR(DELSPACE($LnkTel,both),1,16)"/>
+						<Break/>          
+          </Default>
+				</Switch>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="4">
+				  <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="00"/>
+            <Item name="OFmtCd" length="3" value="000"/>
+						<Item name="AgrNo"      length="55"/>
+						<Item name="AgrTyp"     length="1"/>
+						<Item name="ActCls"     length="1"/>
+						<Item name="ChkFlg"     length="1"/>
+						<Item name="AgrWay"     length="1"/>						
+						<Item name="SBusTy"     length="5"/>
+						<Item name="SBusCh"     length="20"/>						
+						<Item name="CtyCod"     length="4"/>
+						<Item name="OrgCod"     length="9"/>
+						<Item name="PayCBnk"    length="12"/>
+						<Item name="PayCBnkNm"  length="60"/>
+						<Item name="PayOBnk"    length="12"/>
+						<Item name="PayOBnkNm"  length="60"/>
+						<Item name="PayAct"     length="32"/>
+						<Item name="PayNam"     length="60"/>
+						<Item name="OpnDat"     length="8"/>
+						<Item name="UsrCod"     length="18"/>
+						<Item name="UsrNam"     length="60"/>
+						<Item name="LnkNam"     length="60"/>
+						<Item name="LnkTel"     length="25"/>
+						<Item name="LnkPst"     length="6"/>
+						<Item name="LnkAdr"     length="60"/>
+						<Item name="Smr"        length="60"/>
+						<Item name="PayIdTy"    length="1"/>
+						<Item name="PayIdNo"    length="18"/>
+						<Item name="LmtAmt"     length="15"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+				  </If>
+				  <Break/>
+				</Case>
+        <Default>
+				  <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+           <PackItem name="TmpDat">
+             <Item name="ApCode"     length="2"  value="35"/>
+             <Item name="OFmtCd"     length="3"  value="B03"/>
+             <Item name="Title"      length="20" value="½ðÈÚ´úÊÕ¸¶Ð­ÒéÎ¬»¤"/>
+             <Item name="Line1"      length="70" expression="STRCAT(¹¦ÄÜÑ¡Ôñ :,$FuncStr, ÒµÎñÖÖÀà :,$SBusTy, $SBusCh)"/>
+             <Item name="Line3"      length="70" expression="STRCAT(ºÏÍ¬Ð­ÒéºÅ    :,$AgrNo)"/>
+             <Item name="Line4"      length="70" expression="STRCAT(¸¶¿îÈËÕËºÅ    :,$PayAct)"/>
+             <Item name="Line5"      length="70" expression="STRCAT(¸¶¿îÈË¿ª»§ÐÐºÅ:,$PayOBnk)"/>
+             <Item name="Line6"      length="70" expression="STRCAT(¸¶¿îÈË¿ª»§ÐÐÃû:,$PayOBnkNm)"/>
+             <Item name="Line7"      length="70" expression="STRCAT(¸¶¿îÇåËãÐÐÐÐºÅ:,$PayCBnk, Ð­ÒéÀàÐÍ :,$AgrTyp)"/>
+             <Item name="Line8"      length="70" expression="STRCAT(ÓÃ»§±àÂë:,$UsrCod, ÓÃ»§Ãû³Æ:,$UsrNam)"/>
+             <Item name="Line9"      length="70" expression="STRCAT(ÒµÎñ»ú¹¹´úÂë:,$OrgCod, ÁªÏµµç»°:,$LnkTel)"/>
+             <Item name="Line10"     length="70" expression="STRCAT(ÏÞÖÆ½ð¶î:,AMTFMT($LmtAmt))"/>
+             <Item name="Line11"     length="70" expression="STRCAT(ÌáÊ¾:,$TipMsg)"/>
+           </PackItem>
+           <Item name="TmpDat" head_len="4" include_len="yes"/>
+				  </If>        
+        </Default>				
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+		</Response>
+  </Transaction>
+
+<Transaction service="465826" code="465826" timeout="30" log_switch='1' desc="¹ã¶«Ê¡¼¯ÖÐÊ½´úÊÕ¸¶ÎÄ¼þÐ­Òé·¢ËÍ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Item name="SFilTyp" length="2"/> <!--·¢ËÍÎÄ¼þÀàÐÍ-->			
+			<If condition="IS_EQUAL_STRING($SFilTyp,99)"> <!--ÒÆÖ²-->
+			  <Item name="QOrgCod" length="9"/> <!--ÒÆÖ²»ú¹¹-->
+			  <Item name="QAgrTyp" length="1"/> <!--ÒÆÖ²Ð­ÒéÀàÐÍ-->
+      </If>			
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+      <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+        <PackItem name="TmpDat">
+          <Item name="ApCode" length="2" value="00"/>
+          <Item name="OFmtCd" length="3" value="000"/>
+          <Item name="FilNam"  length="60" />    <!--ÎÄ¼þÃû-->
+        </PackItem>
+        <Item name="TmpDat" head_len="4" include_len="yes"/>
+      </If>
+			<Quote name="COMMON_RES"/>      
+		</Response>
+	</Transaction>
+
+<Transaction service="465827" code="465827" timeout="30" log_switch='1' desc="¹ã¶«Ê¡¼¯ÖÐÊ½´úÊÕ¸¶Ð­ÒéÎÄ¼þ½ÓÊÕ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Item name="RFilTyp" length="2"/> <!--½ÓÊÕÎÄ¼þÀàÐÍ-->
+			<Item name="FilNam" length="40" expression="DELBOTHSPACE($FilNam)"/> <!--½ÓÊÕÎÄ¼þÃû³Æ-->
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Quote name="COMMON_RES"/>      
+		</Response>
+	</Transaction>
+
+  <Transaction code="465828" service="465828" log_switch="1" timeout="30" desc="¹ã¶«Ê¡¼¯ÖÐÊ½´úÊÕ¸¶Ð­ÒéÊý¾Ýä¯ÀÀ">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx" length="6"/>
+			</If>
+			<Else>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="1">	<!--²éÑ¯-->
+						<Item name="FilTyp" length="2"  expression="DELBOTHSPACE($FilTyp)"/>
+						<Item name="AgrTyp" length="1"  expression="DELBOTHSPACE($AgrTyp)"/>
+						<Item name="ChkFlg" length="1"  expression="DELBOTHSPACE($ChkFlg)"/>
+						<Item name="OrgCod"  length="9" expression="DELBOTHSPACE($OrgCod)"/>
+						<Item name="PayAct" length="32" expression="DELBOTHSPACE($PayAct)"/>
+						<Item name="AgrNo"  length="55" expression="DELBOTHSPACE($AgrNo)"/>
+						<Item name="FilMrk"  length="30" expression="DELBOTHSPACE($FilMrk)"/>
+						<Item name="Status"  length="1" expression="DELBOTHSPACE($Status)"/>
+						<Break/>
+					</Case>
+					<Case value="2">	<!--´¦Àí-->
+            <Item name="AgrNo"  length="55" expression="DELBOTHSPACE($AgrNo)"/>
+            <Item name="UsrCod" length="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Break/>
+					</Case>
+				</Switch>
+			</Else>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="1">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+						<PackItem name="TmpDat">
+								<Item name="ApCode"  length="2" value="32"/>
+								<Item name="OFmtCd"  length="3" value="Z01"/>
+								<Item name="PageNo"  length="4" value="0001"/>
+								<Item name="VarSize" length="1" value="3"/>
+								<Item name="Ttl"     head_len="3" value="Åú×¢ä¯ÀÀ"/>
+								<Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+							<Group name="Rec" repeat_name="RecNum">
+								<PackItem name="TmpNam">
+										<Item name="AgrNo"   length="55"/>
+										<Item name="UsrCod"  length="18"/>
+										<Item name="Status"  length="1"/>
+										<Item name="AgrTyp"  length="1"/>										
+										<Item name="AgrWay"  length="1"/>
+										<Item name="ChkFlg"  length="1"/>
+										<Item name="FilTyp"  length="2"/>
+										<Item name="PayAct"  length="32"/>
+										<Item name="PayNam"  length="60"/>
+										<Item name="CasCod"  length="8"/>
+								</PackItem>
+								<Item name="TmpNam"   head_len="3"/>
+							</Group>
+						</PackItem>
+						<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>	
+				<Case value="2">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+										<Item name="AgrNo"   length="55"/>
+										<Item name="UsrCod"  length="18"/>
+										<Item name="Status"  length="1"/>
+										<Item name="AgrTyp"  length="1"/>
+										<Item name="AgrWay"  length="1"/>
+										<Item name="ChkFlg"  length="1"/>
+										<Item name="FilTyp"  length="2"/>
+										<Item name="PayAct"  length="32"/>
+										<Item name="PayNam"  length="60"/>
+										<Item name="CasCod"  length="8"/>
+										<Item name="ActCls"  length="1"/>
+										<Item name="ChgMod"  length="1"/>
+										<Item name="FilMrk"  length="40"/>
+										<Item name="PayCBnk" length="12"/>
+										<Item name="SBusTy"  length="5"/>
+										<Item name="SBusCh"  length="20"/>
+										<Item name="CtyCod"  length="4"/>
+										<Item name="OrgCod"  length="9"/>
+										<Item name="OpnDat"  length="8"/>
+										<Item name="IvdDat"  length="8"/>										
+										<Item name="UsrNam"  length="60"/>
+										<Item name="LnkNam"  length="60"/>
+										<Item name="LnkTel"  length="25"/>
+										<Item name="Smr"     length="60"/>
+										<Item name="NodNo"   length="6"/>
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>																
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+    </Response>
+  </Transaction>
+
+	<Transaction code="465830" service="465830" log_switch="1" timeout="30" desc="AAAÇ©Ô¼×ªÕÊÊÕ¿îÕËºÅ°ó¶¨">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="4">	<!--²éÑ¯-->
+						<Item name="AgrNo" length ="55"  expression="DELBOTHSPACE($AgrNo)"/>
+						<Item name="UsrCod" length ="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Break/>
+					</Case>
+          <Default>
+						<Item name="AgrNo"      length="55" expression="DELBOTHSPACE($AgrNo)" />
+						<Item name="UsrCod"     length="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Item name="RcvBnk1"     length="12" expression="DELBOTHSPACE($RcvBnk1)"/>
+						<Item name="RcvAct1"     length="32" expression="DELBOTHSPACE($RcvAct1)"/>
+						<Item name="RcvNam1"     length="60" expression="DELBOTHSPACE($RcvNam1)"/>
+						<Item name="RcvBnk2"     length="12" expression="DELBOTHSPACE($RcvBnk2)"/>
+						<Item name="RcvAct2"     length="32" expression="DELBOTHSPACE($RcvAct2)"/>
+						<Item name="RcvNam2"     length="60" expression="DELBOTHSPACE($RcvNam2)"/>
+						<Item name="RcvBnk3"     length="12" expression="DELBOTHSPACE($RcvBnk3)"/>
+						<Item name="RcvAct3"     length="32" expression="DELBOTHSPACE($RcvAct3)"/>
+						<Item name="RcvNam3"     length="60" expression="DELBOTHSPACE($RcvNam3)"/>												
+						<Break/>          
+          </Default>
+				</Switch>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="4">
+				  <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="00"/>
+            <Item name="OFmtCd" length="3" value="000"/>
+						<Item name="AgrNo"      length="55"/>
+						<Item name="UsrCod"     length="18"/>
+						<Item name="RcvBnk1"     length="12"/>
+						<Item name="RcvAct1"     length="32"/>
+						<Item name="RcvNam1"     length="60"/>
+						<Item name="RcvBnk2"     length="12"/>
+						<Item name="RcvAct2"     length="32"/>
+						<Item name="RcvNam2"     length="60"/>
+						<Item name="RcvBnk3"     length="12"/>
+						<Item name="RcvAct3"     length="32"/>
+						<Item name="RcvNam3"     length="60"/>						
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+				  </If>
+				  <Break/>
+				</Case>
+        <Default>
+				  <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+           <PackItem name="TmpDat">
+             <Item name="ApCode"     length="2"  value="35"/>
+             <Item name="OFmtCd"     length="3"  value="B03"/>
+             <Item name="Title"      length="20" value="×ªÕÊÊÕ¿îÕËºÅ°ó¶¨"/>
+             <Item name="Line1"      length="70" expression="STRCAT(¹¦ÄÜÑ¡Ôñ:,$Func, ÓÃ»§±àºÅ:,$UsrCod)"/>
+             <Item name="Line3"      length="70" expression="STRCAT(Ç©Ô¼Ð­ÒéºÅ:,$AgrNo)"/>
+             <Item name="Line4"      length="70" expression="STRCAT(ÊÕ¿îÈËÐÐºÅ:,$RcvBnk1, ÊÕ¿îÈËÕËºÅ:,$RcvAct1)"/>
+             <Item name="Line5"      length="70" expression="STRCAT(ÊÕ¿îÈËÃû³Æ:,$RcvNam1)"/>
+             <Item name="Line6"      length="70" expression="STRCAT(ÊÕ¿îÈËÐÐºÅ:,$RcvBnk2, ÊÕ¿îÈËÕËºÅ:,$RcvAct2)"/>
+             <Item name="Line7"      length="70" expression="STRCAT(ÊÕ¿îÈËÃû³Æ:,$RcvNam2)"/>
+             <Item name="Line8"      length="70" expression="STRCAT(ÊÕ¿îÈËÐÐºÅ:,$RcvBnk3, ÊÕ¿îÈËÕËºÅ:,$RcvAct3)"/>
+             <Item name="Line9"      length="70" expression="STRCAT(ÊÕ¿îÈËÃû³Æ:,$RcvNam3)"/>
+             <Item name="Line10"     length="70" expression="STRCAT(***,***)"/>
+             <Item name="Line11"     length="70" expression="STRCAT(***,***)"/>
+           </PackItem>
+           <Item name="TmpDat" head_len="4" include_len="yes"/>
+				  </If>        
+        </Default>				
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+		</Response>
+  </Transaction>
+
+  <!--Ó°Ïñ½»»»Ìá»ØÇå·Ö-->
+  <Transaction code="465712" service="465712" log_switch="1" timeout="30" desc="Ó°Ïñ½»»»Ìá»ØÇå·Ö">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+ 			<Item name="Func"   length="1"  /> <!--¹¦ÄÜÑ¡Ôñ-->
+			<Switch expression="$Func">
+				<Case value="1">	<!--²éÑ¯-->
+					<Item name="TxnDat"  length="8" expression="DELSPACE($TxnDat,both)"/> <!--½»Ò×ÈÕÆÚ-->
+					<Item name="RecTyp"  length="1" /> <!--¼ÇÂ¼ÀàÐÍ 0-±¾ÐÐ 1-¿çÐÐ-->
+					<Item name="BusLog"  length="11" /> <!--ÒµÎñÁ÷Ë®ºÅ-->
+					<Break/>
+				</Case>
+				<Case value="2">	<!--´¦Àí-->
+					<Item name="TxnDat"  length="8" expression="DELSPACE($TxnDat,both)"/> <!--½»Ò×ÈÕÆÚ-->
+					<Item name="RecTyp"  length="1" /> <!--¼ÇÂ¼ÀàÐÍ-->
+					<Item name="BusLog"  length="11" /> <!--ÒµÎñÁ÷Ë®ºÅ-->
+					<Break/>
+				</Case>
+			</Switch>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="1">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+							  <Item name="CtlNod" length="6"/>	
+							  <Item name="BilSts" length="1"/>	
+							  <Item name="TxnAmt" length="15"/>	
+							  <Item name="TlrId2" length="7"/>	
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>					
+					</If>
+					<Break/>
+				</Case>					
+			</Switch>
+  		<Quote name="COMMON_RES"/>		      
+    </Response>
+  </Transaction>
+  
+<Transaction service="465831" code="465831" timeout="30" log_switch='1' desc="²éÑ¯´úÂëÃû³Æ" >
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Item name="QryTyp" length="2"/> <!--²éÑ¯Àà±ð-->
+			<Item name="QryCod" length="30" expression="DELSPACE($QryCod,both)"/> <!--²éÑ¯´úÂë-->			
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+      <If condition="IS_EQUAL_STRING($MsgTyp,N)">
+        <PackItem name="TmpDat">
+          <Item name="ApCode" length="2" value="00"/>
+          <Item name="OFmtCd" length="3" value="000"/>
+          <Item name="QryNam"  length="60" />    <!--²éÑ¯Ãû³Æ-->
+        </PackItem>
+        <Item name="TmpDat" head_len="4" include_len="yes"/>
+      </If>
+			<Quote name="COMMON_RES"/>      
+		</Response>
+	</Transaction>
+
+  <Transaction code="465832" service="465832" log_switch="1" timeout="30" desc="¼¯ÖÐ´úÊÕ¸¶ÈëÍøÒµÎñÐ­ÒéÈ·ÈÏ·¢ËÍ">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx" length="6"/>
+			</If>
+			<Else>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="1">	<!--²éÑ¯-->
+						<Item name="FilTyp" length="2"  expression="DELBOTHSPACE($FilTyp)"/>
+						<Item name="AgrTyp" length="1"  expression="DELBOTHSPACE($AgrTyp)"/>
+						<Item name="ChkFlg" length="1"  expression="DELBOTHSPACE($ChkFlg)"/>
+						<Item name="OrgCod"  length="9" expression="DELBOTHSPACE($OrgCod)"/>
+						<Item name="PayAct" length="32" expression="DELBOTHSPACE($PayAct)"/>
+						<Item name="AgrNo"  length="55" expression="DELBOTHSPACE($AgrNo)"/>
+						<Item name="QNodNo"  length="6" expression="DELBOTHSPACE($QNodNo)"/>
+						<Item name="Status"  length="1" expression="DELBOTHSPACE($Status)"/>
+						<Item name="QTlrId"  length="7" expression="DELBOTHSPACE($QTlrId)"/>
+						<Break/>
+					</Case>
+					<Case value="2">	<!--²éÑ¯Ã÷Ï¸-->
+            <Item name="AgrNo"  length="55" expression="DELBOTHSPACE($AgrNo)"/>
+            <Item name="UsrCod" length="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Break/>
+					</Case>
+					<Case value="3">	<!--È·ÈÏ·¢ËÍ-->
+            <Item name="AgrNo"  length="55" expression="DELBOTHSPACE($AgrNo)"/>
+            <Item name="UsrCod" length="18" expression="DELBOTHSPACE($UsrCod)"/>
+						<Break/>
+					</Case>					
+				</Switch>
+			</Else>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="1">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+						<PackItem name="TmpDat">
+								<Item name="ApCode"  length="2" value="32"/>
+								<Item name="OFmtCd"  length="3" value="Z01"/>
+								<Item name="PageNo"  length="4" value="0001"/>
+								<Item name="VarSize" length="1" value="3"/>
+								<Item name="Ttl"     head_len="3" value="Åú×¢ä¯ÀÀ"/>
+								<Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+							<Group name="Rec" repeat_name="RecNum">
+								<PackItem name="TmpNam">
+										<Item name="AgrNo"   length="55"/>
+										<Item name="UsrCod"  length="18"/>
+										<Item name="Status"  length="1"/>
+										<Item name="AgrTyp"  length="1"/>										
+										<Item name="AgrWay"  length="1"/>
+										<Item name="ChkFlg"  length="1"/>
+										<Item name="FilTyp"  length="2"/>
+										<Item name="PayAct"  length="32"/>
+										<Item name="PayNam"  length="60"/>
+										<Item name="CasCod"  length="8"/>
+								</PackItem>
+								<Item name="TmpNam"   head_len="3"/>
+							</Group>
+						</PackItem>
+						<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>	
+				<Case value="2">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+										<Item name="ChgMod"  length="1"/>
+										<Item name="AgrNo"   length="55"/>
+										<Item name="UsrCod"  length="18"/>
+										<Item name="Status"  length="1"/>
+										<Item name="AgrTyp"  length="1"/>
+										<Item name="AgrWay"  length="1"/>
+										<Item name="ChkFlg"  length="1"/>
+										<Item name="PayAct"  length="32"/>
+										<Item name="PayNam"  length="60"/>
+										<Item name="ActCls"  length="1"/>
+										<Item name="PayOBnk" length="12"/>
+										<Item name="SBusTy"  length="5"/>
+										<Item name="SBusCh"  length="20"/>
+										<Item name="CtyCod"  length="4"/>
+										<Item name="OrgCod"  length="9"/>
+										<Item name="OpnDat"  length="8"/>
+										<Item name="IvdDat"  length="8"/>										
+										<Item name="UsrNam"  length="60"/>
+										<Item name="PayMob"  length="25"/>
+										<Item name="Smr"     length="60"/>
+										<Item name="NodNo"   length="6"/>
+										<Item name="PayIdNo"   length="18"/>	
+								    <Item name="LmtAmt"   length="15"/>	
+										<Item name="CasCod"  length="8"/>
+										<Item name="FilTyp"  length="2"/>										
+								    
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>			
+				<Case value="3"> <!--È·ÈÏ·¢ËÍ·µ»Ø-->
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+										<Item name="AgrNo"   length="55"/>
+										<Item name="UsrCod"  length="18"/>
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>																																	
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+    </Response>
+  </Transaction>
+  
+  <Transaction code="465824" service="465824" log_switch="1" timeout="30" desc="´úÊÕ¸¶ÈëÍø»ú¹¹Ãûµ¥ä¯ÀÀ">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx" length="6"/>
+			</If>
+			<Else>
+				<Item name="Func"   length="1" /> <!--¹¦ÄÜÑ¡Ôñ-->
+				<Switch expression="$Func">
+					<Case value="1">	<!--²éÑ¯-->
+						<Item name="OrgCod"  length="12" expression="DELBOTHSPACE($OrgCod)"/>
+						<Item name="SBusTy"  length="5" expression="DELBOTHSPACE($SBusTy)"/>
+						<Item name="CtyCod"  length="4" expression="DELBOTHSPACE($CtyCod)"/>						
+						<Break/>
+					</Case>
+					<Case value="2">	<!--´¦Àí-->
+            <Item name="OrgCod"   length="12" expression="DELBOTHSPACE($OrgCod)"/>
+            <Item name="SBusTy"   length="5" expression="DELBOTHSPACE($SBusTy)"/>
+            <Item name="TxnKnd"   length="6" expression="DELBOTHSPACE($TxnKnd)"/>
+            <Item name="CcyCod"   length="3" expression="DELBOTHSPACE($CcyCod)"/>
+            <Item name="OrgOBnk"  length="12" expression="DELBOTHSPACE($OrgOBnk)"/>
+						<Break/>
+					</Case>
+				</Switch>
+			</Else>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+			<Switch expression="$Func">
+				<Case value="1">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+						<PackItem name="TmpDat">
+								<Item name="ApCode"  length="2" value="32"/>
+								<Item name="OFmtCd"  length="3" value="Z01"/>
+								<Item name="PageNo"  length="4" value="0001"/>
+								<Item name="VarSize" length="1" value="3"/>
+								<Item name="Ttl"     head_len="3" value="Åú×¢ä¯ÀÀ"/>
+								<Item name="SubTtl"  head_len="3" value="²éÑ¯ÄÚÈÝ"/>
+							<Group name="Rec" repeat_name="RecNum">
+								<PackItem name="TmpNam">
+										<Item name="OrgCod"    length="12"/>
+										<Item name="SBusTy"    length="5"/>
+										<Item name="TxnKnd"    length="6"/>
+										<Item name="CcyCod"    length="3"/>
+										<Item name="OrgOBnk"   length="12"/>
+										<Item name="CtyCod"   length="4"/>
+										<Item name="OrgNam"   length="60"/>
+								</PackItem>
+								<Item name="TmpNam"   head_len="3"/>
+							</Group>
+						</PackItem>
+						<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>	
+				<Case value="2">
+					<If condition="IS_EQUAL_STRING($MsgTyp,N)">						
+							<PackItem name="TmpDat">
+								<Item name="ApCode" length="2" value="46"/>
+								<Item name="OFmtCd" length="3" value="999"/>
+										<Item name="OrgCod"    length="12"/>
+										<Item name="SBusTy"    length="5"/>
+										<Item name="TxnKnd"    length="6"/>
+										<Item name="CcyCod"    length="3"/>
+										<Item name="OrgOBnk"   length="12"/>
+										<Item name="CtyCod"   length="4"/>
+										<Item name="OrgNam"   length="60"/>
+										<Item name="OrgActNo"   length="32"/>
+										<Item name="OrgActNm"   length="60"/>
+										<Item name="ComTel"   length="20"/>
+										<Item name="ComMan"   length="16"/>
+										<Item name="EffDat"   length="8"/>
+										<Item name="EprDat"   length="8"/>
+							</PackItem>
+							<Item name="TmpDat" head_len="4" include_len="yes"/>
+					</If>
+					<Break/>
+				</Case>																
+			</Switch>
+  		<Quote name="COMMON_RES"/>		
+    </Response>
+  </Transaction>
+	
+</Application>

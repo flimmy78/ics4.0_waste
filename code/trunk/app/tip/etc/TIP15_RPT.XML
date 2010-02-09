@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP15_RPT.trc" dbconnect="YES">
+  <!--Modified By zhq_BoCom00047053_20080905_½ÉË°Í¨±¨±í(±¨±íÃû:½»Í¨ÒøÐÐ½ÉË°Í¨¶ÔË½ÒµÎñÁ¿Í³¼ÆÔÂ±¨)-->
+  <VarDef>
+    <String alias="StaDat"    name="$StaDat"/> <!--Ñ¡ÔñÈÕÆÚ-->
+    <String alias="BeDate"    name="$BeDate"/> <!--ÆðÊ¼ÈÕÆÚ-->
+    <String alias="EdDate"    name="$EdDate"/> <!--½ØÖÁÈÕÆÚ-->
+    <String alias="LstDat"    name="$LstDat"/> <!--ÉÏ¸öÔÂ·Ý-->
+  </VarDef>
+  <DataSource object="sql"> 
+    <Iterative>
+     <Sql sql="SELECT a.NodNo,COALESCE(c.YCnt,0) YCnt,COALESCE(b.MCnt,0) MCnt,COALESCE(d.LCnt,0) LCnt,COALESCE(c.YAmt,0) YAmt,COALESCE(b.MAmt,0) MAmt,COALESCE(d.LAmt,0) LAmt FROM (SELECT NodNo,SMR FROM puborginf WHERE RIGHT(NodNo,3)='999' AND NodNo NOT IN ('315999','312999')) a
+          LEFT OUTER JOIN (SELECT OBrkNo,COUNT(*) MCnt,SUM(CAST (TxnAmt AS BIGINT)) MAmt FROM tiptxnbok WHERE BilSts='1' AND LEFT(WrkDat,6)='%s' AND RknSts='1' AND PayTyp &gt; '1' GROUP BY OBrkNo) b ON a.NodNo=b.OBrkNo
+          LEFT OUTER JOIN (SELECT OBrkNo,COUNT(*) YCnt,SUM(CAST (TxnAmt AS BIGINT)) YAmt FROM tiptxnbok WHERE BilSts='1' AND WrkDat BETWEEN '%s' AND '%s' AND RknSts='1' AND PayTyp &gt; '1' GROUP BY OBrkNo) c ON a.NodNo=c.OBrkNo
+          LEFT OUTER JOIN (SELECT OBrkNo,COUNT(*) LCnt,SUM(CAST (TxnAmt AS BIGINT)) LAmt FROM tiptxnbok WHERE BilSts='1' AND LEFT(WrkDat,6)='%s' AND RknSts='1' AND PayTyp &gt; '1' GROUP BY OBrkNo) d ON a.NodNo=d.OBrkNo FOR READ ONLY">
+        <FieldList>$StaDat|$BeDate|$EdDate|$LstDat|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine >
+    <Iterative line="1">
+      <Para label="01" alias="LEFTSTR($StaDat,6)"/>
+      <Para label="02" alias="$NodNo"            />
+      <Para label="03" alias="$YCnt"             />
+      <Para label="04" alias="$MCnt"             />
+      <Para label="05" alias="SUB($MCnt,$LCnt)"  />
+      <Para label="06" alias="AMTADDDOT($YAmt)"             />
+      <Para label="07" alias="AMTADDDOT($MAmt)"             />
+      <Para label="08" alias="AMTADDDOT(SUB($MAmt,$LAmt))"  />
+      <Format>
+#:#:2:#:#:#:#:#:#
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
+

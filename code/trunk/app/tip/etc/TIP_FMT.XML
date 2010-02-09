@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="tipfmt.log" err_file="tipfmt.err">
+   <!--BoCom00031634_XuChg_20080222_Ôö¼Ó915225»ú¹¹²ð²¢½»Ò×-->
+   <!--Added by zhq_BoCom00034838_20080325_915226_×Ô¶¯¸üÐÂÈý·½Ð­Òé±íÖÐµÄ¿¨ºÅ-->
+   <!--Added By zhq_BoCom00041319_20080707_915227_¶¨Ê±¸üÐÂµØÇøÂë±í-->
+   <!--Added by sundx at 20090330 for cq61739 ÐÂÔöprocess EXPTIP,µ¼³ötiptxnbok±íÊý¾ÝÉú³ÉÎÄ¼þ-->
+   <CodeSwitching>
+      <Table name="HTxnSt" file="etc/TIP_CSW.XML">
+         <Column name="HTxnSt"/>
+         <Column name="Desc" />
+      </Table>
+   </CodeSwitching>
+   <Process name="BalFmt" debug_file="tipfmt.log" err_file="tipfmt.err"><!--Óà¶îÎÄ¼þ¸ñÊ½ÃèÊö-->
+      <Data deli_str=":">
+         <Item name="NodNo"/><!--»ú¹¹ºÅ	        CHAR£¨06£© -->
+         <Item name="A"/>    <!--»õ±Ò´úºÅ	CHAR£¨02£©         -->
+         <Item name="SbjNo"/><!--¿ÆÄ¿ºÅ	        CHAR£¨05£© -->
+         <Item name="SqnNo"/><!--Ë³ÐòºÅ	        CHAR£¨05£© -->
+         <Item name="A"/><!--Ð£ÑéÎ»	        CHAR£¨01£© -->
+         <Item name="CcyCod"/><!--»õ±Ò	        CHAR£¨03£© -->
+         <Item name="A"/>    <!--ÄÚ²¿ÕË»§×´Ì¬	CHAR£¨01£© -->
+         <Item name="A"/>    <!--¿ØÖÆ»ú¹¹ºÅ	CHAR£¨06£©         -->
+         <Item name="A"/>    <!--¿ª»§ÈÕÆÚ	DEC £¨08£©         -->
+         <Item name="BrkNo"/><!--¹éÊô·ÖÐÐºÅ	CHAR£¨06£©         -->
+         <Item name="A"/>    <!--¿ª»§¹ñÔ±	CHAR£¨07£©         -->
+         <Item name="A"/>    <!--¹Ø±ÕÈÕÆÚ	DEC £¨08£©         -->
+         <Item name="A"/>    <!--¹Ø±Õ¹ñÔ±	CHAR£¨07£©         -->
+         <Item name="A"/>    <!--ÉÏ´Î½»Ò×ÈÕÆÚ	DEC £¨08£© -->
+         <Item name="A"/>    <!--ÉÏ´Î½»Ò×¹ñÔ±	CHAR£¨07£© -->
+         <Item name="A"/>    <!--·Ö¶ÎÆðÏ¢ÈÕÆÚ	DEC£¨ 08 £©-->
+         <Item name="LstBal" expression="AMTPOWER($LstBal,2)"/>    <!--ÉÏÈÕÓà¶î	DEC£¨ 15£©         -->
+         <Item name="CurBal" expression="AMTPOWER($CurBal,2)"/>    <!--µ±Ç°Óà¶î	DEC£¨ 15£©         -->
+         <Item name="A"/>    <!--¸¡¶¯Óà¶î	DEC£¨ 15£©         -->
+         <Item name="A"/>    <!--½è·½¼ÆÏ¢»ýÊý	DEC£¨ 17£© -->
+         <Item name="A"/>    <!--´û·½¼ÆÏ¢»ýÊý	DEC£¨ 17£© -->
+      </Data>
+   </Process>
+   <!--Ö÷»ú¶ÔÕËÃ÷Ï¸²ð·ÖÈë¿â -->
+   <Process name="HstChkFil">
+      <Data>
+         <Item name="FSysId" length=" 5"/>  <!--½»Ò×À´Ô´               -->
+         <Item name="LogNo"  length="14"/>  <!--Ç°ÖÃÁ÷Ë®ºÅ             -->
+         <Item name="TckNo"  length="12" offset="1"/>  <!--»á¼ÆÁ÷Ë®ºÅ/·Ç»á¼ÆÁ÷Ë®ºÅ-->
+         <Item name="HTxnSt" length=" 1"/>  <!--×´Ì¬                   -->
+         <SwitchCode name="HTxnSt" tab_name="HTxnSt" col_name="HTxnSt"/>
+         <Item name="HTxnCd" length=" 6"/>  <!--Ó¦ÓÃÂë ½»Ò×Âë          -->
+         <Item name="HLogNo" length=" 9"/>  <!--Ö÷»úÈÕÖ¾ºÅ             -->
+         <Item name="BusTyp" length=" 5"/>  <!--ÒµÎñÀàÐÍ               -->
+         <Item name="ActNo"  length="21"/>  <!--ÕÊºÅ                   -->
+         <Item name="TxnAmt" length="15"/>  <!--½ð¶î                   -->
+         <Item name="BrkNo"  length="6"/>  <!--·ÖÐÐºÅ                   -->
+         <Item name="NodNo"  length="6"/>  <!--»ú¹¹ºÅ                   -->
+         <Item name="CrpCod" length="10"/>  <!--µ¥Î»´úÂë               -->
+         <Item name="ActDat" length="8" expression="$SelDat"/>
+         <AddItem name="HRspCd" value=" "/>
+         <AddItem name="DskNo" value="            "/>
+      </Data>
+   </Process>
+   <!--Ö÷»ú¶ÔÕË¿ÉÒÉÇåµ¥ -->
+   <Process name="DZ001">
+      <Data deli_asc="124">
+         <Item name="BusNam" />
+         <Item name="CrpCod" />
+         <Item name="LogNo"  />
+         <Item name="TckNo"  />
+         <Item name="ActNo"  />
+         <Item name="TxnAmt" />
+         <Item name="ChkFlg" />
+      </Data>
+   </Process>
+
+   <Process name="CHKTIP">
+      <Head record_length="194">
+         <Item name="PBnkNo" length="12" />   <!--¸¶¿îÐÐÐÐºÅ-->
+         <Item name="RBnkNo"  length="12"/>   <!--ÊÕ¿îÐÐÐÐºÅ-->
+         <Item name="ChkDat"  length="8" />    <!--¶ÔÕËÈÕÆÚ-->
+         <Item name="ChkOrd" length=" 4"/>   <!--¶ÔÕËÅú´Î-->
+         <Item name="LChkOd"  length="4" value=""/>   <!--ÉÏÒ»¶ÔÕËÅú´Î-->
+         <Item name="ChkMod" length="1"/>   <!--¶ÔÕËÀàÐÍ-->
+         <Item name="AllNum" length=" 8"/>    <!--×Ü±ÊÊý-->
+         <Item name="AllAmt" length=" 15" expression="ADDCHAR($AllAmt,15,0,1)"/>   <!--×Ü½ð¶î-->
+         <Item name="CPckNm"  length="1" value="1"/>  <!--×Ó°ü×ÜÊý-->
+         <Item name="CurPackNo" length="1"  value="1"/>    <!--±¾°üÐòºÅ-->
+         <Item name="PackNum"  length="8"  value="" />   <!--±¾°ü±ÊÊý-->
+         <Item name="PackAmt"  length="15"  value="0000000"/>   <!--±¾°ü½ð¶î-->
+      </Head>
+      <Data record_length="194">
+         <Item name="OBnkNo" length="12" expression="ADDCHAR($OBnkNo,12, ,1)"/>  <!--¸¶¿î¿ª»§ÐÐÐÐºÅ-->
+         <Item name="ActNo"  length="32" expression="ADDCHAR($ActNo,32, ,1)"/>  <!--¸¶¿îÕË»§-->
+         <Item name="OrgCod"  length="12" value="" expression="ADDCHAR($OrgCod,12, ,1)"/>  <!--Ô­Õ÷ÊÕ»ú¹Ø´úÂë-->
+         <Item name="EntDat" length=" 8" value=""/>   <!--Ô­Î¯ÍÐÈÕÆÚ-->
+         <Item name="PackNo"  length=" 8"/> <!--Ô­°üÁ÷Ë®ºÅ-->
+         <Item name="TraNo" length=" 8"/>   <!--Ô­½»Ò×Á÷Ë®ºÅ-->
+         <Item name="TxnAmt" length="15" expression="ADDCHAR($TxnAmt,15,0,1)"/>  <!--½»Ò×½ð¶î-->
+      </Data>
+   </Process>
+   <!--BoCom00031634_XuChg_20080222_Ôö¼Ó915225»ú¹¹²ð²¢½»Ò×_ÁÐ±íÎÄ¼þ-->
+   <Process name="OSUINFXXFmt">
+      <Item name="OFilNam"    deli_asc="124"/>     <!--ÎÄ¼þÃû -->
+      <Item name="FilSiz"     deli_asc="10"/>      <!--ÎÄ¼þ´óÐ¡ -->
+   </Process>
+   <!--BoCom00031634_XuChg_20080222_Ôö¼Ó915225»ú¹¹²ð²¢½»Ò×_Õë¶ÔÕû»ú¹¹²ð²¢ÎÄ¼þ-->
+   <Process name="OSUINFBRFmt">
+      <Head>
+         <Item name="HActDat"    length="08"/>     <!--»á¼ÆÈÕÆÚ -->
+         <Item name="RowNo"      length="04"/>     <!--¼ÇÂ¼ÐÐÊý -->
+      </Head>
+      <Data>
+         <Item name="BrNo"       length="06"/>     <!--·ÖÐÐºÅ -->
+         <Item name="OldNodNo"   length="06"/>     <!--²ð³öÍøµã -->
+         <Item name="NewNodNo"   length="06"/>     <!--²ðÈëÍøµã -->
+      </Data>
+   </Process>
+   <!--BoCom00031634_XuChg_20080222_Ôö¼Ó915225»ú¹¹²ð²¢½»Ò×_Õë¶Ôµ¥ÕÊ»§²ð²¢ÎÄ¼þ-->
+   <Process name="OSUINFACFmt">
+      <Head>
+         <Item name="HActDat"    length="08"/>     <!--»á¼ÆÈÕÆÚ -->
+         <Item name="RowNo"      length="08"/>     <!--¼ÇÂ¼ÐÐÊý -->
+      </Head>
+      <Data>
+         <Item name="ActNo"      length="21"/>     <!--ÕÊºÅ -->
+         <Item name="OldNodNo"   length="06"/>     <!--²ð³öÍøµã -->
+         <Item name="NewNodNo"   length="06"/>     <!--²ðÈëÍøµã -->
+      </Data>
+   </Process>
+
+   <!--Added By zhq_BoCom00034838_20080325_915226_×Ô¶¯¸üÐÂÈý·½Ð­Òé±íÖÐµÄ¿¨ºÅ-->
+   <Process name="CBKICSXXFmt">
+      <Item name="DatFilNam"    deli_asc="124"/>     <!--Êý¾ÝÎÄ¼þÃû -->
+      <Item name="TotRec"        deli_asc="124"/>    <!--¼ÇÂ¼Êý -->
+      <Item name="FilSiz"       deli_asc="10"/>      <!--ÎÄ¼þ´óÐ¡ -->
+   </Process>
+
+   <!--Added By zhq_BoCom00034838_20080325_915226_×Ô¶¯¸üÐÂÈý·½Ð­Òé±íÖÐµÄ¿¨ºÅ-->
+   <Process name="CITCDNORFmt">
+      <Data>
+         <Item name="OrnAcNo"  deli_asc="58" />    <!--Ô­¿¨ºÅ -->
+         <Item name="NewAcNo"  deli_asc="58"/>     <!--ÐÂ¿¨ºÅ-->
+         <Item name="AcTyp"    deli_asc="58"/>     <!--ÕÊºÅÀàÐÍ-->
+         <Item name="UpdDat"   length="08" />      <!--¸üÐÂÈÕÆÚ-->
+      </Data>
+   </Process> 
+     
+   <!--Added By zhq_BoCom00041319_20080707_915227_¸üÐÂµØÇøÂë±í-->
+   <Process name="CMTRGNXX">
+      <Data>
+         <Item name="Rgn"      deli_asc="58"/>  <!--µØÇø´úÂë-->
+         <Item name="RgnNm"    deli_asc="58"/>  <!--µØÇøÃû³Æ-->
+         <Item name="LocFlg"   deli_asc="58"/>  <!--µØÇø±êÊ¶--> 
+         <Item name="BrkNo"    deli_asc="58"/>  <!--·ÖÐÐºÅ--> 
+         <Item name="Snm"      deli_asc="58"/>  <!--µØÇø¼ò³Æ--> 
+         <Item name="Sdt"      deli_asc="58"/>  <!--ÉúÐ§ÈÕÆÚ--> 
+         <Item name="Edt"      deli_asc="58"/>  <!--Ê§Ð§ÈÕÆÚ--> 
+         <Item name="MGR_FLG"  deli_asc="58"/>  <!--¹ÜÀí±êÖ¾--> 
+         <Item name="SUP_RGN"  deli_asc="58"/>  <!--ÉÏ¼¶µØÇø--> 
+         <Item name="Upd_dt"   deli_asc="58"/>  <!--Î¬»¤ÈÕÆÚ--> 
+         <Item name="Upd_tlr"  length="07"/>    <!--Î¬»¤¹ñÔ±-->  
+      </Data>
+   </Process>
+      
+   <!--Added by sundx at 20090330 for cq61739 µ¼³ötiptxnbok±íÊý¾ÝÉú³ÉÎÄ¼þ-->
+   <Process name="EXPTIP">
+      <Data>
+         <Item name="OrgCod"      deli_asc="44"/>  <!--Õ÷ÊÕ»ú¹ØºÅ-->
+         <Item name="EntDat"      deli_asc="44"/>  <!--Î¯ÍÐÈÕÆÚ-->
+         <Item name="TraNo"       deli_asc="44"/>  <!--½»Ò×Á÷Ë®ºÅ--> 
+         <Item name="SPckNo"      deli_asc="44"/>  <!--°üÁ÷Ë®ºÅ--> 
+         <Item name="PayMod"      deli_asc="44"/>  <!--½É¿îÄ£Ê½--> 
+         <Item name="PayTyp"      deli_asc="44"/>  <!--Ö§¸¶·½Ê½--> 
+         <Item name="BilSts"      deli_asc="44"/>  <!--¼ÇÂ¼×´Ì¬--> 
+         <Item name="RspSts"      deli_asc="44"/>  <!--»ØÖ´×´Ì¬--> 
+         <Item name="RspNum"      deli_asc="44"/>  <!--»ØÖ´·¢ËÍ´ÎÊý--> 
+         <Item name="FTxnTm"      deli_asc="44"/>  <!--Ç°ÖÃ¼ÇÂ¼Ê±¼ä--> 
+         <Item name="AddWord"     deli_asc="44"/>  <!--¸½ÑÔ--> 
+         <Item name="ChkSts"      deli_asc="44"/>  <!--ºË¶Ô±êÖ¾--> 
+         <Item name="ChkDat"      deli_asc="44"/>  <!--¶ÔÕËÈÕÆÚ--> 
+         <Item name="ChkOrd"      deli_asc="44"/>  <!--¶ÔÕËÅú´Î--> 
+         <Item name="RknSts"      deli_asc="44"/>  <!--×Ê½ðÇåËã±êÖ¾--> 
+         <Item name="RknDat"      deli_asc="44"/>  <!--×Ê½ðÇåËãÈÕÆÚ--> 
+         <Item name="BilFlg"      deli_asc="44"/>  <!--µç×Ó»Øµ¥±êÖ¾--> 
+         <Item name="CclTyp"      deli_asc="44"/>  <!--¹ÒÕËÀàÐÍ--> 
+         <Item name="ReqDat"      deli_asc="44"/>  <!--ÇëÇóÈÕÆÚ--> 
+         <Item name="RspDat"      deli_asc="44"/>  <!--»ØÖ´ÈÕÆÚ--> 
+         <Item name="SrcNod"      deli_asc="44"/>  <!--·¢Æð½Úµã--> 
+         <Item name="DstNod"      deli_asc="44"/>  <!--Ä¿±ê½Úµã--> 
+         <Item name="MsgNo"       deli_asc="44"/>  <!--±¨ÎÄ±àºÅ--> 
+         <Item name="MsgId"       deli_asc="44"/>  <!--±¨ÎÄ±êÊ¶ºÅ--> 
+         <Item name="MsgRef"      deli_asc="44"/>  <!--±¨ÎÄ²Î¿¼ºÅ--> 
+         <Item name="WrkDat"      deli_asc="44"/>  <!--¹¤×÷ÈÕÆÚ--> 
+         <Item name="HdlTyp"      deli_asc="44"/>  <!--¾­ÊÕÀà±ð--> 
+         <Item name="TreCod"      deli_asc="44"/>  <!--ÊÕ¿î¹ú¿âºÅ--> 
+         <Item name="RBnkNo"      deli_asc="44"/>  <!--ÊÕ¿îÐÐºÅ--> 
+         <Item name="ROrgCd"      deli_asc="44"/>  <!--ÊÕ¿îµ¥Î»´úÂë--> 
+         <Item name="RAccNo"      deli_asc="44"/>  <!--ÊÕ¿îÈËÕÊºÅ--> 
+         <Item name="RAccNm"      deli_asc="44"/>  <!--ÊÕ¿îÈËÕÊ»§Ãû³Æ--> 
+         <Item name="PBnkNo"      deli_asc="44"/>  <!--¸¶¿îÐÐºÅ--> 
+         <Item name="POBkNo"      deli_asc="44"/>  <!--¸¶¿î¿ª»§ÐÐºÅ--> 
+         <Item name="ActNo"       deli_asc="44"/>  <!--¸¶¿îÈËÕÊºÅ--> 
+         <Item name="ActNam"      deli_asc="44"/>  <!--¸¶¿îÈËÕÊ»§Ãû³Æ--> 
+         <Item name="VchTyp"      deli_asc="44"/>  <!--Æ¾Ö¤ÀàÐÍ--> 
+         <Item name="VchNo"       deli_asc="44"/>  <!--Æ¾Ö¤±àºÅ--> 
+         <Item name="BilDat"      deli_asc="44"/>  <!--Æ¾Ö¤Ç©·¢ÈÕÆÚ--> 
+         <Item name="PayPsw"      deli_asc="44"/>  <!--Ö§¸¶ÃÜÂë--> 
+         <Item name="TxnAmt"      deli_asc="44"/>  <!--½»Ò×½ð¶î-->
+         <Item name="LogNo"       deli_asc="44"/>  <!--Ç°ÖÃÁ÷Ë®ºÅ--> 
+         <Item name="HTxnSt"      deli_asc="44"/>  <!--Ö÷»ú½»Ò××´Ì¬--> 
+         <Item name="TlrId"       deli_asc="44"/>  <!--¹ñÔ±ºÅ--> 
+         <Item name="OBrkNo"      deli_asc="44"/>  <!--¿ª»§ÐÐ·ÖÐÐºÅ--> 
+         <Item name="CBrkNo"      deli_asc="44"/>  <!--¹ØÁªÐÐ·ÖÐÐºÅ--> 
+         <Item name="RBrkNo"      deli_asc="44"/>  <!--ÇåËãÐÐÐÐºÅ--> 
+         <Item name="NodNo"       deli_asc="44"/>  <!--½»Ò×Íøµã--> 
+         <Item name="ONodNo"      deli_asc="44"/>  <!--¿ª»§Íøµã--> 
+         <Item name="ActSqn"      deli_asc="44"/>  <!--ÔÝÊÕ¿ÆÄ¿Ë³ÐòºÅ--> 
+         <Item name="ActDat"      deli_asc="44"/>  <!--»á¼ÆÈÕÆÚ--> 
+         <Item name="TckNo"       deli_asc="44"/>  <!--»á¼ÆÁ÷Ë®ºÅ--> 
+         <Item name="HRspCd"      deli_asc="44"/>  <!--Ö÷»úÏìÓ¦Âë--> 
+         <Item name="TaxVID"      deli_asc="44"/>  <!--Ë°Æ±ºÅÂë-->
+         <Item name="AgrNo"       deli_asc="44"/>  <!--Ð­Òé±àºÅ-->
+         <Item name="PrtNum"      deli_asc="44"/>  <!--Ë°Æ±´òÓ¡´ÎÊý-->
+         <Item name="PrtNod"      deli_asc="44"/>  <!--Ë°Æ±´òÓ¡Íøµã-->
+         <Item name="LevyNo"      deli_asc="44"/>  <!--Éê±¨ÐòºÅ-->
+         <Item name="TCusId"      deli_asc="44"/>  <!--ÄÉË°ÈË´úÂë-->
+         <Item name="TCusNm"      deli_asc="44"/>  <!--ÄÉË°ÈËÃû³Æ-->
+         <Item name="TBlDt"       deli_asc="44"/>  <!--Ë°Æ±³öÆ±ÈÕÆÚ-->
+         <Item name="TLtDt"       deli_asc="44"/>  <!--Ë°Æ±ÏÞ½ÉÈÕÆÚ-->
+         <Item name="CrpCod"      deli_asc="44"/>  <!--ÆóÒµ´úÂë-->
+         <Item name="BdgTyp"      deli_asc="44"/>  <!--Ô¤ËãÖÖÀà-->
+         <Item name="TrmSgn"      deli_asc="44"/>  <!--ÕûÀíÆÚ±êÖ¾-->
+         <Item name="CrpTyp"      deli_asc="44"/>  <!--ÆóÒµ×¢²áÀàÐÍ-->
+         <Item name="PVSign"      deli_asc="44"/>  <!--´òÓ¡¸¶¿îÆ¾Ö¤±êÖ¾-->
+         <Item name="TTpNm"       deli_asc="44"/>  <!--Ë°ÖÖÌõÊý-->
+         <Item name="ActSeq"      deli_asc="44"/>  <!--ÕËºÅÐòºÅ-->
+         <Item name="DrwTyp"      deli_asc="44"/>  <!--Ö§È¡·½Ê½-->
+         <Item name="PayCod"      deli_asc="44"/>  <!--²ÆÕþÖ§¸¶±àÂë-->
+         <Item name="APVchN"      deli_asc="44"/>  <!--²ÆÕþÆ¾Ö¤Á÷Ë®ºÅ-->
+         <Item name="DActNo"      deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕË³öÕËÕËºÅ-->
+         <Item name="CActNo"      deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕËÈëÕËÕËºÅ-->
+         <Item name="CclNo"       deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕËÏúÕËºÅ-->
+         <Item name="TxnCId"      deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕË½»Ò××ÓÂë-->
+         <Item name="CclDat"      deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕËÈÕÆÚ-->  
+         <Item name="CTckNo"      deli_asc="44"/>  <!--²ÆÕþÁãÓà¶î¹ÒÕË»á¼ÆÁ÷Ë®ºÅ-->        
+         <Item name="PrtNm"       length="4"/>    <!--²ÆÕþÁãÓà¶î¹ÒÕËÍ¨ÖªÊé´òÓ¡´ÎÊý-->  
+      </Data>
+   </Process>
+</BATCH>
+

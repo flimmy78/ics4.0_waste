@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Application name="HIS" trace="yes">
+	<CodeSwitching>
+		<Table name="CcyCod" file="etc/HIS_CSW.XML">
+			<Column name="TCcyCd" sort="no"/>
+			<Column name="CcyCod" sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+
+	<Transaction code="880210" desc="´û¼Ç¿¨Ã÷Ï¸²éÑ¯">
+		<Request necessary="no">
+			<AddItem name="CCSCod" value="TLUE"/>
+			<AddItem name="HTxnCd" value="880210"/>
+			<AddItem name="TTxnCd" value="880210"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"  length="6"/>
+			</If>
+			<Else>
+				<Item name="QryDat" length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+				<Item name="CardNo" length="19" expression="DELSPACE($CardNo,both)" desc="¹«ÎñÔ±¿¨ºÅ"/>
+				<Item name="TxnAmt" length="12" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),12,0,1)" desc="½»Ò×½ð¶î"/>
+				<Item name="CardNm" length="30" expression="DELSPACE($CardNm,both)" desc="¹«ÎñÔ±¿¨Ãû"/>
+				<Item name="AuthCd" length=" 6" desc="ÊÚÈ¨ºÅ"/>
+				<Item name="TLogNo" length=" 6" desc="½»Ò×Á÷Ë®ºÅ"/>
+				<Item name="Append" length="18" desc="¸½¼Ó×Ö¶Î"/>
+			</Else>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="RecLen" length="4"/>
+					<Item name="ApCode" length="2"/>
+					<Item name="OFmtCd" length="3"/>
+					<Item name="PageNo" length="4"/>
+					<Item name="VarSiz" length="1"/>
+					<Item name="Ttl"    head_len="3"/>
+					<Item name="SubTtl" head_len="3"/>
+					<Item name="CardNo" length="19" desc="¹«ÎñÔ±¿¨ºÅ"/>
+					<Item name="CardNm" length="30" desc="¹«ÎñÔ±¿¨Ãû"/>
+					<Group name="Rec">
+						<Item name="TxnDat" length=" 8" offset="3" desc="½»Ò×ÈÕÆÚ"/>
+						<Item name="TxnTim" length=" 8" desc="½»Ò×Ê±¼ä"/>
+						<Item name="MerId"  length="15" desc="ÉÌ»§ºÅ"/>
+						<Item name="TermId" length=" 8" desc="ÖÕ¶ËºÅ"/>
+						<Item name="MerNam" length="43" expression="CGBCLEAR($MerNam)" desc="ÉÌ»§Ãû³Æ"/>
+						<Item name="TLogNo" length=" 6" desc="½»Ò×Á÷Ë®ºÅ"/>
+						<Item name="TmpAmt" length="12" desc="½»Ò×½ð¶î"/>
+						<AddItem name="DtlAmt" length="15" expression="ADDCHAR(DELBOTHSPACE($TmpAmt),15,0,1)" desc="½»Ò×½ð¶î"/>
+						<Item name="TCcyCd" length=" 3" desc="½»Ò×»õ±Ò"/>
+						<SwitchCode name="TCcyCd" tab_name="CcyCod" col_name="TCcyCd" new_name="CcyCod"/>
+						<Item name="ThdCod" length=" 4" desc="½»Ò×Âë"/>
+						<Item name="AuthCd" length=" 6" desc="ÊÚÈ¨ºÅ"/>
+					</Group>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+
+
+
+	<Transaction code="882310" desc="¶ÔË½ÀúÊ·Ã÷Ï¸²éÑ¯">
+		<Request necessary="no">
+			<AddItem name="CCSCod" value="TLUU"/>
+			<AddItem name="HTxnCd" value="882310"/>
+			<AddItem name="TTxnCd" value="882310"/>
+			<Include file="etc/HSTTIA_IIT.XML" />
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"  length="6"/>
+			</If>
+			<Else>
+				<Item name="CardNo" length="19" expression="DELSPACE($CardNo,both)" desc="¿¨ºÅ"/>
+				<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)"  desc="ÕËºÅ"/>
+				<Item name="BegDat" length=" 8" desc="¿ªÊ¼ÈÕÆÚ"/>
+				<Item name="EndDat" length=" 8" desc="½áÊøÈÕÆÚ"/>
+			</Else>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="RecLen" length="4"/>
+					<Item name="ApCode" length="2"/>
+					<Item name="OFmtCd" length="3"/>
+					<Item name="PageNo" length="4"/>
+					<Item name="VarSiz" length="1"/>
+					<Item name="Ttl"    head_len="3"/>
+					<Item name="SubTtl" head_len="3"/>
+	         <Group name="Rec">
+						<Item name="TckNo"  length="11" offset="3" desc="»á¼ÆÁ÷Ë®ºÅ"/>
+						<Item name="CardNo" length="19" desc="¿¨ºÅ"/>
+						<Item name="ActNo"  length="21" desc="ÕËºÅ"/>
+						<Item name="BokDat" length=" 8" desc="¼ÇÕËÈÕÆÚ"/>
+						<Item name="TxnSmr" length="60" desc="ÕªÒª"/>
+						<Item name="CdFlag" length=" 1" desc="½è´û±êÖ¾"/>
+						<Item name="BokAmt" length="15" desc="¼ÇÕË½ð¶î"/>
+						<Item name="Bal"    length="15" desc="Óà¶î"/>
+						<Item name="TxnNod" length=" 6" desc="½»Ò×Íøµã"/>
+						<Item name="CcyCod" length=" 3" desc="»õ±Ò"/>
+						<Item name="TxnLog" length="18" desc="½»Ò×ÈÕÖ¾ºÅ"/>
+						<Item name="TxnAdr" length="60" desc="½»Ò×µØµã"/>
+						<Item name="TxnDat" length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+						<Item name="TxnTim" length=" 6" desc="½»Ò×Ê±¼ä"/>
+						<Item name="AuthCd" length=" 6" desc="ÊÚÈ¨ºÅ"/>
+	         </Group>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+
+
+
+	<Transaction code="882230" desc="¶Ô¹«ÀúÊ·Ã÷Ï¸²éÑ¯">
+		<Request necessary="no">
+			<AddItem name="CCSCod" value="TLUE"/>
+			<AddItem name="HTxnCd" value="882230"/>
+			<AddItem name="TTxnCd" value="882230"/>
+			<Include file="etc/HSTTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx" length="6"/>
+			</If>
+			<Else>
+				<Item name="ActNo"  length="21" expression="DELSPACE($ActNo,both)"  desc="ÕËºÅ"/>
+				<Item name="TTxnTp" length=" 1" value="1" desc="½»Ò×ÀàÐÍ¡¾ÕÊÎñÀà¡¿"/>
+				<Item name="CcyCod" length=" 3" necessary="no" desc="±ÒÖÖ"/>
+				<Item name="BegDat" length=" 8" desc="¿ªÊ¼ÈÕÆÚ"/>
+				<Item name="EndDat" length=" 8" desc="½áÊøÈÕÆÚ"/>
+				<Item name="MinAmt" length="15" desc="×îÐ¡½ð¶î"/>
+				<Item name="MaxAmt" length="15" desc="×î´ó½ð¶î"/>
+				<Item name="BTxnCd" length=" 4" necessary="no" desc="²éÑ¯½»Ò×Âë"/>
+				<Item name="TxnTlr" length=" 7" necessary="no" desc="²éÑ¯¹ñÔ±Âë"/>
+			</Else>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/HSTTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<Item name="RecLen" length="4"/>
+					<Item name="ApCode" length="2"/>
+					<Item name="OFmtCd" length="3"/>
+					<Item name="PageNo" length="4"/>
+					<Item name="VarSiz" length="1"/>
+					<Item name="Ttl"    head_len="3"/>
+					<Item name="SubTtl" head_len="3"/>
+	         <Group name="Rec">
+						<Item name="TxnDat" length=" 8" offset="3" desc="½»Ò×ÈÕÆÚ"/>
+						<Item name="TxnTlr" length=" 7" desc="¹ñÔ±ºÅ"/>
+						<Item name="TxnLog" length=" 9" desc="½»Ò×ÈÕÖ¾ºÅ"/>
+						<Item name="TckNo"  length="11" desc="»á¼ÆÁ÷Ë®ºÅ"/>
+						<Item name="SeqNo"  length=" 1" desc="Á÷Ë®ÐòºÅ"/>
+						<Item name="CdFlag" length=" 1" desc="½è´û±êÖ¾"/>
+						<Item name="CcyCod" length=" 3" desc="»õ±Ò"/>
+						<Item name="BokAmt" length="15" desc="¼ÇÕË½ð¶î"/>
+						<Item name="Bal"    length="15" desc="Óà¶î"/>
+						<Item name="BTxnCd" length=" 6" desc="½»Ò×Âë"/>
+						<Item name="BSubCd" length=" 3" desc="½»Ò××ÓÂë"/>
+						<Item name="Year"   length=" 4" desc="Äê·Ý"/>
+						<Item name="PgNum"  length=" 6" desc="Ò³ºÅ"/>
+						<Item name="PgSeq"  length=" 2" desc="Ò³ÄÚ±ÊÐòºÅ"/>
+						<Item name="OppAct" length="32" desc="¶Ô·½ÕÊºÅ"/>
+						<Item name="OppNam" length="60" desc="¶Ô·½»§Ãû"/>
+	         </Group>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes" deli_asc="-1"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1"/>
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+</Application>

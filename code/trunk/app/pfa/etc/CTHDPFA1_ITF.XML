@@ -1,0 +1,352 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="PFA" server="OFRTPFA1" timeout="120">
+  <GetTxnCode type="xml">
+    <Item value="PFADATA.TComCd"/>
+  </GetTxnCode>
+
+  <Define>
+    <Macro name="REQMSGHEAD" desc="¹«¹²±¨ÎÄÍ·">
+      <ReadElement name="BATCHHEAD">
+        <ReadElement name="TRAORGCODE"   ETF_name="TOrgCd" desc="Ê¡²ÆÕþÌüµÄ»ú¹¹´úÂë"/>
+        <ReadElement name="TRADATE"      ETF_name="TActDt" desc="½»Ò×ÈÕÆÚ"/>
+        <ReadElement name="PACKNO"       ETF_name="TPkgNo" desc="°üÁ÷Ë®ºÅ"/>
+        <ReadElement name="ALLNUM"       ETF_name="TotNum" desc="×Ü±ÊÊý"/>
+        <ReadElement name="ALLAMT"       ETF_name="TotAmt" desc="×Ü½ð¶î"/>
+        <ReadElement name="CHILDPACKNUM" ETF_name="SubNum" desc="×Ó°ü×ÜÊý"/>
+        <ReadElement name="CURPACKNO"    ETF_name="CurSeq" desc="±¾°üÐòºÅ"/>
+        <ReadElement name="CURPACKNUM"   ETF_name="CurNum" desc="±¾°ü±ÊÊý"/>
+        <ReadElement name="CURPACKAMT"   ETF_name="CurAmt" desc="±¾°ü½ð¶î"/>
+      </ReadElement>
+    </Macro>
+
+    <Macro name="RES9000" desc="Í¨ÓÃÓ¦´ð">
+      <WriteElement name="DETAIL9000">
+        <WriteElement name="ORIMSGNO"    ETF_name="CmtCod" desc="Ô­Ê¼±¨ÎÄµÄ±àºÅ"/>
+        <WriteElement name="ORIWORKDATE" ETF_name="CmtDat" desc="Ô­Ê¼±¨ÎÄµÄ¹¤×÷ÈÕÆÚ"/>
+        <WriteElement name="ORIORGCODE"  ETF_name="TOrgCd" desc="Ô­·¢Æð»ú¹¹´úÂë"/>
+        <WriteElement name="ORITRADATE"  ETF_name="TActDt" desc="Ô­½»Ò×ÈÕÆÚ"/>
+        <WriteElement name="ORITRANO"    ETF_name="TTxnId" desc="Ô­½»Ò×Á÷Ë®"/>
+        <WriteElement name="RESULT"      ETF_name="TRtnCd" desc="´¦Àí½á¹û"/>
+        <WriteElement name="AddWord"     ETF_name="Append" desc="¸½ÑÔ"/>
+      </WriteElement>
+    </Macro>
+  </Define>
+
+
+  <Transaction code="1201" service="PFA1201" log_switch="1" desc="ÊÚÈ¨Ö§¸¶Æ¾Ö¤">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1201" ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"            ETF_name="Sub_TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID"    ETF_name="Sub_DtlKey" desc="Ö÷¼ü"/>
+            <ReadElement name="APPRVCHRNO"       ETF_name="Sub_AVchCd" desc="Æ¾Ö¤±àºÅ"/>
+            <ReadElement name="ADJUSTAPPRVCHRNO" ETF_name="Sub_MdAVCd" desc="µ÷ÕÊÆ¾Ö¤±àÂë"/>
+            <ReadElement name="ACCTCODE"         ETF_name="Sub_SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="APPRVCHRMONEY"    ETF_name="Sub_DtlAmt" expression="FABSAMT(AMTPOWER($Sub_DtlAmt,2),15)" desc="Ö§¸¶½ð¶î"/>
+            <ReadElement name="DBGTTYPE"         ETF_name="Sub_TBusTp" desc="ÒµÎñÖÖÀà"/>
+            <ReadElement name="DEPTID"           ETF_name="Sub_DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIVID"            ETF_name="Sub_BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="ECONOMICTYPEID"   ETF_name="Sub_EConTp" desc="¾­¼Ã¿ÆÄ¿±àÂë"/>
+            <ReadElement name="FUNDKINDID"       ETF_name="Sub_AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+            <ReadElement name="GATHBANKACCT"     ETF_name="Sub_PyeAct" desc="ÊÕ¿îµ¥Î»ÕÊºÅ"/>
+            <ReadElement name="GATHBANKNAME"     ETF_name="Sub_PyeBNm" desc="ÊÕ¿îÒøÐÐÃû³Æ"/>
+            <ReadElement name="GATHDIVNAME"      ETF_name="Sub_PyeNam" desc="ÊÕ¿îµ¥Î»Ãû³Æ"/>
+            <ReadElement name="MAKEDATE"         ETF_name="Sub_VchDat" desc="Ö§¸¶ÁîÈÕÆÚ"/>
+            <ReadElement name="PAYBANKACCT"      ETF_name="Sub_PayAct" desc="¸¶¿îÕÊºÅ"/>
+            <ReadElement name="PAYBANKNO"        ETF_name="Sub_PayBNm" desc="¸¶¿îÒøÐÐÐÐºÅ"/>
+            <ReadElement name="PAYDIVID"         ETF_name="Sub_BCusId" desc="¸¶¿îµ¥Î»±àÂë"/>
+            <ReadElement name="PROJID"           ETF_name="Sub_PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="USAGE"            ETF_name="Sub_DtlSmr" desc="ÓÃÍ¾"/>
+            <ReadElement name="VCHREXTCOL1"      ETF_name="Sub_VchNo"  desc="½áËãºÅ"/>
+            <ReadElement name="PLANSUMOBJID"     ETF_name="Sub_QuoId"  desc="¶î¶ÈID"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="1202" service="PFA1202" log_switch="1" desc="ÊÚÈ¨Ö§¸¶×ÜÕÊ¶ÔÕÊ½á¹û">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1202" ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"         ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID" ETF_name="VchKey" desc="Ö÷¼ü"/>
+            <ReadElement name="ACCTCODE"      ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="BALANCESTATUS" ETF_name="ChkFlg" desc="¶ÔÕÊ±êÊ¶"/>
+            <ReadElement name="BANKMONEY"     ETF_name="BnkCAmt" expression="FABSAMT(AMTPOWER($BnkCAmt,2),15)" desc="µ±Ñ®£¨ÔÂ£©ÒøÐÐÖ§³ö½ð¶î"/>
+            <ReadElement name="BANKNUM"       ETF_name="BnkTAmt" expression="FABSAMT(AMTPOWER($BnkTAmt,2),15)" desc="ÒøÐÐÀÛ¼ÆÖ§³ö½ð¶î"/>
+            <ReadElement name="CENTERMONEY"   ETF_name="PfaCAmt" expression="FABSAMT(AMTPOWER($PfaCAmt,2),15)" desc="µ±Ñ®£¨ÔÂ£©Ö§¸¶¾ÖÖ§³ö½ð¶î"/>
+            <ReadElement name="CENTERNUM"     ETF_name="PfaTAmt" expression="FABSAMT(AMTPOWER($PfaTAmt,2),15)" desc="Ö§¸¶¾ÖÀÛ¼ÆÖ§³ö½ð¶î"/>
+            <ReadElement name="DEPTID"        ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIFFMONEY"     ETF_name="DffCAmt" expression="FABSAMT(AMTPOWER($DffCAmt,2),15)" desc="µ±Ñ®£¨ÔÂ£©Ö§³ö½ð¶î²î¶î"/>
+            <ReadElement name="DIFFNUM"       ETF_name="DffTAmt" expression="FABSAMT(AMTPOWER($DffTAmt,2),15)" desc="ÀÛ¼ÆÖ§³ö½ð¶î²î¶î"/>
+            <ReadElement name="DIVID"         ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="MONTH"         ETF_name="MonFlg" desc="ÔÂ£¨Ñ®£©"/>
+            <ReadElement name="PAYMODEID"     ETF_name="PayMod" desc="Ö§¸¶·½Ê½"/>
+            <ReadElement name="PROJID"        ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="STAN"          ETF_name="RtnKey" desc="·µ»ØÖ÷¼ü"/>
+            <ReadElement name="YEAR"          ETF_name="Year"   desc="Äê¶È"/>
+            <ReadElement name="FUNDKINDID"    ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="1203" service="PFA1203" log_switch="1" desc="ÊÚÈ¨Ö§¸¶Ã÷ÎúÖ§³ö¶ÔÕÊ½á¹û">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1203" ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"         ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID" ETF_name="VchKey" desc="Ö÷¼ü"/>
+            <ReadElement name="ACCTCODE"      ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="BANKMONEY"     ETF_name="BnkAmt" expression="FABSAMT(AMTPOWER($BnkAmt,2),15)" desc="ÒøÐÐÖ§³ö½ð¶î"/>
+            <ReadElement name="CENTERMONEY"   ETF_name="PfaAmt" expression="FABSAMT(AMTPOWER($PfaAmt,2),15)" desc="Ö§¸¶¾ÖÖ§³ö½ð¶î"/>
+            <ReadElement name="DEPTID"        ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIFFNUM"       ETF_name="DffAmt" expression="FABSAMT(AMTPOWER($DffAmt,2),15)" desc="Ö§³ö²î¶î"/>
+            <ReadElement name="DIVID"         ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="PAYMODEID"     ETF_name="PayMod" desc="Ö§¸¶·½Ê½"/>
+            <ReadElement name="PROJID"        ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="STAN"          ETF_name="RtnKey" desc="·µ»ØÖ÷¼ü"/>
+            <ReadElement name="ZFDATA"        ETF_name="PfaDat" desc="Ö§¸¶ÈÕÆÚ"/>
+            <ReadElement name="FUNDKINDID"    ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="1204" service="PFA1204" log_switch="1" desc="ÊÚÈ¨Ö§¸¶¶î¶ÈÍ¨Öªµ¥">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1204" ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"          ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID"  ETF_name="QuoKey" desc="Ö÷¼ü"/>
+            <ReadElement name="APPRVCHRNO"     ETF_name="AQuoCd" desc="Æ¾Ö¤±àºÅ"/>
+            <ReadElement name="PLANSUMOBJID"   ETF_name="QuoId"  desc="¶î¶ÈID"/>
+            <ReadElement name="ABSTRACT"       ETF_name="QuoSmr" desc="ÕªÒª"/>
+            <ReadElement name="ACCTCODE"       ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="DEPTID"         ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIVID"          ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="ECONOMICTYPEID" ETF_name="EConTp" desc="¾­¼Ã·ÖÀà±àÂë"/>
+            <ReadElement name="MAKEDATE"       ETF_name="QuoDat" desc="ÖÆµ¥ÈÕÆÚ"/>
+            <ReadElement name="APPRVCHRMONEY"  ETF_name="QuoAmt" expression="FABSAMT(AMTPOWER($QuoAmt,2),15)" desc="Ö§¸¶½ð¶î"/>
+            <ReadElement name="PLANTIME"       ETF_name="QuoMon" desc="ÔÂ·Ý"/>
+            <ReadElement name="PROJID"         ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="YEAR"           ETF_name="Year"   desc="Äê¶È"/>
+            <ReadElement name="FUNDKINDID"     ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="1205" service="PFA1205" log_switch="1" desc="ÊÚÈ¨Ö§¸¶ÓÃ¿î¼Æ»®¶î¶È¶ÔÕÊ½á¹û">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1205" ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"         ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID" ETF_name="QuoKey" desc="Ö÷¼ü"/>
+            <ReadElement name="ACCTCODE"      ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="BANKMONEY"     ETF_name="BnkQuo" expression="FABSAMT(AMTPOWER($BnkQuo,2),15)" desc="ÒøÐÐ¶î¶È½ð¶î"/>
+            <ReadElement name="CENTERMONEY"   ETF_name="PfaQuo" expression="FABSAMT(AMTPOWER($PfaQuo,2),15)" desc="Ö§¸¶¾Ö¶î¶È½ð¶î"/>
+            <ReadElement name="DEPTID"        ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIFFNUM"       ETF_name="DifQuo" expression="FABSAMT(AMTPOWER($DifQuo,2),15)" desc="¶î¶È²î¶î"/>
+            <ReadElement name="DIVID"         ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="PLANTIME"      ETF_name="QuoMon" desc="ÔÂ·Ý"/>
+            <ReadElement name="PROJID"        ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="STAN"          ETF_name="RtnKey" desc="·µ»ØÖ÷¼ü"/>
+            <ReadElement name="FUNDKINDID"    ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="1206" service="PFA1206" log_switch="1" desc="¹«Îñ¿¨Ïû·Ñ±¨Ïú»¹¿îÐÅÏ¢">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+      		<Quote name="REQMSGHEAD"/>
+          <ReadGroupElement name="DETAIL1206"  ETF_name="Rec" repeat_name="CurNum">
+            <ReadElement name="TRANO"          ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID"  ETF_name="MerKey" desc="Ö÷¼ü"/>
+            <ReadElement name="CONSUMEINFOID"  ETF_name="PfaLog" desc="²ÆÕþÏû·ÑÁ÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHRNO"     ETF_name="AVchCd" desc="Æ¾Ö¤±àºÅ"/>
+            <ReadElement name="CARDID"         ETF_name="CardNo" desc="¹«Îñ¿¨ºÅ"/>
+            <ReadElement name="CARDUSERNAME"   ETF_name="CardNm" desc="³Ö¿¨ÈË"/>
+            <ReadElement name="CONSUMEDATE"    ETF_name="TxnDat" desc="Ïû·ÑÈÕÆÚ"/>
+            <ReadElement name="CONSUMEMONEY"   ETF_name="DtlAmt" expression="FABSAMT(AMTPOWER($DtlAmt,2),15)" desc="Ö§¸¶½ð¶î"/>
+            <ReadElement name="INFOBANKID"     ETF_name="LogNo"  desc="ÒøÐÐÁ÷Ë®"/>
+            <ReadElement name="INFONUM"        ETF_name="TLogNo" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="PROVIDEADDRESS" ETF_name="MerAdr" desc="ÉÌ¼ÒµØÖ·"/>
+            <ReadElement name="PROVIDEADDRESS" ETF_name="MerNam" desc="ÉÌ¼ÒÐÅÏ¢"/>
+          </ReadGroupElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="9204" log_switch="PFA9204" desc="´ú¿Û´ú½ÉÒµÎñ»ØÖ´">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+          <ReadElement name="DETAIL9204">
+            <ReadElement name="TRANO"            ETF_name="TTxnId" desc="½»Ò×Á÷Ë®ºÅ"/>
+            <ReadElement name="APPRVCHROBJID"    ETF_name="TTxnId" desc="Ö÷¼ü"/>
+            <ReadElement name="APPRVCHRNO"       ETF_name="AVchCd" desc="Æ¾Ö¤±àºÅ"/>
+            <ReadElement name="ADJUSTAPPRVCHRNO" ETF_name="AJstCd" desc="µ÷ÕÊÆ¾Ö¤±àÂë"/>
+            <ReadElement name="ACCTCODE"         ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            <ReadElement name="APPRVCHRMONEY"    ETF_name="DtlAmt" expression="AMTSIMPLEFMT($DtlAmt)" desc="Ö§¸¶½ð¶î"/>
+            <ReadElement name="DBGTTYPE"         ETF_name="TBusNm" desc="ÒµÎñÖÖÀà"/>
+            <ReadElement name="DEPTID"           ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            <ReadElement name="DIVID"            ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            <ReadElement name="ECONOMICTYPEID"   ETF_name="EConTp" desc="¾­¼Ã¿ÆÄ¿±àÂë"/>
+            <ReadElement name="FUNDKINDID"       ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ"/>
+            <ReadElement name="GATHBANKACCT"     ETF_name="PyeAct" desc="ÊÕ¿îÒøÐÐÕÊºÅ"/>
+            <ReadElement name="GATHBANKNAME"     ETF_name="PyeBNm" desc="ÊÕ¿îÒøÐÐ"/>
+            <ReadElement name="GATHDIVNAME"      ETF_name="PyeNam" desc="ÊÕ¿îÈËÈ«³Æ"/>
+            <ReadElement name="MAKEDATE"         ETF_name="VchDat" desc="Ö§¸¶ÁîÈÕÆÚ"/>
+            <ReadElement name="PAYBANKACCT"      ETF_name="PayAct" desc="¸¶¿îÕÊºÅ"/>
+            <ReadElement name="PAYBANKNO"        ETF_name="PayBNo" desc="¸¶¿îÒøÐÐÐÐºÅ"/>
+            <ReadElement name="PAYDIVID"         ETF_name="BCusId" desc="¸¶¿îµ¥Î»±àÂë"/>
+            <ReadElement name="PROJID"           ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            <ReadElement name="ABSTRACT"         ETF_name="DtlSmr" desc="ÓÃÍ¾"/>
+            <ReadElement name="VCHREXTCOL1"      ETF_name="VchNo"  desc="½áËãºÅ"/>
+            <ReadElement name="PLANSUMOBJID"     ETF_name="QuoId"  desc="¶î¶ÈID"/>
+          </ReadElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="9990" log_switch="PFA9990" desc="¹«¹²Êý¾Ý¸üÐÂÍ¨Öª">
+    <Request>
+      <ReadElement name="CFX">
+        <ReadElement name="MSG">
+		      <ReadElement name="BATCHHEAD">
+		        <ReadElement name="TRADATE" ETF_name="TActDt" desc="½»Ò×ÈÕÆÚ"/>
+		        <ReadElement name="PACKNO"  ETF_name="TPkgNo" desc="°üÁ÷Ë®ºÅ"/>
+		      </ReadElement>
+          <ReadElement name="DEPT9990" necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp1" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum1" desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec1" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"      ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="DEPTID"     ETF_name="DptCod" desc="´¦ÊÒ±àÂë"/>
+            	<ReadElement name="DEPTNAME"   ETF_name="DptNam" desc="´¦ÊÒÃû³Æ"/>
+            	<ReadElement name="UPDATETYPE" ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="DIV9990" necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp2" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum2" desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec2" repeat_name="RecNum2">
+            	<ReadElement name="OBJID"        ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="DIVID"        ETF_name="BCusId" desc="µ¥Î»±àÂë"/>
+            	<ReadElement name="DIVNAME"      ETF_name="BCusNm" desc="µ¥Î»Ãû³Æ"/>
+            	<ReadElement name="FIRSTDIVID"   ETF_name="DptCod" desc="²¿ÃÅ±àÂë"/>
+            	<ReadElement name="FIRSTDIVNAME" ETF_name="DptNam" desc="²¿ÃÅÃû³Æ"/>
+            	<ReadElement name="UPDATETYPE"   ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="ACCT9990" necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp3" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum3" desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec3" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"      ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="ACCTCODE"   ETF_name="SubCod" desc="¿ÆÄ¿±àÂë"/>
+            	<ReadElement name="ACCTNAME"   ETF_name="SubNam" desc="¿ÆÄ¿Ãû³Æ"/>
+            	<ReadElement name="UPDATETYPE" ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="ECONOMICTYPE9990" necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp4" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum4" desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec4" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"            ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="ECONOMICTYPEID"   ETF_name="EConTp" desc="¾­¼Ã·ÖÀà±àÂë"/>
+            	<ReadElement name="ECONOMICTYPENAME" ETF_name="EConNm" desc="¾­¼Ã·ÖÀàÃû³Æ"/>
+            	<ReadElement name="UPDATETYPE"       ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="PROJ9990" necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp5" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum5 desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec5" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"      ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="PROJID"     ETF_name="PrjCod" desc="ÏîÄ¿±àÂë"/>
+            	<ReadElement name="PROJNAME"   ETF_name="PrjNam" desc="ÏîÄ¿Ãû³Æ"/>
+            	<ReadElement name="UPDATETYPE" ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="PAYMODE9990 " necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp6" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum6 desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec6" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"       ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="PAYMODEID"   ETF_name="PrjCod" desc="Ö§¸¶·½Ê½±àÂë"/>
+            	<ReadElement name="PAYMODENAME" ETF_name="PrjNam" desc="Ö§¸¶·½Ê½Ãû³Æ"/>
+            	<ReadElement name="UPDATETYPE"  ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+          <ReadElement name="FUNDKIND9990  " necessary="no">
+            <ReadElement name="DATATYPE"  ETF_name="DataTp7" desc="Êý¾ÝÖÖÀà"/>
+            <ReadElement name="UPDATENUM" ETF_name="RecNum7 desc="¸üÐÂÌõÊý"/>
+          	<ReadGroupElement name="PUBDATA101" ETF_name="Rec7" repeat_name="RecNum1">
+            	<ReadElement name="OBJID"        ETF_name="DataId" desc="Î¨Ò»ID"/>
+            	<ReadElement name="FUNDKINDID"   ETF_name="AmtKnd" desc="×Ê½ðÐÔÖÊ±àÂë"/>
+            	<ReadElement name="FUNDKINDNAME" ETF_name="AmtNam" desc="×Ê½ðÐÔÖÊÃû³Æ"/>
+            	<ReadElement name="UPDATETYPE"   ETF_name="UpdTyp" desc="¸üÐÂÀàÐÍ"/>
+	          </ReadGroupElement>
+          </ReadElement>
+        </ReadElement>
+      </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <Quote name="RES9000"/>
+    </Response>
+  </Transaction>
+</Application>

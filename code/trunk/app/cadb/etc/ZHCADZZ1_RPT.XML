@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ÐÐÕþÊÂÒµÊÕ·ÑÔúÕÊ±í -->
+<Application  dbconnect="YES" trclog="RPTCAD_001.trc">
+  <VarDef>
+    <String alias="TckNo" name="$TckNo" />
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select * from cadjnldtl where LogNo='%s'" >
+        <FieldList>$LogNo|</FieldList>
+      </Sql>  
+    </Iterative>
+    <Summed type="sql" >
+      <Sql sql="select sum(CAST(ItmAmt AS BIGINT)) TotAmt 
+           from cadjnldtl   where LogNo='%s'" >
+        <FieldList>$LogNo|</FieldList>
+      </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="10" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$CusNam"/>
+      <Para label="02" alias="SUBSTR($ActDat,1,4)"/>
+      <Para label="03" alias="SUBSTR($ActDat,5,2)"/>
+      <Para label="04" alias="SUBSTR($ActDat,7,2)"/>
+      <Format>
+					  		ÐÐÕþÊÂÒµÊÕ·ÑÔþÕË±í 
+					  		
+    ½É¿îµ¥Î»£¨ÈË£©£º#                                          #    Äê#  ÔÂ#  ÈÕ                                                       
+©³©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§Ö´ÊÕµ¥Î»´úÂë©§ÏîÄ¿´úÂë©§      ÏîÄ¿Ãû³Æ      ©§¼Æ·Ñµ¥Î»©§¼Æ·ÑÊýÁ¿©§   ÊÕ·Ñ±ê×¼       ©§      ½ð¶î        ©§ 
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="SUBSTR($CrgCod,1,3)"	spread="mid"/>
+      <Para label="02" alias="SUBSTR($CrgCod,6,2)"	spread="mid"/>
+      <Para label="03" alias="$CrgItm"			spread="mid"/>
+      <Para label="04" alias="$CrgUni"			spread="mid"/>
+      <Para label="05" alias="$UniNum"			spread="mid"/>
+      <Para label="06" alias="$UniPri"			spread="mid"/>
+      <Para label="07" alias="AMTFMT($ItmAmt)"		spread="mid"/>
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§#           ©§   #    ©§#                   ©§#       ©§#       ©§#                 ©§#                 ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="AMTFMT($TotAmt)"  spread="right" />
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼ÆÈËÃñ±Ò  ©§ #                                                                                        ©§            
+©»©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+      </Format>
+    </Summed>
+  </FormatDefine>
+</Application>

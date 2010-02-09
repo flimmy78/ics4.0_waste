@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ãÖÝ·ÖÐÐÒøÆó¼ÇÕÊÆ¾Ö¤ -->
+<Application  dbconnect="YES" trclog="BCM441999002.trc">
+	<VarDef>
+		<String alias="BilDat"			pos="1" />
+		<String alias="ActDat"			pos="2" />
+		<String alias="PrtTlr"			pos="3" />
+		<String alias="NodNo"				pos="4" />
+		<String alias="BTckNo"			pos="5" />
+		<String alias="ETckNo"			pos="6" />
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select LOGNO, MACTNO, MACTNM, SACTNO, SACTNM, TXNAMT, SMR, PRTCNT, TLRID, SUP1ID, HLOGNO, TCKNO
+									from BCMTXNJNL441
+								 where NodNo='%s' and ActDat='%s' and TLRID='%s'
+									 and TxnSts='S' and HTxnst='S' and HRspCd='SC0000'
+									 and TckNo between '%s' and '%s'
+							order by TCKNO" >
+				<FieldList>$NodNo|$ActDat|$PrtTlr|$BTckNo|$ETckNo|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine pagerows="2" pagesum="YES">
+		<Iterative line="1">
+			<Para label="01" alias="$BilDat"           spread="left" />
+			<Para label="02" alias="$MACTNO"           spread="left" />
+			<Para label="03" alias="$MACTNM"           spread="left" />
+			<Para label="04" alias="$SACTNO"           spread="left" />
+			<Para label="05" alias="$SACTNM"           spread="left" />
+			<Para label="06" alias="AMTFMT($TXNAMT)"   spread="left" />
+			<Para label="07" alias="AMTTOCAP($TXNAMT)" spread="left" />
+			<Para label="08" alias="$SMR"              spread="left" />
+			<Para label="09" alias="$TLRID"            spread="left" />
+			<Para label="10" alias="$TCKNO"            spread="left" />
+			<Para label="11" alias="$SUP1ID"           spread="left" />
+			<Para label="12" alias="$PRTCNT"           spread="left" />
+			<Para label="13" alias="$ActDat"           spread="left" />
+			<Format>
+                                ½»Í¨ÒøÐÐ¹ãÖÝ·ÖÐÐÄ¸×ÓÕÊ»§×Ê½ð»®²¦Í¨ÖªÊé
+    ©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+    ©§ ½»Ò×  ÈÕÆÚ£º#                                                                           ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ½»  Ò×  Âë£º464902                                                                             ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ½»Ò×  Ãû³Æ£ºÄ¸×ÓÕÊ»§×Ê½ð»®²¦                                                                   ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ¸¶¿îÈËÕÊºÅ£º#                                                              ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ¸¶¿îÈËÃû³Æ£º#                                                                                  ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ÊÕ¿îÈËÕÊºÅ£º#                                                              ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ÊÕ¿îÈËÃû³Æ£º#                                                                                  ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ±ÒÖÖ  ·ûºÅ£ºCNY                                                                                ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ½»Ò×  ½ð¶î£º#                                                                          ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ½ð¶î  ´óÐ´£º#                                                                      ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ Õª      Òª£º#                                                                                  ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§ ¼ÇÕÊ¹ñÔ±ºÅ£º#                ¹ñÔ±  Á÷Ë®£º#              ÊÚÈ¨¹ñÔ±ºÅ£º#    ©§
+    ©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+    ©§                    µÚ # ´Î´òÓ¡                       ´òÓ¡ÈÕÆÚ :#                        ©§
+    ©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+
+
+			</Format>
+		</Iterative>
+	</FormatDefine>
+</Application>

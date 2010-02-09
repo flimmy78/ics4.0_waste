@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Application name="MDF" timeout='3600'>
+
+  <Transaction code="464811" log_switch="1" desc="ÎÄ¼þÍ¨Ñ¶½Ó¿Ú">
+    <Request>
+      <Item name="MdfCod" length=" 1" value="1" desc="´¦Àí´úÂë"/>
+      <Item name="TBSDM"  length=" 1" necessary="no" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"   length="20" necessary="no" desc="Éç±£±àÂë"/>
+      <Item name="LstFNm" length="60" necessary="no" desc="´«ËÍÎÄ¼þÃû"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="RspMsg" length="60" desc="´¦ÀíÊ§°ÜÔ­Òò"/>
+      <Item name="LstFNm" length="60" desc="·µ»ØÁÐ±íÎÄ¼þÃû"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="464815" log_switch="1" desc="ÎÄ¼þÍ¨Ñ¶½Ó¿Ú">
+    <Request>
+      <Item name="MdfCod" length=" 1" value="2" desc="´¦Àí´úÂë"/>
+      <Item name="TBSDM"  length=" 1" necessary="no" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"   length="20" necessary="no" desc="Éç±£±àÂë"/>
+      <Item name="FilNam" length="60" necessary="no" desc="´«ËÍÎÄ¼þÃû"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="RspMsg" length="60" desc="´¦ÀíÊ§°ÜÔ­Òò"/>
+      <Item name="FilNam" length="60" desc="·µ»ØÁÐ±íÎÄ¼þÃû"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="464816" log_switch="1" desc="ÎÄ¼þÍ¨Ñ¶½Ó¿Ú">
+    <Request>
+      <Item name="MdfCod" length=" 1" value="3" desc="´¦Àí´úÂë"/>
+      <Item name="TBSDM"  length=" 1" necessary="no" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"   length="20" necessary="no" desc="Éç±£±àÂë"/>
+      <Item name="FilNam" length="60" necessary="no" desc="´«ËÍÎÄ¼þÃû"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="RspMsg" length="60" desc="´¦ÀíÊ§°ÜÔ­Òò"/>
+      <Item name="FilNam" length="60" desc="·µ»ØÁÐ±íÎÄ¼þÃû"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="464801" log_switch="1" desc="²éÑ¯Í¨Ñ¶½Ó¿Ú">
+    <Request>
+      <Item name="MdfCod" length=" 1" value="0" desc="´¦Àí´úÂë"/>
+      <Item name="TBSDM"  length=" 1" desc="Í¶±£ÊôµØÂë"/>
+      <Item name="SBBM"   length="20" desc="Éç±£±àÂë"/>
+      <Item name="FilNam" length="60" necessary="no" desc="·µ»ØÁÐ±íÎÄ¼þÃû"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length=" 6" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="RspMsg" length="60" desc="´¦ÀíÊ§°ÜÔ­Òò"/>
+      <If condition="IS_EQUAL_STRING($TRspCd,000000)">
+        <Item name="JFZT"   length="  1" desc="Í¶±£ÊôµØÂë"/>
+        <Item name="SSQ"    length="  6" desc="ËùÊôÇø"/>
+        <Item name="DWMC"   length=" 60" desc="½É·ÑÈËÃû³Æ"/>
+        <Item name="GRSF"   length="  3" desc="¸öÈËÉí·Ý£¨½É·ÑÈËÀà±ð£©"/>
+        <Item name="CBDWBM" length="  8" desc="ËùÔÚ²Î±£µ¥Î»±àÂë"/>
+        <Item name="CBDWMC" length="100" desc="ËùÔÚ²Î±£µ¥Î»Ãû³Æ"/>
+        <Item name="ZJLX"   length="  3" desc="Ö¤¼þÀàÐÍ"/>
+        <Item name="ZJHM"   length=" 25" desc="Ö¤¼þºÅÂë"/>
+        <Item name="XJHM"   length=" 40" desc="Ñ§¼®ºÅÂë"/>
+        <Item name="JFYH"   length="  2" desc="Ç©Ô¼½É·ÑÒøÐÐ"/>
+        <Item name="YHHH"   length=" 10" desc="½É·Ñ¿ª»§ÒøÐÐÐÐºÅ£¨Ö§ÐÐ´úÂë£©"/>
+        <Item name="KHYH"   length=" 40" desc="½É·Ñ¿ª»§ÒøÐÐÃû³Æ"/>
+        <Item name="YHZH"   length=" 40" desc="½É·ÑÒøÐÐÕÊºÅ"/>
+        <Item name="YHHM"   length=" 40" desc="½É·ÑÈËÒøÐÐ»§Ãû"/>
+        <Item name="YB"     length="  6" desc="ÓÊ±à"/>
+        <Item name="DWDZ"   length="100" desc="ÁªÏµµØÖ·"/>
+        <Item name="LXR"    length=" 10" desc="ÁªÏµÈË"/>
+        <Item name="LXDH"   length=" 15" desc="ÁªÏµµç»°"/>
+        <Item name="LRSJ"   length=" 14" desc="Â¼ÈëÊ±¼ä"/>
+        <Item name="XGSJ"   length=" 14" desc="ÐÞ¸ÄÊ±¼ä"/>
+      </If>
+    </Response>
+  </Transaction>
+
+
+
+</Application>

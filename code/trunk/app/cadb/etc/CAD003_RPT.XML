@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Öéº£ÊÐ²Æ¾Ö£¨»òÍòÉ½²Æ¾Ö£©ÐÐÕþÊÕ·ÑÇåµ¥ÔþÕË -->
+<Application  dbconnect="YES" trclog="RPTCAD_003.trc">
+  <VarDef>
+    <String alias="QCcyCod"  name="$QCcyCod"/>	<!--»õ±Ò´úÂë-->
+    <String alias="QNodNo"   name="$QNodNo"/>	<!--ÍøµãºÅ-->
+    <String alias="QCrgCod1" name="$QCrgCod1"/>	<!--ÊÕ·Ñ´úÂë-->
+    <String alias="QCrgCod" name="$QCrgCod"/>	<!--ÊÕ·Ñ´úÂë-->
+    <String alias="BgnDat" name="$BgnDat"/>	<!--ÆðÊ¼ÈÕÆÚ-->
+    <String alias="EndDat" name="$EndDat"/>	<!--ÖÕÖ¹ÈÕÆÚ-->
+    <String alias="CTxnAt" name="$CTxnAt"/>	<!--ÈËÃñ±Ò½ð¶î-->
+    <String alias="ZTxnAt" name="$ZTxnAt"/>	<!--×ªÕË½ð¶î-->
+    <String alias="QRecSts" name="$QRecSts"/>	<!--×ªÕË½ð¶î-->
+  </VarDef>
+  <MsgConvert>
+    <Item alias="CrgWay">
+      <Convert value="0" msg="ÏÖ½ð"/>
+      <Convert value="1" msg="×ªÕË"/>
+    </Item>
+    <Item alias="RecSts">
+      <Convert value="0" msg="Î´¼ÇÕË"/>
+      <Convert value="1" msg="³É¹¦"/>
+      <Convert value="T" msg="³¬Ê±"/>
+      <Convert value="C" msg="Ä¨ÕË"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select NodNo,ActDat,RcpNo,TckNo,VchSeq,CrgCod,ItmAmt,CusNam,RecSts,CrgWay,TlrId
+        from cadjnldtl where (NodNo='%s' or '%s'='000000') and ActDat&gt;='%s' and ActDat&lt;='%s' and CcyCod='CNY' and (CrgCod like '%s%%' or '%s'='          ') and (RecSts='%s' or '%s'=' ') and CrgWay in ('0','1')
+        order by RecSts,ActDat,TckNo,CrgWay,CcyCod" >
+        <FieldList>$QNodNo|$QNodNo|$BgnDat|$EndDat|$QCrgCod1|$QCrgCod|$QRecSts|$QRecSts|</FieldList>
+      </Sql>  
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="20" pagesum="YES">
+    <TableHeader>
+      <Format>    
+                                                 ÐÐÕþÊÕ·ÑÁ÷Ë®Çåµ¥
+©³©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©×©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©×©¥©¥©×©¥©¥©¥©¥©·
+©§Íø  µã©§ ÈÕ  ÆÚ ©§  ÊÕ ¾Ý ±à ºÅ   ©§  Á÷ Ë® ºÅ  ©§Ð¡ÐòºÅ©§ ÊÕ·Ñ±àÂë ©§    ½ð    ¶î    ©§                 ½É¿îÃû³Æ                 ©§×´Ì¬©§ÏÖ×ª©§ ¹ñÔ±ºÅ ©§
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$NodNo"	spread="mid"/>
+      <Para label="02" alias="$ActDat"	spread="mid"/>
+      <Para label="03" alias="$RcpNo"	spread="mid"/>
+      <Para label="04" alias="$TckNo"	spread="mid"/>
+      <Para label="05" alias="$VchSeq"	spread="mid"/>
+      <Para label="06" alias="$CrgCod"	spread="mid"/>
+      <Para label="07" alias="AMTFMT($ItmAmt)"	spread="mid"/>
+      <Para label="08" alias="$CusNam"	spread="mid"/>
+      <Para label="09" alias="$RecSts"	spread="mid"  convert="YES"/>
+      <Para label="10" alias="$CrgWay"	spread="mid"  convert="YES"/>
+      <Para label="11" alias="$TlrId"	spread="mid"/>
+      <Format>
+©Ç©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©ï©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©ï©¥©¥©ï©¥©¥©¥©¥©Ï
+©§#     ©§#       ©§#               ©§#           ©§#     ©§#         ©§#               ©§#                                         ©§#   ©§#   ©§#       ©§
+      </Format>
+    </Iterative>
+  <TableFooter>
+    <Para label="01" alias="AMTFMT($CTxnAt)"	spread="mid"/>
+    <Para label="02" alias="AMTFMT($ZTxnAt)"	spread="mid"/>
+      <Format>
+©»©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©ß©¥©¥©ß©¥©¥©¥©¥©¿
+     ÏÖ½ð(ÈËÃñ±Ò)£º#                        ×ªÕË£º#
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

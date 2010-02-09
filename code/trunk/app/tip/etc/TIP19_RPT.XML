@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP19_RPT.trc" dbconnect="YES">
+   <!--Added By Zhq_BoCom00047053_20080909_½ÉË°Í¨±¨±í(±¨±íÃû:ÓëÎÒÐÐÁªÍøµÄÕ÷ÊÕ»ú¹ØÍ³¼Æ±í)-->
+   <VarDef>
+      <String alias="EdDate"    name="$EdDate"/> <!--Ñ¡ÔñÈÕÆÚ-->
+   </VarDef>
+   <DataSource object="sql">
+      <Iterative>
+         <Sql sql="SELECT a.BrkNo,a.OrgCod,b.OrgNam,b.EffDat,a.ONodNo FROM (SELECT DISTINCT OrgCod,BrkNo,ONodNO FROM tipcusagr WHERE Status='0' AND LEFT(SgnDat,8) &lt;= '%s') a ,tiporginf b WHERE a.OrgCod =b.OrgCod  FOR READ ONLY ">
+            <FieldList>$EdDate|</FieldList>
+         </Sql>
+      </Iterative>
+   </DataSource>
+   <FormatDefine>
+      <Iterative line="1">
+         <Para label="01" alias="LEFTSTR($EdDate,6)" />
+         <Para label="02" alias="$BrkNo" />
+         <Para label="03" alias="$OrgCod" />
+         <Para label="04" alias="$OrgNam" />
+         <Para label="05" alias="$ONodNo" />
+         <Para label="06" alias="$EffDat" />
+         <Format>
+#:#:#:#:#:#
+         </Format>
+      </Iterative>
+   </FormatDefine>
+</Application>
+

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server type="CCA" trace="${ics.app.loglevel}" ip="${ics.plt.local_ip}">
+    <ThreadPool>
+      <MinWorkerThreads>10</MinWorkerThreads>
+      <MaxWorkerThreads>10</MaxWorkerThreads>
+    </ThreadPool>
+
+    <ProcessMemoryManager> <!--DZ4f9\@mFw#,M,2=6LA,=SPhEdVC-->
+      <BlockSize>102400</BlockSize><!--?i4sP!(WV=Z)-->
+      <PoolInitSize>16</PoolInitSize><!--DZ4f3X3uJ<4sP!(?i)-->
+      <PoolMaxSize>1024</PoolMaxSize><!--3XWn4s3_4g(?i)-->
+      <PoolAddStep>1</PoolAddStep>
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+        <PageSize>64</PageSize><!--R34sP!(WV=Z)-->
+        <MaxBlocks>10</MaxBlocks ><!--TJPmIjGk5DWn4s?iJ}-->
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+
+    <DllPriDataCtrl name="CMQ" dllfile="dll/cmq_pfa.so" initfunc="initMQClient" donefunc="closeMQClient">
+      <Para name="QueueServer">${ics.app.mq_manager}</Para>
+      <Para name="RecvQName">${ics.app.recv_q}</Para>
+      <Para name="SendQName">${ics.app.send_q}</Para>
+      <Para name="MessageType">PLTIN0</Para>
+      <Para name="DefaultExpireTime">${ics.app.mq_expire_time}</Para><!--¦Ë0.1s-->
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrasync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HostIp">_HOST_IP</Para>  <!--ICS 3.0²ÎÊý-->
+      <Para name="HostPort">_HOST_PORT</Para>  <!--ICS 3.0²ÎÊý-->
+      <Para name="PreLen">8</Para>
+    </DllPriDataCtrl>
+
+    <Connection type="LEFT">
+      <Entrance name="CMQMEBS1" type="MQ">
+        <ListenerModule name="MQClientIn" dllfile="dll/cmq_pfa.so">
+        </ListenerModule>
+      </Entrance>
+    </Connection>
+     <!--Send to Right Queue-->
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/libhub.so" dbapplication="NO">
+        <Entry>
+          <MessageType>PLTIN0</MessageType>
+          <ProcessModule>sendRequest</ProcessModule>
+        </Entry>
+     </RequestProcessor>
+    </QueuePair>
+     <!--Send to ICS3.0-->
+    <QueuePair name="RightQueuePair">
+      <RequestProcessor dllfile="dll/ecnsvrasync.so" dbapplication="NO">
+        <Entry>
+          <MessageType>PLTIN0</MessageType>
+          <ProcessModule>clientShortAsyncOut</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+    </QueuePair>
+  </Server>
+</Region>

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP06_RPT.trc" dbconnect="YES">
+  <VarDef>
+    <String alias="OrgCod"          name="$OrgCod"/>
+    <String alias="ChkDat"          name="$ChkDat"/>
+  </VarDef>
+  <DataSource object="sql"> 
+     <PageHeader type="sql">
+       <Sql sql=" select TaxVID,TlrId from tiptxnbok where OrgCod='%s' and ChkDat='%s' and BilSts='1' and RknSts='1'">
+         <FieldList>$OrgCod|$ChkDat|</FieldList>
+       </Sql>
+    </PageHeader>
+    <Iterative>
+        <Sql sql="select ActDat,ActNo,POBkNo,ActNam,OrgCod,TreCod,TxnAmt,TraNo from tiptxnbok where OrgCod='%s' and ChkDat='%s' and BilSts='1' and RknSts='1'">
+         <FieldList>$OrgCod|$ChkDat|</FieldList>
+       </Sql>
+       <Sql sql="select OrgNam from tiporginf where OrgCod='%s'">
+         <FieldList>$OrgCod|</FieldList>
+       </Sql>
+       <Sql sql="select TreNam from tiptreinf where TreCod='%s'">
+         <FieldList>$TreCod|</FieldList>
+       </Sql>
+       <Sql sql="select TxTpNm,TaxBDt,TaxEDt from tipttprec where OrgCod='%s'">
+         <FieldList>$OrgCod|</FieldList>
+       </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader>
+      <Format>
+                                                          ½»Í¨ÒøÐÐµç×Ó½ÉË°¸¶¿îÆ¾Ö¤
+
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Para label="01" alias="$TaxVID" spread="left"/>
+      <Format>
+																Æ¾Ö¤×ÖºÅ£º#
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$ActDat" spread="left"/>
+      <Para label="02" alias="$ActNo" spread="left"/>
+      <Para label="03" alias="$POBkNo" spread="left"/>
+      <Para label="04" alias="$ActNam" spread="left"/>
+      <Para label="05" alias="$OrgNam" spread="left"/>
+      <Para label="06" alias="$TreNam" spread="left"/>
+      <Para label="07" alias="AMTFMT($TxnAmt)" spread="mid"/>
+      <Para label="08" alias="$TraNo" spread="left"/>
+      <Para label="09" alias="$AMTTOCAP(AMTFMT($TxnAmt))" spread="mid"/>
+      <Para label="10" alias="$TaxTyp" spread="left"/>
+      <Para label="11" alias="$TaxBDt" spread="left"/>
+      <Para label="12" alias="$TaxEDt" spread="left"/>
+      <Para label="13" alias="AMTFMT($TxnAmt)" spread="left"/>
+      <Format>
+			×ªÕÊÈÕÆÚ£º#
+¸¶¿îÈËÐÐºÅ£º#								¸¶¿îÈË¿ª»§ÒøÐÐ£º#
+¸¶¿îÈËÃû³Æ£º#
+Õ÷ÊÕ»ú¹ØÃû³Æ£º#								ÊÕ¿î¹ú¿â£¨ÒøÐÐ£©Ãû³Æ£º#
+Ð¡Ð´£¨ºÏ¼Æ£©½ð¶î£º#							½É¿îÊé½»Ò×Á÷Ë®ºÅ£º#
+´óÐ´£¨ºÏ¼Æ£©½ð¶î£º#
+Ë°£¨·Ñ£©ÖÖÃû³Æ£º						       ËùÊôÈÕÆÚ£º					    Êµ½É½ð¶î£º
+ #									#		--- #				     #
+
+
+
+
+      </Format>
+    </Iterative>
+    <ReportFooter>
+        <Para label="01" alias="$TckNo" />
+        <Para label="02" alias=" " />
+        <Para label="03" alias=" " />
+        <Para label="04" alias="$TlrId" />
+        <Format>
+»á¼ÆÁ÷Ë®ºÅ£º#									ÊÚÈ¨£º#			¸´ºË£º#			¼ÇÕÊ£º#		
+        </Format>
+    </ReportFooter>
+  </FormatDefine>
+</Application>
+

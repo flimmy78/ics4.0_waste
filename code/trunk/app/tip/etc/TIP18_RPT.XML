@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="TIP18_RPT.trc" dbconnect="YES">
+   <!--Added By Zhq_BoCom00047053_20080909_½ÉË°Í¨±¨±í(±¨±íÃû:È«¹úÉÏÏßÕ÷ÊÕ»ú¹ØÍ³¼Æ±í)-->
+   <VarDef>
+      <String alias="EdDate"    name="$EdDate"/> <!--Ñ¡ÔñÈÕÆÚ-->
+   </VarDef>
+   <DataSource object="sql">
+      <Iterative>
+         <Sql sql="SELECT a.OrgCod,a.OrgNam,a.EffDat,(CASE b.flag WHEN '0' THEN b.flag ELSE '1' END) Flg FROM tiporginf a 
+         	       LEFT OUTER JOIN (SELECT DISTINCT OrgCod,'0' flag FROM tipcusagr WHERE Status='0' ) b
+         	       ON a.OrgCod =b.OrgCod WHERE a.EffDat &lt;= '%s' FOR READ ONLY">
+            <FieldList>$EdDate|</FieldList>
+         </Sql>
+      </Iterative>
+   </DataSource>
+   <FormatDefine>
+      <Iterative line="1">
+         <Para label="01" alias="LEFTSTR($EdDate,6)" />
+         <Para label="02" alias="$OrgCod" />
+         <Para label="03" alias="$OrgNam" />
+         <Para label="04" alias="$EffDat" />
+         <Para label="05" alias="$Flg"    />
+         <Format>
+#:#:#:#:#
+         </Format>
+      </Iterative>
+   </FormatDefine>
+</Application>
+

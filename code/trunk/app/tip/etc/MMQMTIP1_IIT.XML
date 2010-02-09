@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='ISO-8859-1'?> 
+<Config>
+  <Define> 
+    <Macro name="WriteHead">
+      <WriteElement name="HEAD">
+	      <WriteElement name="VER" ETF_name="VER" value="1.0"/>
+          <WriteElement name="SRC" ETF_name="SrcNod"/>
+          <WriteElement name="DES" ETF_name="DstNod"/>
+		  <WriteElement name="APP" ETF_name="APP" value="TIPS"/>
+          <WriteElement name="MsgNo" ETF_name="MsgNo"/>
+          <WriteElement name="MsgID" ETF_name="MsgId"/>
+          <WriteElement name="MsgRef" ETF_name="MsgRef"/>
+		  <WriteElement name="WorkDate" ETF_name="WrkDat" necessary="no"/>
+		  <WriteElement name="Reserve" ETF_name="Reserve" necessary="no"/>
+      </WriteElement>
+    </Macro>
+    <Macro name="ReadHead">
+      <ReadElement name="HEAD">
+          <ReadElement name="SRC" ETF_name="SrcNod"/>
+          <ReadElement name="DES" ETF_name="DstNod"/>
+          <ReadElement name="MsgNo" ETF_name="MsgNo"/>
+          <ReadElement name="MsgID" ETF_name="MsgId"/>
+          <ReadElement name="MsgRef" ETF_name="MsgRef"/>
+		  <ReadElement name="WorkDate" ETF_name="WrkDat"/>
+      </ReadElement>
+    </Macro>
+    <Macro name="9120FromPBC"><!--Í¨ÓÃÓ¦´ð-->
+      <ReadElement name="MsgReturn9120">
+          <ReadElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <ReadElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <ReadElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->                    
+          <ReadElement name="Information" ETF_name="Info" necessary="no"/>
+      </ReadElement>
+    </Macro>
+	<Macro name="9120ToPBC"><!--Í¨ÓÃÓ¦´ð-->
+      <WriteElement name="MsgReturn9120">
+          <WriteElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <SwitchCode name="RspCod" new_name="Result" tab_name="Cod2Res" col_name="RspCod"/>
+          <WriteElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <WriteElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->                    
+          <WriteElement name="Information" ETF_name="Info" necessary="no"/>
+      </WriteElement>
+    </Macro>
+    <Macro name="9121ToPBC"><!--Í¨ÓÃÈ·ÈÏÓ¦´ð-->
+      <WriteElement name="MsgReturn9121">
+          <WriteElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <WriteElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­·¢Æð»ú¹¹´úÂë-->
+          <WriteElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+          <WriteElement name="OriRequestNo" ETF_name="ReqNo"/><!--Ô­Ö¸ÁîÐòºÅ-->
+          <SwitchCode name="RspCod" new_name="Result" tab_name="Cod2Res" col_name="RspCod"/>
+          <WriteElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <WriteElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->  			
+      </WriteElement>
+    </Macro>
+	<Macro name="9121FromPBC"><!--Í¨ÓÃÈ·ÈÏÓ¦´ð-->
+      <ReadElement name="MsgReturn9121">
+          <ReadElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <ReadElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­·¢Æð»ú¹¹´úÂë-->
+          <ReadElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+          <ReadElement name="OriRequestNo" ETF_name="ReqNo"/><!--Ô­Ö¸ÁîÐòºÅ-->
+          <ReadElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <ReadElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->  			
+      </ReadElement>
+    </Macro>
+    <Macro name="9122FromPBC"><!--Í¨ÓÃ´¦Àí½á¹ûÍ¨Öª-->
+      <ReadElement name="MsgReturn9122">
+          <ReadElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <ReadElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­·¢Æð»ú¹¹´úÂë-->
+          <ReadElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+          <ReadElement name="OriRequestNo" ETF_name="ReqNo"/><!--Ô­Ö¸ÁîÐòºÅ-->
+          <ReadElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <ReadElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->  			
+      </ReadElement>
+    </Macro>
+	<Macro name="9122ToPBC"><!--Í¨ÓÃ´¦Àí½á¹ûÍ¨Öª-->
+      <WriteElement name="MsgReturn9122">
+          <WriteElement name="OriMsgNo" ETF_name="OMsgNo"/><!--Ô­±¨ÎÄ±àºÅ-->
+          <WriteElement name="OriSendOrgCode" ETF_name="OrgCod"/><!--Ô­·¢Æð»ú¹¹´úÂë-->
+          <WriteElement name="OriEntrustDate" ETF_name="EntDat"/><!--Ô­Î¯ÍÐÈÕÆÚ-->
+          <WriteElement name="OriRequestNo" ETF_name="ReqNo"/><!--Ô­Ö¸ÁîÐòºÅ-->
+          <SwitchCode name="RspCod" new_name="Result" tab_name="Cod2Res" col_name="RspCod"/>
+          <WriteElement name="Result" ETF_name="Result"/><!--´¦Àí½á¹û-->
+          <WriteElement name="AddWord" ETF_name="AddWord" necessary="no"/><!--¸½ÑÔ-->  			
+      </WriteElement>
+    </Macro>
+  </Define>
+</Config>
