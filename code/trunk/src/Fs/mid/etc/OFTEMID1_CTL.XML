@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="MID" code="200" trace="yes">
+	<LibDeclare>
+		<Library name="EXT"	value="dll/extatl.so" />
+	</LibDeclare>
+	<ConfigDeclare>
+		<Config name="BatFormat"   value="etc/MID_FMT_446999.XML" />
+	</ConfigDeclare>
+	<BusDefDeclare>
+		<Busdef name="TxnCnl"   value="MID" />
+		<Busdef name="TSDir"    value="dat/term/send/" />
+    <Busdef name="BrNo"     value="446999"/>
+	</BusDefDeclare>	
+	<TableDeclare>
+		<Table name="pubcrpagt" value="pubcrpagt" />
+		<Table name="midovrnot446" value="midovrnot446" />
+	</TableDeclare>
+
+	<Transaction code="463000" desc="µ¥Ö¤ÒÆ½»Çåµ¥Î¬»¤" >
+		<DynSentence name="SqlQryAdd"> <!-- Ôö¼Ó -->
+			<Sentence>
+				INSERT INTO midovrnot446( SndNo, RcvDat, RcvNod, SndTyp, CetTyp, ActNo, CcyCod, SndAmt, 
+					SndCnt, SndRmk,TlrId, NodNo, ActDat ) 
+					VALUES( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+			</Sentence>
+			<Fields>SndNo|RcvDat|RcvNod|SndTyp|CetTyp|ActNo|CcyCod|SndAmt|SndCnt|SndRmk|TlrId|NodNo|ActDat|</Fields>
+		</DynSentence>
+
+		<DynSentence name="SqlQryUpd"> <!-- ÐÞ¸Ä -->
+			<Sentence>
+				UPDATE midovrnot446 SET RcvNod='%s', SndTyp='%s', CetTyp='%s', ActNo='%s', 
+					CcyCod='%s', SndAmt='%s', SndCnt='%s', SndRmk='%s' WHERE SndNo='%s' AND TlrId='%s'
+			</Sentence>
+			<Fields>RcvNod|SndTyp|CetTyp|ActNo|CcyCod|SndAmt|SndCnt|SndRmk|SndNo|TlrId|</Fields>
+		</DynSentence>
+
+		<DynSentence name="SqlQryDel"> <!-- É¾³ý -->
+			<Sentence>
+				DELETE FROM midovrnot446 WHERE SndNo='%s' AND TlrId='%s'
+			</Sentence>
+			<Fields>SndNo|TlrId|</Fields>
+		</DynSentence>
+
+		<DynSentence name="SqlQryMax"> <!--²éÑ¯×î´ó±àºÅÊý-->
+			<Sentence>
+				SELECT MAX(SUBSTR(SndNo,15,3)) MaxNo FROM midovrnot446 WHERE RcvDat='%s' and NodNo='%s'
+			</Sentence>
+			<Fields>RcvDat|NodNo|</Fields>
+		</DynSentence>
+			
+		<DynSentence name="SqlQryCnt">	<!--²éÑ¯ÊÇ·ñÓÐ¼ÇÂ¼-->
+			<Sentence>
+				SELECT COUNT(*) RecCnt FROM midovrnot446 WHERE RcvDat='%s' and NodNo='%s'
+			</Sentence>
+			<Fields>RcvDat|NodNo|</Fields>			
+		</DynSentence>
+
+		<FlowCtrl>
+			<!--Exec func="PUB:GetAppInfo"/-->
+      <Exec func="PUB:InitTransaction"/>	    
+
+			<Switch expression="$FUNC">
+				<Case value="0"> <!-- Ôö¼Ó -->
+					<Exec func="PUB:ReadRecord">
+						<Arg name="SqlCmd" value="SqlQryCnt" />
+					</Exec>
+
+					<If condition ="$RecCnt=0">
+						<Set>SndNo=STRCAT($RcvDat,$NodNo,001)</Set>
+					</If> 
+					<Else>
+						<Exec func="PUB:ReadRecord">
+							<Args>
+								<Arg name="SqlCmd" value="SqlQryMax" />
+							</Args>
+						</Exec>
+						<Set>SndNo=STRCAT($RcvDat,$NodNo,INTTOSTR(ADD($MaxNo,1),3))</Set>
+					</Else>
+					
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Args>
+							<Arg name="SqlCmd" value="SqlQryAdd"/>
+						</Args>
+					</Exec>
+					<If condition="~RetCod=-1">
+						<Set>RspCod=331000</Set>
+						<Return/>
+					</If> 
+					<Break/>
+				</Case>
+				<Case value="1"> <!-- ÐÞ¸Ä -->
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Args>
+							<Arg name="SqlCmd" value="SqlQryUpd"/>
+						</Args>
+					</Exec>
+					<If condition="~RetCod=-1">
+						<Set>RspCod=331000</Set>
+						<Return/>
+					</If> 
+					<Break/>
+				</Case>
+				<Case value="3"> <!-- É¾³ý -->
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Args>
+							<Arg name="SqlCmd" value="SqlQryDel"/>
+						</Args>
+					</Exec>
+					<If condition="~RetCod=-1">
+						<Set>RspCod=331000</Set>
+						<Return/>
+					</If> 
+					<Break/>
+				</Case>
+			</Switch>
+			<Set>RspCod=000000</Set>
+		</FlowCtrl>
+	</Transaction> 
+
+	<Transaction code="463020" desc="µ¥Ö¤ÒÆ½»Çåµ¥²éÑ¯" >
+		<DynSentence name="MultiQuery">
+			<Sentence>
+			SELECT SndNo, RcvDat, RcvNod, SndTyp, CetTyp, ActNo, CcyCod, SndAmt, 
+					SndCnt,TlrId FROM midovrnot446 WHERE 
+					(SndNo>='%s' OR '%s'='00000000000000000') AND
+					('%s'>=SndNo OR '00000000000000000'='%s') AND
+					(RcvDat='%s' OR '%s'='00000000') AND
+					(RcvNod='%s' OR '%s'='000000') AND NodNo='%s'
+					ORDER BY SndNo
+			</Sentence>
+			<Fields>MinNo|MinNo|MaxNo|MaxNo|RcvDat|RcvDat|RcvNod|RcvNod|NodNo</Fields>
+		</DynSentence>
+		
+		<FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>	    
+			<Exec func="PUB:MultiQuery">
+				<Args>
+					<Arg name="SqlCmd"  value="MultiQuery"/>
+				</Args>
+			</Exec>
+		</FlowCtrl>
+	</Transaction>
+		
+	<Transaction code="463040" desc="µ¥Ö¤ÒÆ½»Çåµ¥´òÓ¡" > 		
+		<FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>	    
+			<!--Exec func="PUB:GetAppInfo"/-->
+			<Set>FmtFil=STRCAT(etc/,MID001_RPT_446999.XML)</Set>
+      <Set>FilNam=STRCAT(Mid001,$TlrId,$ActDat,.RPT)</Set>
+			<Set>Summary=STRCAT(µ¥Ö¤ÒÆ½»Çåµ¥_,$ActDat)</Set>
+										
+			<Exec func="PUB:GenerateReport">
+				<Arg name="ObjFil" value="STRCAT($TSDir,$FilNam)"/>
+				<Arg name="FmtFil" value="$FmtFil"/>
+				<Arg name="PrtNod" value="$NodNo"/>
+				<Arg name="PrtTlr" value="$TlrId"/>
+				<Arg name="ActDat" value="$ActDat"/>
+				<Arg name="RcvDat" value="$RcvDat"/>
+				<Arg name="RcvNod" value="$RcvNod"/>
+				<Arg name="MinNo"  value="$MinNo"/>
+				<Arg name="MaxNo"  value="$MaxNo"/>
+			</Exec>
+			<Exec func="PUB:SendFileMessage">
+				<Arg name="MsgTyp"  value="4"/>
+				<Arg name="ObjNod"  value="$NodNo"/>
+				<Arg name="BusTyp"  value="46"/>
+				<Arg name="AplCod"  value="463040"/>
+				<Arg name="FilNam"  value="$FilNam"/>
+				<Arg name="Summary" value="$Summary"/>
+				<Arg name="ObjTlr"	value="$TlrId"/> 
+			</Exec>
+		</FlowCtrl>	
+	</Transaction>
+
+	<Transaction code='463080' desc="µ¥Ö¤ÒÆ½»Çåµ¥Î¬»¤(Ç¶Ì×²éÑ¯)">
+			<DynSentence name="SqlQrySel" >
+			<Sentence>
+				SELECT RcvDat, RcvNod, SndTyp, CetTyp, ActNo, CcyCod, SndAmt, 
+					SndCnt, SndRmk FROM midovrnot446 WHERE SndNo='%s'
+			</Sentence>
+			<Fields>SndNo|</Fields>
+		</DynSentence>
+	
+		<FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>	    
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+				<Args>
+					<Arg name="SqlCmd"  value="SqlQrySel"/>
+				</Args>
+			</Exec>
+			<If condition="~RetCod=-2">
+	    			<Set>RspCod=BC3010</Set>
+			</If>
+		</FlowCtrl>
+	</Transaction>
+
+  <Transaction code="481217" desc="µØÇø´úÂëÄ£ºý²éÑ¯">
+		<DynSentence name="QryCodDat">
+			<Sentence>
+				SELECT AreaNam,AreaCod
+				FROM arecoddat446
+				WHERE AreaNam like '%%%s%%' 
+				ORDER BY AreaNam,AreaCod
+			</Sentence>
+			<Fields>AreaNam|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<Exec func="PUB:InitTransaction"/>
+			<!--Exec func="PUB:GetAppInfo"/-->
+
+			<Exec func="PUB:MultiQuery">
+				<Arg name="SqlCmd" value="QryCodDat"/>
+			</Exec>
+		</FlowCtrl>
+	</Transaction>
+	
+  <Transaction code="463098" desc="ÕÊ»§×ÊÁÏ´æ´¢">
+		<DynSentence name="InsActInf">	<!--²åÈë-->
+			<Sentence>
+				Insert into prtspenod446(ActNo,ActNam,OpenBr,OpBrNo) values ('%s','%s','%s','%s')
+			</Sentence>
+			<Fields>ActNo|ActNam|OpenBr|OpBrNo|</Fields>
+		</DynSentence>
+		
+		<DynSentence name="DelActInf">	<!--²åÈë-->
+			<Sentence>
+				delete from prtspenod446 where ActNo='%s'
+			</Sentence>
+			<Fields>ActNo|</Fields>
+		</DynSentence>
+
+		<FlowCtrl>
+			<Exec func="PUB:InitTransaction"/>
+
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Args>
+					<Arg name="SqlCmd" value="DelActInf"/>
+				</Args>
+			</Exec>
+			<Exec func="PUB:ExecSql"  error="IGNORE">
+				<Args>
+					<Arg name="SqlCmd" value="InsActInf"/>
+				</Args>
+			</Exec>
+			<Set>RspCod=000000</Set>
+			<Set>MsgTyp=N</Set>
+		</FlowCtrl>
+	</Transaction>
+	
+  <Transaction code="463099" desc="ÕÊ»§×ÊÁÏ²éÑ¯(Ç¶Ì×)">
+		<DynSentence name="QryActInf">	<!--²éÑ¯-->
+			<Sentence>
+				select ActNam,OpenBr,OpBrNo from prtspenod446 where ActNo='%s'
+			</Sentence>
+			<Fields>ActNo|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<Exec func="PUB:InitTransaction"/>
+			<Exec func="PUB:ReadRecord" error="IGNORE" >
+					<Arg name="SqlCmd" value="QryActInf" />
+			</Exec>
+			<Set>RspCod=000000</Set>
+			<Set>MsgTyp=N</Set>
+		</FlowCtrl>
+	</Transaction>	
+</Application>

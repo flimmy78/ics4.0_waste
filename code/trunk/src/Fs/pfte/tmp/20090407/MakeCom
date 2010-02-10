@@ -1,0 +1,34 @@
+MODULE= Fs/pfte
+
+include $(RULES_MAKEFILE)
+
+USERLIBS = -lhiipchk -lmac3des
+USERFLAG = -DDEBUG
+
+DLLNAME1 = pftclifil_446.so
+DLLOBJS1 = pftclifil_446.o
+
+DLLNAME2 = pftsvrfil_446.so
+DLLOBJS2 = pftsvrfil_446.o
+
+
+ALL =  $(DLLNAME1) $(DLLNAME2)
+
+all: $(ALL) install clean
+
+$(DLLNAME1): $(DLLOBJS1)
+		rm -f  ${HOME}/dll/$@
+		$(HISUN_COMBINED) tmpxxx.exp $?
+		$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? -bE:tmpxxx.exp
+		cp $(PRIDLLDIR)/$@ ${HOME}/dll
+
+$(DLLNAME2): $(DLLOBJS2)
+		rm -f  ${HOME}/dll/$@
+		$(HISUN_COMBINED) tmpxxx.exp $?
+		$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? -bE:tmpxxx.exp
+		cp $(PRIDLLDIR)/$@ ${HOME}/dll
+
+clean:
+		-rm *.o *.exp
+
+install:

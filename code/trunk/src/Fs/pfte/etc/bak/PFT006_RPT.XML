@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐÒøË°ÁªÍøÒøÐÐÏ½ÊôÐÐ¿Û¿îÁ÷Ë®Çåµ¥ -->
+<Application dbconnect="YES" trclog="PFT006.log">
+  <VarDef>
+    <String alias="RptNam" pos="1"/>
+    <String alias="ClrDat" pos="2"/>
+    <String alias="ClrSce" pos="3"/>
+    <String alias="BrNo"   pos="4"/>
+    <String alias="NodNo"  pos="5"/>
+    <String alias="PrtTlr" pos="6"/>
+    <String alias="PrtDat" pos="7"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="BILSTS">
+      <Convert value="C" msg="ÒÑ±»³åÕý"/>
+      <Convert value="F" msg="½»Ò×Ê§°Ü"/>
+      <Convert value="W" msg="µÚÈý·½³¬Ê±"/>
+      <Convert value="U" msg="Ô¤¼Ç×´Ì¬"/>
+      <Convert value="T" msg="Ö÷»ú³¬Ê±"/>
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <Convert value="R" msg="ÒÑÄ¨ÕË"/>
+      <Convert value="V" msg="Ö÷»ú³É¹¦"/>
+      <DEFAULT msg="Òì³£"/>  
+    </Item>
+    <Item alias="TXNTYP">
+      <Convert value="N" msg="Õý³£½»Ò×"/>
+      <Convert value="C" msg="³åÕý½»Ò×"/>
+      <DEFAULT msg="Òì³£"/>  
+    </Item>
+    <Item alias="OIFLAG">
+      <Convert value="0" msg="×Ô¶¯ºËÏú"/>
+      <Convert value="1" msg="Ô¤´¢»®½É"/>
+      <DEFAULT msg="Î´Öª"/>  
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select BilSts, OIFlag, TxnTyp, ActDat, ActNo, ActNam, BrNo, TlrId, TckNo, TCrpCd, TActDt, TLogNo, BTxnID,
+                       case when TxnTyp='N' then TxnAmt
+                            when TxnTyp='C' then char((-1)*bigint(TxnAmt))
+                        end Amt
+                  from PftTxnJnl
+                 where ClrDat='%s' and ClrSce=char(int('%s')) and BrNo='%s'
+              order by LogNo" >
+        <FieldList>$ClrDat|$ClrSce|$BrNo|</FieldList>
+      </Sql>
+    </Iterative>
+    <Summed type="field">
+      <Field sum="AMT" sum_alias="TotAmt" count="TotNum"/>
+    </Summed>   
+  </DataSource>
+
+  <FormatDefine pagerows="40" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$RptNam"/>
+      <Para label="02" alias="$ClrDat"/>
+      <Para label="03" alias="$ClrSce"/>
+      <Para label="04" alias="$PAGENUM"/>
+      <Para label="05" alias="$PAGESUM"/>
+      <Format>
+                                                                   ½»Í¨ÒøÐÐÒøË°ÁªÍø¡¾#¡¿
+                                                       ==========================================================
+  ÇåËãÈÕÆÚ: #      ÇåËã³¡´Î£º#                                                                                                                        µÚ   #  Ò³       ¹²  #  Ò³
+©³©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©·
+©§·ÖÐÐºÅ©§Õ÷ÊÕ»ú¹Ø´úÂë©§Õ÷ÊÕÈÕÆÚ©§ Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ ©§½É¿îÀàÐÍ©§       ¼ÇÕÊÕÊºÅ       ©§    ½»Ò×½ð¶î    ©§¼ÇÕÊÈÕÆÚ©§¼ÇÕÊ¹ñÔ±©§ »á¼ÆÁ÷Ë®ºÅ ©§½»Ò×ÀàÐÍ©§ ÒøÐÐ½»Ò×Ê¶±ðºÅ ©§ ½»Ò××´Ì¬ ©§
+©Ç©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$BRNO"/>
+      <Para label="02" alias="$TCRPCD"/>
+      <Para label="03" alias="$TACTDT"/>
+      <Para label="04" alias="$TLOGNO"/>
+      <Para label="05" alias="$OIFLAG" convert="yes"/>
+      <Para label="06" alias="$ACTNO"/>
+      <Para label="07" alias="AMTFMT($AMT)" spread="left"/>
+      <Para label="08" alias="$ACTDAT"/>
+      <Para label="09" alias="$TLRID"/>
+      <Para label="10" alias="$TCKNO"/>
+      <Para label="11" alias="$TXNTYP" convert="yes"/>
+      <Para label="12" alias="$BTXNID"/>
+      <Para label="13" alias="$BILSTS" convert="yes"/>
+      <Format>
+©§#     ©§#           ©§#       ©§#               ©§#       ©§#                     ©§               #©§#       ©§#       ©§#           ©§#       ©§#               ©§#         ©§
+      </Format>
+    </Iterative>
+    <Summed>
+      <Para label="01" alias="$TotNum"/>
+      <Para label="02" alias="AMTFMT($TotAmt)" spread="left" />
+      <Format>
+©Ç©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º                           ±ÊÊý£º#                                                           #                                                                          ©§          
+©Ç©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Para label="01" alias="$PrtTlr"/>
+      <Para label="02" alias="$PrtDat"/>
+      <Format>
+©»©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¿
+                                ´òÓ¡¹ñÔ±ºÅ£º#                                                            ´òÓ¡ÈÕÆÚ£º#
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

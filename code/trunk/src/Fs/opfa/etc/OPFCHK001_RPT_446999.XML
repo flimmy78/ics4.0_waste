@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>                                         
+<Application trclog="OPFCHK001_446999.trc" dbconnect="YES">  
+
+<VarDef>
+    <String alias="TotAmt"	   name="$TotAmt"/>                    
+    <String alias="TotCnt"	   name="$TotCnt"/>                   
+    <String alias="CrpNam"	   name="$CrpNam"/>
+    <String alias="TBusTy"	   name="$TBusTy"/>
+    <String alias="BrNo"       name="$BrNo"/>
+    <String alias="ChkDat"	   name="$ChkDat"/>
+    <String alias="CAgtNo"	   name="$CAgtNo"/>
+  </VarDef>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  <DataSource object="sql">                                      <!--È¡Ç°ÖÃ½»Ò×ÈÕÆÚ-->                                                                   
+    <Iterative>                                                                                                                     
+      <Sql sql="SELECT ActNo,LogNo,TckNo,TCusId,TlrId,TxnCnl,TxnAmt,ActTyp,FTxnTm
+        FROM afetxnjnl
+        WHERE BrNo='%s' AND substr(FTxnTm,1,8)='%s' AND HTxnSt='S' AND CAgtNo='%s'">
+    <FieldList>$BrNo|$ChkDat|$CAgtNo|</FieldList>                                                                                                     
+      </Sql>                                                                                                                        
+    </Iterative>
+   </DataSource>
+
+  <FormatDefine pagerows="55" pagesum="YES">        
+    <TableHeader>
+       <Para label="01" alias="SUBSTR($ChkDat,1,4)"/>                                                                               
+       <Para label="02" alias="SUBSTR($ChkDat,5,2)"/>
+       <Para label="03" alias="SUBSTR($ChkDat,7,2)"/>                                                                               
+       <Para label="04" alias="DELBOTHSPACE($CrpNam)"     spread="left"/>
+       <Para label="05" alias="DELBOTHSPACE($TotCnt)"     spread="left"/>
+       <Para label="06" alias="AMTFMT(DELBOTHSPACE($TotAmt))"     spread="left"/>
+      <Format>
+       ´ú½É·Ñ³É¹¦Çåµ¥                                                # Äê # ÔÂ # ÈÕ   µ¥Î»Ãû £º #                     ×Ü±ÊÊý£º#             ×Ü½ð¶î£º#                                                  
+
+       ¿Í»§ÕËºÅ    Ç°ÖÃÁ÷Ë®ºÅ     »á¼ÆÁ÷Ë®ºÅ     ¿Í»§ºÅ         ½ð¶î£¨Ôª£©        ½»Ò×¹ñÔ±      ½»Ò×ÇþµÀ      ½É·Ñ·½Ê½     ½É·ÑÊ±¼ä        
+      </Format>
+    </TableHeader>                                                                                                                                                                                                                                                 
+    <Iterative line="1">                            
+       <Para label="01" alias="DELBOTHSPACE($ActNo)"    spread="left"/>
+       <Para label="02" alias="DELBOTHSPACE($LogNo)" 	   spread="mid"/>                                                                            
+       <Para label="03" alias="DELBOTHSPACE($TckNo)" 	spread="mid"/>                                                                            
+       <Para label="04" alias="DELBOTHSPACE($TCusId)" 	spread="mid"/>                                                                           
+       <Para label="05" alias="AMTFMT(DELBOTHSPACE($TxnAmt))"	   spread="mid"/>
+       <Para label="06" alias="DELBOTHSPACE($TlrId)" 	spread="mid"/> 
+       <Para label="07" alias="DELBOTHSPACE($TxnCnl)" 	spread="mid"/> 
+       <Para label="08" alias="DELBOTHSPACE($ActTyp)" 	spread="mid"/> 
+       <Para label="09" alias="DELBOTHSPACE($FTxnTm)" 	spread="mid"/>
+                  
+                                                                             
+       <Format>            
+          #            #              #             #              #                 #              #             #             #                                  
+      </Format>                                                                                                                          
+    </Iterative>                                                                                                                    
+  </FormatDefine>                                                                                                                   
+</Application>                                                                                                                      
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

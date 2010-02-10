@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name="STHDPFT3" type="SCA" >
+    <ThreadPool>
+      <MinWorkerThreads>10</MinWorkerThreads>
+      <MaxWorkerThreads>10</MaxWorkerThreads>
+    </ThreadPool>
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrsync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HostIp">_IP</Para>
+      <Para name="HostPort">_PORT</Para>
+      <Para name="ConnTyp">0</Para>
+      <Para name="MaxCom">10</Para>
+      <Para name="PreLen">0</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="file1">etc/STHDPFT3_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <RequestProcessor dllfile="dll/ecnsvrsync.so" dbapplication="NO">
+        <Entry>  
+          <MessageType>PLTOUT</MessageType>
+          <ProcessModule>clientSyncOut</ProcessModule>
+        </Entry>  
+      </RequestProcessor>
+      <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>

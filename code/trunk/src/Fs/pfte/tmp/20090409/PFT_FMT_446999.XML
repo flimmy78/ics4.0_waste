@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="PftFmt.log" err_file="PftFmt.err">
+  <Process name="FSSEC202HEAD" desc="·ðÉ½½ÉË°Ã÷Ï¸ÎÄ¼þÍ·">
+    <Item name="ClrDat" length=" 8" desc="ÇåËãÈÕÆÚ"/>
+    <AddItem name="SndCod" value="000000000000" desc="·¢Æð·½´úÂë"/>
+    <Item name="RcvCod" length="11" desc="½ÓÊÕ·½´úÂë(ÉÌÒµÐÐÖ±½Ó²ÎÓëÐÐºÅ)"/>
+    <Item name="TotNum" length=" 6" desc="×Ü±ÊÊý"/>
+  </Process>
+  <Process name="FSSEC202BODY" deli_str="|" desc="·ðÉ½½ÉË°Ã÷Ï¸ÎÄ¼þÌå">
+    <Item name="FilSeq" desc="¼ÇÂ¼ÐòºÅ"/>
+    <Item name="RcvBNo" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+    <Item name="ActDat" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+    <Item name="BTxnId" desc="ÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+    <Item name="TTxnTp" desc="½»Ò×ÀàÐÍ"/>
+    <Item name="SndAct" expression="DELSPACE($SndAct,all)" desc="ÊÕ¿îÕË»§"/>
+    <Item name="RcvAct" expression="DELSPACE($RcvAct,all)" desc="¸¶¿îÕË»§"/>
+    <AddItem name="ActNo" expression="$RcvAct" desc="¼ÇÕÊÕË»§"/>
+    <Item name="TxnAmt" expression="ADDCHAR($TxnAmt,15,0,1)" desc="Ô­·¢½»Ò×½ð¶î"/>
+    <Item name="PrtFlg" desc="´òÓ¡ÍêË°ÒªËØ±êÖ¾"/>
+    <Item name="TaxNo" desc="ÄÉË°ÈËÊ¶±ðºÅ"/>
+    <AddItem name="AgtInf" expression="$TaxNo"  desc="Ç©Ô¼¸½¼ÓÂë"/>
+    <Item name="TaxNam" expression="DELSPACE($TaxNam,all)" desc="ÄÉË°ÈËÃû³Æ"/>
+    <Item name="CrpKnd" desc="ÆóÒµ×¢²áÀàÐÍ"/>
+    <Item name="TCrpNm" desc="Õ÷ÊÕ»ú¹ØÃû³Æ"/>
+    <Item name="Smr"    desc="±¸×¢"/>
+    <Item name="DtlNum" desc="Ã÷Ï¸×ÜÊý"/>
+    <If condition="INTCMP($DtlNum,4,0)">
+      <Group name="VchDtl" repeat_name="DtlNum">
+        <Item name="DtlSeq" desc="Ã÷Ï¸Ë³ÐòºÅ"/>
+        <Item name="TaxTyp" expression="DELSPACE($TaxTyp,all)" desc="Ë°ÖÖÃû³Æ"/>
+        <Item name="PrjNam" expression="DELSPACE($PrjNam,all)" desc="Æ·Ä¿Ãû³Æ"/>
+        <Item name="LvlNam" expression="DELSPACE($LvlNam,all)" desc="Ô¤Ëã¼¶´ÎÃû³Æ"/>
+        <Item name="TaxDt"  desc="Ë°¿îËùÊôÈÕÆÚ"/>
+        <Item name="DtlAmt" expression="ADDCHAR($DtlAmt,15,0,1)" desc="Ã÷Ï¸½ð¶î"/>
+      </Group>
+    </If>
+  </Process>
+
+  <Process name="FSSEC203HEAD" desc="·ðÉ½ÍË¿â´¦Àí½á¹ûÃ÷Ï¸ÎÄ¼þÍ·">
+    <Item name="ClrDat" length=" 8" desc="ÇåËãÈÕÆÚ"/>
+    <AddItem name="SndCod" value="000000000000" desc="·¢Æð·½´úÂë"/>
+    <Item name="RcvCod" length="11" desc="½ÓÊÕ·½´úÂë(ÉÌÒµÐÐÖ±½Ó²ÎÓëÐÐºÅ)"/>
+    <Item name="ClrSce" length=" 4" desc="µ±ÈÕÅú´ÎºÅ"/>
+    <Item name="TotNum" length=" 6" desc="×Ü±ÊÊý"/>
+    <Item name="TotAmt" length="15" desc="×Ü½ð¶î"/>
+  </Process>
+  <Process name="FSSEC203BODY" deli_str="|" desc="·ðÉ½ÍË¿â´¦Àí½á¹ûÃ÷Ï¸ÎÄ¼þÌå">
+    <Item name="TCrpCd" desc="Õ÷ÊÕ»ú¹Ø´úÂë"/>
+    <Item name="TActDt" desc="Ìá½»ÈÕÆÚ"/>
+    <Item name="TLogNo" desc="Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ"/>
+    <Item name="RcvBNo" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+    <Item name="FskCod" desc="ÊÕ¿î¹ú¿â´úÂë"/>
+    <Item name="TTxnTp" desc="½»Ò×ÀàÐÍ"/>
+    <Item name="Smr"    desc="±£ÁôÓò"/>
+    <Item name="TVchNo" desc="¶ÔÕÕÐÅÏ¢Á÷Ë®ºÅ(µç×ÓË°Æ±ºÅ)"/>
+    <Item name="RcvAct" desc="ÊÕ¿îÕËºÅ"/>
+    <Item name="SndAct" desc="ÍËË°²¹³äÐÅÏ¢(¸¶¿îÕËºÅ)"/>
+    <Item name="TxnAmt" expression="ADDCHAR($TxnAmt,15,0,1)" desc="½»Ò×½ð¶î"/>
+    <Item name="TPayTp" desc="½É¿î·½Ê½´úÂë"/>
+    <Item name="PrtFlg" desc="´òÓ¡ÍêË°ÒªËØ±êÖ¾"/>
+    <Item name="TaxNam" desc="ÄÉË°ÈËÃû³Æ"/>
+    <Item name="TaxNo" desc="ÄÉË°ÈËÊ¶±ðºÅ"/>
+    <AddItem name="AgtInf" expression="$TaxNo"  desc="Ç©Ô¼¸½¼ÓÂë"/>
+    <Item name="CrpKnd" desc="ÆóÒµ×¢²áÀàÐÍ"/>
+    <Item name="DtlNum" desc="Ã÷Ï¸×ÜÊý"/>
+    <If condition="INTCMP($DtlNum,4,0)">
+      <Group name="VchDtl" repeat_name="DtlNum">
+        <Item name="DtlSeq" desc="Ã÷Ï¸Ë³ÐòºÅ"/>
+        <Item name="DtlAmt" expression="ADDCHAR($DtlAmt,15,0,1)" desc="Ã÷Ï¸½ð¶î"/>
+        <Item name="LvlNam" desc="Ô¤Ëã¼¶´ÎÃû³Æ"/>
+        <Item name="TSubCd" desc="Ô¤Ëã¿ÆÄ¿´úÂë"/>
+        <Item name="TaxTyp" desc="Ë°ÖÖÃû³Æ"/>
+        <Item name="TRtnCd" desc="ÍË¿âÔ­Òò´úÂë"/>
+        <Item name="Rmk1"   desc="±£ÁôÓò1"/>
+        <Item name="Rmk2"   desc="±£ÁôÓò2"/>
+      </Group>
+    </If>
+  </Process>
+
+
+  <Process name="FSSEC204HEAD" desc="·ðÉ½ÍË¿âÍË»Ø´¦Àí½á¹û">
+    <Item name="BnkDat" length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+    <Item name="RcvCod" length="11" desc="½ÓÊÕ·½´úÂë"/>
+    <Item name="ClrSce" length=" 4" desc="µ±ÈÕÅú´ÎºÅ"/>
+    <Item name="ClrDat" length=" 8" desc="×Ê½ðÇåËãÈÕÆÚ"/>
+    <Item name="TotNum" length=" 6" desc="×Ü±ÊÊý"/>
+    <Item name="TotAmt" length="15" desc="×Ü½ð¶î"/>
+    <Item name="BRtnCd" length=" 4" desc="Åú·µ»ØÂë"/>
+    <Item name="ErrNum" length=" 6" desc="´íÎó±ÊÊý"/>
+  </Process>
+  <Process name="FSSEC204BODY" deli_str="|" desc="·ðÉ½ÍË¿âÃ÷Ï¸ÎÄ¼þÌå">
+    <Item name="RcvBNo" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+    <Item name="BokDat" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+    <Item name="BTxnId" desc="ÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+    <Item name="TTxnTp" desc="½»Ò×ÀàÐÍ"/>
+    <Item name="RcvAct" desc="ÊÕ¿îÕËºÅ"/>
+    <Item name="SndAct" desc="¸¶¿îÕËºÅ"/>
+    <Item name="TxnAmt" expression="ADDCHAR($TxnAmt,15,0,1)" desc="½»Ò×½ð¶î"/>
+    <Item name="TRtnCd" desc="ÍË¿âÔ­Òò´úÂë"/>
+  </Process>
+
+
+</BATCH>

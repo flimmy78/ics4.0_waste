@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Application name="LSHJ" code="410">
   <LibDeclare>
-    <Library name="MQ"  value="dll/mq.so" />
+    <Library name="MQ"  value="app/lshj/dll/mq.so" />
   </LibDeclare>
 	<!--ÔÁÍ¨¿¨±¾µØÖ÷¿Ø-->
 	<ConfigDeclare>
-		<Config name="BatFormat"   value="etc/LSH_FMT_441999.XML"/>
-		<Config name="ParaFile"    value="etc/CFG_LSH_441999.XML"/>
-		<Config name="OPFCSW"      value="etc/LSH_CSW_441999.XML"/>
+		<Config name="BatFormat"   value="app/lshj/etc/LSH_FMT_441999.XML"/>
+		<Config name="ParaFile"    value="app/lshj/etc/CFG_LSH_441999.XML"/>
+		<Config name="OPFCSW"      value="app/lshj/etc/LSH_CSW_441999.XML"/>
 	</ConfigDeclare>
 	<PackageDeclare>
-		<Package name="AFE"        value="etc/DAFE_PKG.XML"/>
+		<Package name="AFE"        value="app/lshj/etc/DAFE_PKG.XML"/>
 	</PackageDeclare>
 	<TableDeclare>
 		<Table name="afetxnjnl"    value="afetxnjnl"/>	  <!--ÒµÎñÁ÷Ë®±í-->
@@ -24,7 +24,7 @@
 		<Busdef name="AplCls"    value="410"/><!--Added by xuan_20100202-->
 	</BusDefDeclare>
 	<GlobalFunction>
-		<Include file="etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
+		<Include file="app/lshj/etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
 		<!--Added by xuan_20100202-->
     <Function name="_after">
         <Process>

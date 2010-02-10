@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ·ðÉ½ÐÐµ¥Ö¤ÒÆ½»Çåµ¥ -->
+<Application  dbconnect="YES" trclog="RPTMID_001_446999.trc">
+ 	<VarDef>
+		<String alias="PrtNod"  pos="1"/>
+		<String alias="PrtTlr"  pos="2"/>
+		<String alias="ActDat"  pos="3"/>
+		<String alias="RcvDat"  pos="4"/>
+		<String alias="RcvNod"	pos="5"/>
+		<String alias="MinNo"		pos="6"/>
+		<String alias="MaxNo"		pos="7"/>
+	</VarDef>
+	<MsgConvert>
+		<Item alias="SNDTYP">
+			<Convert value="01" msg="ÒµÎñÆ¾Ö¤" />
+			<Convert value="02" msg="ÒµÎñ»Øµ¥" />
+		</Item>
+
+		<Item alias="CETTYP">
+			<Convert value="01" msg="½øÕËµ¥                  "/> 
+			<Convert value="02" msg="Ö§Æ±                    "/> 
+			<Convert value="03" msg="µç×ÓÇåËã´û·½²¹³ä±¨µ¥    "/> 
+			<Convert value="04" msg="µç»®´û·½²¹³ä±¨µ¥        "/> 
+			<Convert value="05" msg="µç»®½è·½²¹³ä±¨µ¥        "/> 
+			<Convert value="06" msg="ÌØÖÖ×ªÕË´û·½´«Æ±        "/> 
+			<Convert value="07" msg="ÌØÖÖ×ªÕË½è·½´«Æ±        "/> 
+			<Convert value="08" msg="Ï½ÄÚ½è·½±¨µ¥            "/> 
+			<Convert value="09" msg="Ï½ÄÚ´û·½±¨µ¥            "/> 
+			<Convert value="10" msg="ÍøÉÏÒøÐÐ×ªÕËÆ¾Ö¤        "/> 
+			<Convert value="11" msg="ÒµÎñÊÜÀíÍ¨ÖªÊé          "/> 
+			<Convert value="12" msg="·Ö»§ÕË                  "/> 
+			<Convert value="13" msg="¼ÆÊÕÀûÏ¢Çåµ¥£¨¸¶³öÆ¾Ö¤£©"/> 
+			<Convert value="14" msg="¼Æ¸¶ÀûÏ¢Çåµ¥£¨ÊÕÈëÆ¾Ö¤£©"/> 
+			<Convert value="15" msg="Î¯ÍÐÊÕ¿îÆ¾Ö¤            "/>    
+			<Convert value="16" msg="ÆäËû                    "/>    
+			<Convert value="17" msg="Ë°µ¥                    "/>    
+			<Convert value="18" msg="ÍËÆ±                    "/>    
+			<Convert value="19" msg="¹ãÖÝÎÄ¼þ                "/>    
+			<Convert value="20" msg="·ðÉ½ÎÄ¼þ                "/>    
+			<Convert value="21" msg="ÁãÊÛÐÅ·â                "/>    
+			<Convert value="22" msg="×ÔÖú¿ÆÐÅ·â              "/> 
+			<Convert value="23" msg="ÍøµãÐÅ·â                "/> 
+			<Convert value="24" msg="Ö§¸¶ÏµÍ³×¨ÓÃÆ¾Ö¤        "/> 
+			<Convert value="25" msg="¹ÒÏúÕÊÍ¨ÖªÊé            "/> 
+			<Convert value="26" msg="¸÷¿ÆÊÒÐÅ·â              "/> 
+			<Convert value="27" msg="½»»»ÐÅ·â                "/> 
+			<Convert value="28" msg="¿ÕÍ·Ö§Æ±±¨¸æÊé          "/> 
+			<Convert value="29" msg="ÐÐÕþ´¦·£Òâ¼û¸æÖªÊé      "/> 
+			<Convert value="30" msg="Ó¡¼ø¿¨                  "/> 
+			<Convert value="31" msg="ÐÐÕþ´¦·£¾ö¶¨Êé          "/> 
+			<Convert value="32" msg="²»ÓèÐÐÕþ´¦·£¾ö¶¨Êé      "/> 
+			<Convert value="33" msg="³ÂÊö¡¢Éê±ç´¦Àí½á¹û      "/>
+			<Convert value="34" msg="»á¼Æ¸¨µ¼Ô±ÐÅ·â          "/>
+			<Convert value="35" msg="²ÆÕþÖ±½ÓÖ§¸¶Æ¾Ö¤				 "/> 
+			<Convert value="36" msg="²ÆÕþÊÚÈ¨Ö§¸¶Æ¾Ö¤				 "/> 
+			<Convert value="37" msg="Ó¡¼ø¿¨×¢ÏúÇåµ¥ 				 "/>
+			<Convert value="38" msg="µçÒø²¿ÐÅ·â 						 "/>
+			<Default msg="ÆäËû" />
+		</Item>           
+	</MsgConvert>       
+	<DataSource object="sql">
+		<Iterative>       
+			<Sql sql="select SNDNO, RCVDAT, SNDTYP, CETTYP, ACTNO, CCYCOD, SNDAMT, 
+					SNDCNT, SNDRMK, TLRID from midovrnot446 where 
+					(SNDNO>='%s' or '%s'='00000000000000000') and
+					('%s'>=SNDNO OR '00000000000000000'='%s') and
+					RCVDAT='%s' and RCVNOD='%s' and NODNO='%s'
+					order by SNDNO">
+				<FieldList>$MinNo|$MinNo|$MaxNo|$MaxNo|$RcvDat|$RcvNod|$PrtNod</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="$RcvDat"/>
+			<Para label="02" alias="$PAGESUM"/>
+			<Para label="03" alias="$PAGENUM"/>
+			<Format>
+                                                                         ·ðÉ½·ÖÐÐÒµÎñÆ¾Ö¤¡¢ÒµÎñ»Øµ¥ÒÆ½»Çåµ¥ 
+                                                             ======================================================
+                                                                    
+  ÒÆ½»ÈÕÆÚ£º#                          ¡¡¡¡¡¡         ¡¡¡¡¡¡¡¡¡¡¡¡¡¡  ¡¡                                                                                       ¹² # Ò³ µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§     ÒÆ½»ÐòºÅ     ©§ÒÆ½»ÀàÐÍ©§        µ¥Ö¤ÖÖÀà          ©§         ÕË  ºÅ       ©§±ÒÖÖ©§      ½ð¶î      ©§  ·ÝÊý  ©§                     ±¸×¢                               ©§¡¡¡¡
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$SNDNO"									spread="mid"/>
+			<Para label="02" alias="$SNDTYP" convert="YES"  spread="mid"/>
+			<Para label="03" alias="$CETTYP" convert="YES"	spread="left"/>
+			<Para label="04" alias="$ACTNO"									spread="mid"/>    
+			<Para label="05" alias="$CCYCOD"								spread="mid"/>
+			<Para label="06" alias="$SNDAMT"								spread="left"/>
+			<Para label="07" alias="AMTDELZERO($SNDCNT)"		spread="left"/>
+			<Para label="08" alias="DELBOTHSPACE($SNDRMK)"	spread="Right"/>
+			<Format>
+©§        #         ©§    #   ©§                         #©§          #           ©§  # ©§               #©§       #©§#                                                       ©§
+			</Format>
+		</Iterative>
+		<TableFooter>
+			<Para label="01" alias="DELBOTHSPACE($PrtNod)"/>
+			<Para label="02" alias="$RcvNod"/>
+			<Para label="03" alias="$PrtTlr"/>
+			<Para label="04" alias="$DATE"/>
+			<Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+   ½»³öÐÐ:#          ½»³ö¹ñÔ±(Ç©ÕÂ):                    ½ÓÊÕÐÐ:#          ½ÓÊÕÐÐ¾­°ìÔ±(Ç©ÕÂ):                                        ´òÓ¡¹ñÔ±:#             ´òÓ¡ÈÕÆÚ:#
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

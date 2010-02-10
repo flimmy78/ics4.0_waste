@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='ISO-8859-1'?> 
+<Application name="PFT" timeout="30">								<!--ÎÄ¼þ½Ó¿ÚÐÅÏ¢¸ñÊ½-->
+	<Transaction code="465921" log_switch="1">
+		<Request>
+			<Item name="ImCod" length="5"/>								<!--ÐÅÏ¢±êÊ¾·û-->
+			<Item name="KpCol" length="4" value="XXXX"/>	<!--±£Áô×Ö¶Î-->
+			<Item name="ImLen" length="8"/>								<!--ÐÅÏ¢Ìå³¤¶È-->
+			<Item name="ImBod" deli_asc="-1"/>						<!--ÐÅÏ¢Ìå-->
+		</Request>
+		<Response necessary="no"> 
+			<Item name="TRspCd" length="5" />							<!--·µ»ØÂë-->
+			<Item name="KpCol"  length="4" />							<!--±£Áô×Ö¶Î-->
+			<Item name="ImLen"  length="8" value="4"/>		<!--ÐÅÏ¢Ìå³¤¶È-->
+			<Item name="ImBod"  length="4" value="0000"/> <!--ÐÅÏ¢Ìå-->
+		</Response>
+	</Transaction>
+</Application>

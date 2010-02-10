@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐÒøË°ÁªÍøÒøÐÐ×Ê½ðÇåËãÇåµ¥ -->
+<Application dbconnect="YES" trclog="PFT005.log">
+  <VarDef>
+    <String alias="RptNam" pos="1"/>
+    <String alias="ClrDat" pos="2"/>
+    <String alias="ClrSce" pos="3"/>
+    <String alias="BrNo"   pos="4"/>
+    <String alias="NodNo"  pos="5"/>
+    <String alias="PrtTlr" pos="6"/>
+    <String alias="PrtDat" pos="7"/>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="TRCVTP">
+      <Convert value="4" msg="¹ú¿â¾­ÊÕ" />
+      <Convert value="2" msg="ÒøÐÐ¾­ÊÕ" />
+      <DEFAULT msg="Òì³£" />  
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select PyrCod,PyrNam,PyrBNo,PyrBNm,PyrAct,
+                       PyeCod,PyeNam,PyeBNo,PyeBNm,PyeAct,TTxnTp,TRcvTp,TRTpNm,TaxKnd,TaxNam,TxnAmt
+                  from PftEft003
+                 where ClrDat='%s' and ClrSce='%s'
+              order by TRcvTp" >
+        <FieldList>$ClrDat|$ClrSce|</FieldList>
+      </Sql>
+    </Iterative>
+    <SubTotal type="field" groupby="PYEBNO|">
+      <Field fmtseq="1" field="PYEBNO">
+        <Sum sum="TXNAMT" sum_alias="SubAmt" count="SubNum"/>
+      </Field>
+    </SubTotal>
+    <Summed type="field">
+      <Field sum="TXNAMT" sum_alias="TotAmt" count="TotNum"/>
+    </Summed>   
+  </DataSource>
+  <FormatDefine pagerows="20" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$RptNam"/>
+      <Para label="02" alias="$ClrDat"/>
+      <Para label="03" alias="$ClrSce"/>
+      <Para label="04" alias="$PAGENUM"/>
+      <Para label="05" alias="$PAGESUM"/>
+      <Format>
+                                                                   ½»Í¨ÒøÐÐÒøË°ÁªÍø¡¾#¡¿
+                                                       ==========================================================
+  ÇåËãÈÕÆÚ: #      ÇåËã³¡´Î£º#                                                                                                                        µÚ   #  Ò³       ¹²  #  Ò³
+©³©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©·
+©§ ¸¶¿î·½´úÂë ©§                    ¸¶¿î·½Ãû³Æ                    ©§¸¶·½ÇåËãÐÐºÅ©§               ¸¶¿îÇåËãÐÐÃû               ©§             ¸¶¿î·½ÕÊºÅ             ©§  ¾­ÊÕÀà±ð  ©§
+©§ ÊÕ¿î·½´úÂë ©§                    ÊÕ¿î·½Ãû³Æ                    ©§ÊÕ·½ÇåËãÐÐºÅ©§               ÊÕ¿îÇåËãÐÐÃû               ©§             ÊÕ¿î·½ÕÊºÅ             ©§    ½ð¶î    ©§
+©Ç©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$PYECOD"/>
+      <Para label="02" alias="$PYENAM"/>
+      <Para label="03" alias="$PYEBNO"/>
+      <Para label="04" alias="$PYEBNM"/>
+      <Para label="05" alias="$PYEACT"/>
+      <Para label="06" alias="$TRCVTP" convert="yes"/>
+      <Para label="07" alias="$PYRCOD"/>
+      <Para label="08" alias="$PYRNAM"/>
+      <Para label="09" alias="$PYRBNO"/>
+      <Para label="10" alias="$PYRBNM"/>
+      <Para label="11" alias="$PYRACT"/>
+      <Para label="12" alias="AMTFMT($TXNAMT)" spread="left"/>
+      <Format>
+©§#           ©§#                                                 ©§#           ©§#                                         ©§#                                   ©§#           ©§
+©§#           ©§#                                                 ©§#           ©§#                                         ©§#                                   ©§           #©§
+      </Format>
+    </Iterative>
+    <SubTotal fmtseq="1">
+      <Para label="01" alias="$SubNum"         spread="mid" />
+      <Para label="02" alias="AMTFMT($SubAmt)" spread="left" />
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©Ï
+©§Ð¡¼Æ£º                           ±ÊÊý£º     #                                                                                                                                #©§          
+©Ç©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </SubTotal>
+    <Summed>
+      <Para label="01" alias="$TotNum"         spread="mid" />
+      <Para label="02" alias="AMTFMT($TotAmt)" spread="left" />
+      <Format>
+©Ç©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º                           ±ÊÊý£º     #                                                                                                                                #©§          
+©Ç©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©Ï
+      </Format>
+    </Summed>
+    <TableFooter>
+      <Para label="01" alias="$PrtTlr"/>
+      <Para label="02" alias="$PrtDat"/>
+      <Format>
+©»©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¿
+                                ´òÓ¡¹ñÔ±ºÅ£º#                                                            ´òÓ¡ÈÕÆÚ£º#
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>

@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="MID"  pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term" server="OFTEMID1">
+	<CodeSwitching>
+		<Table name="CcyCod" file="etc/MID_CSW_446999.XML">
+			<Column name="Host" sort="yes"/>
+			<Column name="Front" sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+	<Define>
+	<!--Í¨ÓÃ»ØÓ¦-->
+    <Macro name="MID_RES" desc="Í¨ÓÃ»ØÓ¦">
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+          <Break/>
+        </Case>
+        <Case value="W"/>
+        <Case value="E">
+          <PackItem name="TMP">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TMP" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="A">
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Case>
+      </Switch>
+    </Macro>
+  </Define>
+
+	<!-- µ¥Ö¤ÒÆ½»Çåµ¥Î¬»¤  -->
+	<Transaction service="463000" code="463000" log_switch="0">
+		<Request delimiter_type="fixed">
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Item name="Func"   length="1" />		<!--¹¦ÄÜÑ¡Ïî			-->
+			<Item name="SndNo"	length="17"	/>	<!--ÒÆ½»±àºÅ			-->
+			<Item name="RcvDat"	length="8"	/>	<!--ÒÆ½»ÈÕÆÚ			-->
+			<Item	name="RcvNod"	length="6"	/>	<!--½ÓÊÕÐÐºÅ			-->
+			<Item name="SndTyp"	length="2"	/>	<!--ÒÆ½»ÀàÐÍ			-->
+			<Item	name="CetTyp"	length="2"	/>	<!--Æ¾Ö¤ÀàÐÍ			-->
+			<Item name="ActNo"	length="21"	/>	<!--ÕËºÅ					-->
+			<Item name="CcyCod" length="3"	/>	<!--±ÒÖÖ    			-->
+			<Item name="SndAmt"	length="14"	/>	<!--½ð¶î					-->
+			<Item name="SndCnt"	length="8"	/>	<!--·ÝÊý					-->
+			<Item name="SndRmk"	length="60"	/>	<!--±¸×¢					-->
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<PackItem name="TMP">
+				<Item name="ApCode" length="2" value="46"/> 
+				<Item name="OFmtCd" length="3" value="A00"/>
+				<Item	name="SndNo"	length="17"	/>
+			</PackItem>
+			<Item name="TMP" head_len="4" include_len="yes"/>
+		</Response>
+	</Transaction>
+
+
+	<!-- µ¥Ö¤ÒÆ½»Çåµ¥²éÑ¯  -->
+	<Transaction service="463020" code="463020" timeout="30" log_switch="0">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"	length="6"/>
+			</If>
+			<Else>
+				<Item name="RcvDat"	length="8" />		<!--½ÓÊÕÈÕÆÚ	-->	
+				<Item name="RcvNod"	length="6" />		<!--½ÓÊÕ²¿ÃÅºÅ 	-->  
+				<Item name="MinNo"	length="17" />	<!--ÆðÊ¼±àºÅ	-->
+				<Item name="MaxNo"	length="17" />	<!--ÖÕÖ¹±àºÅ-->
+			</Else>
+		</Request>
+		<Response necessary="no">
+   			<Include file="etc/TRMTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<PackItem name="TmpDat">
+						<Item name="ApCode"  length="2" value="46" />	<!--Ó¦ÓÃÂë-->
+						<Item name="OFmtCd"  length="3" value="Z01" />
+						<Item name="PageNo"  length="4" value="0001"/>
+						<Item name="VarSize" length="1" value="3"/>
+						<Item name="Ttl"	head_len="3"	value=" µ¥Ö¤ÒÆ½»Çåµ¥ "/>
+						<Item name="SubTtl"	head_len="3"	value="ÒÆ½»±àºÅ      ½ÓÊÕÐÐ ÒÆ½»ÀàÐÍ Æ¾Ö¤ÖÖÀà         ÕËºÅ       ±ÒÖÖ      ½ð¶î     ·ÝÊý"/>
+						<Group name="Rec" repeat_name="RecNum">
+							<PackItem name="TmpNam">
+								<Item name="SndNo"	length="17" />	<!--ÒÆ½»±àºÅ				-->	
+								<Item name="RcvNod" length="6" />		<!--½ÓÊÕ²¿ÃÅºÅ			-->
+								<Item name="SndTyp" length="2" />		<!--ÒÆ½»ÀàÐÍ			-->
+								<Item name="CetTyp" length="2" />		<!--Æ¾Ö¤ÖÖÀà	-->
+								<Item name="ActNo"  length="21" />	<!--ÕËºÅ-->
+								<Item name="CcyCod" length="3" /> 	<!--±ÒÖÖ-->
+								<Item name="SndAmt" length="14" />	<!--½ð¶î-->
+								<Item name="SndCnt" length="8" />		<!--·ÝÊý-->
+								<Item name="TlrId"	length="7" />		<!--Â¼Èë¹ñÔ±-->
+							</PackItem>
+						<Item name="TmpNam" head_len="3"/>
+						</Group>
+					</PackItem>
+					<Item name="TmpDat" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1" />
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+	
+	<!-- µ¥Ö¤ÒÆ½»Çåµ¥´òÓ¡ -->
+	<Transaction service="463040" code="463040" log_switch="0"> 
+		<Request> 
+			<Include file="etc/TRMTIA_IIT.XML"/> 
+				<Item name="RcvDat"	length="8" />		<!--½ÓÊÕÈÕÆÚ	-->	
+				<Item name="RcvNod"	length="6" />		<!--½ÓÊÕ²¿ÃÅºÅ 	-->  
+				<Item name="MinNo"	length="17" />	<!--ÆðÊ¼±àºÅ	-->
+				<Item name="MaxNo"	length="17" />	<!--ÖÕÖ¹±àºÅ-->
+		</Request> 
+		<Response necessary="no"> 
+			<Include file="etc/TRMTOA_IIT.XML"/> 
+			<PackItem name="TMP"> 
+				<Item name="ApCode" length="2" value="SC"/> 
+				<Item name="OFmtCd" length="3" value="D04"/> 
+				<Item name="RspCod" length="6"/> 
+				<Item name="InPos"  length="4" value="0001"/> 
+				<Item name="RspMsg" length="56" /> 
+			</PackItem> 
+			<Item name="TMP" head_len="4" include_len="yes"/> 
+		</Response> 
+	</Transaction> 
+
+	<!-- µ¥Ö¤ÒÆ½»Çåµ¥Î¬»¤(²éÑ¯Ç¶Ì×½»Ò×)  -->
+	<Transaction service='463080' code="463080" log_switch="0">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>	
+			<Item name="SndNo"		length="17" />		<!--ÒÆ½»±àºÅ				-->
+		</Request>
+		<Response necessary="no">
+   			<Include file="etc/TRMTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<PackItem name="TmpDat">
+						<Item name="ApCode" length="2" value="46" />
+						<Item name="OFmtCd" length="3" value="000" />
+						<Item name="RcvDat"	length="8"	/>	<!--ÒÆ½»ÈÕÆÚ			-->
+						<Item name="RcvNod"	length="6"	/>	<!--½ÓÊÕÐÐºÅ			-->
+						<Item name="SndTyp"	length="2"	/>	<!--ÒÆ½»ÀàÐÍ			-->
+						<Item name="CetTyp"	length="2"	/>	<!--Æ¾Ö¤ÀàÐÍ			-->
+						<Item name="ActNo"	length="21"	/>	<!--ÕËºÅ					-->
+						<Item name="CcyCod" length="3"	/>	<!--±ÒÖÖ    			-->
+						<Item name="SndAmt"	length="14"	/>	<!--½ð¶î					-->
+						<Item name="SndCnt"	length="8"	/>	<!--·ÝÊý					-->
+						<Item name="SndRmk"	length="60"	/>	<!--±¸×¢					-->
+					</PackItem>
+					<Item name="TmpDat" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1" />
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>	
+	
+	<Transaction code="481217" desc="µØÇø´úÂëÄ£ºý²éÑ¯" log_switch="0">
+      <Request>
+         <Include file="etc/TRMTIA_IIT.XML"/>
+         <If condition="IS_EQUAL_STRING($TIATyp,P)">
+            <Item name="PagIdx"  length="6"/>
+         </If>
+         <Else>
+            <Item name="AreaNam" length="40" expression="DELBOTHSPACE($AreaNam)"/>  <!--µØÇøÃû³Æ-->
+         </Else>
+      </Request>
+      <Response necessary="no">
+         <Include file="etc/TRMTOA_IIT.XML"/>
+         <Switch expression="$MsgTyp">
+            <Case value="N" desc="½»Ò×³É¹¦">
+               <PackItem name="TmpDat">
+                  <Item name="ApFmt"   length="5" value="48Z01"/>
+                  <Item name="PageNo"  length="4" value="0001"/>
+                  <Item name="VarSiz"  length="1" value="3"/>
+                  <Item name="Ttl"    head_len="3" value="µØÇøÂë²éÑ¯"/>
+                  <Item name="SubTtl" head_len="3" value=""/>
+                  <Group name="Rec" repeat_name="RecNum">
+                     <PackItem name="TmpNam">
+                     	 	<Item name="AreaNam"  length="40"/>  <!--µØÇøÃû³ÆµÀ-->
+                        <Item name="AreaCod"  length="4"/>   <!--µØÇø´úÂë-->
+                     </PackItem>
+                     <Item name="TmpNam" head_len="3"/>
+                  </Group>
+               </PackItem>
+               <Item name="TmpDat" head_len="4" include_len="yes"/>
+               <Break/>
+            </Case>
+            <Case value="E">
+               <Include file="etc/ERRFMT_IIT.XML"/>
+               <Break/>
+            </Case>
+            <Case value="A">
+               <Item name="BillText" deli_asc="-1"/>
+               <Break/>
+            </Case>
+         </Switch>
+      </Response>
+   </Transaction>
+
+  <Transaction service="463098" code="463098" timeout="30" log_switch='0' desc="´òÓ¡ÕÊºÅÐÅÏ¢´æ´¢">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ActNo"   length="30" expression="DELSPACE($ActNo,both)"  desc="ÕÊºÅ"/>
+      <Item name="ActNam"  length="60" expression="DELSPACE($ActNam,both)"  desc="»§Ãû"/>
+      <Item name="OpenBr"	 length="30" expression="DELSPACE($OpenBr,both)"  desc="¿ª»§ÐÐ"/>
+      <Item name="OpBrNo"	 length="10" expression="DELSPACE($OpBrNo,both)"  desc="¿ª»§ÐÐºÅ"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="MID_RES"/>
+    </Response>
+  </Transaction>
+
+  <Transaction service="463099" code="463099" timeout="30" log_switch='0' desc="´òÓ¡ÕÊºÅÐÅÏ¢²éÑ¯"> 
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ActNo"   length="30" expression="DELSPACE($ActNo,both)"  desc="ÕÊºÅ"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+       <Switch expression="$MsgTyp">
+            <Case value="N">
+               <PackItem name="TmpDat">
+									<Item name="ApCode" length="2" value="46" />
+									<Item name="OFmtCd" length="3" value="000" />
+      						<Item name="ActNam"  length="60" desc="»§Ãû"/>
+      						<Item name="OpenBr"	 length="30" desc="¿ª»§ÐÐ"/>
+      						<Item name="OpBrNo"	 length="10" desc="¿ª»§ÐÐºÅ"/>
+               </PackItem>
+               <Item name="TmpDat" head_len="4" include_len="yes"/>
+               <Break/>
+            </Case>
+            <Case value="E">
+               <Include file="etc/ERRFMT_IIT.XML"/>
+               <Break/>
+            </Case>
+            <Case value="A">
+               <Item name="BillText" deli_asc="-1"/>
+               <Break/>
+            </Case>
+         </Switch>
+    </Response>
+  </Transaction>
+
+</Application>

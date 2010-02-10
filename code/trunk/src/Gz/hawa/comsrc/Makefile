@@ -2,13 +2,13 @@ MODULE = Gz/hawa
 
 include $(RULES_MAKEFILE)
 
-USERINCL = $(DB2INCDIR) $(MQINCDIR)
-USERLIBS = $(DB2LIBDIR) $(DB2LIBS) $(MQLIBDIR) $(MQLIBS) -lm -lhiswcode -lbptrandata -lbponlbs -lbpdb -lhipex -lhicrc -lhirdo -lhiatlpub -lhiafp -lhirpt -lhimon
+USERINCL =
+USERLIBS = -lhiurl -lhiftpcli -lhiftpsvr -lhipra -lbpbase -lbpdb -lbpdebug -lbponlbs -lbptrandata -lhicrc -lhirdo -lhisaf -lsqnmng -lhipex -lhiafp -lhiatlpub -lhidba -lhimon -lhirpt
 
-USERFLAG = -D_HI_VARARGS
+USERFLAG =
 
 DLLNAME1 = pre_haw.so
-OBJNAME1 = pre_haw.c
+OBJNAME1 = pre_haw.o
 
 ALL = $(DLLNAME1)
 

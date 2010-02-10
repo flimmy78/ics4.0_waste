@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>                                         
+<Application trclog="FBP03_104_RPT.trc" dbconnect="YES">  
+
+ <VarDef>                   
+    <String alias="MinDat"     pos="1"/>
+    <String alias="MaxDat"   	 pos="2"/> 
+    <String alias="ActNo"      pos="3"/>
+    <String alias="ActNam"     pos="4"/>
+    <String alias="BrNo"       pos="5"/>
+    <String alias="PrtNod"     pos="6"/>
+    <String alias="PrtTlr"     pos="7"/>
+    <String alias="PrtDat"     pos="8"/>
+    <String alias="BBusTyp"    pos="9"/>
+    <String alias="BBusNam"    pos="10"/>
+  </VarDef>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  <DataSource object="sql">                                      <!--È¡Ç°ÖÃ½»Ò×ÈÕÆÚ-->                                                                   
+    <Iterative>                                                                                                                     
+      <Sql sql="SELECT a.ActNo,a.ActDat,a.LogNo,e.AA,a.TCusId,a.TxnCod,a.TlrId,a.CCYCOD,a.NodNo,a.HLogNo,
+                       a.TxnCnl,a.TxnAmt,c.CrpNam,b.TActNo,e.EE,e.BB
+        FROM afebatrec a, savcrpagr b,savcrpinf c,fbpbatrec e
+        WHERE a.BrNo='%s' AND  (a.ActDat BETWEEN '%s' AND '%s') AND a.HRspCd='SC0000' AND a.ActNo='%s' 
+         and b.BBusTyp='%s' and a.extkey=e.extkey
+         and a.CAgtNo=b.CAgtNo and a.BrNo=b.BrNo and b.BrNo=c.BrNo and b.CrpCod=c.CrpCod">
+        <FieldList>$BrNo|$MinDat|$MaxDat|$ActNo|$BBusTyp|</FieldList>                                                                                                     
+      </Sql>                                                                                                                        
+    </Iterative>
+ 		<Summed type="field">
+			<Field sum="TXNAMT" sum_alias="TotTxnAmt" count="TotNum"/>
+		</Summed> 
+  </DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+		  <Para label="01" alias="$BBusNam"/>
+			<Para label="02" alias="$ActNo"/>
+			<Para label="03" alias="$ActNam"/>
+			<Para label="04" alias="$MinDat"/>
+			<Para label="05" alias="$MaxDat"/>
+			<Para label="06" alias="$PAGESUM"/>
+			<Para label="07" alias="$PAGENUM"/>
+			<Format>
+                                          ½»Í¨ÒøÐÐ·ðÉ½·ÖÐÐÅúÁ¿´ú¿Û¿Í»§¼ÇÕËÁ÷Ë®Çåµ¥¡ª¡ª# 
+                                       ==========================================================
+ ÕËºÅ£º#                                                     
+ »§Ãû£º#                                                        ²éÑ¯ÈÕÆÚ·¶Î§£º#¡ª#                             ¹² # Ò³     µÚ # Ò³   
+©³©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§½»Ò×ÈÕÆÚ©§  µçÐÅºÅÂë  ©§ Ö÷»úÁ÷Ë®ºÅ ©§µÚÈý·½Á÷Ë®ºÅ©§ ÔÂ·Ý ©§ ÈëÕÊ½ð¶î   ©§      ÈëÕËÕËºÅÕÊºÅ    ©§          ÈëÕË»§Ãû                  ©§
+©Ç©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="$ActDat"           spread="mid" />
+			<Para label="02" alias="DELBOTHSPACE($BB)" spread="mid" />
+			<Para label="03" alias="$HLogNo"           spread="mid"/>
+			<Para label="04" alias="DELBOTHSPACE($AA)"/>
+			<Para label="05" alias="$EE"/> 
+			<Para label="06" alias="AMTFMT($TxnAmt)"   spread="left"/>
+			<Para label="07" alias="$TActNo"					 spread="mid" />
+			<Para label="08" alias="DELBOTHSPACE($CrpNam)"          />
+			<Format>
+©§#       ©§#           ©§#           ©§#           ©§#     ©§           #©§                     #©§#                                   ©§
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="$TotNum"					    spread="mid" />
+			<Para label="02" alias="AMTFMT($TotTxnAmt)"   spread="left" />
+			<Format>
+©Ç©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ£º      	          ±ÊÊý£º     #                                   #                                                              ©§            
+©Ç©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+			</Format>
+		</Summed>
+		<TableFooter>
+			<Para label="01" alias="$PrtTlr"/>
+			<Para label="02" alias="$PrtDat"/>
+			<Para label="03" alias="$PrtNod"/>
+			<Format>
+©»©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+                                ´òÓ¡¹ñÔ±ºÅ£º#                                          ´òÓ¡ÈÕÆÚ£º#                            ´òÓ¡Íøµã£º#
+			</Format>                                                                                                                         
+   </TableFooter>                                                                                                            
+  </FormatDefine>                                                                                                                   
+</Application>           
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

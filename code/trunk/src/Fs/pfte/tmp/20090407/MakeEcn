@@ -1,0 +1,22 @@
+MODULE		= Fs/pfte
+
+include $(RULES_MAKEFILE)
+
+#USERLIBS = -bloadmap:xx -lhiipchk -lets_446
+#USERLIBS = -lhiipchk -lets_446
+USERLIBS = -lhiipchk -lets
+USERFLAG = -DDEBUG
+
+DLLNAME1 = ecnsvrasyncl_pft446.so
+DLLOBJS1 = ecnsvrasyncl_pft446.o
+
+ALL =  $(DLLNAME1)
+
+all: $(ALL) clean
+
+$(DLLNAME1): $(DLLOBJS1)
+	$(HISUN_COMBINED) tmpxxx.exp $?	
+	$(CC) $(LIBCCFLAGS) -o $(PRIDLLDIR)/$@ $? -bE:tmpxxx.exp
+
+clean:
+	-rm *.o *.exp

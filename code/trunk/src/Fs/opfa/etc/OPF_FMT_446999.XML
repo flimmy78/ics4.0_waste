@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="fsltfmt.log" err_file="fsltfmt.err">   
+   <Process name="FS_LTDZFmt"><!--·ðÉ½ÁªÍ¨¶ÔÕÊ¸ñÊ½-->
+      <Head>
+      	<AddItem name="AAA" value=" "/>
+         <!--Item name="AAA"    expression="STRCAT(AGENT_CODE FSJT000\\n,TRANS_DATE ,$ActDat, ,$ActDat, ,$ActDat, \\n,TRANS_NUM ,$AllNum, ,$OrnNum, ,$CJnlNm, ,$AllAmt, ,$OrnAmt, ,$CJnlAt, \\n,TEXT_BEGIN\\n)"/-->
+         <Item name="AAA"    expression="AGENT_CODE FSJT000"  deli_asc="10"/>
+         <Item name="AAA"    expression="STRCAT(TRANS_DATE ,$ChkDat, ,$ChkDat, ,$ChkDat)"   deli_asc="10"/>
+         <Item name="AAA"    expression="STRCAT(TRANS_NUM ,$AllNum, ,$OrnNum, ,$CJnlNm, ,$AllAmt, ,$OrnAmt, ,$CJnlAt)"    deli_asc="10"/>
+         <Item name="AAA"    expression="TEXT_BEGIN"/>
+      </Head>
+      <Data deli_asc="32">
+         <Item name="RSFLD1"/>   <!--ÒµÎñÀàÐÍ-->
+         <Item name="RSFLD2"/>   <!--ÇøÓòÂë-->
+         <Item name="LogNo" expression="ADDCHAR(DELBOTHSPACE($LogNo),20,0,1)"/>   <!--»ú¹¹Á÷Ë®£¨¼´ÒøÐÐÁ÷Ë®£¬±ØÐëÍ¬½»Ò×Ê±µÄÁ÷Ë®ºÅÒ»ÖÂ£©-->
+         <Item name="TCusId"/>   <!--µç»°ºÅÂë-->
+         <Item name="TLogNo"/>   <!--ÁªÍ¨Á÷Ë®-->
+         <Item name="RSFLD3"/>   <!--½»Ò×Âë-->
+         <Item name="TxnAmt"  expression="AMTDELZERO(DELBOTHSPACE($TxnAmt))"/>   <!--½»Ò×½ð¶î£¨·ÖÎªµ¥Î»£©-->
+         <Item name="ActDat"/>   <!--½»Ò×ÈÕÆÚ-->
+         <Item name="ActNo"/>    <!--ÓÃ»§ÕËºÅ-->
+      </Data>
+      <End>
+      	<Item name="AAA" expression="TEXT_END"/>
+      </End>
+   </Process>
+   
+   
+   <Process name="OPF_MOBL"><!--·ðÉ½ÒÆ¶¯¶ÔÕÊ¸ñÊ½-->
+      <Head deli_asc="10">
+         <Item name="AAA"    value="25"/>
+         <Item name="TxnDat"/>
+         <Item name="OrnCnt"/>
+         <Item name="OrnAmt"/>
+      </Head>
+      <Data deli_asc="32">
+         <Item name="LogNo" expression="SUBSTR($LogNo,3,12)"/>   <!--ICSÁ÷Ë®ºÅ-->
+         <Item name="TLogNo"/>   <!--BOSSÁ÷Ë®-->
+         <Item name="TCusId"/>   <!--µç»°ºÅÂë-->
+         <Item name="TxnAmt" expression="ADDCHAR(AMTDELZERO(DELBOTHSPACE($TxnAmt)),14,0,1)"/>   <!--½»Ò×½ð¶î£¨·ÖÎªµ¥Î»£©-->
+         <Item name="RSFLD1"/>   <!--½»Ò×Âë-->
+      </Data>
+   </Process>
+</BATCH>

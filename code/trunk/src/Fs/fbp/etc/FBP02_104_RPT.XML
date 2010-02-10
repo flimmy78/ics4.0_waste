@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>                                         
+<Application trclog="FBP02_104_RPT.trc" dbconnect="YES">   <!--104´ú¿ÛµçÐÅ»°·Ñ-->
+
+ <VarDef>                   
+    <String alias="TxnDat"     pos="1"/> 
+    <String alias="ActNo"      pos="2"/>
+    <String alias="ActNam"     pos="3"/>
+    <String alias="HLogNo"		 pos="4"/>
+    <String alias="BBusTyp"    pos="5"/>
+    <String alias="BBusNam"		 pos="6"/>
+    <String alias="BrNo"       pos="7"/>
+    <String alias="PrtNod"     pos="8"/>
+    <String alias="PrtTlr"     pos="9"/>
+    <String alias="PrtDat"     pos="10"/>
+  </VarDef>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  <DataSource object="sql">                                      <!--È¡Ç°ÖÃ½»Ò×ÈÕÆÚ-->                                                                   
+    <Iterative>                                                                                                                     
+      <Sql sql="SELECT a.ActNo,a.ActDat,a.LogNo,e.AA,a.TCusId,a.TxnCod,a.TlrId,a.CCYCOD,a.NodNo,a.HLogNo,
+                       a.TxnCnl,a.TxnAmt,c.CrpNam,b.TActNo,d.PrtCnt,e.EE,e.BB
+        FROM afebatrec a, savcrpagr b,savcrpinf c,fbptxnprt446 d,fbpbatrec e
+        WHERE a.BrNo='%s' AND a.ActDat='%s' AND a.HRspCd='SC0000' AND a.ActNo='%s' 
+         and ('%s'='000000000' or a.HLogNo='%s') and b.BBusTyp='%s'
+         and a.extkey=e.extkey
+         and a.CAgtNo=b.CAgtNo and a.BrNo=b.BrNo and b.BrNo=c.BrNo and b.CrpCod=c.CrpCod
+         and a.ActNo=d.ActNo and a.ActDat=d.ActDat and a.HLogNo=d.HLogNo">
+        <FieldList>$BrNo|$TxnDat|$ActNo|$HLogNo|$HLogNo|$BBusTyp|</FieldList>                                                                                                     
+      </Sql>                                                                                                                        
+    </Iterative>
+  </DataSource>
+
+  <FormatDefine pagesum="YES">                                   
+  
+    <Iterative line="1">                            
+    	 <Para label="01" alias="$BBusNam"											   />
+       <Para label="02" alias="$ActNo"                           />                                                                               
+       <Para label="03" alias="DELBOTHSPACE($ActNam)"            />
+       <Para label="04" alias="$TActNo"                          />                                                                               
+       <Para label="05" alias="DELBOTHSPACE($CrpNam)"            />
+       <Para label="06" alias="$CcyCod"                          />       
+       <Para label="07" alias="AMTFMT(DELBOTHSPACE($TxnAmt))"    />
+       <Para label="08" alias="DELBOTHSPACE(AMTTOCAP($TxnAmt))"  />
+       <Para label="09" alias="DELBOTHSPACE($EE)"                />  <!--´ú¿ÛÔÂ·Ý-->
+       <Para label="10" alias="DELBOTHSPACE($BB)"								 />  <!--µçÐÅºÅÂë-->
+       <Para label="11" alias="DELBOTHSPACE($TxnCod)"            />
+       <Para label="12" alias="$TxnCnl"                          />
+       <Para label="13" alias="$HLogNo"                          />
+       <Para label="14" alias="DELBOTHSPACE($AA)"                /> <!--µçÐÅÁ÷Ë®ºÅ-->
+       <Para label="15" alias="$ActDat"                          />
+       <Para label="16" alias="DELBOTHSPACE($TCusId)"            />
+       <Para label="17" alias="$TlrId"                           />
+       <Para label="18" alias="$NodNo"                           />
+       <Para label="19" alias="$PrtCnt"                          />
+       <Para label="20" alias="$PrtTlr"                          />
+       <Para label="21" alias="$PrtNod"                          />
+       <Para label="22" alias="$PrtDat"                          />
+       
+       <Format>            
+         
+                                              ·ðÉ½·ÖÐÐ
+       
+                                                                                                                              
+           »Øµ¥ÀàÐÍ£ºÅúÁ¿´ú¿Û            ÒµÎñÃû³Æ£º#
+                                                                                                         
+
+           ¸¶¿îÈËÕÊºÅ£º#
+           ¸¶¿îÈËÃû³Æ£º#
+                                                                                                         
+
+           ÊÕ¿îÈËÕËºÅ£º#
+           ÊÕ¿îÈËÃû³Æ£º#
+                                                                                                         
+
+           »õ±Ò¡¢½ð¶î£º##
+           ½ð¶î(´óÐ´)£º#
+                                                                                                         
+
+           Õª    Òª£º´ú¿Û#µçÐÅ·Ñ         µçÐÅºÅÂë£º#
+                                                                                                         
+                                         
+           ½»Ò×´úÂë£º#                   ½»Ò×ÇþµÀ£º#
+           Ö÷»úÁ÷Ë®ºÅ£º#                 µÚÈý·½Á÷Ë®ºÅ£º#
+           »á¼ÆÈÕÆÚ£º#                   µçÐÅ¿Í»§±àÂë£º#                                                     
+           ¼ÇÕË¹ñÔ±£º#                   ¼ÇÕË»ú¹¹£º#                ´òÓ¡´ÎÊý£º#                                     
+           ´òÓ¡¹ñÔ±£º#                   ´òÓ¡»ú¹¹£º#                ´òÓ¡ÈÕÆÚ£º#     
+                                                                                                        
+        
+        
+                                                                                                              
+   
+   
+      </Format>                                                                                                                          
+    </Iterative>                                                                                                                    
+  </FormatDefine>                                                                                                                   
+</Application>           
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

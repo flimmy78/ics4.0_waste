@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--ÈÕÖÕ»ã×Ü¶ÔÕÊ±¨±í-->
+<Application trclog="PFT008_446.log" dbconnect="YES">
+  <VarDef>
+    <String alias="ClrDat" pos="1"/>
+    <String alias="ClrSce" pos="2"/>
+    <String alias="BnkCod" pos="3"/>           
+  </VarDef>
+  <MsgConvert>
+    <Item alias="ChkFlg">
+      <Convert value="0" msg="Î´Í¨¹ý"/>
+      <Convert value="1" msg="ÒÑºË¶Ô"/>
+    </Item>
+    <Item alias="TTxnTp">
+      <Convert value="1" msg="Ë°·Ñ¿î½ÉÄÉ"/>
+      <Convert value="3" msg="ÍËË°"/>
+      <Convert value="15" msg="ÍËË°ÍË»Ø"/>
+    </Item>
+  </MsgConvert>       
+
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select * from pftchktot446 where ClrDat='%s' and ClrSce='%s' and BnkCod='%s'" >
+        <FieldList>$ClrDat|$ClrSce|$BnkCod|</FieldList>
+      </Sql>  
+    </Iterative>
+  </DataSource>
+  <FormatDefine pagerows="50" pagesum="YES">
+    <ReportHeader line="3">
+      <Para label="01" alias="$ClrDat" />
+      <Para label="02" alias="$ClrSce" />
+      <Para label="03" alias="$BnkCod" />
+      <Para label="04" alias="$PAGESUM"  spread="left"/>
+      <Para label="05" alias="$PAGENUM"  spread="left"/>
+      <Format>
+                                ·ðÉ½ÊÐ²ÆË°¿âÁªÍøÈÕÖÕÈËÐÐ¶ÔÊý½á¹ûÇåµ¥
+                                   
+        ÇåËãÈÕÆÚ: #         ÇåËã³¡´Î: #   ·Ö(Ö§)ÐÐ´úÂë: #               ¹²  # Ò³ µÚ  # Ò³
+      </Format>
+    </ReportHeader>
+    <TableHeader>
+      <Format>
+        --------------------------------------------------------------------------------------
+        ½»Ò×ÖÖÀà     ¶ÔÕÊ±êÊ¶   ÈËÐÐÍ³¼Æ½ð¶î      ÈËÐÐÍ³¼Æ±ÊÊý ÒøÐÐÍ³¼Æ½ð¶î      ÒøÐÐÍ³¼Æ±ÊÊý 
+        --------------------------------------------------------------------------------------
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$TTxnTp" convert="YES" />
+      <Para label="02" alias="$ChkFlg"  convert="yes" />
+      <Para label="03" alias="AMTFMT($TotAmt)" spread="left" />
+      <Para label="04" alias="$TotNum"  />
+      <Para label="05" alias="AMTFMT($BnkAmt)" spread="left" />
+      <Para label="06" alias="$BnkNum"  />            
+      <Format>
+        #           #                         #   #                        #       # 
+      </Format>
+    </Iterative>
+    <PageFooter>
+      <Format>
+        --------------------------------------------------------------------------------------
+      </Format>
+    </PageFooter>
+  </FormatDefine>
+</Application>

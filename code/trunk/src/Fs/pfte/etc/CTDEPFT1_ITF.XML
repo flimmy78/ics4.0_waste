@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Application name="PFT" trace="yes" timeout="180">
+  <MemPool init_size="1000" max_size="5000"/>
+  <GetTxnCode>
+    <Item type="fixed"  offset="0" length="6"/> 		<!--ÅäÖÃ´ÓÊý¾Ý°üÈ¡½»Ò×ÂðµÄ¹æÔò,±¨ÎÄÇ°6Î»-->
+  </GetTxnCode>
+  <CodeSwitching>
+    <Table name="ThdCodToTxnCod" file="etc/PFT_CSW_446999.XML">
+      <Column name="ThdCod" sort="no"/>
+      <Column name="TxnCod" sort="no"/>
+    </Table>
+    <Table name="RspCodToRtnCod" file="etc/PFT_CSW_446999.XML">
+      <Column name="RspCod" sort="no"/>
+      <Column name="RtnCod" sort="no"/>
+    </Table>
+  </CodeSwitching>
+
+<!--½ÓÊÕSET202-->
+  <Transaction code="SET202" server='OFTEPFT1' log_switch="1">
+    <Request delimiter_type="fixed">
+      <Item name="MsgFmt"  length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="TCrpCd"  length="11" expression="DELSPACE($TCrpCd,both)" desc="Õ÷ÊÕ»ú¹ØÕ÷ÊÕ»ú¹Ø´úÂë"/>
+      <Item name="TActDt"  length=" 8" desc="Õ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="TLogNo"  length="16" desc="Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ"/>
+      <Item name="RcvBNo"  length="11" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+      <Item name="FskCod"  length="11" desc="ÊÕ¿î¹ú¿â´úÂë"/>
+      <Item name="TTxnTp"  length=" 2" expression="DELSPACE($TTxnTp,both)" desc="½»Ò×ÀàÐÍ"/>
+			<Switch expression="DELSPACE($TTxnTp,both)">
+				<Case value="1"> 	<!--¿Û¿î½»Ò×Í¨Öª-->
+      		<Item name="TVchNo"  length="24" desc="Õ÷ÊÕ»ú¹Øµç×ÓË°Æ±ºÅ"/>
+      		<Item name="AgtInf"  length="35" expression="DELSPACE($AgtInf,both)" desc="ÄÉË°ÈË±àÂë"/>
+					<Break/>
+				</Case>
+				<Case value="2"> 	<!--³åÕý½»Ò×Í¨Öª-->
+      		<Item name="OTActDt" length=" 8" desc="¶ÔÕÕÕ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      		<Item name="OTLogNo" length="16" desc="¶ÔÕÕÁ÷Ë®ºÅ"/>
+      		<Item name="AgtInf"  length="35" expression="DELSPACE($AgtInf,both)" desc="ÄÉË°ÈË±àÂë"/>
+      		<Break/>
+				</Case>
+			  <Case value="6">  <!--²éÑ¯ÄÉË°ÈËÕÊºÅÊÇ·ñÓÐÐ§ºÍ×ã¶î-->
+      		<Item name="OTActDt" length=" 8" desc="¶ÔÕÕÕ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ(¿Õ¸ñ)"/>
+      		<Item name="OTLogNo" length="16" desc="¶ÔÕÕÁ÷Ë®ºÅ(¿Õ¸ñ)"/>
+      		<Item name="PyeAct" length="35"  desc="ÊÕ¿îÈËÕÊºÅ(¿Õ¸ñ)"/>
+					<Break/>
+				</Case>
+			</Switch>
+      <Item name="RcvAct"  length="35" expression="DELSPACE($RcvAct,both)" desc="¸¶¿îÕÊºÅ"/>
+      <Item name="TxnAmt"  length="15" desc="½»Ò×½ð¶î"/>
+      <Item name="TPayTp"  length=" 1" desc="½É¿î·½Ê½´úÂë"/>
+      <Item name="ClrDat"  length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <Item name="ExdLen"  length=" 4" desc="À©Õ¹ÒªËØ³¤¶È"/>     
+      <AddItem name="ClrSce" value="1"/>		<!--ÇåËã³¡´Î£¬ÎÞÒâÒå£¬¼æÈÝÊ¡ÐÐÊý¾Ý±í-->
+      <AddItem name="OIFlag" value="1" />
+      <AddItem name="ThdCod" expression="STRCAT($MsgFmt,$TTxnTp)"/>   
+      <SwitchCode name="ThdCod" new_name="TTxnCd" tab_name="ThdCodToTxnCod" col_name="ThdCod"/>
+      <AddHead head_name="STC" name="TTxnCd"/> 
+    </Request>
+  </Transaction>
+
+<!--·¢ËÍSET203-->
+  <Transaction code="SET203" server='OFTEPFT1' log_switch="1">
+    <Request >
+      <AddItem name="MsgFmt" value="SET203"/>
+      <Item name="MsgFmt"  length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="RcvBNo"  length="11" desc="¾­ÊÕ´¦ÒøÐÐºÅ"/>
+      <Item name="ActDat"  length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="BTxnID"  length="16" desc="½»Ò×Ê¶±ðºÅ"/>
+      <Item name="TCrpCd"  length="11" desc="Õ÷ÊÕ»ú¹ØÕ÷ÊÕ»ú¹Ø´úÂë"/>
+      <Item name="TActDt"  length=" 8" desc="Õ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ"/>
+      <Item name="TLogNo"  length="16" desc="Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ"/>
+      <Item name="TTxnTp"  length=" 2" desc="½»Ò×ÀàÐÍ"/>
+			<Switch expression="DELSPACE($TTxnTp,both)">
+				<Case value="1"> 	<!--¿Û¿îÐÅÏ¢»ØÓ¦-->
+      		<Item name="TVchNo"  length="24" desc="Õ÷ÊÕ»ú¹Øµç×ÓË°£¨Æ±£©ºÅ"/>
+					<Break/>
+				</Case>
+				<Case value="2"/> 	<!--³åÕý»ØÓ¦-->
+				<Case value="6"> 	<!--ÄÉË°ÈËÊÇ·ñ×ã¶îºÍÓÐÐ§²éÑ¯»ØÓ¦-->
+      		<Item name="OTActDt" length=" 8" desc="¶ÔÕÕÕ÷ÊÕ»ú¹ØÌá½»ÈÕÆÚ,ÒøÐÐ¿Û¿îÈÕÆÚ"/>
+      		<Item name="OTLogNo" length="16" desc="¶ÔÕÕÁ÷Ë®ºÅ"/>
+					<Break/>
+				</Case>
+			</Switch>
+      <Item name="ClrDat"  length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <SwitchCode name="RspCod" new_name="RtnCod" tab_name="RspCodToRtnCod" col_name="RspCod"/>
+      <Item name="RtnCod"  length=" 4" desc="´¦Àí·µ»ØÂë"/>
+      <Item name="TxnAmt"  length="15" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)" desc="½»Ò×½ð¶î"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="TRspCd" length="6"/>
+    </Response>
+  </Transaction>
+  
+<!--½ÓÊÕSEC201-->
+<!--¶ÔÊýÐÅÏ¢£¬¶ÔÊý²éÑ¯½á¹û-->
+   <Transaction code="SEC201" server='OFTEPFT1' log_switch="1">
+     <Request delimiter_type="fixed">
+      <Item name="MsgFmt" length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="BnkCod" length="11" desc="ÒøÐÐ´úÂë"/>
+      <Item name="TxnDat" length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="BTxnID" length="16" desc="ÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+      <Item name="RtnCod" length=" 4" desc="´¦Àí·µ»ØÓò"/>
+      <Item name="QryTyp" length=" 2" desc="²éÑ¯ÀàÐÍ"/>
+      <Item name="ClrDat" length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <Item name="TTxnTp" length=" 2" expression="DELBOTHSPACE($TTxnTp)" desc="½»Ò×ÀàÐÍ"/>
+      <Item name="SRFlg"  length=" 1" desc="½Ó·¢±êÖ¾"/>
+      <Item name="TotNum" length=" 6" desc="Í³¼Æ±ÊÊý"/>
+      <Item name="TotAmt" length="15" desc="Í³¼Æ½ð¶î"/>
+      <AddItem name="ClrSce" value="1"/>
+      <AddItem name="OIFlag" value="1"/>
+      <AddItem name="ThdCod" expression="STRCAT($MsgFmt,0)"/>   
+      <SwitchCode name="ThdCod" new_name="TTxnCd" tab_name="ThdCodToTxnCod" col_name="ThdCod"/>
+      <AddHead head_name="STC" name="TTxnCd"/> 
+     </Request>
+   </Transaction>
+
+<!--·¢ËÍSEQ201-->
+<!--¶ÔÊý²éÑ¯ÉêÇë-->
+   <Transaction code="SEQ201" server='OFTEPFT1' log_switch="1">
+     <Request delimiter_type="fixed">
+      <AddItem name="MsgFmt" value="SEQ201"/>
+      <Item name="MsgFmt"  length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <SwitchCode name="RspCod" new_name="RtnCod" tab_name="RspCodToRtnCod" col_name="RspCod"/>
+      <Item name="BnkCod"  length="11" desc="ÒøÐÐ´úÂë"/>
+      <Item name="TxnDat"  length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="BTxnID"  length="16" desc="ÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+      <Item name="QryTyp"  length=" 2" desc="²éÑ¯ÀàÐÍ"/>
+      <Item name="TTxnTp"  length=" 2" expression="DELBOTHSPACE($TTxnTp)" desc="½»Ò×ÀàÐÍ"/>
+      <Item name="ClrDat"  length=" 8" desc="ÇåËãÈÕÆÚ"/>
+      <Item name="OTxnDat" length=" 8" desc="Ô­ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="BBTxnID" length="16" desc="ÆðÊ¼ÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+      <Item name="EBTxnID" length="16" desc="½áÊøÒøÐÐ½»Ò×Ê¶±ðºÅ"/>
+     </Request>
+     <Response necessary="no">
+      <Item name="TRspCd" length="6"/>
+     </Response>
+   </Transaction>
+
+<!--½ÓÊÕSES202-->
+<!--µÇÂ½»ØÓ¦ÐÅÏ¢-->
+   <Transaction code="SES202" server='OFTEPFT1' log_switch="1">
+     <Request delimiter_type="fixed">
+      <Item name="MsgFmt" length="6" desc="ÐÅÏ¢¸ñÊ½Âë" />
+      <AddItem name="OIFlag" value="1"/>
+      <AddItem name="ThdCod" expression="STRCAT($MsgFmt,0)"/>   
+      <SwitchCode name="ThdCod" new_name="TTxnCd" tab_name="ThdCodToTxnCod" col_name="ThdCod"/>
+      <AddHead head_name="STC" name="TTxnCd"/> 
+     </Request>
+   </Transaction>
+
+<!--½ÓÊÕSES203-->
+<!--ÏµÍ³¹Ø±ÕÍ¨ÖªÐÅÏ¢-->
+   <Transaction code="SES203" server='OFTEPFT1' log_switch="1">
+     <Request delimiter_type="fixed">
+      <Item name="MsgFmt" length=" 6" desc="ÐÅÏ¢¸ñÊ½Âë"/>
+      <Item name="BnkCod" length="11" desc="ÒøÐÐ´úÂë"/>
+      <Item name="TxnDat" length=" 8" desc="ÒøÐÐÌá½»ÈÕÆÚ"/>
+      <Item name="SysSts" length=" 1" desc="ÏµÍ³¹Ø±Õ"/>
+      <AddItem name="OIFlag" value="1"/>
+      <AddItem name="ThdCod" expression="STRCAT($MsgFmt,0)"/>   
+      <SwitchCode name="ThdCod" new_name="TTxnCd" tab_name="ThdCodToTxnCod" col_name="ThdCod"/>
+      <AddHead head_name="STC" name="TTxnCd"/> 
+     </Request>
+   </Transaction>
+</Application>

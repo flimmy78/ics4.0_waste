@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½ÉË°×Ê½ð»®²¦Æ¾Ö¤ -->
+<Application dbconnect="YES" trclog="PFT009_446.log">
+  <VarDef>
+    <String alias="RptNam" pos="1"/>
+    <String alias="MsgFmt" pos="2"/>
+    <String alias="ClrDat" pos="3"/>
+    <String alias="ClrSce" pos="4"/>
+    <String alias="BrNo"   pos="5"/>
+    <String alias="NodNo"  pos="6"/>
+    <String alias="PrtTlr" pos="7"/>
+    <String alias="PrtDat" pos="8"/>
+  </VarDef>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="select value(sum(bigint(TxnAmt)),0) TotAmt from pftsec202sum446 where MsgFmt='%s' and ClrDat='%s' and ClrSce='%s' and OpnBr='%s'">
+        <FieldList>$MsgFmt|$ClrDat|$ClrSce|$BrNo|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+  <FormatDefine>
+    <Iterative line="1">
+      <Para label="01" alias="$RptNam" spread="mid"/>
+      <Para label="02" alias="$ClrDat" spread="mid"/>
+      <Para label="03" alias="$ClrSce" spread="mid"/>
+      <Para label="04" alias="AMTFMT($TOTAMT)" spread="left"/>
+      <Para label="05" alias="AMTFMT($TOTAMT)" spread="left"/>
+      <Para label="06" alias="$PrtDat" spread="mid"/>
+      <Para label="07" alias="$PrtTlr" spread="mid"/>
+      <Format>
+
+
+
+
+
+
+                      ½»Í¨ÒøÐÐ #
+  ÇåËãÈÕÆÚ£º¡¾#¡¿                                ÇåËã³¡´Î£º¡¾#¡¿
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©·
+©§      ÇåËã  ÕË»§      ©§     ½è        ·½     ©§     ´û        ·½     ©§
+©§446800011110100001899 ©§ £¨¹ú¿â»ã×ÜÈë¿â½ð¶î£© ©§ £¨ÒÑÇåËã´ú¿Û½ÉË°¿î£© ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§      ·¢Éú¶îºÏ¼Æ      ©§                  0.00©§                     #©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§      ÇåËã¶îºÏ¼Æ      ©§                  0.00©§                     #©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Ï
+©§»á¼Æ·ÖÂ¼  ½è£º22203   ©§ÉÏÁÐ²î¶îÒÑ°´¹æ¶¨°ìÀí×ªÆý                      ©§
+©§             ´û£º11101©§        ¼ÇÕÊ£º          ¸´ºË£º                ©§
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+  ´òÓ¡ÈÕÆÚ£º¡¾#¡¿                             ´òÓ¡¹ñÔ±£º¡¾#¡¿
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>

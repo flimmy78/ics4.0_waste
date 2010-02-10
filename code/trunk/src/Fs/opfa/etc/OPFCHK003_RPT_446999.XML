@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>                                         
+<Application trclog="OPFCHK003_446999.trc" dbconnect="YES">  
+
+ <VarDef>                   
+    <String alias="TxnDat"     pos="1"/> 
+    <String alias="ActNo"      pos="2"/>
+    <String alias="ActNam"     pos="3"/>
+    <String alias="TckNo"			 pos="4"/>
+    <String alias="BrNo"       pos="5"/>
+    <String alias="PrtNod"     pos="6"/>
+    <String alias="PrtTlr"     pos="7"/>
+    <String alias="PrtDat"     pos="8"/>
+  </VarDef>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+  <DataSource object="sql">                                      <!--È¡Ç°ÖÃ½»Ò×ÈÕÆÚ-->                                                                   
+    <Iterative>                                                                                                                     
+      <Sql sql="SELECT a.ActNo,a.ActDat,a.LogNo,a.TckNo,a.TCusId,a.TXNCOD,a.TlrId,a.CCYCOD,a.NodNo,
+                       a.TxnCnl,a.TxnAmt,a.TLogNo,a.FTxnTm,c.CrpNam,b.TActNo,d.PrtCnt
+        FROM afetxnjnl a, savcrpagr b,savcrpinf c,comtxnprt446 d
+        WHERE a.BrNo='%s' AND a.ActDat='%s' AND a.HTxnSt='S' AND a.ActNo='%s' 
+         and a.CAgtNo in ('4460000005','4460000001') and ('%s'='00000000000' or a.TckNo='%s')
+         and a.CAgtNo=b.CAgtNo and a.BrNo=b.BrNo and b.BrNo=c.BrNo and b.CrpCod=c.CrpCod
+         and a.ActNo=d.ActNo and a.TckNo=d.TckNo and a.ActDat=d.ActDat">
+        <FieldList>$BrNo|$TxnDat|$ActNo|$TckNo|$TckNo</FieldList>                                                                                                     
+      </Sql>                                                                                                                        
+    </Iterative>
+  </DataSource>
+
+  <FormatDefine pagesum="YES">        
+    <Iterative line="1">                            
+       <Para label="01" alias="$ActNo"                           />                                                                               
+       <Para label="02" alias="DELBOTHSPACE($ActNam)"            />
+       <Para label="03" alias="$TActNo"                          />                                                                               
+       <Para label="04" alias="DELBOTHSPACE($CrpNam)"            />
+       <Para label="05" alias="$CcyCod"                          />       
+       <Para label="06" alias="AMTFMT(DELBOTHSPACE($TxnAmt))"    />
+       <Para label="07" alias="DELBOTHSPACE(AMTTOCAP($TxnAmt))"  />
+       <Para label="08" alias="DELBOTHSPACE($TCusId)"            />
+       <Para label="09" alias="DELBOTHSPACE($TxnCod)"            />
+       <Para label="10" alias="$TxnCnl"                          />
+       <Para label="11" alias="$TckNo"                           />
+       <Para label="12" alias="DELBOTHSPACE($TLogNo)"            />
+       <Para label="13" alias="$ActDat"                          />
+       <Para label="14" alias="$FTxnTm"                          />
+       <Para label="15" alias="$TlrId"                           />
+       <Para label="16" alias="$NodNo"                           />
+       <Para label="17" alias="$PrtCnt"                          />
+       <Para label="18" alias="$PrtTlr"                          />
+       <Para label="19" alias="$PrtNod"                          />
+       <Para label="20" alias="$PrtDat"                          />
+       
+       <Format>            
+         
+                                              ·ðÉ½·ÖÐÐ
+       
+                                                                                                                              
+           »Øµ¥ÀàÐÍ£º´ú½ÉÍ¨Ñ¶·Ñ          ÒµÎñÃû³Æ£º´ú½ÉÍ¨Ñ¶·Ñ¿Û¿î
+                                                                                                         
+
+           ¸¶¿îÈËÕÊºÅ£º#
+           ¸¶¿îÈËÃû³Æ£º#
+                                                                                                         
+
+           ÊÕ¿îÈËÕËºÅ£º#
+           ÊÕ¿îÈËÃû³Æ£º#
+                                                                                                         
+
+           »õ±Ò¡¢½ð¶î£º##
+           ½ð¶î(´óÐ´)£º#
+                                                                                                         
+
+           Õª    Òª£º´ú½ÉÍ¨Ñ¶·Ñ          Í¨Ñ¶ºÅÂë£º#
+                                                                                                         
+
+           ½»Ò×´úÂë£º#                   ½»Ò×ÇþµÀ£º#
+           »á¼ÆÁ÷Ë®£º#                   µÚÈý·½Á÷Ë®ºÅ£º#
+           »á¼ÆÈÕÆÚ£º#                   ½»Ò×Ê±¼ä£º#                                                     
+           ¼ÇÕË¹ñÔ±£º#                   ¼ÇÕË»ú¹¹£º#                ´òÓ¡´ÎÊý£º#                                     
+           ´òÓ¡¹ñÔ±£º#                   ´òÓ¡»ú¹¹£º#                ´òÓ¡ÈÕÆÚ£º#     
+                                                                                                        
+        
+        
+                                                                                                              
+   
+   
+      </Format>                                                                                                                          
+    </Iterative>                                                                                                                    
+  </FormatDefine>                                                                                                                   
+</Application>           
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

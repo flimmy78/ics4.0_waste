@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="CPL"  pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term" server="OFTECPL1">
+	<!--CodeSwitching>
+		<Table name="CcyCod" file="etc/CPL_CSW_446999.XML">
+			<Column name="Host" sort="yes"/>
+			<Column name="Front" sort="no"/>
+		</Table>
+	</CodeSwitching-->
+	
+ <Define>
+     <Macro name="CPL_RES">      <!--Í¨ÓÃ»ØÓ¦-->
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+          <Break/>
+        </Case>
+        <Case value="W"/>
+        <Case value="E">
+          <PackItem name="TMP">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="56" />
+          </PackItem>
+          <Item name="TMP" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="A">
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Case>
+      </Switch>
+    </Macro>
+ 		<Macro name="CPL_SGN">      <!--Ç©Ô¼ÐÅÏ¢-->
+				<Item name="CAgtNo" length="10"/>		<!--µ¥Î»±àºÅ-->
+ 	  		<Item name="InMode" length="1" />		<!--ÈëÕÊ·½Ê½(0-¸ù¾Ý¿¨Á÷Ë®Öð±ÊÈëÕË 1-Áô´æ×îµÍ½ð¶îºóÒ»±ÊÈëÕË)-->      
+				<Item name="PayAct" length="21" />	<!--×ª³öÕÊ»§-->	                                                    
+				<Item name="RcvAct" length="21" />	<!--×ªÈëÕÊºÅ-->                                                     
+				<Item name="MidAct" length="21" />	<!--26201ÔÝÊÕÕÊºÅ-->                                                
+				<Item name="KepAmt" length="15" />	<!--Áô´æ½ð¶î  -->                                                   
+				<Item name="SgnNod" length="6" />		<!--Ç©Ô¼²¿ÃÅ	-->                                                   
+				<Item name="SqnTlr" length="7" />		<!--Ç©Ô¼¹ñÔ±	-->                                                   
+				<Item name="SqnDat" length="8" />	  <!--Ç©Ô¼ÈÕÆÚ	-->                                                   
+ 		</Macro>
+ </Define>
+ 
+	<!-- ¶ÔË½×ª¶Ô¹«Ç©Ô¼¹ØÏµÎ¬»¤  -->
+	<Transaction service="463600" code="463600" log_switch="1">
+		<Request delimiter_type="fixed">
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<Quote name="CPL_SGN"/>
+		</Request>
+		<Response necessary="no">
+			<Include file="etc/TRMTOA_IIT.XML"/>
+			<Quote name="CPL_RES"/>
+		</Response>
+	</Transaction>
+
+	<!-- ¶ÔË½×ª¶Ô¹«Ç©Ô¼¹ØÏµ²éÑ¯(Ç¶Ì×½»Ò×)  -->
+	<Transaction service='463680' code="463680" log_switch="1">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>	
+			<Item name="CAgtNo" length="3" />		<!--×ª³öÕÊºÅ£¨¶ÔË½£©-->
+		</Request>
+		<Response necessary="no">
+   			<Include file="etc/TRMTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<PackItem name="TmpDat">
+					<Quote name="CPL_SGN"/>
+					</PackItem>
+					<Item name="TmpDat" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1" />
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+
+	<!-- ¶ÔË½×ª¶Ô¹«Ç©Ô¼¹ØÏµÃ÷Ï¸²éÑ¯  -->
+	<Transaction service="463620" code="463620" timeout="30" log_switch="1">
+		<Request>
+			<Include file="etc/TRMTIA_IIT.XML"/>
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Item name="PagIdx"  length="6"/>
+			</If>
+			<Else>
+				<Item name="SgnNod" length="1" />		<!--Ç©Ô¼²¿ÃÅ	-->  
+				<Item name="CAgtNo" length="3" />		<!--Ð­Òé±àºÅ	-->
+			</Else>
+		</Request>
+		<Response necessary="no">
+   			<Include file="etc/TRMTOA_IIT.XML" />
+			<Switch expression="$MsgTyp">
+				<Case value="N">
+					<PackItem name="TmpDat">
+						<Item name="ApCode"  length="2" value="46" />	<!--Ó¦ÓÃÂë-->
+						<Item name="OFmtCd"  length="3" value="Z01" />
+						<Item name="PageNo"  length="4" value="0001"/>
+						<Item name="VarSize" length="1" value="3"/>
+						<Item name="Ttl"	head_len="3"	value="¶ÔË½×ª¶Ô¹«Ç©Ô¼¹ØÏµ"/>
+						<Item name="SubTtl"	head_len="3"	value="²éÑ¯Ã÷Ï¸"/>
+						<Group name="Rec" repeat_name="RecNum">
+							<PackItem name="TmpNam">
+									<Quote name="CPL_SGN"/>
+							</PackItem>
+						<Item name="TmpNam" head_len="3"/>
+						</Group>
+					</PackItem>
+					<Item name="TmpDat" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="E">
+					<Item name="RspMsg" head_len="4" include_len="yes"/>
+					<Break/>
+				</Case>
+				<Case value="A">
+					<Item name="BillText" deli_asc="-1" />
+					<Break/>
+				</Case>
+			</Switch>
+		</Response>
+	</Transaction>
+	
+	<!-- ¶ÔË½×ª¶Ô¹«±¨±í´òÓ¡ -->
+	<Transaction service="463641" code="463641" log_switch="1"> 
+		<Request> 
+			<Include file="etc/TRMTIA_IIT.XML"/> 
+			<Item name="PrtCon"	length="2" />	  <!--´òÓ¡ÄÚÈÝ	-->	
+			<Item name="ActDat"	length="8" />	  <!--»á¼ÆÈÕÆÚ	--> 
+			<Item name="CAgtNo"	length="21" />	<!--Ð­Òé±àºÅ-->
+		</Request> 
+		<Response necessary="no"> 
+			<Include file="etc/TRMTOA_IIT.XML"/> 
+			<Quote name="CPL_RES"/>
+		</Response> 
+	</Transaction>	
+</Application>

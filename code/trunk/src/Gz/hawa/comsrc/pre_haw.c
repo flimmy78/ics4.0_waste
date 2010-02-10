@@ -14,9 +14,7 @@
 
 *********************************************************************/
 #include <stdlib.h>
-/*
-#include "hixmlafp.h"
-*/
+#include "hiafp.h"
 #include "hihaw.h"
 #define  ClearStr(str) memset(str,'\0',sizeof(str))
 /******************************************************************************

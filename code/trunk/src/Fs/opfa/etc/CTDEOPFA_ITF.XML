@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="OPF" server="OFTEOPFA">
+   <GetTxnCode>
+      <Item type="fixed" offset="45" length="4"/>
+   </GetTxnCode>	
+
+ 	<CodeSwitching>
+		<Table name="RspCod2TRtnCd_UN" file="etc/OPF_CSW_446999.XML"> <!--·ðÉ½ÁªÍ¨½»·Ñ-->
+			<Column name="RspCod" sort="no"/>
+			<Column name="TRtnCd" sort="no"/>
+		</Table>
+		<Table name="FS_AppNam" file="etc/OPF_CSW_446999.XML"> <!--·ðÉ½ÁªÍ¨½»·Ñ-->
+			<Column name="AppNam" sort="no"/>
+			<Column name="CAgtNo" sort="no"/>
+		</Table>
+ 	</CodeSwitching>
+ 	<Define>
+ 		<Macro name="uni_head_rcv">		<!--½ÓÊÜµ½ÁªÍ¨µÄÍ¨Ñ¶°üÍ·-->
+			<Item name="MsgLen"		length="4"/>				<!--ÐÅÏ¢³¤¶È(°üÀ¨³¤¶È×Ö¶Î£¬Ê®½øÖÆ×Ö·û´®±íÊ¾)-->  
+			<Item name="BusKnd"		length="1"/>				<!--ÒµÎñÀàÐÍ G-GSM¡¢C-CDMA¡¢P-193³¤Í¾¡¢H-165Õ­´ø¡¢W-»¥ÁªÍø¿í´øÓëÔöÖµÒµÎñ¡¢I-ÓïÒô×¨ÏßÁùÀàÒµÎñ¡££¨±ØÌî£©-->
+			<Item name="TLogNo"		length="20"/>				<!--ÁªÍ¨ÇëÇó½»Ò×Á÷Ë®ºÅ-->
+			<Item name="LogNo"		length="20"/>				<!--ÒøÐÐÓ¦´ðÁ÷Ë®ºÅ(Ç°ÖÃÁ÷Ë®)-->
+			<Item name="ThdCod"		length="4"/>				<!--ÁªÍ¨½»Ò×Âë£¬±ØÌî-->
+			<Item name="AreCod"		length="1"	value="C"/>		<!--ÇøÓòÂë(·ðÉ½C)£¬±ØÌî-->
+			<Item name="BnkCod"		length="7"/>				<!--´úÀí»ú¹¹±àÂë£¬±ØÊä-->
+			<Item name="TTlrId"		length="6"/>				<!--ÁªÍ¨²Ù×÷Ô±ºÅ-->
+			<Item name="TTxnTm"		length="14"/>				<!--½»Ò×Ê±¼ä(¸ñÊ½£ºYYYYMMDDHH24MISS)-->
+			<Item name="TActDt"		length="8"/>				<!--ÕËÎñÈÕÆÚ(¸ñÊ½£ºYYYYMMDD)-->
+			<Item name="TRtnCd"		length="4"/>				<!--ÁªÍ¨·µ»Ø½á¹ûÂë(½á¹û0000Îª³É¹¦£¬·ñÔòÊ§°Ü)-->
+			<Item name="ConFlg"		length="1"/>				<!--ºóÐø°ü±êÖ¾£º0-ÎÞºóÐø°ü£¬1-ÓÐºóÐø°ü¡££¨±ØÌî£©-->
+			<Item name="RowCnt"		length="4"/>				<!--°üÌåÐÐÊý£¨±ØÌî£©-->
+			<Item name="FldCnt"		length="4"/>			  <!--°üÌå×Ö¶ÎÊýÄ¿£¨±ØÌî£©-->
+         <AddItem name="ThdKey" expression="$TLogNo"/>
+		</Macro>
+		<Macro name="uni_head_snd">	<!--·¢ËÍ¸øÁªÍ¨µÄÍ¨Ñ¶°üÍ·-->
+			<AddItem name="AAA" value=" "/>
+			<!--Item name="MsgLen"		length="4"/-->				<!--ÐÅÏ¢³¤¶È(°üÀ¨³¤¶È×Ö¶Î£¬Ê®½øÖÆ×Ö·û´®±íÊ¾)-->  
+			<Item name="BusKnd"		length="1"/>				<!--ÒµÎñÀàÐÍ G-GSM¡¢C-CDMA¡¢P-193³¤Í¾¡¢H-165Õ­´ø¡¢W-»¥ÁªÍø¿í´øÓëÔöÖµÒµÎñ¡¢I-ÓïÒô×¨ÏßÁùÀàÒµÎñ¡££¨±ØÌî£©-->
+			<Item name="TLogNo"		length="20" />				<!--ÁªÍ¨ÇëÇó½»Ò×Á÷Ë®ºÅ-->
+			<Item name="LogNo"		length="20" expression="ADDCHAR(DELBOTHSPACE($LogNo),20,0,1)" />				<!--ÒøÐÐÓ¦´ðÁ÷Ë®ºÅ(Ç°ÖÃÁ÷Ë®)-->
+			<Item name="ThdCod"		length="4"/>				<!--ÁªÍ¨½»Ò×Âë£¬±ØÌî-->
+			<Item name="AreCod"		length="1"	value="C"/>		<!--ÇøÓòÂë(·ðÉ½C)£¬±ØÌî-->
+			<Item name="BnkCod"		length="7"/>				<!--´úÀí»ú¹¹±àÂë£¬±ØÊä-->
+			<Item name="TTlrId"		length="6"    expression="SUBSTR($TlrId,2,6)"/>				<!--ÁªÍ¨²Ù×÷Ô±ºÅ-->
+			<Item name="FTxnTm"		length="14"/>				<!--½»Ò×Ê±¼ä(¸ñÊ½£ºYYYYMMDDHH24MISS)-->
+			<Item name="ActDat"		length="8"/>				<!--ÕËÎñÈÕÆÚ(¸ñÊ½£ºYYYYMMDD)-->
+			<SwitchCode name="RspCod"		new_name="TRtnCd"	tab_name="RspCod2TRtnCd_UN"	col_name="RspCod"/>		<!--·¢ËÍ¸øÁªÍ¨µÄ·µ»Ø½á¹ûÂë(½á¹û0000Îª³É¹¦£¬·ñÔòÊ§°Ü-->
+			<Item name="TRtnCd"		length="4"/>				<!--ÁªÍ¨·µ»Ø½á¹ûÂë(½á¹û0000Îª³É¹¦£¬·ñÔòÊ§°Ü)-->
+			<Item name="ConFlg"		length="1"/>				<!--ºóÐø°ü±êÖ¾£º0-ÎÞºóÐø°ü£¬1-ÓÐºóÐø°ü¡££¨±ØÌî£©-->
+			<Item name="RowCnt"		length="4"/>				<!--°üÌåÐÐÊý£¨±ØÌî£©-->
+			<Item name="FldCnt"		length="4"/>			  <!--°üÌå×Ö¶ÎÊýÄ¿£¨±ØÌî£©-->
+		</Macro>
+	</Define>
+	
+	<!--·ðÉ½ÁªÍ¨µÚÈý·½ÊµÊ±´ú¿Û»°·Ñ-->  
+	<Transaction code="1001" service="481152" desc="·ðÉ½ÁªÍ¨µÚÈý·½ÊµÊ±´ú¿Û»°·Ñ" log_switch="1">
+    	<Request>
+         <AddItem name="AppNam" value="FS_UNIN"/>
+         <AddItem name="TxnCod" value="481152"/>
+         <AddItem name="CnlTyp" value="L"/>
+         <AddItem name="TxnCnl" value="THD"/>
+         <SwitchCode name="AppNam" new_name="CAgtNo"  tab_name="FS_AppNam" col_name="AppNam"/>
+ 			<Quote name="uni_head_rcv"/>												<!--Í¨Ñ¶°üÍ·-->
+			<Item name="TCusId"		include_len="no"	head_len="3"	offset="5"/>	<!--µç»°ºÅÂë»ò½É·ÑÕÊºÅ-->
+			<Item name="TxnAmt"		include_len="no"	head_len="3"	offset="5"    expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>	<!--½»·Ñ½ð¶î-->
+			<Item name="ActNo"		include_len="no"	head_len="3"	offset="5"    expression="DELBOTHSPACE($ActNo)"/>	<!--ÒøÐÐÕËºÅ-->
+			<Item name="UsrCod"		include_len="no"	head_len="3"	offset="5"    necessary="no"/>	<!--ÉÌ»§±àºÅ-->
+		</Request>
+		<Response necessary="no">
+			<PackItem name="TmpDat">
+			   <Quote name="uni_head_snd"/>													<!--Í¨Ñ¶°üÍ·-->
+			      <AddItem name="FldCd1"	value="10001"/>								<!--×Ö¶Î±àÂë1-->
+			      <Item name="FldCd1"/>
+			      <Item name="AAA"		length="3"	expression="ADDCHAR(STRLEN($TCusId),3,0,1)"/>					<!--×Ö¶Î³¤¶È1-->
+			      <Item name="TCusId"/>															<!--µç»°ºÅÂë-->
+			      <AddItem name="FldCd2"	value="90003"/>								<!--×Ö¶Î±àÂë2-->
+			      <Item name="FldCd2"/>
+			      <Item name="AAA"		length="3"	expression="ADDCHAR(STRLEN($ActNo),3,0,1)"/>				<!--×Ö¶Î³¤¶È2-->	
+			      <Item name="ActNo"/>															<!--ÒøÐÐÕËºÅ-->
+			      <AddItem name="FldCd3"	value="11002"/>								<!--×Ö¶Î±àÂë3-->
+			      <Item name="FldCd3"/>
+			   <If condition="$MsgTyp=N">
+			      <Item name="AAA"		lenght="3"	expression="ADDCHAR(STRLEN(DELBOTHSPACE($TxnAmt)),3,0,1)"/>	<!--×Ö¶Î³¤¶È3-->
+			      <Item name="TxnAmt"		expression="DELBOTHSPACE($TxnAmt)"/>						<!--Êµ¿Û½ð¶î-->
+			   </If>
+			   <Else>   <!--½É·Ñ²»³É¹¦-->
+			      <AddItem name="BBB"		value="001"/>
+			      <Item name="BBB"/>
+			      <AddItem name="CCC"		value="0"/>
+			      <Item name="CCC"/>						<!--Êµ¿Û½ð¶î-->			   
+			   </Else>
+			</PackItem>
+			<Item	name="TmpDat" head_len="4" include_len="yes"/>
+		</Response>
+ 	</Transaction> 
+
+	<!--·ðÉ½ÁªÍ¨µÚÈý·½½É·Ñ½á¹û²éÑ¯-->
+ 	<Transaction  code="1002" service="481153" desc="·ðÉ½ÁªÍ¨µÚÈý·½½É·Ñ½á¹û²éÑ¯" log_switch="0"> 
+		<Request>
+         <AddItem name="AppNam" value="FS_UNIN"/>
+         <AddItem name="TxnCod" value="481153"/>
+         <AddItem name="CnlTyp" value="L"/>
+         <AddItem name="TxnCnl" value="THD"/>
+         <AddItem name="TTxnCd" value="481153"/>
+         <SwitchCode name="AppNam" new_name="CAgtNo"  tab_name="FS_AppNam" col_name="AppNam"/>
+ 			<Quote name="uni_head_rcv"/>												<!--Í¨Ñ¶°üÍ·-->
+			<Item name="TCusId"		include_len="no"	head_len="3"	offset="5"/>	<!--µç»°ºÅÂë»ò½É·ÑÕÊºÅ-->
+			<Item name="LogNo"		include_len="no"	head_len="3"	offset="5" expression="ADDCHAR(DELBOTHSPACE($LogNo),20,0,1)" />	<!--ÒøÐÐÁ÷Ë®ºÅ(Ç°ÖÃÁ÷Ë®ºÅ)-->
+			<Item name="TLogNo"		include_len="no"	head_len="3"	offset="5"/>	<!--ÁªÍ¨Á÷Ë®ºÅ-->
+			<Item name="TxnAmt"		include_len="no"	head_len="3"	offset="5"   expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>	<!--¿Û¿î½ð¶î-->
+			<Item name="UsrCod"		include_len="no"	head_len="3"	offset="5"/>	<!--ÉÌ»§±àºÅ-->
+			<Item name="ActNo"		include_len="no"	head_len="3"	offset="5"/>	<!--ÒøÐÐÕËºÅ-->
+		</Request>
+		<Response necessary="no">
+			<PackItem name="TmpDat">
+			   <Quote name="uni_head_snd"/>										<!--Í¨Ñ¶°üÍ·-->
+			</PackItem>
+			<Item	name="TmpDat" head_len="4" include_len="yes"/>
+		</Response>
+	</Transaction> 
+</Application>

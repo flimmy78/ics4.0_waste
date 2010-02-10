@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐÒøË°ÁªÍøÈÕÖÕ¶ÔÕÊ²î´íÇåµ¥-->
+<Application dbconnect="YES" trclog="PFT001.log">
+  <VarDef>
+    <String alias="DatFil" pos="1"></String>
+  </VarDef>
+  <MsgConvert>
+    <Item alias="OIFLAG">
+      <Convert value="0" msg="ÍùÕÊ"/>
+      <Convert value="1" msg="À´ÕÊ"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+    <Item alias="BILSTS">
+      <Convert value="C" msg="ÒÑ±»³åÕý"/>
+      <Convert value="F" msg="½»Ò×Ê§°Ü"/>
+      <Convert value="W" msg="µÚÈý·½³¬Ê±"/>
+      <Convert value="U" msg="Ô¤¼Ç×´Ì¬"/>
+      <Convert value="T" msg="Ö÷»ú³¬Ê±"/>
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <Convert value="R" msg="ÒÑÄ¨ÕË"/>
+      <Convert value="V" msg="Ö÷»ú³É¹¦"/>
+      <DEFAULT msg="Òì³£»ò²»´æÔÚ" />
+    </Item>
+  </MsgConvert>
+  <DataSource object="file" filename="$DatFil"/>
+  <FormatDefine pagerows="40" pagesum="YES">
+    <TableHeader>
+      <Para label="01" alias="$RPTHEAD"/>
+      <Para label="02" alias="$CLRDAT"/>
+      <Para label="03" alias="$CLRSCE"/>
+      <Para label="04" alias="$PAGENUM"/>
+      <Para label="05" alias="$PAGESUM"/>
+      <Format>
+                                                          ·ðÉ½ÊÐÒøË°ÁªÍøÏµÍ³¡¾#¡¿
+                                             ==========================================================
+  ÇåËãÈÕÆÚ£º#          ÇåËã³¡´Î£º#¡¡¡¡¡¡¡¡¡¡                                            ¡¡¡¡¡¡           µÚ   #  Ò³       ¹²  #  Ò³
+©³©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©·
+©§·ÖÐÐºÅ©§»á¼ÆÈÕÆÚ©§ÍùÀ´±êÖ¾©§ Õ÷ÊÕ»ú¹ØÁ÷Ë®ºÅ ©§            ½»Ò×ÕÊºÅ              ©§  ½»Ò×½ð¶î  ©§ »á¼ÆÁ÷Ë®ºÅ ©§   ÐÐÄÚ×´Ì¬   ©§ ÖÐÐÄ×´Ì¬ ©§
+©Ç©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©Ï 
+      </Format>
+    </TableHeader>
+    <Iterative line="1">
+      <Para label="01" alias="$TXNBR"/>
+      <Para label="02" alias="$TXNDAT"/>
+      <Para label="03" alias="$OIFLAG" convert="yes"/>
+      <Para label="04" alias="$TLOGNO"/>
+      <Para label="05" alias="$RCVACT"/>
+      <Para label="06" alias="AMTFMT($TXNAMT)" spread="left"/>
+      <Para label="07" alias="$TCKNO"/>
+      <Para label="08" alias="$BILSTS" convert="yes"/>
+      <Para label="09" alias="$TBILST"/>
+      <Format>
+©§#     ©§#       ©§#       ©§#               ©§#                                 ©§           #©§#           ©§#             ©§#         ©§
+      </Format>
+    </Iterative>
+    <TableFooter>
+      <Format>
+©»©¥©¥©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¥©¥©Û©¥©¥©¥©¥©¥©¿
+      </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
