@@ -202,9 +202,11 @@
 			<If condition="~RetCod!=-2">
 				<Set>RspCod=481299</Set>
 				<Set>RspMsg=STRCAT(改批次已录入，批次号为,$DskNo)</Set>
+				<Set>MsgTyp=E</Set><!--add by qm 20100222-->
 				<Return/>
 			</If>
 			<Set>RspCod=000000</Set>
+			<Set>MsgTyp=N</Set><!--add by qm 20100222-->
 			<Exec func="PUB:ReadModuleCfg">
 				<Arg name="Application" value="$BrNo"/>
 				<Arg name="Transaction" value="$CAgtNo"/>
@@ -588,6 +590,13 @@
 			<Exec func="PUB:ReadRecord" error="IGNORE">
 				<Arg name="SqlCmd" value="GetCrpInf"/>
 			</Exec>
+			<If condition="~RetCod!=0">
+				<Set>RspCod=CM4704</Set>
+				<Set>RspMsg=记录不存在</Set>
+				<Set>MsgTyp=E</Set>
+				<Return/>
+			</If>
+				<Set>MsgTyp=N</Set>
 		</FlowCtrl>
 	</Transaction>
 	<Transaction code="481208" desc="批次号查询批次信息（嵌套）">

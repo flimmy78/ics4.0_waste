@@ -21,10 +21,12 @@
 			<If condition="OR(ISNULL(@PARA.ChkCrp),ISNULL(@PARA.CnlLst),ISNULL(@PARA.ChkPsn),ISNULL(@PARA.IsSignIn))">
 				<Set>RspCod=478600</Set><!--应用参数未定义-->
 				<Set>RspMsg=受理渠道 </Set>
+				<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 				<Return/>
 			</If>
 			<If condition="INTCMP(GETSTRPOS(@PARA.CnlLst,$inTxnCnl),1,0)">
 				<Set>RspCod=478601</Set><!--返回$TxnCnl渠道不允许-->
+				<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 				<Return/>
 			</If>
 			<If condition="@PARA.ChkCrp=1">
@@ -34,10 +36,12 @@
 				<If condition="~RetCod=-1">
 					<Set>RspCod=478399</Set>
 					<Set>RspMsg=查询单位协议时系统错误</Set>
+					<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 					<Return/>
 				</If>
 				<If condition="~RetCod=-2">
 					<Set>RspCod=478602</Set><!--返回无有效单位协议-->
+					<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 					<Return/>
 				</If>
 			</If>
@@ -48,10 +52,12 @@
 				<If condition="~RetCod=-1">
 					<Set>RspCod=478399</Set>
 					<Set>RspMsg=检查单位签到状态时系统错误</Set>
+					<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 					<Return/>
 				</If>
 				<If condition="~RetCod=-2">
 					<Set>RspCod=478605</Set><!--返回该单位未签到-->
+					<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 					<Return/>
 				</If>
 			</If>
@@ -153,12 +159,13 @@
 				</Exec>
 				<If condition="~RetCod!=0">
 					<Exec func="PUB:ExecSql">
-					<Arg name="SqlCmd" value="DeleteInf"/>
-				</Exec>
-				<Set>RspCod=482199</Set>
-				<Set>RspMsg=取文件失败</Set>
-				<Return/>
-			</If>
+						<Arg name="SqlCmd" value="DeleteInf"/>
+					</Exec>
+					<Set>RspCod=482199</Set>
+					<Set>RspMsg=取文件失败</Set>
+					<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
+					<Return/>
+				</If>
 				
 			</If>
 			<Else>
@@ -167,7 +174,7 @@
 					<Arg name="SrcFil" value="STRCAT(dat/term/recv/,$RcvFil)"/>
 					<Arg name="ObjFil" value="STRCAT(dat/fbp/,$LclFil)"/>
 				</Exec-->
-			<Set>LclFil=STRCAT($RcvFil,.,bem)</Set>
+				<Set>LclFil=STRCAT($RcvFil,.,bem)</Set>
 			</Else>
 			<Exec func="PUB:PasteBatchFile" error="IGNORE">   <!--外部文件到批量文件目录-->
 				<Arg name="PathIn" value="dat/fbp"/>
@@ -177,6 +184,7 @@
 			<If condition="~RetCod=-1">
 				<Set>RspCod=478007</Set>
 				<Set>RspMsg=拷贝文件失败</Set>
+				<Set>MsgTyp=E</Set><!--add by qm 20100222 ICS4.0-->
 				<Return/>
 			</If>
       
@@ -210,6 +218,7 @@
 				</If>
 				<ElseIf condition="~RetCod=-2">
 					<Set>RspCod=000000</Set>
+					<Set>MsgTyp=N</Set><!--add by qm 20100222 ICS4.0-->
 				</ElseIf>
 
 				<!-- 更新没通过协议检查的记录 -->
