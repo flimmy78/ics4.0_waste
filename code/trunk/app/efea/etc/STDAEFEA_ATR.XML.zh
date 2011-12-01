@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name="STDAEFEA" type="SCA" trace="yes">
+    <ThreadPool>
+      <MinWorkerThreads>100</MinWorkerThreads>
+      <MaxWorkerThreads>100</MaxWorkerThreads>
+    </ThreadPool>
+    <DllPriDataCtrl dllfile="dll/ecnsvrasyncl2.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HstIp">_IP</Para>
+      <Para name="SndHstPrt">_SH_PORT</Para>
+      <Para name="RcvHstPrt">_RH_PORT</Para>
+      <Para name="MaxCon">10</Para>
+      <Para name="PreLen">0</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="parserfile">etc/STDAEFEA_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <Connection type="LEFT">
+      <Entrance name="APP" type="TCP">
+        <ListenerModule name="clientLongAsync2In" dllfile="dll/ecnsvrasyncl2.so">
+          <Para name="MsgTyp">TRM001</Para>
+          <Para name="port"></Para> <!--´ÓÓ¦ÓÃ×ÊÔ´±íÈ¡-->
+        </ListenerModule>
+      </Entrance>
+    </Connection>
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <RequestProcessor dllfile="dll/ecnsvrasyncl2.so" dbapplication="NO">
+        <Entry>
+          <MessageType>PLTOUT</MessageType> <!--´ÓÓ¦ÓÃ×ÊÔ´±íÈ¡-->
+      <ProcessModule>clientLongAsync2Out</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+      <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
+</Region>
