@@ -2547,7 +2547,7 @@
       <Sentence>
          select count(*) ClrCnt from  efeaclrtbl where BrNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>BrNo|CAgtNo|ClrDat|</Fields>
+      <Fields>BrNo|ClrDat|</Fields>
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
@@ -2559,7 +2559,7 @@
       <Sentence>
          insert into efeaclrdtl values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') 
       </Sentence>
-      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
+      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrTim|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
@@ -2615,6 +2615,7 @@
        </If>
      </If> 
      <Else>
+       <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
        <Set>ClrRst=0</Set> <!--清算情况  0:未清算；1:已清算-->
        <Set>ClrTyp=1</Set> <!--清算类型  0:自动清算；1:手工清算-->
        <Set>ClrTot=0</Set> <!--清算笔数-->
