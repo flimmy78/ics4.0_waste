@@ -2640,6 +2640,7 @@
      </If>
 
       <Set>HTxnCd=451900</Set>
+      <Set>CrpCod=EFEA99999999</Set>
       <Set>BusTyp=PCL76</Set>
       <Set>RgCFlg=1</Set>   <!--贷方回单，不登记0，登记 1 -->
       <Set>ActBk1=441999</Set>
@@ -3231,7 +3232,7 @@
     </DynSentence>
     <DynSentence name="UpdClrSts">    <!--修改清算参数 -->
       <Sentence>
-         update efeaclrtbl set ClrDat='%s',ClrTim=’%s',ClrSts='%s',AutFlg='%s' where BrNo='%s' 
+         update efeaclrtbl set ClrDat='%s',ClrTim='%s',ClrSts='%s',AutFlg='%s' where BrNo='%s' 
       </Sentence>
       <Fields>ClrDat|ClrTim|ClrSts|AutFlg|BrNo|</Fields>
     </DynSentence>
