@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--¹ã¶«µçÍø½Ó¿Ú  -->
+<Application name="EFE" server="OFRTEFEA">
+
+	<GetTxnCode>
+		<Item type="fixed" offset="10" length="3"/>
+	</GetTxnCode>
+
+  <CodeSwitching>
+    <Table name="RspCod2TRspCd_DL"  file="etc/EFE_CSW_441999.XML">
+      <Column name="RspCod"   sort="no"/>
+      <Column name="TRspCd"   sort="no"/>
+    </Table>
+    <Table name="RspCod2TRspMsg_DL" file="etc/EFE_CSW_441999.XML">
+      <Column name="RspCod"   sort="no"/>
+      <Column name="RspMsg"   sort="no"/>
+    </Table>
+		<Table name="DL_OAN"  file="etc/EFE_CSW_441999.XML">
+			<Column name="OAN" sort="no"/>
+			<Column name="CAgtNo" sort="no"/>
+		</Table>
+  </CodeSwitching>
+
+	<Define>
+
+		<Macro name="req_head"> <!--½»Ò×ÇëÇó±¨ÎÄÍ·-->
+			<Item name="MesgLen"     length="10"/>		<!--±¨ÎÄ³¤¶È-->
+			<Item name="TTxnCd1"     length="3"/>		  <!--ÒµÎñ½»Ò×Âë-->
+			<Item name="StartAddr"   length="12" expression="DELBOTHSPACE($StartAddr)"/>	<!--Ô´µØÖ·-->
+			<Item name="DestAddr"    length="12" expression="DELBOTHSPACE($DestAddr)"/>		<!--Ä¿±êµØÖ·-->
+			<Item name="AAC"         length="20" expression="DELBOTHSPACE($AAC)"/>		<!--±¨ÎÄ±êÊ¶ºÅ-->
+			<Item name="WorkDate"    length="8"/>		  <!--Ìá½»ÈÕÆÚ-->
+			<Item name="TxnTim"      length="14"/>		<!--·¢ËÍÊ±¼ä-->
+			<Item name="mesgPRI"     length="1"/>		  <!--ÐÅÏ¢ÓÅÏÈ¼¶-->
+			<Item name="recordNum"   length="10"/>		<!--ÐÅÏ¢Ã÷Ï¸ÏîÊý-->
+			<Item name="FilNam"      length="32" expression="DELBOTHSPACE($FilNam)"/>	<!--ÎÄ¼þÃû-->
+			<Item name="zipFlag"     length="1"/>		<!--Ñ¹Ëõ±êÖ¾-->
+		</Macro>
+
+		<Macro name="resp_head"> <!--½»Ò×Ó¦´ð±¨ÎÄÍ·-->
+			<Item name="TTxnCd1"     length="3"/>		<!--ÒµÎñ½»Ò×Âë-->
+			<SwitchCode name="RspCod" new_name="TRspCd" tab_name="RspCod2TRspCd_DL" col_name="RspCod"/>
+			<Item name="TRspCd"      length="2"/>		<!--½»Ò×·µ»ØÂë-->
+			<SwitchCode name="RspCod" new_name="RspMsg" tab_name="RspCod2TRspMsg_DL" col_name="RspCod"/>
+			<Item name="RspMsg"      length="60"/>		<!--½»Ò×·µ»Ø´íÎóÐÅÏ¢-->
+			<Item name="SAddr"       length="12" value="301"/>  	<!--Ô´µØÖ·-->
+			<Item name="DAddr"       length="12" expression="DELBOTHSPACE($StartAddr)"/>	    <!--Ä¿µÄµØÖ·-->
+			<Item name="AAC"         length="20"/>			<!--±¨ÎÄ±êÊ¶ºÅ-->
+			<Item name="WorkDate"    length="8"  expression="GETDATE()"/>		<!--Ìá½»ÈÕÆÚ-->
+			<Item name="TxnTim"      length="14" expression="GETDATETIME()"/>	<!--·¢ËÍÊ±¼ä-->
+			<Item name="mesgPRI"     length="1"/>		<!--ÐÅÏ¢ÓÅÏÈ¼¶-->
+			<Item name="recordNum"   length="10"/>		<!--ÐÅÏ¢Ã÷Ï¸ÏîÊý-->
+			<Item name="FilNam"      length="32" expression="DELBOTHSPACE($FilNam)"/>	<!--ÎÄ¼þÃû-->
+			<Item name="zipFlag"     length="1"/>		<!--Ñ¹Ëõ±êÖ¾-->
+		</Macro>
+
+	</Define>
+
+	<!--µ¥±Ê´ú¿ÛÒµÎñ-->
+	<Transaction code="20 " service="460220" log_switch="5" des="µ¥±Ê´ú¿ÛÒµÎñ">
+		<Request>
+			<Quote name="req_head"/>      <!--°üÍ·-->
+			<Item name="ECD" length="12" expression="DELBOTHSPACE($ECD)"/>  <!--ÊÕ¸¶·ÑÆóÒµ´úÂë-->
+			<Item name="JBR" length="8"/>  <!--¾­°ìÈË±àºÅ-->
+			<Item name="TLogNo" length="16"/>  <!--µÚÈý·½Á÷Ë®-->
+			<Item name="WDO" length="8"/>  <!--¹¤×÷ÈÕÆÚ-->
+			<Item name="EDD" length="3"/>  <!--·ÑÏî´úÂë-->
+			<Item name="JFH" length="32" expression="DELBOTHSPACE($JFH)"/>  <!--½É·ÑºÅ-->
+			<Item name="KKB" length="12" expression="DELBOTHSPACE($KKB)"/>  <!--¿Û¿îÐÐÐÐºÅ-->
+			<Item name="ActNo"   length="32" expression="DELBOTHSPACE($ActNo)"/>  <!--ÕÊºÅ-->
+			<Item name="KAT" length="1"/>  <!--¿Û¿îÕÊºÅÀàÐÍ-->
+			<Item name="CUN" length="3"/>  <!--»õ±ÒÀàÐÍ-->
+			<Item name="TxnAmt" length="12" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),12,0,1)"/>			
+			<Item name="KFG" length="1"/>  <!--¿Û¿î·½Ê½-->
+			<Item name="ActNam" length="64" expression="DELBOTHSPACE($ActNam)"/>  <!--¿Í»§Ãû³Æ-->
+			<Item name="PCF" length="1"/>   <!--²¿·Ö½É·Ñ±êÖ¾-->
+			<Item name="PCC" length="12" expression="ADDCHAR(DELBOTHSPACE($PCC),12,0,1)"/>  <!--Î¥Ô¼½ð-->
+			<Item name="CPS" length="12" expression="ADDCHAR(DELBOTHSPACE($CPS),12,0,1)"/>  <!--±¾½ð-->
+			<Item name="AUN" length="32"/>  <!--ÒøÐÐÕË»§Ãû³Æ-->
+			<Item name="CLM" length="8"/>  <!--µçÁ¿-->
+			<Item name="OAN" length="32" expression="DELBOTHSPACE($OAN)"/>  <!--¹©µç¾ÖÒøÐÐÕÊºÅ-->
+			<Item name="MON" length="6"/>  <!--µç·ÑÔÂ·Ý-->
+			<Item name="MNS" length="2"/>  <!--µç·Ñ´ÎÊý-->
+			<Item name="JLD" length="5"/>  <!--¼ÆÁ¿µãºÅ-->
+			<Item name="YSH" length="16"/>  <!--Ó¦ÊÕÆ¾Ö¤ºÅ-->
+			<Item name="GDO" length="16"/>  <!--¹©µç²Ù×÷Ô±´úÂë-->
+			<SwitchCode name="OAN" new_name="CAgtNo"  tab_name="DL_OAN"  col_name="OAN"/><!--¸´ÖÆOANÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"   length="10" value="591"/>
+			<Quote name="resp_head"/>   <!--°üÍ·-->
+			<Item name="WTC" length="12" value="301"/>  <!--Î¯ÍÐ½Úµã´úÂë-->
+			<Item name="LogNo" length="16"/>  <!--Á÷Ë®-->
+			<Item name="WDO" length="8"/>  <!--ÊÕ·ÑÈÕÆÚ YYYYMMDD-->
+			<Item name="OWC" length="12" expression="DELBOTHSPACE($ECD)"/>  <!--ÊÕ¸¶·ÑÆóÒµ´úÂë-->
+			<Item name="KKB" length="12"/>  <!--¿Û¿îÐÐÐÐºÅ-->
+			<Item name="TLogNo" length="16"/>  <!--Ô­ÒµÎñÁ÷Ë®-->
+			<Item name="ActNo" length="32"/>  <!--¿Û¿îÕÊºÅ/¿¨ºÅ-->
+			<Item name="TxnAmt" length="12"/>  <!--¿Û¿î½ð¶î-->
+			<Item name="JFH" length="32"/>  <!--½É·ÑºÅ-->
+			<Item name="CDM" length="8" value="00000000"/>  <!--¿Í»§ËùÔÚ²¿ÃÅ-->
+			<Item name="ActNam" length="64"/>  <!--¿Í»§Ãû³Æ-->
+			<Item name="PCF" length="1"/>  <!--²¿·Ö½É·Ñ±êÖ¾-->
+			<Item name="PCC" length="12"/>  <!--Î¥Ô¼½ð-->
+			<Item name="CPS" length="12"/>  <!--±¾½ð-->
+			<Item name="TxnAmt" length="12"/>  <!--Ç··Ñ½ð¶î-->
+			<Item name="AUN" length="32"/>  <!--ÕË»§Ãû³Æ-->
+			<Item name="CLM" length="8"/>  <!--µçÁ¿-->
+			<Item name="OAN" length="32"/>  <!--¹©µçÆóÒµÒøÐÐÕÊºÅ-->
+			<Item name="TlrId"  length="8"/> <!--¾­°ì¹ñÔ±ºÅ -->
+			<Item name="MON"  length="6"/> <!--µç·ÑÔÂ·Ý -->
+			<Item name="MNS"  length="2"/> <!--µç·Ñ´ÎÊý -->
+			<Item name="JLD"  length="5"/> <!--¼ÆÁ¿µãºÅ -->
+			<Item name="YSH"  length="16"/> <!--Ó¦ÊÕÆ¾Ö¤ºÅ -->
+			<Item name="GDO"  length="16"/> <!--¹©µç²Ù×÷Ô±´úÂë -->
+			<Item name="WYSB"  length="30"/> <!--Î¨Ò»Ê¶±ðÂë -->
+		</Response>
+	</Transaction>
+
+
+
+
+
+	<!--µ¥±Êµ±ÈÕ´ú¿Û³åÏúÒµÎñ-->
+	<Transaction code="21 " service="460221" log_switch="5" des="µ¥±Êµ±ÈÕ´ú¿Û³åÏú">
+		<Request>
+			<Quote name="req_head"/>      <!--°üÍ·-->
+			<Item name="OWC" length="12"/>  <!--ÊÕ¸¶·ÑÆóÒµ´úÂë-->
+			<Item name="JFH" length="32"/>  <!--½É·ÑºÅ-->
+			<Item name="ActNam" length="64"/>  <!--¿Í»§Ãû³Æ-->
+			<Item name="KAC" length="32" expression="DELBOTHSPACE($KAC)"/>  <!--¿Û¿îÕÊºÅ/¿¨ºÅ-->
+			<Item name="AUN" length="32"/>  <!--ÒøÐÐÕË»§Ãû³Æ-->
+			<Item name="TxnAmt" length="12"/>  <!--¿Û¿î½ð¶î-->
+			<Item name="STO"  length="8"/> <!--¾­°ì¹ñÔ±ºÅ -->
+			<Item name="WD0" length="8"/>  <!--¹¤×÷ÈÕÆÚ YYYYMMDD-->
+			<Item name="LogNo" length="16"/>  <!--Á÷Ë®-->
+			<Item name="OAN" length="32" expression="DELBOTHSPACE($OAN)"/>  <!--¹©µçÆóÒµÒøÐÐÕÊºÅ-->
+			<Item name="MON"  length="6"/> <!--µç·ÑÔÂ·Ý -->
+			<Item name="MNS"  length="2"/> <!--µç·Ñ´ÎÊý -->
+			<Item name="JLD"  length="5"/> <!--¼ÆÁ¿µãºÅ -->
+			<Item name="YSH"  length="16"/> <!--Ó¦ÊÕÆ¾Ö¤ºÅ -->
+			<SwitchCode name="OAN" new_name="CAgtNo"  tab_name="DL_OAN"  col_name="OAN"/><!--¸´ÖÆOANÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"   length="10" value="175"/>
+			<Quote name="resp_head"/>   <!--°üÍ·-->
+		</Response>
+	</Transaction>
+
+
+
+
+
+	<!--µç·ÑÅúÁ¿´ú¿Û-->
+	<Transaction code="22 " service="460222" log_switch="5" des="¹©µç·¢ÆðÅúÁ¿´ú¿Û·¢ËÍ½»Ò×">
+		<Request>
+			<Quote name="req_head"/>      <!--°üÍ·-->
+			<Item name="WTC" length="12"/> <!--Î¯ÍÐ½Úµã´úÂë-->
+			<Item name="WD0" length="8"/> <!--¹¤×÷ÈÕÆÚ-->
+			<Item name="QFG" length="1"/> <!--²éÑ¯·½Ê½-->
+			<Item name="ACT" length="8"/> <!--ÕÊºÅÀàÐÍ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgLens"   length="10" value="175"/>
+			<Quote name="resp_head"/>   <!--°üÍ·-->
+		</Response>
+	</Transaction>
+
+
+
+
+
+
+	<!--µç·ÑÅúÁ¿´ú¿ÛÈ¡Ïû-->
+	<Transaction code="24 " service="460224" log_switch="5" des="¹©µç·¢ÆðÅúÁ¿´ú¿ÛÈ¡Ïû">
+		<Request>
+			<Quote name="req_head"/>      <!--°üÍ·-->
+			<Item name="BankCd" length="12"/> <!--ÒøÐÐ´úÂë-->
+			<Item name="FilNm"  length="32"/> <!--ÎÄ¼þÃû-->
+			<Item name="FSDT"   length="08"/> <!--·¢ËÍÈÕÆÚ-->
+			<Item name="TZDT"   length="08"/> <!--Í¨ÖªÈÕÆÚ-->
+			<Item name="FilMx"  length="08"/> <!--ÎÄ¼þÃ÷Ï¸Êý-->
+			<Item name="QSSM"   length="64"/> <!--È¡ÏûËµÃ÷-->
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"   length="10" value="308"/>
+			<Quote name="resp_head"/>   <!--°üÍ·-->
+			<Item name="BankLs" length="16"/> <!--ÒøÐÐÁ÷Ë®ºÅ-->
+			<Item name="BankCd" length="12"/> <!--ÒøÐÐ´úÂë-->
+			<Item name="FilNm"  length="32"/> <!--ÎÄ¼þÃû-->
+			<Item name="QSFlg"  length="01"/> <!--È¡Ïû±êÖ¾-->
+			<Item name="FSDT"   length="08"/> <!--·¢ËÍÈÕÆÚ-->
+			<Item name="QSSM"   length="64"/> <!--È¡ÏûËµÃ÷-->
+		</Response>
+	</Transaction>
+
+
+
+
+
+
+	<!--¹©µç·¢ÆðÒøµçÒµÎñ¿ª¹¤ÇëÇó½»Ò×-->
+	<Transaction code="90 " service="460290" log_switch="5" des="¹©µç·¢ÆðÒøµçÒµÎñ¿ª¹¤ÇëÇó½»Ò×">
+		<Request>
+			<Quote name="req_head"/>		<!--°üÍ·-->
+			<Item name="CreOrg"  length="12"/>	<!--Î¯ÍÐ½Úµã´úÂë-->
+			<Item name="WdoDat"  length="8"/>	<!--¹¤×÷ÈÕÆÚ YYYYMMDD-->
+			<Item name="OprCod"  length="8"/>	<!--²Ù×÷Ô±´úÂë -->
+			<Item name="DlTxt"   length="128" expression="DELBOTHSPACE($DlTxt)"/>	<!--±¸×¢-->
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"   length="10" value="303"/>
+			<Quote name="resp_head"/>		<!--°üÍ·-->
+			<Item name="DlTxt"   length="128"/>	<!--±¸×¢-->
+		</Response>
+	</Transaction>
+
+
+
+
+	<!--¹©µç·¢ÆðÒøµçÒµÎñÇ©ÍËÇëÇó½»Ò×-->
+	<Transaction code="91 " service="460291" log_switch="5" des="¹©µç·¢ÆðÒøµçÒµÎñÇ©ÍËÇëÇó½»Ò×">
+		<Request>
+			<Quote name="req_head"/>		<!--°üÍ·-->
+			<Item name="CreOrg"   length="12"/>	<!--Î¯ÍÐ½Úµã´úÂë-->
+			<Item name="WdoDat"   length="8"/>	<!--¹¤×÷ÈÕÆÚ YYYYMMDD-->
+			<Item name="OprCod"   length="8"/>	<!--²Ù×÷Ô±´úÂë -->
+			<Item name="DlTxt"    length="128" expression="DELBOTHSPACE($DlTxt)"/>	<!--±¸×¢-->
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"    length="10" value="303"/>
+			<Quote name="resp_head"/>		<!--°üÍ·-->
+			<Item name="DlTxt"    length="128"/>	<!--±¸×¢	-->
+		</Response>
+	</Transaction>
+
+
+
+
+
+	<!--µç·ÑÅúÁ¿ftp·µ»ØÎÄ¼þÊÖ¹¤Ö´ÐÐ-->
+	<Transaction code="824" service="460225" log_switch="5" des="ÅúÁ¿´ú¿Û·µ»ØÎÄ¼þftpÉÏ´«µçÁ¦½»Ò×">
+		<Request>
+			<Quote name="req_head"/>      <!--°üÍ·-->
+			<Item name="LogNo"      length="32" expression="DELBOTHSPACE($LogNo)"/> <!--Á÷Ë®ºÅ-->
+			<Item name="BrNo"       length="32" value="444999"/> <!--444999-->
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgLens"   length="10" value="175"/>
+			<Quote name="resp_head"/>   <!--°üÍ·-->
+		</Response>
+	</Transaction>
+
+	<!--¹©µç·¢Æð´ú¿ÛÐ­Òé±ä¸ü½»Ò×-->
+	<Transaction code="31 " service="460231" log_switch="5" des="¹©µç·¢Æð´ú¿ÛÐ­Òé±ä¸ü½»Ò×">
+		<Request>
+			<Quote name="req_head"/>		<!--°üÍ·-->
+			<Item name="SBN"    length="12" expression="DELBOTHSPACE($SBN)"/>     <!--·¢ÆðÒµÎñµÄ½Úµã´úÂë-->
+			<Item name="WDO"    length="8 " expression="DELBOTHSPACE($WDO)"/>     <!--¹¤×÷ÈÕÆÚ        -->
+			<Item name="TLogNo" length="16" expression="DELBOTHSPACE($TLogNo)"/>  <!--¹©µç¾ÖÁ÷Ë®      -->
+			<Item name="CHT"    length="1 " />              <!--±ä¸ü·½Ê½ 0-ÐÂÔö,3-ÐÞ¸Ä,5-²éÑ¯,9-×¢Ïú  -->
+      <Item name="ECD"    length="12" expression="DELBOTHSPACE($ECD)"/>     <!--ÊÕ¸¶·ÑÆóÒµ´úÂë  -->
+      <Item name="EDD"    length="3 " expression="DELBOTHSPACE($EDD)"/>     <!--·ÑÏî´úÂë        -->
+      <Item name="JFH"    length="32" expression="DELBOTHSPACE($JFH)"/>     <!--½É·ÑºÅ          -->
+      <Item name="OKH"    length="12" expression="DELBOTHSPACE($OKH)"/>     <!--Ô­¿ª»§ÐÐÐÐºÅ    -->
+      <Item name="OAC"    length="32" expression="DELBOTHSPACE($OAC)"/>     <!--Ô­ÕË»§/¿¨ºÅ     -->
+      <Item name="KKB"    length="12" expression="DELBOTHSPACE($KKB)"/>     <!--ÐÂ¿ª»§ÐÐÐÐºÅ    -->
+      <Item name="TActNo" length="32" expression="DELBOTHSPACE($TActNo)"/>  <!--ÐÂÕË»§/¿¨ºÅ     -->
+      <Item name="TActNm" length="40" expression="DELBOTHSPACE($TActNm)"/>  <!--ÐÂ¿Í»§Ãû³Æ      -->
+      <Item name="ACT"    length="1 " />                                    <!--ÕÊºÅÀàÐÍ        --> 
+      <Item name="TXT"    length="64" expression="DELBOTHSPACE($TXT)"/>     <!--±¸×¢            -->
+      <Item name="UsrNam" length="64" expression="DELBOTHSPACE($UsrNam)"/>  <!--ÓÃ»§Ãû³Æ        -->   
+      <Item name="TIdTyp" length="2 " expression="DELBOTHSPACE($TIdTyp)"/>  <!--Ö¤¼þÀàÐÍ        -->
+      <Item name="TIdNo"  length="32" expression="DELBOTHSPACE($TIdNo)"/>   <!--Ö¤¼þºÅÂë        -->
+      <Item name="DLNo"   length="12" expression="DELBOTHSPACE($DLNo)"/>    <!--¹©µç¹«Ë¾±àºÅ    -->
+      <Item name="DLOpr"  length="32" expression="DELBOTHSPACE($DLOpr)"/>   <!--¹©µç²Ù×÷Ô±      -->
+      <Item name="JLD"    length="5 " expression="DELBOTHSPACE($JLD)" />    <!--¼ÆÁ¿µãºÅ        -->    
+		</Request>
+		<Response necessary="no">
+			<Item name="MesgL"  length="10" value="614"/>
+			<Quote name="resp_head"/>		<!--°üÍ·-->
+			<Item name="WTC"    length="12" value="301"/>   <!--Î¯ÍÐ½Úµã´úÂë    -->
+			<Item name="ActDat" length="8 " />              <!--¹¤×÷ÈÕÆÚ        -->
+			<Item name="LogNo"  length="16" />              <!--ÒøÐÐÁ÷Ë®        -->
+			<Item name="OWC"    length="12" value="301"/>   <!--Ô­Î¯ÍÐ½Úµã´úÂë  -->
+			<Item name="ODT"    length="8"  />              <!--Ô­Î¯ÍÐÈÕÆÚ      -->
+			<Item name="OLZ"    length="16" />              <!--Ô­ÒµÎñÁ÷Ë®      -->
+			<Item name="UsrNam" length="64" />              <!--¿Í»§Ãû³Æ       -->
+			<Item name="ECD"    length="12" />              <!--ÊÕ¸¶·ÑÆóÒµ´úÂë  -->
+      <Item name="EDD"    length="3 " />              <!--·ÑÏî´úÂë        -->
+      <Item name="JFH"    length="32" />              <!--½É·ÑºÅ          -->
+      <Item name="TActNo" length="32" />              <!--ÐÂÕË»§/¿¨ºÅ     -->
+      <Item name="KKB"    length="12" />              <!--ÐÂ¿ª»§ÐÐÐÐºÅ    -->
+      <Item name="TIdTyp" length="2 " />              <!--Ö¤¼þÀàÐÍ        -->		
+			<Item name="TIdNo"  length="32" />              <!--Ö¤¼þºÅÂë        -->
+      <Item name="DLNo"   length="12" />              <!--¹©µç¹«Ë¾±àºÅ    -->
+      <Item name="DLOpr"  length="32" />              <!--¹©µç²Ù×÷Ô±      -->      
+      <Item name="JLD"    length="5 " />              <!--¼ÆÁ¿µãºÅ        -->
+      <Item name="TActNm" length="64" />              <!--ÕË»§Ãû³Æ        --> 
+      <Item name="CHT"    length="1 " />              <!--±ä¸ü·½Ê½ 0-ÐÂÔö,3-ÐÞ¸Ä,5-²éÑ¯,9-×¢Ïú  -->
+      <Item name="TXT"    length="64" />              <!--±¸×¢            --> 
+		</Response>
+	</Transaction>
+
+
+
+</Application>
