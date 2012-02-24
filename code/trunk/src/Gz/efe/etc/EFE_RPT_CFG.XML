@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="EFE_RPT_CFG.trc">
+  <VarDef>
+  	<String alias="BrNo"    pos="1"/>
+    <String alias="CAgtNo"  pos="2"/>
+    <String alias="TxnDat"  pos="3"/>
+    <String alias="PNodNo"  pos="4"/>
+    <String alias="PTlrId"  pos="5"/>
+  </VarDef>
+  <MsgConvert>
+ 	 <Item alias="HTxnSt">
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <DEFAULT msg="¿ÉÒÉ,Çë²éÑ¯"/>
+    </Item>
+    <Item alias="BrNo">
+      <Convert value="441999" msg="¹ãÖÝ·ÖÐÐ"/>
+      <Convert value="445999" msg="ÉÇÍ··ÖÐÐ"/>
+      <Convert value="446999" msg="·ðÉ½·ÖÐÐ"/>
+      <Convert value="491999" msg="»ÝÖÝ·ÖÐÐ"/>
+      <Convert value="444999" msg="Öéº£·ÖÐÐ"/>
+      <Convert value="484999" msg="ÖÐÉ½·ÖÐÐ"/>
+      <Convert value="483999" msg="¶«Ý¸·ÖÐÐ"/>
+      <Convert value="485999" msg="½ÒÑô·ÖÐÐ"/>
+      <Convert value="761999" msg="½­ÃÅ·ÖÐÐ"/>
+      <DEFAULT msg="Î´Öª"/>
+    </Item>
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+      <Sql sql="SELECT FTXNTM,ActNo,TCUSNM,TCUSID,TxnAmt,HTxnSt,TckNo,LogNo
+				FROM afetxnjnl WHERE ActDat='%s' and CAgtNo='%s' and HTxnSt='S' ">
+				<FieldList>$TxnDat|$CAgtNo|</FieldList>
+	   </Sql>
+    </Iterative>
+    <Summed type="sql">
+       <Sql sql="select sum(cast(TxnAmt as bigint)) as sumamt,coalesce(COUNT(*),0) TotCnt from afetxnjnl where  ActDat = '%s' and CAgtNo= '%s' and HTxnSt= 'S' ">
+       <FieldList>$TxnDat|$CAgtNo|</FieldList>
+	   </Sql>
+    </Summed>
+  </DataSource>
+  <FormatDefine pagerows="41" pagesum="YES">
+    <TableHeader line="1">
+    	 <Para label="01"  alias="$BrNo"   convert="YES" spread="right"></Para>
+       <Para label="02"  alias="µçÁ¦µç·ÑÒµÎñ" spread="right" ></Para>
+       <Para label="03"  alias="SUBSTR($TxnDat,1,4)" spread="right" ></Para>
+       <Para label="04"  alias="SUBSTR($TxnDat,5,2)" spread="right"></Para>
+       <Para label="05"  alias="SUBSTR($TxnDat,7,2)" spread="right"></Para>
+       <Para label="06"  alias="$PAGESUM" spread="mid"></Para>
+       <Para label="07"  alias="$PAGENUM" spread="mid"></Para>
+       <Format>
+                                   #´úÀíÒµÎñ½É·Ñ³É¹¦Ã÷Ï¸±í
+
+                  ÒµÎñÀàÐÍ:#             ÈÕÆÚ:     #Äê  #ÔÂ  #ÈÕ     ¹² # Ò³     µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©·
+©§  ½»Ò×ÈÕÆÚ        ©§     ½É·ÑÏîÄ¿     ©§          ÕÊºÅ        ©§  Ç°ÖÃÁ÷Ë®ºÅ  ©§  »á¼ÆÁ÷Ë®ºÅ  ©§    ½ð¶î      ©§   ½»Ò××´Ì¬   ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+       </Format>
+    </TableHeader>
+    <Iterative line="1">       
+       <Para label="01" alias="SUBSTR($FTXNTM,1,8)" spread="right"></Para>
+       <Para label="02" alias="µçÁ¦µç·Ñ" spread="right"></Para>
+       <Para label="03" alias="$ActNo"  spread="right"></Para>
+       <Para label="04" alias="DELBOTHSPACE($LogNo)"  spread="right"></Para>
+       <Para label="05" alias="DELBOTHSPACE($TckNo)"  spread="right"></Para>
+       <Para label="06" alias="AMTFMT($TxnAmt)" spread="left"></Para>   
+       <Para label="07" alias="$HTxnSt"  convert="YES" spread="right" ></Para>
+       <Format>
+©§#                 ©§#                 ©§#                     ©§#             ©§#             ©§             #©§#             ©§
+       </Format>
+    </Iterative>
+    <Summed line='1'>
+       <Para label="01" alias="$TotCnt"         spread="left"></Para>
+       <Para label="02" alias="AMTFMT($sumamt)" spread="left"></Para>
+       <Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ºÏ¼Æ                                       ±ÊÊý:   #                              ½ð¶î£º            #                                                    ©§
+     </Format>
+    </Summed>
+    <TableFooter line="1">
+       <Para label="01" alias="$PNodNo" spread="right"></Para>
+       <Para label="02" alias="$PTlrId" spread="right"></Para>
+       <Para label="03" alias="GETDATETIME(YYYY-MM-DD)" spread="left"></Para>
+       <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+	                  ´òÓ¡²¿ÃÅ£º#           ´òÓ¡¹ñÔ±£º#          ´òÓ¡ÈÕÆÚ£º#
+       </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
