@@ -7,6 +7,8 @@ CREATE TABLE efeaclrtbl
 (
   BrNo          CHAR(6)         DEFAULT ' ',
 --分行号  
+  CAgtNo        CHAR(10)        DEFAULT ' ',
+--清算单位协议号
   ClrDat        CHAR(8)         DEFAULT ' ',
 --清算日期
   ClrTim        CHAR(6)         DEFAULT ' ',
