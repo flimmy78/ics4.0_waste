@@ -17,7 +17,7 @@
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
     <Table name="efeaclrtbl"   value="efeaclrtbl"/>  <!--广州电力清算日期表-->
-    <Table name="efeaclrtbl"   value="efeaclrlog"/>  <!--广州电力清算参数修改记录表-->
+    <Table name="efeaclrlog"   value="efeaclrlog"/>  <!--广州电力清算参数修改记录表-->
     <Table name="efeaclrdtl"   value="efeaclrdtl"/>  <!--广州电力清算明细表表-->
   </TableDeclare>
   <GlobalFunction>
@@ -1495,7 +1495,7 @@
         <Arg name="DatSrc"  value="OPFCSW"/>
         <Arg name="SourNam" value="DptTyp"/>
         <Arg name="DestNam" value="CAgtNo"/>
-        <Arg name="TblNam"  value="DptTypToCAgtNo"/>
+        <Arg name="TblNam"  value="DptTypToCAgtNo_PL"/>
       </Exec>      
 
       <!--取电子柜员号-->
@@ -2032,11 +2032,11 @@
         </Else>
         
 
-        <!--test
+        <!--test-->
         <Exec func="PUB:FtpPut">
           <Arg name="FtpId" value="EFE_SND_441"/>
         </Exec>	
-        -->
+        <!---->
         <Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>			  		       
       </While>
       
