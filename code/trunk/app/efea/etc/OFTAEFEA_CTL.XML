@@ -679,7 +679,7 @@
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Break/>
       </Case>
-      <Case value="601"><!--活期存折-->
+      <Case value="704"><!--活期存折-->
         <Set>ActFlg=2</Set>  <!--对私帐号-->
         <Set>ActTyp=2</Set>
         <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -688,7 +688,7 @@
         <Set>VchCod=$VchNo</Set><!--凭证编号-->
         <Break/>
       </Case>
-      <Case value="603"><!--本外活本-->
+      <Case value="722"><!--本外活本-->
         <Set>ActFlg=1</Set>  <!--一本通-->
         <Set>ActTyp=1</Set>
         <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -697,7 +697,7 @@
         <Set>VchCod=$VchNo</Set><!--凭证编号-->
         <Break/>
       </Case>
-      <Case value="021"><!--个人支票-->
+      <Case value="021"><!--个人支票,需删除-->
         <Set>ActFlg=5</Set>  <!--支票-->
         <Set>ActTyp=5</Set>
         <Set>PayMod=0</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -712,13 +712,13 @@
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
         <Break/>
       </Case>
-      <Case value="127"><!--银承汇票-->
+      <Case value="127"><!--银承汇票,需删除-->
         <Set>PayTyp=12</Set><!--收费类型:10现金;11支票预交;12支票实交-->
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
         <Break/>
       </Case>
-      <Case value="129"><!--商承汇票-->
+      <Case value="129"><!--商承汇票,需删除-->
         <Set>PayTyp=12</Set><!--收费类型:10现金;11支票预交;12支票实交-->
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
@@ -744,7 +744,7 @@
       </Case>
      </Switch>
 
-     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,601),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
+     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
         <Set>HTxnCd=471140</Set>
         <Set>VchChk=0</Set>
         <!--在前边对私凭证内添加<Set>PayMod=0</Set>支取方式 1 凭密支取 0 不验密-->
@@ -849,7 +849,7 @@
 
       <Label>CRCHOST</Label> <!--只上主机冲正-->
          <Set>OLogNo=$LogNo</Set>
-         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,601),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
+         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
            <Set>HTxnCd=471149</Set>
          </If>
          <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--对公-->
@@ -1136,9 +1136,9 @@
     </DynSentence>
     <DynSentence name="UpdThdJnl"><!--更新流水表-->
          <Sentence>
-            LogNo='%s'
+            UPDATE afetxnjnl SET HLOGNO='%s',HRSPCD='%s',HTXNST='%s',TCKNO='%s' WHERE LogNo='%s'
          </Sentence>
-         <Fields>LogNo|</Fields>
+         <Fields>HLogNo|HRspCd|HTxnSt|TckNo|LogNo|</Fields>
     </DynSentence>
     <DynSentence name="QryClrSts">    <!--检查清算状态 -->
       <Sentence>
@@ -1230,7 +1230,7 @@
       
       <Set>TActDt=$ClrDat</Set> <!--清算日期-->
       
-      <Exec func="PUB:InsertRecordExt" error="IGNORE">
+      <Exec func="PUB:InsertRecord" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
@@ -1246,7 +1246,7 @@
       <If condition="~RetCod=0">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=S</Set>
         <Set>HRspCd=SC0000</Set>
-        <Exec func="PUB:UpdateRecordExt" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:UpdateRecord" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -1261,7 +1261,7 @@
       </If>
       <ElseIf condition="~RetCod=3">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=F</Set>
-        <Exec func="PUB:UpdateRecordExt" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:UpdateRecord" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -1500,7 +1500,7 @@
 
       <!--取电子柜员号-->
       <Set>TxnCnl=EFE</Set>       <!--取电子柜员号用-->
-      <Set>TxnObj=OFRTEFEA</Set>
+      <Set>TxnObj=OFTAEFEA</Set>
       <Exec func="PUB:GetVirtualTeller">
         <Arg name="TxnCnl" value="EFE"/>
       </Exec>
@@ -1844,8 +1844,8 @@
       <Set>DFMon= </Set>
 
       <Set>LclDir=dat/efea</Set>
-      <Set>LclFil=STRCAT(1001,SUBSTR($DskNam,5,27))</Set>
-      <Set>SndFil=$LclFil</Set>
+      <Set>LclFil=STRCAT(1001,SUBSTR($DskNam,5,27),.cb)</Set>
+      <Set>SndFil=STRCAT($LclFil,.cb)</Set>
 
       <Exec func="PUB:ReadModuleCfg">
         <Arg name="Application" value="GZ_DLDFPL"/>

@@ -6,7 +6,7 @@
 			<Column name="HRspCd" sort="no"/>
 			<Column name="TRspCd" sort="no"/>
 		</Table>
-		<Table name="DptTypToCAgtNo"  file="etc/EFEA_CSW2.XML">
+		<Table name="DptTypToCAgtNo_PL"  file="etc/EFEA_CSW2.XML">
 			<Column name="DptTyp" sort="no"/>
 			<Column name="CAgtNo" sort="no"/>
 		</Table>
@@ -50,10 +50,10 @@
 			<Item name="TxnAmt"  deli_str="|"/>    <!--金额-->
 			<Item name="SetDat"  deli_str="|"/>     <!--电费月份-->
 			<Item name="RsFld2"   deli_str="|"/>  <!--区号-->
-			<AddItem name="DptTyp" length="4" expression="STRCAT(DELBOTHSPACE($RsFld2),00)"/>
+			<!--AddItem name="DptTyp" length="4" expression="STRCAT(DELBOTHSPACE($RsFld2),00)"/-->
 			<Item name="OldAct"    deli_str="|"  expression="DELBOTHSPACE($OldAct)"/>  <!--供电企业账号-->
 			<Item name="FLAG"    deli_str="|"/>     <!--缴费标志-->
-			<SwitchCode name="DptTyp" new_name="CAgtNo"  tab_name="DptTypToCAgtNo"  col_name="DptTyp"/>
+			<SwitchCode name="DptTyp" new_name="CAgtNo"  tab_name="DptTypToCAgtNo_PL"  col_name="DptTyp"/>
 		</Data>
 	</Process>
   
