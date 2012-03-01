@@ -18,5 +18,5 @@ insert into pubjnldef values('441999','EFEA1','9999999999','afetxnjnl','afetxnjn
 
 --增加清算参数
 db2 "insert into efeaclrtbl values('441999', '4410000971','YYYYMMDD','1800','0','0')"
-db2 "insert into efeaclrtbl values('441999', '4410002224','YYYYMMDD','1800','0','0')"
-db2 "insert into efeaclrtbl values('441999', '4410002225','YYYYMMDD','1800','0','0')"
+db2 "insert into efeaclrtbl values('441999', '4410000958','YYYYMMDD','1800','0','0')"
+db2 "insert into efeaclrtbl values('441999', '4410000960','YYYYMMDD','1800','0','0')"
