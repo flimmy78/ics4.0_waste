@@ -1246,7 +1246,7 @@
       <If condition="~RetCod=0">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=S</Set>
         <Set>HRspCd=SC0000</Set>
-        <Exec func="PUB:UpdateRecord" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:ExecSql" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -1261,7 +1261,7 @@
       </If>
       <ElseIf condition="~RetCod=3">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=F</Set>
-        <Exec func="PUB:UpdateRecord" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:ExecSql" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -2341,7 +2341,7 @@
       <Set>RspCod=000000</Set>
 
 
-    <If condition="AND(IS_NOEQUAL_STRING($CAgtNo,4410000577),IS_NOEQUAL_STRING($CAgtNo,4410000960),IS_NOEQUAL_STRING($CAgtNo,4410000971))">            <!--彩票/车船税业务除外-->
+    <If condition="AND(IS_NOEQUAL_STRING($CAgtNo,4410000971),IS_NOEQUAL_STRING($CAgtNo,4410000960),IS_NOEQUAL_STRING($CAgtNo,4410000971))">            <!--彩票/车船税业务除外-->
       <Exec func="PUB:ReadRecord">  <!--查询 -->
         <Arg name="SqlCmd" value="QryJnlInfo"/>
       </Exec>
@@ -2533,7 +2533,7 @@
     </DynSentence>
     <DynSentence name="QryClrSts">    <!--检查清算状态 -->
       <Sentence>
-         select ClrDat,ClrTim,ClrSts,AutFlg from  efeaclrtbl where BrNo='%s' 
+         select ClrSts,AutFlg from  efeaclrtbl where BrNo='%s' 
       </Sentence>
       <Fields>BrNo|</Fields>
     </DynSentence>
@@ -2551,7 +2551,7 @@
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrRst,ClrTyp from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrSts from efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -2588,6 +2588,19 @@
          <Arg name="ObjSvr" value="SHSTPUB1" />
      </Exec>
 
+      <Exec func="PUB:ReadRecord">    <!--检查清算状态 -->
+        <Arg name="SqlCmd" value="QryClrSts"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=不存在清算日期参数</Set>
+        <Return/>
+      </If>
+      <If condition="IS_NOEQUAL_STRING($ClrSts,1)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=非清算状态</Set>
+        <Return/>
+      </If>
 
      <Exec func="PUB:ReadRecord">    <!--查询当天有没清算 -->
        <Arg name="SqlCmd" value="QryClrCnt"/>
@@ -2607,7 +2620,7 @@
          <Set>RspMsg=查询当天清算情况失败</Set>
          <Return/>
        </If>
-       <If condition="IS_EQUAL_STRING($ClrRst,1)">
+       <If condition="IS_EQUAL_STRING($ClrSts,1)">
        	<!--该协议单位已清算-->
          <Set>RspCod=EFE999</Set>
          <Set>RspMsg=该协议单位已清算</Set>
@@ -2998,7 +3011,7 @@
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrRst,ClrTyp from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrSts from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -3108,7 +3121,7 @@
             <Set>RspMsg=查询当天清算情况失败</Set>
             <Return/>
           </If>
-          <If condition="IS_EQUAL_STRING($ClrRst,1)">
+          <If condition="IS_EQUAL_STRING($ClrSts,1)">
           	<!--该协议单位已清算-->
           	<Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
           	<Continute/>
