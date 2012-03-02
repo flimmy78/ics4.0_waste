@@ -815,7 +815,9 @@
       </ElseIf>
       <!--主机记账失败-->
       <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
-        <Set>MsgTyp=E</Set>
+        <If condition="IS_NOEQUAL_STRING($MsgTyp,A)">
+          <Set>MsgTyp=E</Set>
+        </If>
         <Return/>
       </ElseIf>
       <!--第三方发送错误-->
@@ -902,7 +904,7 @@
 
     <DynSentence name="Chk_TLogNo"><!--检查凭单号是否重复 -->
       <Sentence>
-        select HTxnSt,TlrId, HLogNo OHLogNo, LogNo OLogNo,ActNo,TxnAmt,Fee,LChkTm,RsFld1
+        select HTxnSt,TlrId, HLogNo OHLogNo, LogNo OLogNo,ActNo,TxnAmt,Fee,LChkTm,RsFld1,TActDt,ChkFlg
         from afetxnjnl
         where BrNo='%s' and CAgtNo='%s' and TckNo='%s' AND ActDat='%s' AND HTxnSt IN ('T','S','U','C')
         order by LogNo desc
@@ -954,7 +956,11 @@
         <Set>RspMsg=已冲正</Set>
         <Return/>
       </If>
-
+      <If condition="OR(IS_EQUAL_STRING($ChkFlg,1),IS_EQUAL_STRING($TActDt,4410000960))">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=已清算,不能抹帐</Set>
+        <Return/>
+      </If>
   
       <If condition="ISNUMBER($ActNo)">
         <!--校验各分行账号-->
@@ -2545,13 +2551,13 @@
     </DynSentence>
     <DynSentence name="QryClrCnt">    <!--查询当天有没清算 -->
       <Sentence>
-         select count(*) ClrCnt from  efeaclrtbl where BrNo='%s' and ClrDat='%s'
+         select count(*) ClrCnt from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>BrNo|ClrDat|</Fields>
+      <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrSts from efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrRst from efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -2612,22 +2618,22 @@
      </If>
      <If condition="IS_NOEQUAL_STRING($ClrCnt,0)">
      	<!--当天有清算记录-->
-       <Exec func="PUB:ReadRecord">
+       <Exec func="PUB:ReadRecord"  error="IGNORE">
          <Arg name="SqlCmd" value="QryClrDtl"/>
        </Exec>
-       <If condition="~RetCod!=0">
+       <If condition="~RetCod=-1">
          <Set>RspCod=EFE999</Set>
          <Set>RspMsg=查询当天清算情况失败</Set>
          <Return/>
        </If>
-       <If condition="IS_EQUAL_STRING($ClrSts,1)">
+       <If condition="IS_EQUAL_STRING($ClrRst,1)">
        	<!--该协议单位已清算-->
          <Set>RspCod=EFE999</Set>
          <Set>RspMsg=该协议单位已清算</Set>
          <Return/>
        </If>
      </If> 
-     <Else>
+     <Else><!--当天清算记录为空-->
        <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
        <Set>ClrRst=0</Set> <!--清算情况  0:未清算；1:已清算-->
        <Set>ClrTyp=1</Set> <!--清算类型  0:自动清算；1:手工清算-->
@@ -3011,7 +3017,7 @@
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrSts from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrRst from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -3121,7 +3127,7 @@
             <Set>RspMsg=查询当天清算情况失败</Set>
             <Return/>
           </If>
-          <If condition="IS_EQUAL_STRING($ClrSts,1)">
+          <If condition="IS_EQUAL_STRING($ClrRst,1)">
           	<!--该协议单位已清算-->
           	<Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
           	<Continute/>
