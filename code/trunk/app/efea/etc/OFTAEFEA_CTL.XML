@@ -918,6 +918,12 @@
       </Sentence>
       <Fields>HTxnSt|TxnSts|TTxnSt|BrNo|CAgtNo|OTckNo|ActDat|</Fields>
     </DynSentence>
+    <DynSentence name="QryClrDat">    <!--检查清算控制表中的清算日期 -->
+      <Sentence>
+         select ClrDat from  efeaclrtbl where BrNo='%s' and CAgtNo='%s'
+      </Sentence>
+      <Fields>BrNo|CAgtNo|</Fields>
+    </DynSentence>
 
     <FlowCtrl>
       <!--根据柜员号取BrNo-->
@@ -956,7 +962,12 @@
         <Set>RspMsg=已冲正</Set>
         <Return/>
       </If>
-      <If condition="OR(IS_EQUAL_STRING($ChkFlg,1),IS_EQUAL_STRING($TActDt,4410000960))">
+
+      <Exec func="PUB:ReadRecord">  <!--检查凭单号是否记帐-->
+        <Arg name="SqlCmd" value="QryClrDat"/>
+      </Exec>
+
+      <If condition="OR(IS_EQUAL_STRING($ChkFlg,1),IS_NOEQUAL_STRING($TActDt,$ClrDat))">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=已清算,不能抹帐</Set>
         <Return/>
