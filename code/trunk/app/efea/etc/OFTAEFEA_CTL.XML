@@ -1502,7 +1502,7 @@
         </Exec>
         <If condition="~RetCod!=0">
         	<Set>Num5=ADD($Num5,1)</Set>
-          <Continute/>
+          <Continue/>
         </If>                 
    	  </Else>
 
@@ -3022,7 +3022,7 @@
     </DynSentence>
     <DynSentence name="QryClrCnt">    <!--查询当天有没清算 -->
       <Sentence>
-         select count(*) ClrCnt from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select count(*) ClrCnt from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -3036,7 +3036,7 @@
       <Sentence>
          insert into efeaclrdtl values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') 
       </Sentence>
-      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
+      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrTim|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
@@ -3066,8 +3066,9 @@
       </If>
 
       <Set>ClrDT=STRCAT($ClrDat,$ClrTim)</Set>  <!--设置的清算时点YYYYMMDDHHMI-->
-      <Set>SysDT=GETDATETIME(YYYMMDDHHMI)</Set> <!--系统的时点YYYYMMDDHHMI-->
-      
+      <Set>SysDT=GETDATETIME(YYYYMMDDHHMI)</Set> <!--系统的时点YYYYMMDDHHMI-->
+      <Set>ClrDT=$SysDT</Set>  <!--测试使用-->
+
       <If condition="IS_NOEQUAL_STRING($ClrDT,$SysDT)">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=非清算时间</Set>
@@ -3087,8 +3088,11 @@
       <Exec func="PUB:GetVirtualTeller">
         <Arg name="TxnCnl" value="EFE"/>
       </Exec>
-                  
-      <Set>DptTyp=$ROOT.TBANK</Set>
+
+      <!-- modify by qm -->
+      <!--Set>DptTyp=$ROOT.TBANK</Set-->
+      <Set>DptTyp=0000</Set><!-- 配营部类型 -->
+      <!-- modify by qm -->
 
       <Set>Num=01</Set>
       <While condition="INTCMP($Num,2,3)">
@@ -3130,10 +3134,10 @@
         </If>
         <If condition="IS_NOEQUAL_STRING($ClrCnt,0)">
         	<!--当天有清算记录-->
-          <Exec func="PUB:ReadRecord">
+          <Exec func="PUB:ReadRecord" error="IGNORE">
             <Arg name="SqlCmd" value="QryClrDtl"/>
           </Exec>
-          <If condition="~RetCod!=0">
+          <If condition="~RetCod=-1">
             <Set>RspCod=EFE999</Set>
             <Set>RspMsg=查询当天清算情况失败</Set>
             <Return/>
@@ -3141,7 +3145,7 @@
           <If condition="IS_EQUAL_STRING($ClrRst,1)">
           	<!--该协议单位已清算-->
           	<Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          	<Continute/>
+          	<Continue/>
           </If>
         </If>              
         <Else> 
@@ -3183,12 +3187,12 @@
         <If condition="~RetCod!=0"> 
           <!--上主机查询失败,做下一个协议单位号清算-->
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          <Continute/>
+          <Continue/>
         </If>
         <If condition="INTCMP($ClrAmt,4,$Bal)">
         	<!--明细记录汇总金额和内部帐余额不等,做下一个协议单位号清算-->
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          <Continute/>        	
+          <Continue/>        	
         </If>
 
         <If condition="INTCMP($ClrAmt,6,0)">  <!--清算金额大于0,才上主机清算-->
@@ -3210,7 +3214,7 @@
           <If condition="~RetCod=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-            <Continute/>
+            <Continue/>
           </If>
         </If>
   
