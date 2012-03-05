@@ -973,7 +973,7 @@
         <Return/>
       </If>
   
-      <If condition="ISNUMBER($ActNo)">
+      <If condition="INTCMP(ISNUMBER($ActNo),3,0)">
         <!--校验各分行账号-->
         <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
         <Call function="$AcJudFunc">
@@ -988,8 +988,9 @@
          </If>
         <Switch expression="$ActCls">
           <Case value="2" /> <!-- 对私 -->
-          <Case value="3" />
-          <Case value="5" >
+          <Case value="3" /><!-- 银行卡 -->
+          <Case value="5" />
+          <Case value="7" ><!-- 现金 -->
            <If condition="INTCMP($ActCls,3,3)">
                <Set>HTxnCd=471149</Set>  <!--对私卡号-->
             </If>
@@ -998,7 +999,7 @@
             </Else>
             <Break/>
           </Case>
-          <Case value="0" /> <!-- 对公 -->
+          <Case value="0" /> <!-- 支票 --><!-- 对公 -->
           <Case value="4" >
             <Set>HTxnCd=451249</Set>
             <Break/>
@@ -3067,7 +3068,7 @@
 
       <Set>ClrDT=STRCAT($ClrDat,$ClrTim)</Set>  <!--设置的清算时点YYYYMMDDHHMI-->
       <Set>SysDT=GETDATETIME(YYYYMMDDHHMI)</Set> <!--系统的时点YYYYMMDDHHMI-->
-      <Set>ClrDT=$SysDT</Set>  <!--测试使用-->
+      <Set>SysDT=$ClrDT</Set>  <!--测试使用-->
 
       <If condition="IS_NOEQUAL_STRING($ClrDT,$SysDT)">
         <Set>RspCod=EFE999</Set>
@@ -3089,10 +3090,7 @@
         <Arg name="TxnCnl" value="EFE"/>
       </Exec>
 
-      <!-- modify by qm -->
-      <!--Set>DptTyp=$ROOT.TBANK</Set-->
-      <Set>DptTyp=0000</Set><!-- 配营部类型 -->
-      <!-- modify by qm -->
+      <Set>DptTyp=$ROOT.TBANK</Set>
 
       <Set>Num=01</Set>
       <While condition="INTCMP($Num,2,3)">
@@ -3179,6 +3177,7 @@
         </Exec>         
 
         <Set>ActNo=$TACTNO</Set>
+        <Set>TTxnCd=460266</Set>
         
         <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机查询内部帐-->
           <Arg name="HTxnCd" value="098061"/>
@@ -3189,7 +3188,8 @@
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
           <Continue/>
         </If>
-        <If condition="INTCMP($ClrAmt,4,$Bal)">
+        <Set>ClrAm2=COBOL_TO_NORMAL($ClrAmt,15)</Set>
+        <If condition="INTCMP($ClrAm2,4,$Bal)">
         	<!--明细记录汇总金额和内部帐余额不等,做下一个协议单位号清算-->
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
           <Continue/>        	
@@ -3197,6 +3197,9 @@
 
         <If condition="INTCMP($ClrAmt,6,0)">  <!--清算金额大于0,才上主机清算-->
           <Set>HTxnCd=451900</Set>
+          <!--Set>TrmNo=4418003</Set-->
+          <!--Set>LogNo=12033100020417</Set-->
+          <!--Set>AthTbl=EFE000                                                      </Set-->
           <Set>BusTyp=PCL76</Set>
           <Set>RgCFlg=1</Set>   <!--贷方回单，不登记0，登记 1 -->
           <Set>ActBk1=441999</Set>
@@ -3211,7 +3214,7 @@
             <Arg name="HTxnCd" value="$HTxnCd"/>
             <Arg name="ObjSvr" value="SHSTPUB1"/>
           </Exec>       
-          <If condition="~RetCod=0">
+          <If condition="~RetCod!=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
             <Continue/>
