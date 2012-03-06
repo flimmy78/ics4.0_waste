@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+   <Server name="CTDAEFEA" type="CCA" trace="${ics.plt.loglevel}" ip="${ics.plt.local_ip}">
+     <ThreadPool>
+         <MaxWorkerThreads>10</MaxWorkerThreads>
+         <MinWorkerThreads>10</MinWorkerThreads>
+     </ThreadPool>
+     <ProcessMemoryManager>
+         <BlockSize>102400</BlockSize>
+         <PoolInitSize>1</PoolInitSize>
+         <PoolMaxSize>1024</PoolMaxSize>
+         <PoolAddStep>1</PoolAddStep>
+         <TimeOut>1</TimeOut>
+         <ThreadMemoryManager>
+            <PageSize>64</PageSize>
+            <MaxBlocks>10</MaxBlocks>
+         </ThreadMemoryManager>
+     </ProcessMemoryManager>
+     <DllPriDataCtrl name="ECN" dllfile="dll/ecncliasyncl2_gzdl.so" initfunc="initChannel" donefunc="closeChannel">
+       <Para name="IpLstFil">etc/CTDAEFEA_IPD.XML</Para>
+       <Para name="PreLen">0</Para><!--Ç°ÖÃ³¤¶È-->
+     </DllPriDataCtrl>
+     <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+       <Para name="file3">etc/CTDAEFEA_ITF.XML</Para>
+     </DllPriDataCtrl>
+     <Connection type="LEFT">
+        <Entrance name="CCAMGP01" type="TCP">
+           <ListenerModule name="serverLongAsync2In" dllfile="dll/ecncliasyncl2_gzdl.so">
+              <Para name="MsgTyp">PLTIN0</Para>
+              <Para name="RequestPort">30111</Para>
+              <Para name="ResponsePort">30121</Para>
+           </ListenerModule>
+        </Entrance>
+     </Connection>
+     <QueuePair name="LeftQueuePair">
+        <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+           <Entry>
+              <MessageType>PLTIN0</MessageType>
+              <ProcessModule>dataParser</ProcessModule>
+           </Entry>
+        </RequestProcessor>
+        <ResponseProcessor dllfile="dll/ecncliasyncl2_gzdl.so" dbapplication="NO">
+           <Entry>
+              <MessageType>PLTIN0</MessageType>
+              <ProcessModule>serverLongAsync2Out</ProcessModule>
+           </Entry>
+        </ResponseProcessor>
+     </QueuePair>
+     <QueuePair name="RightQueuePair">
+        <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+           <Entry>
+              <MessageType>OTHERS</MessageType>
+              <ProcessModule>dataParser</ProcessModule>
+           </Entry>
+        </ResponseProcessor>
+     </QueuePair>
+  </Server>
+</Region>
