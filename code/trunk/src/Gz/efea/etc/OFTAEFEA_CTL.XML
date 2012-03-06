@@ -17,7 +17,7 @@
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
     <Table name="efeaclrtbl"   value="efeaclrtbl"/>  <!--广州电力清算日期表-->
-    <Table name="efeaclrtbl"   value="efeaclrlog"/>  <!--广州电力清算参数修改记录表-->
+    <Table name="efeaclrlog"   value="efeaclrlog"/>  <!--广州电力清算参数修改记录表-->
     <Table name="efeaclrdtl"   value="efeaclrdtl"/>  <!--广州电力清算明细表表-->
   </TableDeclare>
   <GlobalFunction>
@@ -679,7 +679,7 @@
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Break/>
       </Case>
-      <Case value="601"><!--活期存折-->
+      <Case value="704"><!--活期存折-->
         <Set>ActFlg=2</Set>  <!--对私帐号-->
         <Set>ActTyp=2</Set>
         <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -688,7 +688,7 @@
         <Set>VchCod=$VchNo</Set><!--凭证编号-->
         <Break/>
       </Case>
-      <Case value="603"><!--本外活本-->
+      <Case value="722"><!--本外活本-->
         <Set>ActFlg=1</Set>  <!--一本通-->
         <Set>ActTyp=1</Set>
         <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -697,7 +697,7 @@
         <Set>VchCod=$VchNo</Set><!--凭证编号-->
         <Break/>
       </Case>
-      <Case value="021"><!--个人支票-->
+      <Case value="021"><!--个人支票,需删除-->
         <Set>ActFlg=5</Set>  <!--支票-->
         <Set>ActTyp=5</Set>
         <Set>PayMod=0</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -712,13 +712,13 @@
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
         <Break/>
       </Case>
-      <Case value="127"><!--银承汇票-->
+      <Case value="127"><!--银承汇票,需删除-->
         <Set>PayTyp=12</Set><!--收费类型:10现金;11支票预交;12支票实交-->
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
         <Break/>
       </Case>
-      <Case value="129"><!--商承汇票-->
+      <Case value="129"><!--商承汇票,需删除-->
         <Set>PayTyp=12</Set><!--收费类型:10现金;11支票预交;12支票实交-->
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Set>VckFlg=1</Set><!--凭证检查标志 选项：0－不检查；1－检查。-->
@@ -744,7 +744,7 @@
       </Case>
      </Switch>
 
-     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,601),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
+     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
         <Set>HTxnCd=471140</Set>
         <Set>VchChk=0</Set>
         <!--在前边对私凭证内添加<Set>PayMod=0</Set>支取方式 1 凭密支取 0 不验密-->
@@ -815,7 +815,9 @@
       </ElseIf>
       <!--主机记账失败-->
       <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
-        <Set>MsgTyp=E</Set>
+        <If condition="IS_NOEQUAL_STRING($MsgTyp,A)">
+          <Set>MsgTyp=E</Set>
+        </If>
         <Return/>
       </ElseIf>
       <!--第三方发送错误-->
@@ -849,7 +851,7 @@
 
       <Label>CRCHOST</Label> <!--只上主机冲正-->
          <Set>OLogNo=$LogNo</Set>
-         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,601),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
+         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
            <Set>HTxnCd=471149</Set>
          </If>
          <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--对公-->
@@ -902,7 +904,7 @@
 
     <DynSentence name="Chk_TLogNo"><!--检查凭单号是否重复 -->
       <Sentence>
-        select HTxnSt,TlrId, HLogNo OHLogNo, LogNo OLogNo,ActNo,TxnAmt,Fee,LChkTm,RsFld1
+        select HTxnSt,TlrId, HLogNo OHLogNo, LogNo OLogNo,ActNo,TxnAmt,Fee,LChkTm,RsFld1,TActDt,ChkFlg
         from afetxnjnl
         where BrNo='%s' and CAgtNo='%s' and TckNo='%s' AND ActDat='%s' AND HTxnSt IN ('T','S','U','C')
         order by LogNo desc
@@ -916,6 +918,12 @@
       </Sentence>
       <Fields>HTxnSt|TxnSts|TTxnSt|BrNo|CAgtNo|OTckNo|ActDat|</Fields>
     </DynSentence>
+    <DynSentence name="QryClrDat">    <!--检查清算控制表中的清算日期 -->
+      <Sentence>
+         select ClrDat from  efeaclrtbl where BrNo='%s' and CAgtNo='%s'
+      </Sentence>
+      <Fields>BrNo|CAgtNo|</Fields>
+    </DynSentence>
 
     <FlowCtrl>
       <!--根据柜员号取BrNo-->
@@ -928,6 +936,16 @@
       <Exec func="PUB:InitTransaction"/>
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
+
+<!-- add by qm 2011-12-01 begin -->
+     <Exec func="PUB:AddAuthReason" >
+         <Arg name="AthCod" value="40" />
+         <Arg name="AthMsg" value="EFE000" />
+     </Exec>
+     <Exec  func="PUB:CheckLocalAuth" >
+         <Arg name="ObjSvr" value="SHSTPUB1" />
+     </Exec>
+<!-- add by qm 2011-12-01 end -->
 
       <Exec func="PUB:ReadRecord">  <!--检查凭单号是否记帐-->
         <Arg name="SqlCmd" value="Chk_TLogNo"/>
@@ -945,8 +963,17 @@
         <Return/>
       </If>
 
+      <Exec func="PUB:ReadRecord">  <!--检查凭单号是否记帐-->
+        <Arg name="SqlCmd" value="QryClrDat"/>
+      </Exec>
+
+      <If condition="OR(IS_EQUAL_STRING($ChkFlg,1),IS_NOEQUAL_STRING($TActDt,$ClrDat))">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=已清算,不能抹帐</Set>
+        <Return/>
+      </If>
   
-      <If condition="ISNUMBER($ActNo)">
+      <If condition="INTCMP(ISNUMBER($ActNo),3,0)">
         <!--校验各分行账号-->
         <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
         <Call function="$AcJudFunc">
@@ -961,8 +988,9 @@
          </If>
         <Switch expression="$ActCls">
           <Case value="2" /> <!-- 对私 -->
-          <Case value="3" />
-          <Case value="5" >
+          <Case value="3" /><!-- 银行卡 -->
+          <Case value="5" />
+          <Case value="7" ><!-- 现金 -->
            <If condition="INTCMP($ActCls,3,3)">
                <Set>HTxnCd=471149</Set>  <!--对私卡号-->
             </If>
@@ -971,7 +999,7 @@
             </Else>
             <Break/>
           </Case>
-          <Case value="0" /> <!-- 对公 -->
+          <Case value="0" /> <!-- 支票 --><!-- 对公 -->
           <Case value="4" >
             <Set>HTxnCd=451249</Set>
             <Break/>
@@ -1126,9 +1154,9 @@
     </DynSentence>
     <DynSentence name="UpdThdJnl"><!--更新流水表-->
          <Sentence>
-            LogNo='%s'
+            UPDATE afetxnjnl SET HLOGNO='%s',HRSPCD='%s',HTXNST='%s',TCKNO='%s' WHERE LogNo='%s'
          </Sentence>
-         <Fields>LogNo|</Fields>
+         <Fields>HLogNo|HRspCd|HTxnSt|TckNo|LogNo|</Fields>
     </DynSentence>
     <DynSentence name="QryClrSts">    <!--检查清算状态 -->
       <Sentence>
@@ -1220,7 +1248,7 @@
       
       <Set>TActDt=$ClrDat</Set> <!--清算日期-->
       
-      <Exec func="PUB:InsertRecordExt" error="IGNORE">
+      <Exec func="PUB:InsertRecord" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
@@ -1236,7 +1264,7 @@
       <If condition="~RetCod=0">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=S</Set>
         <Set>HRspCd=SC0000</Set>
-        <Exec func="PUB:UpdateRecordExt" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:ExecSql" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -1251,7 +1279,7 @@
       </If>
       <ElseIf condition="~RetCod=3">  <!--recsts 0:初始化 1:成功 2:失败 -->
         <Set>HTxnSt=F</Set>
-        <Exec func="PUB:UpdateRecordExt" error="IGNORE"> <!--更新记账信息-->
+        <Exec func="PUB:ExecSql" error="IGNORE"> <!--更新记账信息-->
            <Arg name="TblNam" value="afetxnjnl"/>
            <Arg name="CndSts" value="UpdThdJnl"/>
         </Exec>
@@ -1475,7 +1503,7 @@
         </Exec>
         <If condition="~RetCod!=0">
         	<Set>Num5=ADD($Num5,1)</Set>
-          <Continute/>
+          <Continue/>
         </If>                 
    	  </Else>
 
@@ -1485,12 +1513,12 @@
         <Arg name="DatSrc"  value="OPFCSW"/>
         <Arg name="SourNam" value="DptTyp"/>
         <Arg name="DestNam" value="CAgtNo"/>
-        <Arg name="TblNam"  value="DptTypToCAgtNo"/>
+        <Arg name="TblNam"  value="DptTypToCAgtNo_PL"/>
       </Exec>      
 
       <!--取电子柜员号-->
       <Set>TxnCnl=EFE</Set>       <!--取电子柜员号用-->
-      <Set>TxnObj=OFRTEFEA</Set>
+      <Set>TxnObj=OFTAEFEA</Set>
       <Exec func="PUB:GetVirtualTeller">
         <Arg name="TxnCnl" value="EFE"/>
       </Exec>
@@ -1834,8 +1862,8 @@
       <Set>DFMon= </Set>
 
       <Set>LclDir=dat/efea</Set>
-      <Set>LclFil=STRCAT(1001,SUBSTR($DskNam,5,27))</Set>
-      <Set>SndFil=$LclFil</Set>
+      <Set>LclFil=STRCAT(1001,SUBSTR($DskNam,5,27),.cb)</Set>
+      <Set>SndFil=STRCAT($LclFil,.cb)</Set>
 
       <Exec func="PUB:ReadModuleCfg">
         <Arg name="Application" value="GZ_DLDFPL"/>
@@ -2022,11 +2050,11 @@
         </Else>
         
 
-        <!--test
+        <!--test-->
         <Exec func="PUB:FtpPut">
           <Arg name="FtpId" value="EFE_SND_441"/>
         </Exec>	
-        -->
+        <!---->
         <Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>			  		       
       </While>
       
@@ -2331,7 +2359,7 @@
       <Set>RspCod=000000</Set>
 
 
-    <If condition="AND(IS_NOEQUAL_STRING($CAgtNo,4410000577),IS_NOEQUAL_STRING($CAgtNo,4410000960),IS_NOEQUAL_STRING($CAgtNo,4410000971))">            <!--彩票/车船税业务除外-->
+    <If condition="AND(IS_NOEQUAL_STRING($CAgtNo,4410000971),IS_NOEQUAL_STRING($CAgtNo,4410000960),IS_NOEQUAL_STRING($CAgtNo,4410000971))">            <!--彩票/车船税业务除外-->
       <Exec func="PUB:ReadRecord">  <!--查询 -->
         <Arg name="SqlCmd" value="QryJnlInfo"/>
       </Exec>
@@ -2523,7 +2551,7 @@
     </DynSentence>
     <DynSentence name="QryClrSts">    <!--检查清算状态 -->
       <Sentence>
-         select ClrDat,ClrTim,ClrSts,AutFlg from  efeaclrtbl where BrNo='%s' 
+         select ClrSts,AutFlg from  efeaclrtbl where BrNo='%s' 
       </Sentence>
       <Fields>BrNo|</Fields>
     </DynSentence>
@@ -2535,13 +2563,13 @@
     </DynSentence>
     <DynSentence name="QryClrCnt">    <!--查询当天有没清算 -->
       <Sentence>
-         select count(*) ClrCnt from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select count(*) ClrCnt from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrRst,ClrTyp from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrRst from efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -2549,7 +2577,7 @@
       <Sentence>
          insert into efeaclrdtl values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') 
       </Sentence>
-      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
+      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrTim|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
@@ -2578,6 +2606,19 @@
          <Arg name="ObjSvr" value="SHSTPUB1" />
      </Exec>
 
+      <Exec func="PUB:ReadRecord">    <!--检查清算状态 -->
+        <Arg name="SqlCmd" value="QryClrSts"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=不存在清算日期参数</Set>
+        <Return/>
+      </If>
+      <If condition="IS_NOEQUAL_STRING($ClrSts,1)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=非清算状态</Set>
+        <Return/>
+      </If>
 
      <Exec func="PUB:ReadRecord">    <!--查询当天有没清算 -->
        <Arg name="SqlCmd" value="QryClrCnt"/>
@@ -2589,10 +2630,10 @@
      </If>
      <If condition="IS_NOEQUAL_STRING($ClrCnt,0)">
      	<!--当天有清算记录-->
-       <Exec func="PUB:ReadRecord">
+       <Exec func="PUB:ReadRecord"  error="IGNORE">
          <Arg name="SqlCmd" value="QryClrDtl"/>
        </Exec>
-       <If condition="~RetCod!=0">
+       <If condition="~RetCod=-1">
          <Set>RspCod=EFE999</Set>
          <Set>RspMsg=查询当天清算情况失败</Set>
          <Return/>
@@ -2604,7 +2645,8 @@
          <Return/>
        </If>
      </If> 
-     <Else>
+     <Else><!--当天清算记录为空-->
+       <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
        <Set>ClrRst=0</Set> <!--清算情况  0:未清算；1:已清算-->
        <Set>ClrTyp=1</Set> <!--清算类型  0:自动清算；1:手工清算-->
        <Set>ClrTot=0</Set> <!--清算笔数-->
@@ -2629,6 +2671,7 @@
      </If>
 
       <Set>HTxnCd=451900</Set>
+      <Set>CrpCod=EFEA99999999</Set>
       <Set>BusTyp=PCL76</Set>
       <Set>RgCFlg=1</Set>   <!--贷方回单，不登记0，登记 1 -->
       <Set>ActBk1=441999</Set>
@@ -2980,13 +3023,13 @@
     </DynSentence>
     <DynSentence name="QryClrCnt">    <!--查询当天有没清算 -->
       <Sentence>
-         select count(*) ClrCnt from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select count(*) ClrCnt from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
     <DynSentence name="QryClrDtl">    <!--查询清算情况 -->
       <Sentence>
-         select ClrRst,ClrTyp from  efeaclrtbl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
+         select ClrRst from  efeaclrdtl where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
       <Fields>BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -2994,7 +3037,7 @@
       <Sentence>
          insert into efeaclrdtl values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') 
       </Sentence>
-      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
+      <Fields>BrNo|NodNo|TlrId|CAgtNo|ClrDat|ClrTim|ClrRst|ClrTyp|ClrTot|ClrAmt|</Fields>
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
@@ -3024,8 +3067,9 @@
       </If>
 
       <Set>ClrDT=STRCAT($ClrDat,$ClrTim)</Set>  <!--设置的清算时点YYYYMMDDHHMI-->
-      <Set>SysDT=GETDATETIME(YYYMMDDHHMI)</Set> <!--系统的时点YYYYMMDDHHMI-->
-      
+      <Set>SysDT=GETDATETIME(YYYYMMDDHHMI)</Set> <!--系统的时点YYYYMMDDHHMI-->
+      <Set>SysDT=$ClrDT</Set>  <!--测试使用-->
+
       <If condition="IS_NOEQUAL_STRING($ClrDT,$SysDT)">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=非清算时间</Set>
@@ -3045,7 +3089,7 @@
       <Exec func="PUB:GetVirtualTeller">
         <Arg name="TxnCnl" value="EFE"/>
       </Exec>
-                  
+
       <Set>DptTyp=$ROOT.TBANK</Set>
 
       <Set>Num=01</Set>
@@ -3088,10 +3132,10 @@
         </If>
         <If condition="IS_NOEQUAL_STRING($ClrCnt,0)">
         	<!--当天有清算记录-->
-          <Exec func="PUB:ReadRecord">
+          <Exec func="PUB:ReadRecord" error="IGNORE">
             <Arg name="SqlCmd" value="QryClrDtl"/>
           </Exec>
-          <If condition="~RetCod!=0">
+          <If condition="~RetCod=-1">
             <Set>RspCod=EFE999</Set>
             <Set>RspMsg=查询当天清算情况失败</Set>
             <Return/>
@@ -3099,7 +3143,7 @@
           <If condition="IS_EQUAL_STRING($ClrRst,1)">
           	<!--该协议单位已清算-->
           	<Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          	<Continute/>
+          	<Continue/>
           </If>
         </If>              
         <Else> 
@@ -3133,6 +3177,7 @@
         </Exec>         
 
         <Set>ActNo=$TACTNO</Set>
+        <Set>TTxnCd=460266</Set>
         
         <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机查询内部帐-->
           <Arg name="HTxnCd" value="098061"/>
@@ -3141,16 +3186,22 @@
         <If condition="~RetCod!=0"> 
           <!--上主机查询失败,做下一个协议单位号清算-->
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          <Continute/>
+          <Continue/>
         </If>
-        <If condition="INTCMP($ClrAmt,4,$Bal)">
+        <Set>ClrAm2=COBOL_TO_NORMAL($ClrAmt,15)</Set>
+        <If condition="INTCMP($ClrAm2,4,$Bal)">
         	<!--明细记录汇总金额和内部帐余额不等,做下一个协议单位号清算-->
           <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-          <Continute/>        	
+          <Continue/>        	
         </If>
 
         <If condition="INTCMP($ClrAmt,6,0)">  <!--清算金额大于0,才上主机清算-->
+          <!--取前置流水号,由于每次上主机需要不同的流水号,因此在这里取-->
+          <Exec func="PUB:GetLogNo"/>
           <Set>HTxnCd=451900</Set>
+          <!--Set>TrmNo=4418003</Set-->
+          <!--Set>LogNo=12033100020417</Set-->
+          <!--Set>AthTbl=EFE000                                                      </Set-->
           <Set>BusTyp=PCL76</Set>
           <Set>RgCFlg=1</Set>   <!--贷方回单，不登记0，登记 1 -->
           <Set>ActBk1=441999</Set>
@@ -3165,10 +3216,10 @@
             <Arg name="HTxnCd" value="$HTxnCd"/>
             <Arg name="ObjSvr" value="SHSTPUB1"/>
           </Exec>       
-          <If condition="~RetCod=0">
+          <If condition="~RetCod!=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
-            <Continute/>
+            <Continue/>
           </If>
         </If>
   
@@ -3220,7 +3271,7 @@
     </DynSentence>
     <DynSentence name="UpdClrSts">    <!--修改清算参数 -->
       <Sentence>
-         update efeaclrtbl set ClrDat='%s',ClrTim=’%s',ClrSts='%s',AutFlg='%s' where BrNo='%s' 
+         update efeaclrtbl set ClrDat='%s',ClrTim='%s',ClrSts='%s',AutFlg='%s' where BrNo='%s' 
       </Sentence>
       <Fields>ClrDat|ClrTim|ClrSts|AutFlg|BrNo|</Fields>
     </DynSentence>
