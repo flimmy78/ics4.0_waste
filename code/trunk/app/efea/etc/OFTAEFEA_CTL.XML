@@ -3196,6 +3196,8 @@
         </If>
 
         <If condition="INTCMP($ClrAmt,6,0)">  <!--清算金额大于0,才上主机清算-->
+          <!--取前置流水号,由于每次上主机需要不同的流水号,因此在这里取-->
+          <Exec func="PUB:GetLogNo"/>
           <Set>HTxnCd=451900</Set>
           <!--Set>TrmNo=4418003</Set-->
           <!--Set>LogNo=12033100020417</Set-->
