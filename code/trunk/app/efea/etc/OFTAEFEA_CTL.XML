@@ -591,8 +591,10 @@
         <Return/>
       </Else>
       
-      <Set>UsrAdd=DELSPACE(SUBSTR($UsrDat,1,32),all)</Set>
-      <Set>UsrNam=DELSPACE(SUBSTR($UsrDat,34,23),all)</Set>
+      <!--Set>UsrAdd=DELSPACE(SUBSTR($UsrDat,1,32),all)</Set-->
+      <Set>UsrAdd=DELSPACE(SUBSTR($UsrDat,1,SUB(GETSTRPOS($UsrDat,^),1)),all)</Set><!-- 用户地址 -->
+      <!--Set>UsrNam=DELSPACE(SUBSTR($UsrDat,34,23),all)</Set-->
+      <Set>UsrNam=DELSPACE(SUBSTR($UsrDat,ADD(GETSTRPOS($UsrDat,^),1),SUB(STRLEN($UsrDat),GETSTRPOS($UsrDat,^))),all)</Set><!-- 用户名称 -->
       
 			<Set>MsgTyp=N</Set>
 			<Set>RspCod=000000</Set>
@@ -1085,6 +1087,12 @@
 
   <Transaction code="460247" desc="银行发送网管信息">
     <FlowCtrl>
+
+      <Set>UsrDat=          桃园东路385号10栋0605房^市美林基业投资有限公司</Set>
+      <!--Set>UsrAdd=DELSPACE(SUBSTR($UsrDat,1,32),all)</Set-->
+      <Set>UsrAdd=DELSPACE(SUBSTR($UsrDat,1,SUB(GETSTRPOS($UsrDat,^),1)),all)</Set>
+      <!--Set>UsrNam=DELSPACE(SUBSTR($UsrDat,34,23),all)</Set-->
+      <Set>UsrNam=DELSPACE(SUBSTR($UsrDat,ADD(GETSTRPOS($UsrDat,^),1),SUB(STRLEN($UsrDat),GETSTRPOS($UsrDat,^))),all)</Set>
     	<!--该部分程序是验证读XML文件的方法-->
       <!--
       <Exec func="PUB:OpenFile" error="IGNORE">
