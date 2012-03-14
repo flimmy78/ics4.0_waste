@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="ICCA" server="OFTAICCA" trace="yes" >
+   <GetTxnCode>
+      <Item type="fixed" offset="6" length="6"/>
+   </GetTxnCode>
+   <Define>
+		<Macro name="req_head"> <!--½»Ò×ÇëÇó±¨ÎÄÍ·-->
+			<Item name="MesgLen"     length="6"/>		  <!--±¨ÎÄ³¤¶È-->
+			<Item name="TTxnCd"      length="6" />	  <!--µÚÈý·½½»Ò×Âë-->
+			<Item name="MchID"       length="6" />	  <!--´úÀíÉÌ±àºÅ-->
+			<Item name="TTxnTm"      length="14"/>		<!--µÚÈý·½½»Ò×Ê±¼ä-->
+			<Item name="RetCod"      length="4"/>		  <!--´¦Àí½á¹û·µ»ØÂë-->
+			<Item name="TLogNo"      length="20"/>	  <!--ÏµÍ³²Î¿¼ºÅ-->
+			<Item name="BodyMac"     length="32"/>		<!--MAC-->
+		</Macro>
+
+		<Macro name="resp_head"> <!--½»Ò×Ó¦´ð±¨ÎÄÍ·-->
+			<Item name="MesgLen"     length="6"/>     <!--±¨ÎÄ³¤¶È-->
+			<Item name="TTxnCd"      length="6" />	  <!--µÚÈý·½½»Ò×Âë-->
+			<Item name="MchID"       length="6" />	  <!--´úÀíÉÌ±àºÅ-->
+			<Item name="TTxnTm"      length="14"/>		<!--µÚÈý·½½»Ò×Ê±¼ä-->
+			<Item name="RetCod"      length="4"/>		  <!--´¦Àí½á¹û·µ»ØÂë-->
+			<Item name="TLogNo"      length="20"/>	  <!--ÏµÍ³²Î¿¼ºÅ-->
+			<Item name="BodyMac"     length="32"/>		<!--MAC-->
+		</Macro>
+	</Define>
+
+
+  <!-- Ð£Ô°¿¨µç×ÓÇ®°ü×ªÕÊµ½ÒøÐÐ¿¨µç×ÓÇ®°ü½»Ò× -->
+  <Transaction code="404102" service="480703" desc="Ð£Ô°¿¨µç×ÓÇ®°ü×ªÕÊµ½ÒøÐÐ¿¨µç×ÓÇ®°ü½»Ò×" log_switch="5">
+    <Request>
+			<Quote name="req_head"/>           <!--½ÓÊÕ°üÍ·-->
+			<Item name="CrdNo"  length="21"/>  <!--½è¼Ç¿¨ºÅÂë-->
+			<Item name="ICBak"  length="21"/>  <!--ÒøÐÐµç×ÓÇ®°üºÅ-->
+			<Item name="ICSch"  length="16"/>  <!--Ð£Ô°IC¿¨ºÅ-->
+			<Item name="TCusNm" length="64"/>  <!--ÓÃ»§ÐÕÃû-->
+			<Item name="MonTyp" length="3"/>   <!--±ÒÖÖ:001ÈËÃñ±Ò-->
+			<Item name="TxnAmt" length="15" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>  <!--³äÖµ½ð¶î-->
+			<Item name="ActNo"  length="21"/>  <!--¶Ô¹«½áËãÕËºÅ-->
+			<Item name="PosNo"  length="5" />  <!--È¦´æ»úºÅ-->
+			<Item name="BusCls" length="2"/>   <!--ÒµÎñÖÖÀà,01:È¦´æ,02:Ïû·Ñ-->
+			<Item name="CarSis" length="3"/>   <!--¿¨ÐòÁÐºÅ-->
+			<Item name="FifLen" length="3" />	 <!--55ÓòÊµ¼Ê³¤¶È-->		
+			<Item name="FiFif"  length="504"/> <!--55Óò-->
+			<AddItem name="TxnCnl"  value="THD"/>
+    </Request>
+    <Response necessary="no">
+    	<Quote name="resp_head"/>          <!--Ó¦´ð°üÍ·-->
+			<Item name="LogNo"  length="14"/>  <!--ÒøÐÐÁ÷Ë®ºÅ-->
+			<Item name="ActDat" length="8" />  <!--»á¼ÆÈÕÆÚ-->
+			<Item name="FifLen" length="3" />	 <!--55ÓòÊµ¼Ê³¤¶È-->		
+			<Item name="FiFif"  length="504"/> <!--55Óò-->
+    </Response>
+  </Transaction>
+
+  <!-- Ð£Ô°¿¨µç×ÓÇ®°ü×ªÕÊµ½ÒøÐÐ¿¨µç×ÓÇ®°ü³åÕý -->
+  <Transaction code="404402" service="480704" desc="Ð£Ô°¿¨µç×ÓÇ®°ü×ªÕÊµ½ÒøÐÐ¿¨µç×ÓÇ®°ü³åÕý" log_switch="5">
+    <Request>
+			<Quote name="req_head"/>           <!--½ÓÊÕ°üÍ·-->
+			<Item name="CrdNo"   length="21"/>  <!--½è¼Ç¿¨ºÅÂë-->
+			<Item name="ICBak"   length="21"/>  <!--ÒøÐÐµç×ÓÇ®°üºÅ-->
+			<Item name="ICSch"   length="16"/>  <!--Ð£Ô°IC¿¨ºÅ-->
+			<Item name="TCusNm"  length="64"/>  <!--ÓÃ»§ÐÕÃû-->
+			<Item name="MonTyp"  length="3"/>   <!--±ÒÖÖ:001ÈËÃñ±Ò-->
+			<Item name="TxnAmt"  length="15" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>  <!--³äÖµ½ð¶î-->
+			<Item name="ActNo"   length="21"/>  <!--¶Ô¹«½áËãÕËºÅ-->
+			<Item name="PosNo"   length="5" />  <!--È¦´æ»úºÅ-->
+			<Item name="BusCls"  length="2"/>   <!--ÒµÎñÖÖÀà,01:È¦´æ,02:Ïû·Ñ-->
+			<Item name="CarSis"  length="3"/>   <!--¿¨ÐòÁÐºÅ-->
+			<Item name="FifLen"  length="3"/>	 <!--55ÓòÊµ¼Ê³¤¶È-->		
+			<Item name="FiFif"   length="504"/>  <!--55Óò-->
+			<Item name="OTLogNo" length="20"/>  <!--Ô­µÚÈý·½Á÷Ë®ºÅ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+    </Request>
+    <Response necessary="no">
+    	<Quote name="resp_head"/>          <!--Ó¦´ð°üÍ·-->
+			<Item name="LogNo"  length="14"/>  <!--ÒøÐÐÁ÷Ë®ºÅ-->
+			<Item name="ActDat" length="8" />  <!--»á¼ÆÈÕÆÚ-->
+			<Item name="FifLen" length="3" />	 <!--55ÓòÊµ¼Ê³¤¶È-->		
+			<Item name="FiFif"  length="504"/> <!--55Óò-->
+    </Response>
+  </Transaction>
+
+  <!--½è¼Æ¿¨¿Û¿î×ªÕÊµ½Ð£Ô°¿¨µç×ÓÇ®°ü½»Ò× -->
+  <Transaction code="404101" service="480701" desc="½è¼Æ¿¨¿Û¿î×ªÕÊµ½Ð£Ô°¿¨µç×ÓÇ®°ü½»Ò×" log_switch="5">
+    <Request>
+			<Quote name="req_head"/>           <!--½ÓÊÕ°üÍ·-->
+			<Item name="CrdNo"  length="21"/>  <!--½è¼Ç¿¨ºÅÂë-->
+			<Item name="ICBak"  length="21"/>  <!--ÒøÐÐµç×ÓÇ®°üºÅ-->
+			<Item name="ICSch"  length="16"/>  <!--Ð£Ô°IC¿¨ºÅ-->
+			<Item name="TCusNm" length="64"/>  <!--ÓÃ»§ÐÕÃû-->
+			<Item name="MonTyp" length="3"/>   <!--±ÒÖÖ:001ÈËÃñ±Ò-->
+			<Item name="TxnAmt" length="15" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>  <!--³äÖµ½ð¶î-->
+			<Item name="ActNo"  length="21"/>  <!--¶Ô¹«½áËãÕËºÅ-->
+			<Item name="PosNo"  length="5" />  <!--È¦´æ»úºÅ-->
+			<Item name="BusCls" length="2"/>   <!--ÒµÎñÖÖÀà,01:È¦´æ,02:Ïû·Ñ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+    </Request>
+    <Response necessary="no">
+    	<Quote name="resp_head"/>          <!--Ó¦´ð°üÍ·-->
+			<Item name="LogNo"  length="14"/>  <!--ÒøÐÐÁ÷Ë®ºÅ-->
+			<Item name="ActDat" length="8" />  <!--»á¼ÆÈÕÆÚ-->
+    </Response>
+  </Transaction>
+
+  <!-- ½è¼Æ¿¨¿Û¿î×ªÕÊµ½Ð£Ô°¿¨µç×ÓÇ®°ü³åÕý -->
+  <Transaction code="404401" service="480702" desc="½è¼Æ¿¨¿Û¿î×ªÕÊµ½Ð£Ô°¿¨µç×ÓÇ®°ü³åÕý" log_switch="5">
+    <Request>
+			<Quote name="req_head"/>           <!--½ÓÊÕ°üÍ·-->
+			<Item name="CrdNo"   length="21"/>  <!--½è¼Ç¿¨ºÅÂë-->
+			<Item name="ICBak"   length="21"/>  <!--ÒøÐÐµç×ÓÇ®°üºÅ-->
+			<Item name="ICSch"   length="16"/>  <!--Ð£Ô°IC¿¨ºÅ-->
+			<Item name="TCusNm"  length="64"/>  <!--ÓÃ»§ÐÕÃû-->
+			<Item name="MonTyp"  length="3"/>   <!--±ÒÖÖ:001ÈËÃñ±Ò-->
+			<Item name="TxnAmt"  length="15" expression="ADDCHAR(DELBOTHSPACE($TxnAmt),15,0,1)"/>  <!--³äÖµ½ð¶î-->
+			<Item name="ActNo"   length="21"/>  <!--¶Ô¹«½áËãÕËºÅ-->
+			<Item name="PosNo"   length="5" />  <!--È¦´æ»úºÅ-->
+			<Item name="BusCls"  length="2"/>   <!--ÒµÎñÖÖÀà,01:È¦´æ,02:Ïû·Ñ-->
+  		<Item name="OTLogNo" length="20"/>  <!--Ô­µÚÈý·½Á÷Ë®ºÅ-->
+			<AddItem name="TxnCnl"  value="THD"/>
+    </Request>
+    <Response necessary="no">
+    	<Quote name="resp_head"/>          <!--Ó¦´ð°üÍ·-->
+			<Item name="LogNo"  length="14"/>  <!--ÒøÐÐÁ÷Ë®ºÅ-->
+			<Item name="ActDat" length="8" />  <!--»á¼ÆÈÕÆÚ-->
+    </Response>
+  </Transaction>
+
+</Application>
