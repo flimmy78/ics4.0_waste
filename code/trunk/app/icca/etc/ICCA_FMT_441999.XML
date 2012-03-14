@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="agtfmta.log" err_file="agtfmta.err">
+
+	<Process name="ChkFormat">   <!--¹ãÖÝ´óÑ§³ÇICÁªÃû¿¨¶ÔÕÊÎÄ¼þ¸ñÊ½-->
+		<Head>
+			<Item name="OrnCnt"      deli_str="|"  />
+			<Item name="OrnAmt"      expression="AMTSIMPLEFMT($OrnAmt)"/>
+		</Head>
+		<Data>
+			<Item name="LogNo"   length="20"/>  <!-- ÒøÐÐÁ÷Ë®ºÅ -->
+			<Item name="TLogNo"  length="20" /> <!-- Ò»¿¨Í¨ÏµÍ³Á÷Ë®ºÅ -->
+			<Item name="ActDat"  length="16" /> <!-- »á¼ÆÈÕÆÚ -->
+      <Item name="FTxnTm"  length="14" /> <!-- ½»Ò×Ê±¼ä -->
+      <Item name="CrdNo"   length="21" /> <!-- ¿¨ºÅ -->
+      <Item name="ICBak"   length="21" /> <!-- ÒøÐÐIC¿¨ºÅ -->
+      <Item name="ICSch"   length="16" /> <!-- Ð£Ô°IC¿¨ºÅ -->
+      <Item name="TxnAmt"  length="12" align_mode="right" expression="AMTSIMPLEFMT($TxnAmt)"/> <!-- ½»Ò×½ð¶î -->
+      <Item name="TCusNm"  length="30" />  <!-- ¿Í»§ÐÕÃû -->
+      <Item name="TTxnCd"  length="6" />   <!-- µÚÈý·½½»Ò×Âë -->
+      <Item name="PosNo"   length="5" />   <!-- »ú¾ß±àºÅ -->
+		</Data>
+	</Process>
+
+  
+</BATCH>
