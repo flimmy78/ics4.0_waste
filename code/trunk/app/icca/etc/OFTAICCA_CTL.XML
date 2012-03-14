@@ -1033,7 +1033,7 @@
     </DynSentence>
     <DynSentence name="GetTxnJnl">
       <Sentence>
-        select TckNo, TLogNo, ICBak, CrdNo, TxnAmt, substr(FTxnTm,1,8), substr(FTxnTm,9,6), HTxnSt 
+        select TckNo, TLogNo, ICBak, CrdNo, TxnAmt, substr(FTxnTm,1,8) TxnDat, substr(FTxnTm,9,6) TxnTim, HTxnSt 
         from iccatxnjnl
         where ActDat='%s'
       </Sentence>
@@ -1044,10 +1044,10 @@
       <Exec func="PUB:InitTransaction"/>
 
       <Set>RtnDat=20110225</Set>
-      <Set>MchID=441001</Set>
+      <!--Set>MchID=441001</Set>
       <Set>BrNo=441999</Set>
       <Set>NodNo= </Set>
-      <Set>TlrId= </Set>
+      <Set>TlrId= </Set-->
 
 			<Exec func="PUB:IsExistNode" error="IGNORE">
         <Arg name="FieldName" value="RtnDat"/>
@@ -1067,6 +1067,7 @@
       <Set>FilNam=STRCAT(00,$ActDat,INTTOSTR($OrnCnt,5),INTTOSTR($OrnAmt,10),.txt)</Set>
       <Set>SendFil=STRCAT(GETENV(WORKDIR),/dat/icca/,$FilNam)</Set>
 
+      <Set>Remark= </Set>
       <Exec func="PUB:ExportFromDB"><!--产生上送主机的文件-->
         <Arg name="SqlName" value="GetTxnJnl"/>
         <Arg name="FormatName" value="ChkFormat"/>
