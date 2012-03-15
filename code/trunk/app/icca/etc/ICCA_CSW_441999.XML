@@ -71,4 +71,12 @@
       <Default   CnlTyp="0"/>
    </Table>
 
+   <Table name="CurCod"> <!--根据渠道标识确定渠道-->
+      <Item HTxnSt="S"   HTxnS2="1"/> <!--成功-->
+      <Item HTxnSt="T"   HTxnS2="2"/> <!--超时-->
+      <Item HTxnSt="U"   HTxnS2="2"/> <!--未处理-->
+      <Item HTxnSt="C"   HTxnS2="3"/> <!--冲正-->
+      <Default   HTxnS2="2"/>
+   </Table>
+
  </root>
