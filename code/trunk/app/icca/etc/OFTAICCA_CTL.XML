@@ -1067,7 +1067,6 @@
       <Set>FilNam=STRCAT(00,$ActDat,INTTOSTR($OrnCnt,5),INTTOSTR($OrnAmt,10),.txt)</Set>
       <Set>SendFil=STRCAT(GETENV(WORKDIR),/dat/icca/,$FilNam)</Set>
 
-      <!--Set>Remark= </Set-->
       <Exec func="PUB:ExportFromDB"><!--产生上送主机的文件-->
         <Arg name="SqlName" value="GetTxnJnl"/>
         <Arg name="FormatName" value="ICCA_JNL"/>
@@ -1075,25 +1074,10 @@
         <Arg name="TableName" value="iccatxnjnl"/>
       </Exec>
 
-      <!--Set>LclFil=$FilNam</Set>
-      <Set>LclDir=dat/icca</Set-->
-      <!--
+      <Set>SndFil=$FilNam</Set>
       <Exec func="PUB:FtpPut">
-        <Arg name="FtpId" value="GZ_ICSCH01"/>
+        <Arg name="FtpId" value="GZ_ICSCH02"/>
       </Exec>
-       -->
-
-      <!--Set>FmtFil=app/icca/etc/ICCA_RPT_441999.XML</Set>
-      <Set>RptNam=STRCAT(ICCA,$BrNo,$TxnDat,GETDATETIME(HHMISS),.rpt)</Set>
-      <Exec func="EXT:GenerateReport">
-        <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/icca/,$RptNam)"/>
-        <Arg name="FmtFil" value="$FmtFil"/>
-        <Arg name="BrNo"   value="$BrNo"/>
-        <Arg name="CAgtNo" value="$MchID"/>
-        <Arg name="TxnDat" value="$TxnDat"/>
-        <Arg name="PNodNo"  value="$NodNo"/>
-        <Arg name="PTlrId"  value="$TlrId"/>
-      </Exec-->   
 
       <Set>RspCod=000000</Set>
       
