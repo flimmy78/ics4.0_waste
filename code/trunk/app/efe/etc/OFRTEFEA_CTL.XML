@@ -804,12 +804,14 @@
           <Else>
             <Exec func="PUB:RollbackWork" error="IGNORE" />
             <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE999</Set>
             <Exec func="PUB:CodeSwitching">
               <Arg name="DatSrc"  value="OPFCSW"/>
               <Arg name="SourNam" value="TRspCd"/>
               <Arg name="DestNam" value="RspMsg"/>
               <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
             </Exec>
+            <Return/>
           </Else>
           <Break/>
         </Case>
@@ -868,12 +870,14 @@
           <Else>
             <Exec func="PUB:RollbackWork" error="IGNORE" />
             <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE999</Set>
             <Exec func="PUB:CodeSwitching">
               <Arg name="DatSrc"  value="OPFCSW"/>
               <Arg name="SourNam" value="TRspCd"/>
               <Arg name="DestNam" value="RspMsg"/>
               <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
             </Exec>
+            <Return/>
           </Else>
           <Break/>
         </Case>
@@ -1711,10 +1715,6 @@
     </DynSentence>
 
     <FlowCtrl>
-
-      <Set>RspCod=EFE999</Set>
-      <Set>RspMsg=此交易暂停使用</Set>
-      <Return/>
 
       <Set>DLIP=@MSG.SIP</Set>
       <Exec func="PUB:ReadRecord">    <!--查询对应分行号 -->
