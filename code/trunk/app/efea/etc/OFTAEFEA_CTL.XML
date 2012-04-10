@@ -195,7 +195,7 @@
 
     <DynSentence name="QryCrpAgr">    <!--检查单位协议 -->
       <Sentence>
-         select BBusTyp,TActNo  from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'
+         select BBusTyp,TActNo, CrpCod from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'
       </Sentence>
       <Fields>BrNo|CAgtNo|</Fields>
     </DynSentence>
@@ -206,6 +206,26 @@
       </Sentence>
       <Fields>BrNo|</Fields>
     </DynSentence>
+    <!--零余额语句开始,add by qm-->
+    <DynSentence name="QryCrpInf"><!--查询单位信息 -->
+      <Sentence>
+        SELECT CrpNam, StlAct FROM savcrpinf WHERE BrNo='%s' AND CrpCod='%s'
+      </Sentence>
+      <Fields>BrNo|CrpCod|</Fields>
+    </DynSentence>
+    <DynSentence name="QryAgrNum"><!-- 检查零余额账户-->
+       <Sentence>
+          SELECT COUNT(*) ZeroNum FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+       </Sentence>
+       <Fields>ActNo</Fields>
+    </DynSentence>
+    <DynSentence name="QryPfaAgr"><!-- 查询零余额对应协议号-->
+       <Sentence>
+          SELECT distinct BCusId,AgrNo,PfaSub,SubCod FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+       </Sentence>
+       <Fields>ActNo</Fields>
+    </DynSentence>
+    <!--零余额语句结束,add by qm-->
 
     <FlowCtrl>
       <Set>MacFlg=0</Set>
@@ -343,6 +363,150 @@
       <Set>FRspCd= </Set>  <!--20100511-->
       <Set>ItgTyp=0</Set>  <!--20100511-->
       <Set>TXNTYP=N</Set>  <!--20100511-->
+
+      <!-- 零余额账号开始, add by qm -->
+      <!--检查零余额账户-->
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="QryAgrNum"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=478399</Set>
+        <Set>RspMsg=查询零余额账号数据库错</Set>
+        <Goto>EXIT_RETURN</Goto>
+      </If>
+      <If condition="INTCMP($ZeroNum,6,0)">   <!--记录条数大于零-->
+        <!--零余额账户处理开始-->
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Arg name="SqlCmd" value="QryCrpInf"/>
+        </Exec>
+        <If condition="~RetCod!=0">
+          <Set>RspCod=478399</Set>
+          <Set>RspMsg=查询入帐单位信息数据库错</Set>
+          <Goto>EXIT_RETURN</Goto>
+        </If>
+	   <Exec func="PUB:OpenCursor"><!--打开游标-->
+	  	<Arg name="SqlCurFmp" value="QryPfaAgr"></Arg>
+	  	<Arg name="CursorName" value="CUR_TRFA"/>
+	   </Exec>					
+	   <If condition="~RetCod!=0">
+	  	<Set>MsgTyp=E</Set>
+	  	<Set>RspCod=EFE999</Set>
+	  	<Set>RspMsg=打开游标错QryPfaAgr!</Set>
+	  	<Goto>EXIT_RETURN</Goto>
+	   </If>
+		<While>
+			<Exec func="PUB:FetchCursor" error="IGNORE">	<!--取下一笔记录-->
+			  <Arg name="CursorName" value="CUR_TRFA"/>
+			</Exec>
+			<If condition="~RetCod=100">
+				<Exec func="PUB:CloseCursor">	<!--关闭游标-->
+				  <Arg name="CursorName" value="CUR_TRFA"/>
+				</Exec>
+            <Set>MsgBodyFlg=0</Set>
+		        <Goto>EXIT_RETURN</Goto>
+		</If>
+		<If condition="~RetCod!=0">
+			<Exec func="PUB:CloseCursor">	<!--关闭游标-->
+			  <Arg name="CursorName" value="CUR_TRFA"/>
+			</Exec>
+      <Set>MsgBodyFlg=0</Set>
+  	  <Goto>EXIT_RETURN</Goto>
+		</If>
+          <Switch expression="$PfaSub">
+            <Case value="001" > <!--省财政支付-->
+            	<Set>PfaSub=$PfaSub</Set>       <!--财政应用编码-->
+            	<Set>BCusId=$BCusId</Set>       <!--基层预算单位编码-->
+            	<Set>PayAct=$ActNo</Set>        <!--付款人帐号-->
+            	<Set>PayNam=$TCusNm</Set>       <!--付款名称单位-->
+            	<Set>PayBNm=交通银行</Set>      <!--开户银行-->
+            	<Set>PyeAct=$StlAct</Set>       <!--收款人帐号-->
+              <Set>PyeNam=$CrpNam</Set>       <!--收款人名称-->
+              <Set>PyeBNm=交通银行</Set>      <!--收款银行-->
+              <Set>VchDat=$ActDat</Set>       <!--签发日期-->
+              <Set>TOIFlg=O</Set>             <!--交易方向-->
+              <Set>AgrNo=$AgrNo</Set>         <!--协议编码-->
+              <Set>VchSmr=电力扣费</Set>      <!--摘要-->
+              <Set>ActSqn=$ActSqn</Set>       <!--入帐帐号顺序号-->
+              <Set>ActNod=$ActNod</Set>       <!--入帐网点-->
+              <Set>TxnAmt=$TxnAmt</Set>       <!--金额-->
+              <Set>NodNo=$ActNod</Set>        <!--凭证登记部门-->
+              <Set>HSubCd=001</Set>           <!--借零余额户贷26201-->
+              <Set>TTXnCd=461181</Set>
+              <Set>THD_TRNCOD=461181</Set>
+              <Set>THD_SVROBJ=STHDPFA3</Set>
+      	      <!--省零余额记账-->
+      	      <Call package="AFE" function="AFE_SglPrvZeroPay"/>      
+              <Break/>
+            </Case>
+            <Case value="999" > <!--中央财政支付-->
+              <Set>BrNam=广东省分行</Set>     <!--分行名称-->
+              <Set>EleBk=63407</Set>          <!--电子联行号-->
+              <!--Set>APVchN=$LogNo</Set-->   <!--授权支付凭证号码,该变量在AFE_SglCntZeroPay中赋值-->
+              <Set>PayCod=$SubCod</Set>
+              <Set>FinAre=999</Set>
+              <Set>ActNo=$ActNo</Set>         <!--付款人帐号-->                                  
+              <Set>ActNam=$TCusNm</Set>       <!--付款单位名称-->
+              <Set>ANodNm=交通银行</Set>      <!--付款单位开户银行-->
+              <Set>PyeAct=$StlAct</Set>       <!--收款人帐号-->
+              <Set>PyeNam=$CrpNam</Set>       <!--收款单位名称-->
+              <Set>PyeBk =交通银行</Set>      <!--收款单位开户银行-->
+              <Set>UdwDat=$ActDat</Set>       <!--签发日期-->
+              <Set>ActSqn=$ActSqn</Set>       <!--入帐帐号顺序号-->
+              <Set>ActNod=$ActNod</Set>       <!--入帐网点-->
+              <Set>StlMod=07</Set>            <!--结算方式-->
+              <Set>CcyCod=CNY</Set>           <!--币种-->                      
+              <Set>AthAmt=FABSAMT($TxnAmt,15)</Set>       <!--金额-->
+              <!--Set>VInTlr=$TlrId</Set-->   <!--凭证登记录入员 该变量在AFE_SglCntZeroPay中赋值-->
+              <Set>VRgNod=$ActNod</Set>       <!--凭证登记部门-->
+              <Set>Smr=电信扣费</Set>         <!--摘要-->
+              <Set>HSubCd=001</Set>           <!--主机交易子码 001记26201分户-->
+              <Set>TTXnCd=363412</Set>
+              <Set>THD_TRNCOD=363412</Set>
+              <Set>THD_SVROBJ=STHDFAP2</Set>
+      	      <!--中央零余额记账-->
+      	      <Call package="AFE" function="AFE_SglCntZeroPay"/>                
+              <Break/>
+            </Case>
+            <Default>
+              <Set>RspCod=EFE001</Set>
+              <Set>RspMsg=没该财政支付类型</Set>
+              <Set>MsgBodyFlg=0</Set>
+              <Goto>EXIT_RETURN</Goto>
+            </Default>
+          </Switch>
+
+          <Set>FulRtn=0</Set><!--返回扣款标识,1:部分扣款;0:全部扣款-->
+          <If condition="OR( IS_EQUAL_STRING($RspCod,CD5200), IS_EQUAL_STRING($RspCod,SD5200) )">
+            <Set>BEChk=0</Set>
+          </If>
+          <Else>
+            <Set>BEChk=1</Set>
+          </Else>
+          
+          <If condition="IS_EQUAL_STRING($RspCod,000000)">
+          	<!--记账成功返回-->
+          	<Exec func="PUB:CloseCursor">	<!--关闭游标-->
+          	  <Arg name="CursorName" value="CUR_TRFA"/>
+          	</Exec>
+          	<Goto>EXIT_RETURN</Goto>
+          </If>
+          <ElseIf condition="OR( IS_EQUAL_STRING($RspCod,CD5200), IS_EQUAL_STRING($RspCod,SD5200) )">
+          	<!--余额不足取下一条协议-->
+          	<Continue/>
+          </ElseIf>
+          <Else>
+          	<!--其他错误返回-->
+          	<Exec func="PUB:CloseCursor">	<!--关闭游标-->
+          	  <Arg name="CursorName" value="CUR_TRFA"/>
+          	</Exec>
+          	<Set>MsgBodyFlg=0</Set>
+          	<Goto>EXIT_RETURN</Goto>
+          </Else>
+          
+        </While>
+        <!--零余额账户处理结束-->
+      </If>
+      <!-- 零余额账号结束, add by qm -->
 
       <Call package="AFE" function="AFE_SglThdPay"/>
       <If condition="$RspCod=000000">
@@ -1959,9 +2123,9 @@
         SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim, LChkTm, substr(RsFld1,43,2) PayTyp,substr(RsFld1,45,25) ChkNum
         FROM afetxnjnl
         WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s' AND substr(RsFld1,44,2)='%s'
+        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|PayTyp|</Fields>
+      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>
     <!--生成文件 总笔数 只统计主机成功状态的-->
     <DynSentence name="TotalDeal_DL">
@@ -1978,9 +2142,9 @@
         SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
         FROM afetxnjnl
         WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s' AND substr(RsFld1,44,2)='%s'
+        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|PayTyp|</Fields>
+      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>   
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
@@ -1999,10 +2163,10 @@
       
       <!--01 实时划帐文件-->
       <!--02 银行现金文件-->
-      <!--03 银行柜台支票文件-->
+      <!--03 银行柜台支票文件--><!-- 03支票交易经供电局确认跟02现金进行合并 -->
 
       <Set>FilTyp=01</Set>
-      <While condition="INTCMP($FilTyp,2,3)">
+      <While condition="INTCMP($FilTyp,2,2)">
     	  <Exec func="PUB:GetLogNo"/>
         <Set>LclFil=STRCAT(SUBSTR($DptTyp,1,2),$FilTyp,_,$ClrDat,_,315810,_001,.bil)</Set> 
  
@@ -2036,12 +2200,12 @@
             <Arg name="DestNam" value="CAgtNo"/>
             <Arg name="TblNam"  value="DptTypToCAgtNo_YH"/>
           </Exec>
-          <If condition="IS_EQUAL_STRING($FilTyp,02)">
+          <!--If condition="IS_EQUAL_STRING($FilTyp,02)">
           	<Set>PayTyp=10</Set>
           </If>
           <Else>
             <Set>PayTyp=12</Set>
-          </Else>
+          </Else-->
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_YH"/>
           </Exec>         
