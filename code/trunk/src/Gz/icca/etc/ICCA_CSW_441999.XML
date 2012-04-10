@@ -39,118 +39,44 @@
   <!--Table name="TxnSrc2TxnCnl">
     <Item TxnSrc="0000" TxnCnl="000000"/>
   </Table-->
-  <Table name="LSHD_RetCod2TRspCd">   <!--第三方返回-->
-    <Item TspCd="00000000" TRspCd="000000"/>
-    <Default TRspCd="482199"/>
-  </Table>
-  <Table name="LSHD_RetCod2RspMsg">   <!--第三方返回-->
-    <Item TspCd="00000000" TRspMsg="交易处理成功                  "/>
-    <Item TspCd="00010280" TRspMsg="期销售结束"/>
-    <Default TRspMsg="福彩中心交易失败"/>
-  </Table>
-  <Table name="RspCod2TRspCd">   <!--给第三方-->
-    <Item RspCod="000000" TRspCd="0000"/>
-    <Default TRspCd="5555"/>
-  </Table>
-  <Table name="RetCod2TRspCd">   <!--第三方返回-->
-    <Item TspCd="0000" TRspCd="000000"/>
-    <Item TspCd="000" TRspCd="000000"/>  <!--银旅通-->
-    <Default TRspCd="482199"/>
-  </Table>
-  
-  <Table name="RetCod2RspMsg">   <!--第三方返回-->
-    <Item TspCd="0000" RspMsg="交易处理成功                  "/>
-    <Item TspCd="0003" RspMsg="所录入资料的车船已完税        "/>
-    <Item TspCd="0040" RspMsg="该业务暂停                    "/>
-    <Item TspCd="0072" RspMsg="系统超时                      "/>
-		<Item TspCd="0081" RspMsg="无此电话号码                  "/>
-    <Item TspCd="0082" RspMsg="该电话号码无欠费记录          "/>
-    <Item TspCd="0083" RspMsg="欠费月份过多                  "/>
-    <Item TspCd="0084" RspMsg="话费不符                      "/>
-    <Item TspCd="0089" RspMsg="冲正找不着原交易记录          "/>
-    <Item TspCd="0090" RspMsg="正在日终处理                  "/>
-    <Item TspCd="0096" RspMsg="系统繁忙                      "/>
-    <Item TspCd="0097" RspMsg="暂停退费                      "/>
-    <Item TspCd="0055" RspMsg="查询密码错                    "/>
-    <Default RspMsg="交易失败"/>
-  </Table>
-  
-   <Table name="TRtnCd2RspCod">   <!--给第三方-->
-     <Item TRtnCd="0000" RspCod="000000"/>
-     <Default RspCod="5555"/>
-   </Table>
 
-   <Table name="ThdTRspCd">   <!--转换第三方-->
-     <Item TRtnCd="0000" TRspCd="000000"/>       <!--交易处理正确-->
-     <Item TRtnCd="0001" TRspCd="481101"/>       <!--系统处理错误-->
-     <Item TRtnCd="0002" TRspCd="481102"/>       <!--流水号已经存在-->
-     <Item TRtnCd="0003" TRspCd="481103"/>       <!--电话号码不存在或错误-->
-     <Item TRtnCd="0004" TRspCd="481104"/>       <!--包格式错误-->
-     <Item TRtnCd="0005" TRspCd="481105"/>       <!--目标接点错误-->
-     <Item TRtnCd="0006" TRspCd="481106"/>       <!--原接点错误-->
-     <Item TRtnCd="0007" TRspCd="481107"/>       <!--业务类型错误-->
-     <Item TRtnCd="0008" TRspCd="481108"/>       <!--网络中断-->
-     <Item TRtnCd="0009" TRspCd="481109"/>       <!--存在空值-->
-     <Item TRtnCd="0010" TRspCd="481110"/>       <!--该用户该月无话费-->
-     <Item TRtnCd="0011" TRspCd="481111"/>       <!--该月发票已经打过-->
-     <Item TRtnCd="0012" TRspCd="481112"/>       <!--用户交费的年月错误，暂时未用-->
-     <Item TRtnCd="0013" TRspCd="481113"/>       <!--该月话费已缴或该月还未出帐-->
-     <Item TRtnCd="0014" TRspCd="481114"/>       <!--话费未缴-->
-     <Item TRtnCd="0015" TRspCd="481115"/>       <!--目前不能缴费-->
-     <Item TRtnCd="0016" TRspCd="481116"/>       <!--预交款用户-->
-     <Item TRtnCd="0017" TRspCd="481117"/>       <!--不是预交款用户-->
-     <Item TRtnCd="0018" TRspCd="481118"/>       <!--该现金用户缴费业务已做 -->
-     <Item TRtnCd="0019" TRspCd="481119"/>       <!--该用户缴费业务不存在-->
-     <Item TRtnCd="0020" TRspCd="481120"/>       <!--该笔业务已反销过-->
-     <Item TRtnCd="0021" TRspCd="481121"/>       <!--所交话费与实际话费不符-->
-     <Item TRtnCd="0022" TRspCd="481122"/>       <!--用户查询话费的日期大于当前日期-->
-     <Item TRtnCd="0023" TRspCd="481123"/>       <!--返销金额与实收金额不符-->
-     <Item TRtnCd="0024" TRspCd="481124"/>       <!--交费记录不完整-->
-     <Item TRtnCd="0025" TRspCd="481125"/>       <!--交费金额错误-->
-     <Item TRtnCd="0030" TRspCd="481126"/>       <!--该用户已办理托收-->
-     <Item TRtnCd="0031" TRspCd="481127"/>       <!--该用户未办理托收-->
-     <Item TRtnCd="0033" TRspCd="481128"/>       <!--无该项业务受理权限-->
-     <Item TRtnCd="0034" TRspCd="481129"/>       <!--客户密码不正确-->
-     <Item TRtnCd="0099" TRspCd="481130"/>       <!--系统调用错误-->
-     <Item TRtnCd="0100" TRspCd="481131"/>       <!--该项服务不存在-->
-     <Default TRspCd="481199"/>                 <!--未知错误-->
-   </Table>
-     
-  <Table name="GDSPT_TRspCd2RspMsg">   <!--广东体彩第三方返回-->
-    <Item TRspCd="000000" RspMsg="交易处理成功                  "/>
-    <Item TRspCd="000001" RspMsg="体彩系统故障                  "/>
-    <Item TRspCd="000002" RspMsg="体彩通信故障                  "/>
-    <Item TRspCd="000003" RspMsg="无效的数据格式                "/>
-    <Item TRspCd="000004" RspMsg="无效交易请求码                "/>
-    <Item TRspCd="000005" RspMsg="MAC码校验错误                 "/>
-    <Item TRspCd="000006" RspMsg="体彩系统超时                  "/>
-    <Item TRspCd="003010" RspMsg="手机号或帐号或密码有误        "/>
-    <Item TRspCd="003011" RspMsg="未开通服务                    "/>
-    <Item TRspCd="003012" RspMsg="号码错误                      "/>
-    <Item TRspCd="003013" RspMsg="资金不足(代购帐户或用户帐户） "/>
-    <Item TRspCd="003014" RspMsg="投注失败（或扣费失败）        "/>
-    <Item TRspCd="003015" RspMsg="注数超过5注                   "/>
-    <Item TRspCd="003016" RspMsg="不能混合投注                  "/>
-    <Item TRspCd="003017" RspMsg="超过指定期数                  "/>
-    <Item TRspCd="003018" RspMsg="购彩失败（体彩前置问题）      "/>
-    <Item TRspCd="003019" RspMsg="体彩网络故障                  "/>
-    <Item TRspCd="003020" RspMsg="超过单票最大限额              "/>
-    <Item TRspCd="003021" RspMsg="银行暂停交易                  "/>
-    <Item TRspCd="003022" RspMsg="该期已截至                    "/>
-    <Item TRspCd="003034" RspMsg="购彩投注倍数超出限制          "/>
-    <Item TRspCd="003036" RspMsg="购彩号码受到福彩限制，不能卖出该彩票，购彩失败"/>
-    <Item TRspCd="004000" RspMsg="无该流水购买记录              "/>
-    <Default RspMsg="交易失败"/>
+  <Table name="RspCod2RetCod">
+    <Item RspCod="000000" RetCod="0000" /> <!--交易成功-->
+    <Item RspCod="481908" RetCod="9999" /> <!--金额不符-->
+    <Item RspCod="478608" RetCod="9999" /> <!--此流水的交易已经处理过-->
+    <Item RspCod="481906" RetCod="9999" /> <!--已冲正-->
+    <Item RspCod="481905" RetCod="9999" /> <!--无冲正记录-->
+    <Item RspCod="CD5205" RetCod="5001" /> <!--可用余额不足-->
+    <Item RspCod="PD5100" RetCod="5001" /> <!--可用余额不足-->
+    <Item RspCod="SD5200" RetCod="5001" /> <!--可用余额不足-->
+    <Item RspCod="331012" RetCod="9999" /> <!--查询条件不符数据库无对应记录-->
+    <Item RspCod="PD3755" RetCod="9999" /> <!--帐户状态不正常，止付-->
+    <Item RspCod="CI1557" RetCod="9999" /> <!--客户账户关系不存在-->
+    <Item RspCod="PA1017" RetCod="9999" /> <!--货币不正确-->
+    <Item RspCod="SD3038" RetCod="9999" /> <!--非对私活期帐号-->
+    <Item RspCod="PA1097" RetCod="9999" /> <!--储蓄非个人结算账户不支持外部账户转帐-->
+    <Item RspCod="AG7001" RetCod="9999" /> <!--扣账账号有错误-->
+    <Item RspCod="CI6018" RetCod="9999" /> <!--新旧账号对照记录不存在-->
+    <Default RetCod="9999"/>       <!--其它错误-->
   </Table>
+
+
    
-   
-      <Table name="CnlTyp"> <!--根据渠道标识确定渠道-->
+   <Table name="CnlTyp"> <!--根据渠道标识确定渠道-->
       <Item OrnFlg="T"   CnlTyp="1"/> <!--电话银行-->
       <Item OrnFlg="W"   CnlTyp="2"/> <!--网上银行-->
       <Item OrnFlg="D"   CnlTyp="5"/> <!--多媒体-->
       <Item OrnFlg="M"   CnlTyp="6"/> <!--手机银行-->
       <Item OrnFlg="S"   CnlTyp="L"/> <!--第三方系统-->
       <Default   CnlTyp="0"/>
+   </Table>
+
+   <Table name="CurCod"> <!--根据渠道标识确定渠道-->
+      <Item HTxnSt="S"   HTxnS2="1"/> <!--成功-->
+      <Item HTxnSt="T"   HTxnS2="2"/> <!--超时-->
+      <Item HTxnSt="U"   HTxnS2="2"/> <!--未处理-->
+      <Item HTxnSt="C"   HTxnS2="3"/> <!--冲正-->
+      <Default   HTxnS2="2"/>
    </Table>
 
  </root>

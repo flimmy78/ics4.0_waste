@@ -3,6 +3,12 @@
    <GetTxnCode>
       <Item type="fixed" offset="6" length="6"/>
    </GetTxnCode>
+   <CodeSwitching>
+     <Table name="RspCod2RetCod" file="etc/ICCA_CSW_441999.XML">
+       <Column name="RspCod"   sort="no"/>
+       <Column name="RetCod"   sort="no"/>
+     </Table>
+   </CodeSwitching>
    <Define>
 		<Macro name="req_head"> <!--交易请求报文头-->
 			<Item name="MesgLen"     length="6"/>		  <!--报文长度-->
@@ -19,6 +25,7 @@
 			<Item name="TTxnCd"      length="6" />	  <!--第三方交易码-->
 			<Item name="MchID"       length="6" />	  <!--代理商编号-->
 			<Item name="TTxnTm"      length="14"/>		<!--第三方交易时间-->
+			<SwitchCode name="RspCod" new_name="RetCod" tab_name="RspCod2RetCod" col_name="RspCod"/>
 			<Item name="RetCod"      length="4"/>		  <!--处理结果返回码-->
 			<Item name="TLogNo"      length="20"/>	  <!--系统参考号-->
 			<Item name="BodyMac"     length="32"/>		<!--MAC-->

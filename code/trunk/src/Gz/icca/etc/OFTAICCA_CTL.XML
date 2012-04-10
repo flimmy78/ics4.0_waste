@@ -1022,6 +1022,73 @@
     </FlowCtrl>
   </Transaction>
 
+  <Transaction code="480712" desc="电子现金圈存对账文件格式自动触发">
+    <DynSentence name="GetTxnTol">
+      <Sentence>
+        select Count(*) OrnCnt, SUM(CAST(TxnAmt As BIGINT)) OrnAmt
+        from iccatxnjnl
+        where ActDat='%s'
+      </Sentence>
+      <Fields>ActDat|</Fields>
+    </DynSentence>
+    <DynSentence name="GetTxnJnl">
+      <Sentence>
+        select TckNo, TLogNo, ICBak, CrdNo, TxnAmt, substr(FTxnTm,1,8) TxnDat, substr(FTxnTm,9,6) TxnTim, HTxnSt , ' ' Remark
+        from iccatxnjnl
+        where ActDat='%s'
+      </Sentence>
+      <Fields>ActDat|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+			<!-- 测试开始,qm 20120330 -->	
+      <!--Set>RtnDat=20120401</Set-->
+			<!-- 测试结束,qm 20120330 -->	
+      <Set>MchID=441001</Set>
+      <Set>BrNo=441999</Set>
+      <Set>NodNo= </Set>
+      <Set>TlrId= </Set>
+
+			<Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="RtnDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,1)">  <!--手工发起回应-->
+        <Set>ActDat=$RtnDat</Set>
+      </If>
+      <Else>			
+			  <Set>ActDat=GETDATE()</Set>	
+			  <Set>ActDat=CALCDATE($ActDat,-,d,1)</Set>
+      </Else>
+ 
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="GetTxnTol"/>
+      </Exec>
+      
+      <Set>FilNam=STRCAT(00,$ActDat,INTTOSTR($OrnCnt,5),INTTOSTR($OrnAmt,10),.txt)</Set>
+      <Set>SendFil=STRCAT(GETENV(WORKDIR),/dat/icca/,$FilNam)</Set>
+
+      <Exec func="PUB:ExportFromDB"><!--产生上送主机的文件-->
+        <Arg name="SqlName" value="GetTxnJnl"/>
+        <Arg name="FormatName" value="ICCA_JNL"/>
+        <Arg name="FileName" value="$SendFil"/>
+        <Arg name="TableName" value="iccatxnjnl"/>
+      </Exec>
+
+      <Set>SndFil=$FilNam</Set>
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="GZ_ICSCH02"/>
+      </Exec>
+
+      <Set>RspCod=000000</Set>
+      
+      <If condition="$RspCod=000000">
+        <Set>MsgTyp=N</Set>
+        <Return/>
+      </If>
+    </FlowCtrl>
+  </Transaction>
 
 
 </Application>

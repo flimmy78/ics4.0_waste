@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <BATCH debug_file="agtfmta.log" err_file="agtfmta.err">
+  <CodeSwitching>
+    <Table name="CurCod" file="etc/ICCA_CSW_441999.XML">
+      <Column name="HTxnSt"  sort="no"/>
+      <Column name="HTxnS2"  sort="no"/>
+    </Table>
+  </CodeSwitching>
 
 	<Process name="ChkFormat">   <!--¹ãÖÝ´óÑ§³ÇICÁªÃû¿¨¶ÔÕÊÎÄ¼þ¸ñÊ½-->
 		<Head>
@@ -21,5 +27,20 @@
 		</Data>
 	</Process>
 
-  
+	<Process name="ICCA_JNL">   <!--µç×ÓÏÖ½ðÈ¦´æ¶ÔÕËÎÄ¼þ¸ñÊ½-->
+		<Data deli_asc="44">
+			<Item name="TckNo"  expression="DELBOTHSPACE($TckNo)"    /> <!-- ÒøÐÐ¶Ë½»Ò×²Î¿¼ºÅ -->
+			<Item name="TLogNo" expression="DELBOTHSPACE($TLogNo)"    /> <!-- Ò»¿¨Í¨Á÷Ë®ºÅ -->
+			<Item name="ICBak"  expression="DELBOTHSPACE($ICBak)"    /> <!-- µç×ÓÏÖ½ðÒøÐÐ¿¨ºÅ£¨´û·½£© -->
+      <Item name="CrdNo"  expression="DELBOTHSPACE($CrdNo)"    /> <!-- ½è·½ÒøÐÐ¿¨ºÅ -->
+      <Item name="TxnAmt" expression="DELBOTHSPACE($TxnAmt)"    /> <!-- È¦´æ½ð¶î -->
+      <Item name="TxnDat" expression="DELBOTHSPACE($TxnDat)"    /> <!-- ½»Ò×ÈÕÆÚ -->
+      <Item name="TxnTim" expression="DELBOTHSPACE($TxnTim)"    /> <!-- ½»Ò×Ê±¼ä -->
+      <AddItem name="HTxnSt" expression="DELBOTHSPACE($HTxnSt)"    /> <!-- ±êÖ¾ -->
+      <SwitchCode name="HTxnSt" new_name="HTxnS2" tab_name="CurCod" col_name="HTxnSt"/>
+      <Item name="HTxnS2" expression="DELBOTHSPACE($HTxnS2)"    /> <!-- ±êÖ¾ -->
+      <Item name="Remark" expression="DELBOTHSPACE($Remark)"    /> <!-- ±¸×¢ -->
+		</Data>
+	</Process>
+
 </BATCH>
