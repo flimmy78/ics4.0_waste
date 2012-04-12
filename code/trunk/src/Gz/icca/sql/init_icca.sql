@@ -1,5 +1,6 @@
 --添加电子柜员
-insert into pubdumtlr values('441999','ICC','','EPCLBI1');
+--insert into pubdumtlr values('441999','ICC','','EPCLBI1');
+insert into pubdumtlr values('441999','ICC','','XXXXXXX');
 
 --delete from pubaplbus where brno='441999' and  APLCLS='404' and bustyp='ICCA';
 insert into pubaplbus values('441999','404','','ICCA','广州大学城联名卡');
