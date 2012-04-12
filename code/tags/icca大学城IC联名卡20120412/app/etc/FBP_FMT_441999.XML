@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="FBPfmt.log" err_file="FBPfmt.err">
+		<CodeSwitching>
+		<Table name="H2T_insu_441" file="etc/FBP_CSW_441999.XML"> 
+			<Column name="HRspCd" sort="no"/>
+			<Column name="TRspCd" sort="no"/>
+		</Table>
+		<Table name="H2T_lot_441" file="etc/FBP_CSW_441999.XML"> 
+			<Column name="HRspCd" sort="no"/>
+			<Column name="TRspCd" sort="no"/>
+		</Table>
+		</CodeSwitching>
+	
+	<Process name="insu_in_441999"    desc="¹ãÖÝµç»°ÒøÐÐ±£ÏÕ"  sqn_flag="Y" sqn_node_name="SeqNo">
+		<Data extend_flag="Y">
+			<Item name="AA"	      length="02"/>	  <!--Çë¿îÀàÐÍ -->
+			<Item name="TCusId"	  length="14"/>	  <!--±£µ¥±àºÅ-->
+			<Item name="SetDat"	  length="08"/>	  <!--±£µ¥ÉúÐ§ÈÕ-->
+			<Item name="ActNo"    length="21"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RsFld1"	      length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<Item name="CC"       length="20"/>   <!--±¸×¢-->
+			<Item name="DD"       length="08"/>   <!--Çë¿îÆðÊ¼ÈÕ-->
+			<Item name="EE"       length="08"/>   <!--Çë¿îÖÕÖ¹ÈÕ-->
+			<AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/>
+		</Data>
+	</Process>
+	<Process name="insu_out_441999" desc="¹ãÖÝµç»°ÒøÐÐ±£ÏÕ">   <!-- ±£·ÑÊä³ö -->
+		<Data>
+			<Item name="AA"	      length="02"/>	  <!--Çë¿îÀàÐÍ -->
+			<Item name="TCusId"	  length="14"/>	  <!--±£µ¥±àºÅ-->
+			<Item name="SetDat"	  length="08"/>	  <!--±£µ¥ÉúÐ§ÈÕ-->
+			<Item name="ActNo"    length="21"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RsFld1"	      length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<SwitchCode name="HRspCd" new_name="TRspCd" tab_name="H2T_insu_441" col_name="HRspCd"/>
+			<Item name="TRspCd"	  length="02"/>	  <!-- »ØÅÌ´úÂë -->
+			<Item name="CC"       length="20"/>   <!--±¸×¢-->
+			<Item name="DD"       length="08"/>   <!--Çë¿îÆðÊ¼ÈÕ-->
+			<Item name="EE"       length="08"/>   <!--Çë¿îÖÕÖ¹ÈÕ-->
+			
+		</Data>
+	</Process>
+	
+   <Process name="lott_in_441999" desc="²ÊÆ±·µ½±" end_ignore_line="1" sqn_flag="Y" sqn_node_name="SeqNo">  <!--·µ½±ÎÄ¼þ--> 
+      <Head> 
+         <Item name="TxnDat"       length="08"/>
+         <Item name="RecCnt"       length="08"/>  
+         <Item name="TolAmt"       length="13"/>
+      </Head>
+      <Data extend_flag="Y">
+         <Item name="AA"           length="02"/><!--ÓÎÏ·±àºÅ-->
+         <Item name="BB"           length="05"/><!--×ÜÆÚºÅ-->
+         <Item name="CC"           length="08"/><!--Õ¾µãÂß¼­»úºÅ-->   
+         <Item name="DD"           length="05"/><!--²ÊÆ±Á÷Ë®ºÅ-->
+         <Item name="FF"           length="10"/><!--Í¶×¢½ð¶î-->
+         <Item name="TCusId"       length="20"/><!--ÒøÐÐÏµÍ³Á÷Ë®ºÅ-->
+         <Item name="ActNo"        length="30"/><!--ÒøÐÐ¿¨ºÅ-->
+         <Item name="RsFld1"       length="18"/><!--Éí·ÝÖ¤ºÅ-->
+         <Item name="TxnAmt"       length="13" expression="MUL($TxnAmt,100)"/><!--ÖÐ½±½ð¶î--> 
+         <AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/>
+      </Data>
+     	<!--End  record_length="256">
+      	<Item name="RsFld2"         length="256"/>
+    	</End-->
+   </Process>
+
+   <Process name="lott_out_441999">  <!--ÒøÐÐ¶Ò½±»®¿îÇé¿öÎÄ¼þ--> 
+     <Head> 
+         <Item name="ActDat"       length="08"/><!--¶ÔÕÊµ±Ç°ÈÕÆÚ-->  
+         <Item name="TotCnt"       length="08" expression="ADDCHAR(DELBOTHSPACE($TotCnt),8,0,1)"/><!--¼ÇÂ¼Êý-->  
+         <Item name="TotAmt"       length="13" expression="ADDCHAR(FDIV($TotAmt,100,2),13,0,1)"/><!--×Ü½ð¶î-->
+      </Head>
+      <Data>
+        <Item name="AA"           length="02"/><!--ÓÎÏ·±àºÅ-->
+        <Item name="BB"           length="05"/><!--×ÜÆÚºÅ-->
+        <Item name="CC"           length="08"/><!--Õ¾µãÂß¼­»úºÅ-->   
+        <Item name="DD"           length="05"/><!--²ÊÆ±Á÷Ë®ºÅ-->
+        <Item name="FF"           length="10"/><!--Í¶×¢½ð¶î-->                              
+        <Item name="TCusId"       length="20"/><!--ÒøÐÐÏµÍ³Á÷Ë®ºÅ-->                                 
+        <Item name="ActNo"        length="30"/><!--ÒøÐÐ¿¨ºÅ-->                                       
+        <Item name="RsFld1"       length="18"/><!--Éí·ÝÖ¤ºÅ-->                                       
+        <Item name="TxnAmt"       length="13" expression="ADDCHAR(FDIV($TxnAmt,100,2),13,0,1)"/><!--ÖÐ½±½ð¶î-->  
+        <SwitchCode name="HRspCd" new_name="TRspCd" tab_name="H2T_lot_441" col_name="HRspCd"/>                                              
+        <Item name="TRspCd"       length="01"/><!--³É¹¦±êÖ¾Î»-->      
+      </Data>
+   </Process>
+
+   <!--Ñò³ÇÍ¨¿ÕÖÐ³äÖµ-->
+   <Process name="yct_in_441999"    desc="Ñò³ÇÍ¨¿ÕÖÐ³äÖµ"  sqn_flag="Y" sqn_node_name="SeqNo">
+		<Data extend_flag="Y">
+			<Item name="AA"	      length="02"/>	  <!--Çë¿îÀàÐÍ -->
+			<Item name="TCusId"	  length="10"/>	  <!--Ñò³ÇÍ¨¿¨ºÅ-->
+			<Item name="SetDat"	  length="08"/>	  <!--½»Ò×ÈÕÆÚ-->
+			<Item name="ACTNAM"	  length="14"/>	  <!--½»Ò×Ê±¼ä-->
+			<Item name="ActNo"    length="19"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RSFLD1"	  length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<Item name="RSFLD2"	  length="12"/>	  <!-- Á÷Ë®ºÅ -->
+			<Item name="RSFLD3"	  length="6"/>	  <!-- ½»Ò×ÀàÐÍ -->
+			<AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/>
+		</Data>
+	</Process>
+	<Process name="yct_out_441999" desc="Ñò³ÇÍ¨¿ÕÖÐ³äÖµ">   
+		<Data>
+			<Item name="AA"	      length="02"/>	  <!--Çë¿îÀàÐÍ -->
+			<Item name="TCusId"	  length="10"/>	  <!--Ñò³ÇÍ¨¿¨ºÅ-->
+			<Item name="SetDat"	  length="08"/>	  <!--½»Ò×ÈÕÆÚ-->
+			<Item name="ACTNAM"	  length="14"/>	  <!--½»Ò×Ê±¼ä-->
+			<Item name="ActNo"    length="19"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RSFLD1"	  length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<Item name="RSFLD2"	  length="12"/>	  <!-- Á÷Ë®ºÅ -->
+			<Item name="RSFLD3"	  length="6"/>	  <!-- ½»Ò×ÀàÐÍ -->
+			<SwitchCode name="HRspCd" new_name="TRspCd" tab_name="H2T_insu_441" col_name="HRspCd"/>                                              
+      <Item name="TRspCd"       length="01"/><!--³É¹¦±êÖ¾Î»-->
+		</Data>
+	</Process>
+	
+		<Process name="ytk_in_441999"    desc="ÔÁÍ¨¿¨"  sqn_flag="Y" sqn_node_name="SeqNo">
+		<Data extend_flag="Y">
+			<Item name="TCusId"	  length="12"/>	  <!--ÔÁÍ¨¿¨¿¨ºÅ-->
+			<Item name="ACTNAM"	  length="14"/>	  <!--½»Ò×Ê±¼ä-->
+			<Item name="ActNo"    length="19"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RSFLD1"	  length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/>
+		</Data>
+	</Process>
+	<Process name="ytk_out_441999" desc="ÔÁÍ¨¿¨">   
+		<Data>
+			<Item name="TCusId"	  length="12"/>	  <!--ÔÁÍ¨¿¨¿¨ºÅ-->
+			<Item name="ACTNAM"	  length="14"/>	  <!--½»Ò×Ê±¼ä-->
+			<Item name="ActNo"    length="19"/>   <!--ÕÊºÅ--> 
+			<Item name="TxnAmt"   length="12"/>   <!--½ð¶î-->
+			<Item name="TCusNm"	  length="30"/>	  <!-- »§Ãû -->
+			<Item name="RSFLD1"	  length="18"/>	  <!-- Ö¤¼þºÅ -->
+			<SwitchCode name="HRspCd" new_name="TRspCd" tab_name="H2T_insu_441" col_name="HRspCd"/>                                              
+      <Item name="TRspCd"       length="01"/><!--³É¹¦±êÖ¾Î»-->
+		</Data>
+	</Process>
+
+   <Process name="sptlt_in_441999" desc="²ÊÆ±·µ½±"  sqn_flag="Y" sqn_node_name="SeqNo">  <!--ÌåÓý²ÊÆ±ÒøÐÐ¶Ò½±ÎÄ¼þ--> 
+		<Head>
+			<Item name="OrnCnt"      deli_str="|"/>
+			<Item name="OrnAmt"      deli_str="|" expression="ADDCHAR(MUL(DELBOTHSPACE($OrnAmt),100),15,0,1)"/>
+		</Head>
+    <Data extend_flag="Y">
+      <Item name="RSFLD1"       length="20" expression="SUBSTR(DELBOTHSPACE($RSFLD1),7,14)"/><!--½ÓÈëÏµÍ³Á÷Ë®ºÅ-->
+      <Item name="RSFLD2"       length="20" expression="DELBOTHSPACE($RSFLD2)"/><!--¹º²ÊÁ÷Ë®ºÅ-->
+      <Item name="AA"           length="08"/><!--·µ½±ÈÕÆÚ-->   
+      <Item name="ActNo"        length="21" expression="DELBOTHSPACE($ActNo)"/><!--ÕÊºÅ-->
+      <Item name="TCusNm"       length="30" expression="DELBOTHSPACE($TCusNm)"/><!--¿Í»§ÐÕÃû-->
+      <Item name="BB"           length="30" expression="DELBOTHSPACE($BB)"/><!--Ö¤¼þºÅÂë-->
+      <Item name="TxnAmt"       length="15" expression="ADDCHAR(MUL(DELBOTHSPACE($TxnAmt),100),15,0,1)"/><!--·µ½±½ð¶î-->
+      <Item name="CC"           length="15" expression="ADDCHAR(MUL(DELBOTHSPACE($BuyAmt),100),15,0,1)"/><!--¹º²Ê½ð¶î-->
+      <Item name="DD"           length="15" expression="DELBOTHSPACE($CC)"/><!--ÆÚºÅ-->
+      <Item name="EE"           length="2"  expression="DELBOTHSPACE($EE)"/><!--²ÊÆ±ÀàÐÍ-->
+      <Item name="FF"           length="20" expression="DELBOTHSPACE($FF)"/><!--ÁªÏµµç»°-->
+      <AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/>
+    </Data>
+   </Process>
+   <Process name="sptlt_out_441999">  <!--ÌåÓý²ÊÆ±ÒøÐÐ¶Ò½±ÎÄ¼þ·µ»Ø-->
+    <Head>
+      <Item name="STotCnt"   deli_str="|"/>   <!--Åú¿Û³É¹¦¼ÇÂ¼Êý-->
+      <Item name="STotAmt"   deli_str="|" expression="AMTSIMPLEFMT($STotAmt)"/>   <!--Åú¿Û³É¹¦×Ü½ð¶î(·µÅÌ½ð¶î·ÖÎªµ¥Î»£¬ÓÐÐ¡Êýµã£©-->
+      <Item name="FTotCnt"   deli_str="|"/>   <!--Åú¿ÛÊ§°Ü¼ÇÂ¼Êý-->
+      <Item name="FTotAmt"   deli_str="|" expression="AMTSIMPLEFMT($FTotAmt)"/>   <!--Åú¿ÛÊ§°Ü×Ü½ð¶î(·µÅÌ½ð¶î·ÖÎªµ¥Î»£¬ÓÐÐ¡Êýµã£©-->
+    </Head>
+    <Data>                          
+      <Item name="RSFLD1"       length="20"/><!--ÒøÐÐÏµÍ³Á÷Ë®ºÅ-->
+      <Item name="RSFLD2"       length="20"/><!--¹º²ÊÁ÷Ë®ºÅ-->
+      <Item name="ActDat"       length="08"/><!--¼ÇÕËÈÕÆÚ-->                                 
+      <Item name="ActNo"        length="21"/><!--ÒøÐÐ¿¨ºÅ-->                                                                         
+      <Item name="TxnAmt"       length="15" expression="AMTSIMPLEFMT($TxnAmt)"/><!--ÖÐ½±½ð¶î-->  
+      <SwitchCode name="HRspCd" new_name="TRspCd" tab_name="H2T_lot_441" col_name="HRspCd"/>                                              
+      <Item name="TRspCd"       length="01"/><!--³É¹¦±êÖ¾Î»-->      
+    </Data>
+   </Process>
+</BATCH>
