@@ -1,0 +1,27 @@
+上线须知:
+1、将app中的文件放到1.6对应文件夹
+
+2、将src中的文件放到1.6对应文件夹
+
+3、SYSCFG_441999.XML文件中配置守护端口
+<!--广州大学城联名卡【icca】-->
+<!--广州大学城联名卡【icca】-->
+<!--广州大学城联名卡【icca】-->
+  <CTDAICCA>
+    <_PORT desc="广州大学城联名卡第三方接入端口">35150</_PORT>
+  </CTDAICCA>
+
+4、TIMCON_LCL_441999.XML文件中配置定时触发机制
+<!--广州大学城联名IC卡系统,自动生成对账-->
+        <SchItem istxn='0' objsvr="OFTAICCA" txncod='480712' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' minute='25' hour='4' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+
+5、运行src文件夹中sql里面的所有sql语句，并保证成功
+
+
+*注意:程序中并没有使用comsrc文件夹中编译出来的pre_icca.so
+
+上线参数缺少：
+单位协议号（ICCA_CSW_441999.XML,本次上线暂时不需要）
+
