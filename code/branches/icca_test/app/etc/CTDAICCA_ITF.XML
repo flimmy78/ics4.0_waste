@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Application name="ICCA" server="OFTAICCA" trace="yes" >
    <GetTxnCode>
-      <Item type="fixed" offset="6" length="6"/>
+      <Item type="fixed" offset="0" length="6"/>
    </GetTxnCode>
    <CodeSwitching>
      <Table name="RspCod2RetCod" file="etc/ICCA_CSW_441999.XML">
@@ -11,7 +11,9 @@
    </CodeSwitching>
    <Define>
 		<Macro name="req_head"> <!--½»Ò×ÇëÇó±¨ÎÄÍ·-->
-			<Item name="MesgLen"     length="6"/>		  <!--±¨ÎÄ³¤¶È-->
+<!--
+			<Item name="MesgLen"     length="6"/>
+-->
 			<Item name="TTxnCd"      length="6" />	  <!--µÚÈý·½½»Ò×Âë-->
 			<Item name="MchID"       length="6" />	  <!--´úÀíÉÌ±àºÅ-->
 			<Item name="TTxnTm"      length="14"/>		<!--µÚÈý·½½»Ò×Ê±¼ä-->
@@ -21,7 +23,9 @@
 		</Macro>
 
 		<Macro name="resp_head"> <!--½»Ò×Ó¦´ð±¨ÎÄÍ·-->
-			<Item name="MesgLen"     length="6"/>     <!--±¨ÎÄ³¤¶È-->
+<!--
+			<Item name="MesgLen"     length="6"/>
+-->
 			<Item name="TTxnCd"      length="6" />	  <!--µÚÈý·½½»Ò×Âë-->
 			<Item name="MchID"       length="6" />	  <!--´úÀíÉÌ±àºÅ-->
 			<Item name="TTxnTm"      length="14"/>		<!--µÚÈý·½½»Ò×Ê±¼ä-->
