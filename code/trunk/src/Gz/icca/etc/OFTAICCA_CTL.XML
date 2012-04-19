@@ -551,7 +551,32 @@
       <Set>RspCod=000000</Set>
       
       <Set>TTxnCd=404102</Set>
-    
+
+      <!-- 对发送过来的IP地址进行判断 -->
+      <Exec func="PUB:CodeSwitching">
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="MchID"/>
+        <Arg name="DestNam" value="MIpAdr"/>
+        <Arg name="TblNam"  value="MchID2MIpAdr"/>
+      </Exec>
+      <If condition="IS_NOEQUAL_STRING(@MSG.SIP,$MIpAdr)">
+          <Set>RspCod=9999</Set>
+          <Set>RspMsg=非法IP地址</Set>
+          <Return/>
+      </If>
+      
+      <!-- 对发送过来的对公账号进行判断 -->
+      <Exec func="PUB:CodeSwitching">
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="MchID"/>
+        <Arg name="DestNam" value="ActNo2"/>
+        <Arg name="TblNam"  value="MchID2ActNo2"/>
+      </Exec>
+      <If condition="IS_NOEQUAL_STRING($ActNo,$ActNo2)">
+          <Set>RspCod=9999</Set>
+          <Set>RspMsg=对公账号不一致</Set>
+          <Return/>
+      </If>
       
       <!--校验各分行账号-->
       <!--441999广东省分行-->
@@ -962,8 +987,7 @@
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
 
-      <!-- 去掉下一句的注释可以重发某一天的对账文件 -->
-      <!--Set>RtnDat=20110225</Set-->
+      <Set>RtnDat=20110225</Set>
       <Set>MchID=441001</Set>
       <Set>BrNo=441999</Set>
       <Set>NodNo= </Set>
