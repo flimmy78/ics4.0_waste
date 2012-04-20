@@ -387,7 +387,7 @@
 	   <Exec func="PUB:OpenCursor"><!--打开游标-->
 	  	<Arg name="SqlCurFmp" value="QryPfaAgr"></Arg>
 	  	<Arg name="CursorName" value="CUR_TRFA"/>
-	   </Exec>					
+	   </Exec>
 	   <If condition="~RetCod!=0">
 	  	<Set>MsgTyp=E</Set>
 	  	<Set>RspCod=EFE999</Set>
@@ -507,8 +507,9 @@
         <!--零余额账户处理结束-->
       </If>
       <!-- 零余额账号结束, add by qm -->
-
-      <Call package="AFE" function="AFE_SglThdPay"/>
+      <Else>
+        <Call package="AFE" function="AFE_SglThdPay"/>
+      </Else>
       <If condition="$RspCod=000000">
 
       </If>
