@@ -4542,4 +4542,373 @@
 
       </Process>
    </Function>
+
+   <Function name="AFE_SglPrvZeroPay" desc="单笔省财政零余额账户缴费(第三方发起)">
+      <!--
+      <Quote name="Def_TxnChk"/>
+      -->
+      <DynSentence name="ChkRepeat"><!--检查第三方流水是否重复 -->
+         <Sentence>
+            SELECT 'Y' YN from table(values(1)) as anony where Exists(Select * FROM afetxnjnl WHERE ThdKey='%s')
+         </Sentence>
+         <Fields>@PARA.ThdKey|</Fields>
+      </DynSentence>
+      <DynSentence name="UpdThdJnl"><!--更新缴费标志-->
+         <Sentence>
+            LogNo='%s'
+         </Sentence>
+         <Fields>LogNo|</Fields>
+      </DynSentence>
+      <Attributes>
+        <Attribute name="nodatabase" value="2"/>
+      </Attributes>
+      <Process>
+         <Quote name="Do_TxnChk"/>
+         <Switch expression="@PARA.RepeatChk">   <!--交易重复性检查-->
+            <Case value="0">
+               <Exec func="PUB:ReadRecord" error="IGNORE">
+                  <Arg name="SqlCmd" value="ChkRepeat"/>
+               </Exec>
+               <If condition="~RetCod=0">
+                  <Set>RspCod=478608</Set>
+                  <Set>RspMsg=第三方交易重复</Set>
+                  <Return/>
+               </If>
+               <ElseIf condition="~RetCod=-2">
+                  <Break/>
+               </ElseIf>
+               <Else>
+                  <Set>RspCod=478699</Set>
+                  <Set>RspMsg=数据库操作错</Set>
+                  <Return/>
+               </Else>
+               <Break/>
+            </Case>
+            <Case value="1"><!--个性检查-->
+               <Call function="@PARA.IddFunc_RepeatChk"/>
+               <Break/>
+            </Case>
+            <Case value="2"><!--不检查-->
+               <Break/>
+            </Case>
+            <Default>
+               <Set>RspCod=478600</Set><!--系统参数错误 -->
+               <Set>RspMsg=交易重复性检查 </Set>
+               <Return/>
+               <Break/>
+            </Default>
+         </Switch>
+
+         <If condition="AND(IS_EQUAL_STRING(@PARA.RollBack,1),INTCMP(GETSTRPOS(@PARA.RollBackCnls,$TxnCnl),5,0))">
+            <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
+         </If>
+
+         <Exec func="PUB:GetAppInfo"/>
+         <Exec func="PUB:GetLogNo"/>
+         <Exec func="PUB:GetVirtualTeller">
+            <Arg name="TxnCnl" value="AFE"/>
+            <Arg name="CnlSub" value="$BrNo"/>
+         </Exec>
+         <Exec func="PUB:InsertRecordExt" error="IGNORE">
+            <Arg name="TblNam" value="afetxnjnl"/>
+         </Exec>
+         <If condition="INTCMP(~RetCod,4,0)">
+            <Set>RspCod=478399</Set>
+            <Set>RspMsg=插入流水表失败</Set>
+            <Return/>
+         </If>
+         <Set>Mask=STRCAT(9,$BBusTyp)</Set>
+         <Set>CcyTyp=0</Set>
+         <Exec func="PUB:CallThirdOther" error="IGNORE">
+            <Arg name="HTxnCd" value="$THD_TRNCOD"/>
+            <Arg name="ObjSvr" value="$THD_SVROBJ"/>
+         </Exec>
+         <Switch expression="~RetCod">
+            <Case value="-1"><!--第三方交易超时 -->
+               <Set>TxnSts=U</Set>
+               <Set>TTxnSt=T</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <If condition="IS_NOEQUAL_STRING($TxnCnl,TRM)">
+                  <Exec func="PUB:SetNoResponse"/>
+               </If>
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=第三方交易超时</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Case value="-10"><!--第三方交易未发送成功 -->
+               <Set>TxnSts=X</Set>
+               <Set>TTxnSt=X</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=发送到第三方失败</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Case value="-2"><!--第三方交易系统错误 -->
+               <Set>TxnSts=X</Set>
+               <Set>TTxnSt=X</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=调用第三方系统错误</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Default><!--交易有明确返回-->
+               <If condition="IS_NOEQUAL_STRING($TRspCd,000000)">
+                  <Set>TTxnSt=F</Set>
+                  <Set>TxnSts=F</Set>
+                  <Set>HTxnSt=F</Set>
+                  <Set>HRspCd=$TRspCd</Set>
+                  <Set>RspCod=$TRspCd</Set><!--第三方交易失败-->
+                  <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                     <Arg name="TblNam" value="afetxnjnl"/>
+                     <Arg name="CndSts" value="UpdThdJnl"/>
+                  </Exec>
+                  <If condition="INTCMP(~RetCod,4,0)">
+                     <Set>RspCod=478399</Set>
+                     <Set>RspMsg=更新流水表第三方信息失败</Set>
+                  </If>
+                <Exec func="PUB:CommitWork"/>  <!--提交更新记录-->
+               <!--   <Exec func="PUB:DefaultErrorProc"/>-->
+                  <Set>RspMsg=STRCAT(第三方返回: ,$TRspCd)</Set>
+                  <Return/>
+               </If>
+               <Else>
+                  <Set>TTxnSt=S</Set>
+                  <Set>TxnSts=S</Set>
+                  <Set>HTxnSt=S</Set>
+                  <Set>HRspCd=SC0000</Set>
+                  <Set>RspCod=000000</Set>
+                  <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                     <Arg name="TblNam" value="afetxnjnl"/>
+                     <Arg name="CndSts" value="UpdThdJnl"/>
+                  </Exec>
+                  <If condition="INTCMP(~RetCod,4,0)">
+                     <Set>RspCod=478399</Set>
+                     <Set>RspMsg=更新流水表第三方信息失败</Set>
+                     <!--<Exec func="PUB:DefaultErrorProc"/>-->
+                     <Return/>
+                  </If>
+                  <Exec func="PUB:CommitWork"/>
+               </Else>
+               <Return/>
+               <Break/>
+            </Default>
+         </Switch>
+
+         <Exec func="PUB:CommitWork"/>
+      </Process>
+   </Function>
+
+   <Function name="AFE_SglCntZeroPay" desc="单笔中央财政零余额账户缴费(第三方发起)">
+      <DynSentence name="ChkRepeat"><!--检查第三方流水是否重复 -->
+         <Sentence>
+            SELECT 'Y' YN from table(values(1)) as anony where Exists(Select * FROM afetxnjnl WHERE ThdKey='%s')
+         </Sentence>
+         <Fields>@PARA.ThdKey|</Fields>
+      </DynSentence>
+      <DynSentence name="UpdThdJnl"><!--更新缴费标志-->
+         <Sentence>
+            LogNo='%s'
+         </Sentence>
+         <Fields>LogNo|</Fields>
+      </DynSentence>
+      <Process>
+         <Quote name="Do_TxnChk"/>
+         <Switch expression="@PARA.RepeatChk">   <!--交易重复性检查-->
+            <Case value="0">
+               <Exec func="PUB:ReadRecord" error="IGNORE">
+                  <Arg name="SqlCmd" value="ChkRepeat"/>
+               </Exec>
+               <If condition="~RetCod=0">
+                  <Set>RspCod=478608</Set>
+                  <Set>RspMsg=第三方交易重复</Set>
+                  <Return/>
+               </If>
+               <ElseIf condition="~RetCod=-2">
+                  <Break/>
+               </ElseIf>
+               <Else>
+                  <Set>RspCod=478699</Set>
+                  <Set>RspMsg=数据库操作错</Set>
+                  <Return/>
+               </Else>
+               <Break/>
+            </Case>
+            <Case value="1"><!--个性检查-->
+               <Call function="@PARA.IddFunc_RepeatChk"/>
+               <Break/>
+            </Case>
+            <Case value="2"><!--不检查-->
+               <Break/>
+            </Case>
+            <Default>
+               <Set>RspCod=478600</Set><!--系统参数错误 -->
+               <Set>RspMsg=交易重复性检查 </Set>
+               <Return/>
+               <Break/>
+            </Default>
+         </Switch>
+
+         <If condition="AND(IS_EQUAL_STRING(@PARA.RollBack,1),INTCMP(GETSTRPOS(@PARA.RollBackCnls,$TxnCnl),5,0))">
+            <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
+         </If>
+
+         <Exec func="PUB:GetAppInfo"/>
+         <Exec func="PUB:GetLogNo"/>
+         <Exec func="PUB:GetVirtualTeller">
+            <Arg name="TxnCnl" value="AFE"/>
+            <Arg name="CnlSub" value="$BrNo"/>
+         </Exec>
+         
+         <Set>APVchN=$LogNo</Set>   <!--授权支付凭证号码,中央财政接口需要--> 
+         <Set>VInTlr=$TlrId</Set>   <!--凭证登记录入员,  中央财政接口需要-->
+       
+         <Exec func="PUB:InsertRecordExt" error="IGNORE">
+            <Arg name="TblNam" value="afetxnjnl"/>
+         </Exec>
+         <If condition="INTCMP(~RetCod,4,0)">
+            <Set>RspCod=478399</Set>
+            <Set>RspMsg=插入流水表失败</Set>
+            <Return/>
+         </If>
+         <Set>Mask=STRCAT(9,$BBusTyp)</Set>
+         <Set>CcyTyp=0</Set>
+         
+         <Exec func="PUB:CallThirdOther" error="IGNORE">
+            <Arg name="HTxnCd" value="$THD_TRNCOD"/>
+            <Arg name="ObjSvr" value="$THD_SVROBJ"/>
+         </Exec>
+         
+         <Switch expression="~RetCod">
+            <Case value="-1"><!--第三方交易超时 -->
+               <Set>TxnSts=U</Set>
+               <Set>TTxnSt=T</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <If condition="IS_NOEQUAL_STRING($TxnCnl,TRM)">
+                  <Exec func="PUB:SetNoResponse"/>
+               </If>
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=第三方交易超时</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Case value="-10"><!--第三方交易未发送成功 -->
+               <Set>TxnSts=X</Set>
+               <Set>TTxnSt=X</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=发送到第三方失败</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Case value="-2"><!--第三方交易系统错误 -->
+               <Set>TxnSts=X</Set>
+               <Set>TTxnSt=X</Set>
+               <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                  <Arg name="TblNam" value="afetxnjnl"/>
+                  <Arg name="CndSts" value="UpdThdJnl"/>
+               </Exec>
+               <If condition="INTCMP(~RetCod,4,0)">
+                  <Set>RspCod=478399</Set>
+                  <Set>RspMsg=更新流水表第三方信息失败</Set>
+               </If>
+               <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+               <Exec func="PUB:DefaultErrorProc"/>
+               <Set>RspCod=478613</Set>
+               <Set>RspMsg=调用第三方系统错误</Set>
+               <Return/>
+               <Break/>
+            </Case>
+            <Default><!--交易有明确返回-->
+               <If condition="IS_NOEQUAL_STRING($TRspCd,000000)">
+                  <Set>TTxnSt=F</Set>
+                  <Set>TxnSts=F</Set>
+                  <Set>HTxnSt=F</Set>
+                  <Set>HRspCd=$TRspCd</Set>
+                  <Set>RspCod=$TRspCd</Set><!--第三方交易失败-->        
+                  <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                     <Arg name="TblNam" value="afetxnjnl"/>
+                     <Arg name="CndSts" value="UpdThdJnl"/>
+                  </Exec>
+                  <If condition="INTCMP(~RetCod,4,0)">
+                     <Set>RspCod=478399</Set>
+                     <Set>RspMsg=更新流水表第三方信息失败</Set>
+                  </If>
+                  <Exec func="PUB:CommitWork"/><!--提交更新记录-->
+                  <Set>RspMsg=STRCAT(第三方返回: ,$TRspCd)</Set>
+                  <Return/>
+               </If>
+               <Else>
+                  <Set>TTxnSt=S</Set>
+                  <Set>TxnSts=S</Set>
+                  <Set>HTxnSt=S</Set>
+                  <Set>HRspCd=SC0000</Set>
+                  <Set>RspCod=000000</Set>
+                  <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
+                     <Arg name="TblNam" value="afetxnjnl"/>
+                     <Arg name="CndSts" value="UpdThdJnl"/>
+                  </Exec>
+                  <If condition="INTCMP(~RetCod,4,0)">
+                     <Set>RspCod=478399</Set>
+                     <Set>RspMsg=更新流水表第三方信息失败</Set>
+                     <Return/>
+                  </If>
+                  <Exec func="PUB:CommitWork"/>
+               </Else>
+               <Return/>
+               <Break/>
+            </Default>
+         </Switch>
+
+         <Exec func="PUB:CommitWork"/>
+      </Process>
+   </Function>
+
 </Package>
