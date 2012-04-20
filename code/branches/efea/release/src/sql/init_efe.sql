@@ -1,5 +1,5 @@
 --添加电子柜员
-insert into pubdumtlr values('441999','EFE','','EPCLBI1');
+insert into pubdumtlr values('441999','EFE','','EEFEBI2');
 
 
 
@@ -17,6 +17,6 @@ insert into pubjnldef values('441999','EFEA1','9999999999','afetxnjnl','afetxnjn
 --pubjnldef业务流水定义管理表(业务类型、、联机流水表名、批量流水表名、联机、批量对帐标记)
 
 --增加清算参数
-db2 "insert into efeaclrtbl values('441999', '4410000971','YYYYMMDD','1800','0','0')"
-db2 "insert into efeaclrtbl values('441999', '4410000958','YYYYMMDD','1800','0','0')"
-db2 "insert into efeaclrtbl values('441999', '4410000960','YYYYMMDD','1800','0','0')"
+db2 "insert into efeaclrtbl values('441999', '4410003976','20120421','1800','0','0')"
+db2 "insert into efeaclrtbl values('441999', '4410003977','20120421','1800','0','0')"
+db2 "insert into efeaclrtbl values('441999', '4410003978','20120421','1800','0','0')"
