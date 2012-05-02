@@ -2157,8 +2157,16 @@
       <Set>DLDat1= </Set>
       <Set>DLTim1= </Set>
       
+      <!-- 判断是否自动触发, add 20120502 -->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="ClrDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
+        <Set>ClrDat=GETDATETIME(YYYYMMDD)</Set>
+      </If>
       
-      
+      <!-- 配型部类型 -->
+      <Set>DptTyp=0000</Set>
       
       <Set>LclDir=dat/efea</Set>
       
@@ -3392,6 +3400,7 @@
           <If condition="~RetCod!=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
+            <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
             <Continue/>
           </If>
         </If>
@@ -3420,6 +3429,7 @@
         </If> 
         
         <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	   	
+        <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
       </While>
 
       <Set>ClrSts=0</Set> <!--设置成交易状态-->
