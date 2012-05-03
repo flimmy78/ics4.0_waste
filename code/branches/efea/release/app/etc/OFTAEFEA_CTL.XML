@@ -2147,6 +2147,12 @@
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>   
+    <DynSentence name="CntClrRst">    <!--查询当天有没清算 -->
+      <Sentence>
+         select count(*) RstCnt from  efeaclrdtl where BrNo='441999' and ClrDat='%s' and ClrRst='1'
+      </Sentence>
+      <Fields>ClrDat|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
@@ -2165,6 +2171,14 @@
         <Set>ClrDat=GETDATETIME(YYYYMMDD)</Set>
       </If>
       
+      <Exec func="PUB:ReadRecord"><!-- 查询清算是否完成 -->
+        <Arg name="SqlCmd" value="CntClrRst"/>
+      </Exec>         
+      <!-- 由于有三个内部账号,因此不等于3的就返回 -->
+      <If condition="INTCMP($RstCnt,4,3)">
+        <Return/>
+      </If>    
+
       <!-- 配型部类型 -->
       <Set>DptTyp=0000</Set>
       
@@ -2187,6 +2201,7 @@
             <Arg name="DestNam" value="CAgtNo"/>
             <Arg name="TblNam"  value="DptTypToCAgtNo_DL"/>
           </Exec>
+
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_DL"/>
           </Exec>         
@@ -3532,4 +3547,3 @@
 			</Exec>
     </FlowCtrl>
   </Transaction>  
-</Application>
