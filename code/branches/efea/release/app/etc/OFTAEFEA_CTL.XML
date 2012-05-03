@@ -2190,10 +2190,11 @@
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_DL"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_DL"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -2218,10 +2219,11 @@
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_YH"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_YH"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -3403,16 +3405,17 @@
             <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
             <Continue/>
           </If>
+          <!-- 更新清算标志为已清算 -->
+          <Exec func="PUB:ExecSql" error="IGNORE">
+            <Arg name="SqlCmd" value="Updafetxnjnl"/>
+          </Exec>
+          <If condition="~RetCod!=0">
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=修改交易明细为已清算失败</Set>
+            <Return/>
+          </If>        
         </If>
   
-        <Exec func="PUB:ExecSql">
-          <Arg name="SqlCmd" value="Updafetxnjnl"/>
-        </Exec>
-        <If condition="~RetCod!=0">
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=修改交易明细为已清算失败</Set>
-          <Return/>
-        </If>        
 
         <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
         <Set>ClrRst=1</Set> <!--清算情况:1已清算-->
