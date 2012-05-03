@@ -2147,6 +2147,12 @@
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>   
+    <DynSentence name="CntClrRst">    <!--查询当天有没清算 -->
+      <Sentence>
+         select count(*) RstCnt from  efeaclrdtl where BrNo='441999' and ClrDat='%s' and ClrRst='1'
+      </Sentence>
+      <Fields>ClrDat|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
@@ -2157,8 +2163,24 @@
       <Set>DLDat1= </Set>
       <Set>DLTim1= </Set>
       
+      <!-- 判断是否自动触发, add 20120502 -->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="ClrDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
+        <Set>ClrDat=GETDATETIME(YYYYMMDD)</Set>
+      </If>
       
-      
+      <Exec func="PUB:ReadRecord"><!-- 查询清算是否完成 -->
+        <Arg name="SqlCmd" value="CntClrRst"/>
+      </Exec>         
+      <!-- 由于有三个内部账号,因此不等于3的就返回 -->
+      <If condition="INTCMP($RstCnt,4,3)">
+        <Return/>
+      </If>    
+
+      <!-- 配型部类型 -->
+      <Set>DptTyp=0000</Set>
       
       <Set>LclDir=dat/efea</Set>
       
@@ -2179,13 +2201,15 @@
             <Arg name="DestNam" value="CAgtNo"/>
             <Arg name="TblNam"  value="DptTypToCAgtNo_DL"/>
           </Exec>
+
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_DL"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_DL"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -2210,10 +2234,11 @@
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_YH"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_YH"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -3392,18 +3417,20 @@
           <If condition="~RetCod!=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
+            <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
             <Continue/>
           </If>
+          <!-- 更新清算标志为已清算 -->
+          <Exec func="PUB:ExecSql" error="IGNORE">
+            <Arg name="SqlCmd" value="Updafetxnjnl"/>
+          </Exec>
+          <If condition="~RetCod!=0">
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=修改交易明细为已清算失败</Set>
+            <Return/>
+          </If>        
         </If>
   
-        <Exec func="PUB:ExecSql">
-          <Arg name="SqlCmd" value="Updafetxnjnl"/>
-        </Exec>
-        <If condition="~RetCod!=0">
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=修改交易明细为已清算失败</Set>
-          <Return/>
-        </If>        
 
         <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
         <Set>ClrRst=1</Set> <!--清算情况:1已清算-->
@@ -3420,6 +3447,7 @@
         </If> 
         
         <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	   	
+        <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
       </While>
 
       <Set>ClrSts=0</Set> <!--设置成交易状态-->
@@ -3519,4 +3547,3 @@
 			</Exec>
     </FlowCtrl>
   </Transaction>  
-</Application>
