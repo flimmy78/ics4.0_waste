@@ -2,23 +2,23 @@
 <Application name="EFEA" code="202">
   <!--电力电费业务本地主控-->
   <ConfigDeclare>
-    <Config name="BatFormat"   value="etc/EFEA_FMT_441999.XML"/>
+    <!--Config name="BatFormat"   value="etc/EFEA_FMT_441999.XML"/>
     <Config name="ParaFile"    value="etc/CFG_EFEA_441999.XML"/>
-    <Config name="OPFCSW"      value="etc/EFEA_CSW2.XML"/>
+    <Config name="OPFCSW"      value="etc/EFEA_CSW2.XML"/-->
   </ConfigDeclare>
-  <BusDefDeclare>
+  <!--BusDefDeclare>
   	<Busdef name="BrNo"      value="441999"/>
-    <Busdef name="AplCls"    value="202"/> <!--add by xuan_20101108-->
-  </BusDefDeclare>
+    <Busdef name="AplCls"    value="202"/>
+  </BusDefDeclare-->
   <PackageDeclare>
     <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
   </PackageDeclare>
   <TableDeclare>
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
-    <Table name="efeaclrtbl"   value="efeaclrtbl"/>  <!--广州电力清算日期表-->
-    <Table name="efeaclrlog"   value="efeaclrlog"/>  <!--广州电力清算参数修改记录表-->
-    <Table name="efeaclrdtl"   value="efeaclrdtl"/>  <!--广州电力清算明细表表-->
+    <!--Table name="efeaclrtbl"   value="efeaclrtbl"/-->  <!--广州电力清算日期表-->
+    <!--Table name="efeaclrlog"   value="efeaclrlog"/-->  <!--广州电力清算参数修改记录表-->
+    <!--Table name="efeaclrdtl"   value="efeaclrdtl"/-->  <!--广州电力清算明细表表-->
   </TableDeclare>
   <GlobalFunction>
     <Include file="etc/ActJudge_IIT.XML"/>     <!--区别对公对私帐号-->
@@ -44,7 +44,8 @@
     <!--end by xuan_20101108-->
   </GlobalFunction>
   <Define>
-    <Macro name="Chk_TxnSrc">  <!--检查交易来源-->
+    <!--检查交易来源-->
+    <!--Macro name="Chk_TxnSrc">
       <If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
         <Set>TxnCnl=TRM</Set>
         <Set>CnlTyp=0</Set>
@@ -68,124 +69,8 @@
         <Arg name="DestNam" value="TxnCnl"/>
         <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
       </Exec>
-    </Macro>
+    </Macro-->
 
-    <Macro name="MakeMac"> <!--MAC产生-->
-    <Set>Key=1111222233334444</Set>
-    
-    <!--MAC生成-->
-      <If condition="IS_EQUAL_STRING($TraTyp,HZ)">
-        <If condition="INTCMP($MacFlg,3,0)">
-          <!--校验MAC的生成-->
-    	    <Set>OldDat=STRCAT($ActNo,$TxnAmt,$RcsNo,$TLogNo,$TTrmId,$RcvOrg)</Set>
-    	  </If>
-    	  <Else>
-    	  	<!--返回MAC的生成-->
-    	  	<Set>OldDat=STRCAT($ActNo,$TxnAmt,$RcsNo,$TLogNo,$TRtnCd,$TTrmId,$RcvOrg)</Set>
-    	  </Else>
-    	</If>
-    	<ElseIf condition="IS_EQUAL_STRING($TraTyp,JF)">
-         <If condition="INTCMP($MacFlg,3,0)">
-          <!--发送MAC的生成-->
-    	    <Set>OldDat=STRCAT($ActNo,$TxnAmt,$RcsNo,$TTrmId,$RcvOrg)</Set>
-    	    <Set>OldDat=REPCHAR($OldDat, ,1)</Set>
-    	  </If>
-    	  <Else>
-    	  	<!--校验MAC的生成-->
-    	  	<Set>OldDat=STRCAT($ActNo,$TxnAmt,$RcsNo,$TLogNo,$TRtnCd,$TTrmId,$RcvOrg)</Set>
-    	  </Else>
-    	</ElseIf>
-    	<Else>
-    		 <Return/>
-    	</Else>
-    	<!--test
-    	<Set>OldDat=6543219876A432B654321987654321</Set>
-    	-->
-    	<Set>NewDat= </Set>
-    	<Set>NewDat=DELSPACE($NewDat,all)</Set>
-    	<Set>DatPos=1</Set>
-    	<If condition="INTCMP(ISNUMBER($OldDat),4,0)">
-    	  <While condition="INTCMP($DatPos,2,STRLEN($OldDat))">
-    	  	<Set>tmpWord=SUBSTR($OldDat,$DatPos,1)</Set>
-    	  	<If condition="INTCMP(ISNUMBER($tmpWord),3,0)">
-    	  		<Set>NewDat=STRCAT($NewDat,$tmpWord)</Set>
-    	  	</If>
-    	  	<Else>
-    	  		<Set>NewDat=STRCAT($NewDat,1)</Set>
-    	  	</Else>
-    	  	<Set>DatPos=ADD($DatPos,1)</Set>
-    	  </While>
-    	</If>
-    	<Else>
-    		<Set>NewDat=$OldDat</Set>
-    	</Else>
-    	<!--8的倍数，不够补零-->
-    	<Set>tmpLen=SUB(8,MOD(STRLEN($NewDat),8))</Set>
-    	<Set>DatPos=1</Set>
-    	<While condition="INTCMP($DatPos,2,$tmpLen)">
-    		<Set>NewDat=STRCAT($NewDat,0)</Set>
-    		<Set>DatPos=ADD($DatPos,1)</Set>
-    	</While>
-    	
-    	<Set>Num1=DIV(STRLEN($NewDat),8)</Set>
-    	<Set>Num2=DIV(STRLEN($Key),8)</Set>
-    	<Set>Mov1=1</Set>
-    	<Set>Mov2=1</Set>
-    	<Set>Stp1=1</Set>
-    	<Set>Stp2=1</Set>
-    	<Set>T1=0</Set>
-    	<Set>T2=0</Set>
-    	<Set>T3=0</Set>
-    	<Set>T4=0</Set>
-    	<Set>T5=0</Set>
-    	<Set>T6=0</Set>
-    	<Set>T7=0</Set>
-    	<Set>T8=0</Set>
-    	<While condition="INTCMP($Stp1,2,$Num1)">
-        <Set>D1=SUBSTR($NewDat,ADD($Mov1,0),1)</Set>
-        <Set>D2=SUBSTR($NewDat,ADD($Mov1,1),1)</Set>
-        <Set>D3=SUBSTR($NewDat,ADD($Mov1,2),1)</Set>
-        <Set>D4=SUBSTR($NewDat,ADD($Mov1,3),1)</Set>
-        <Set>D5=SUBSTR($NewDat,ADD($Mov1,4),1)</Set>
-        <Set>D6=SUBSTR($NewDat,ADD($Mov1,5),1)</Set>
-        <Set>D7=SUBSTR($NewDat,ADD($Mov1,6),1)</Set>
-        <Set>D8=SUBSTR($NewDat,ADD($Mov1,7),1)</Set>
-        <Set>K1=SUBSTR($Key,ADD($Mov2,0),1)</Set>
-        <Set>K2=SUBSTR($Key,ADD($Mov2,1),1)</Set>
-        <Set>K3=SUBSTR($Key,ADD($Mov2,2),1)</Set>
-        <Set>K4=SUBSTR($Key,ADD($Mov2,3),1)</Set>
-        <Set>K5=SUBSTR($Key,ADD($Mov2,4),1)</Set>
-        <Set>K6=SUBSTR($Key,ADD($Mov2,5),1)</Set>
-        <Set>K7=SUBSTR($Key,ADD($Mov2,6),1)</Set>
-        <Set>K8=SUBSTR($Key,ADD($Mov2,7),1)</Set>
-        <Set>T1=ADD($T1,MUL($D1,$K1))</Set>
-        <Set>T2=ADD($T2,MUL($D2,$K2))</Set>
-        <Set>T3=ADD($T3,MUL($D3,$K3))</Set>
-        <Set>T4=ADD($T4,MUL($D4,$K4))</Set>
-        <Set>T5=ADD($T5,MUL($D5,$K5))</Set>
-        <Set>T6=ADD($T6,MUL($D6,$K6))</Set>
-        <Set>T7=ADD($T7,MUL($D7,$K7))</Set>
-        <Set>T8=ADD($T8,MUL($D8,$K8))</Set>
-        <Set>Mov1=ADD($Mov1,8)</Set>
-        <Set>Mov2=ADD($Mov2,8)</Set>
-        <Set>Stp1=ADD($Stp1,1)</Set>
-        <Set>Stp2=ADD($Stp2,1)</Set>
-        <If condition="INTCMP($Stp2,6,$Num2)">
-          <Set>Mov2=1</Set>
-          <Set>Stp2=1</Set>
-        </If>
-    	</While>
-    	<Set>MAC=SUBSTR($T1,STRLEN($T1),1)</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T2,STRLEN($T2),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T3,STRLEN($T3),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T4,STRLEN($T4),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T5,STRLEN($T5),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T6,STRLEN($T6),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T7,STRLEN($T7),1))</Set>
-    	<Set>MAC=STRCAT($MAC,SUBSTR($T8,STRLEN($T8),1))</Set>
-      <!--MAC结束-->
-
-    </Macro>
   </Define> 
 
   <Transaction code="460230" desc="电力实时划帐">
