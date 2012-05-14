@@ -1,28 +1,12 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
-<Application name="EFE">
+<Application name="YCT">
   <MemPool init_size="1000" max_size="5000"/>
-  <Include file="etc/EFEA_MCR.XML"/>
+  <!--Include file="etc/XXXXXX.XML"/-->
   <CodeSwitching>
-    <Table name="ThdCodToMap" file="etc/EFEA_CSW2.XML">
-     <Column name="ThdCod" sort="no"/>
-     <Column name="PBitMap" sort="no"/>
-    </Table>
-    <Table name="RspCodToThd" file="etc/EFEA_CSW2.XML">
-     <Column name="RspCod" sort="no"/>
-     <Column name="TRtnCd" sort="no"/>
-    </Table>
-    <Table name="RspCodToThd_CZ" file="etc/EFEA_CSW2.XML">
-     <Column name="RspCod" sort="no"/>
-     <Column name="TRtnCd" sort="no"/>
-    </Table>
-    <Table name="RspCodToCrc_CZ" file="etc/EFEA_CSW2.XML">
-     <Column name="RspCod" sort="no"/>
-     <Column name="CrcDat" sort="no"/>
-    </Table>
-    <Table name="DptTypToCAgtNo" file="etc/EFEA_CSW2.XML">
-     <Column name="DptTyp" sort="no"/>
-     <Column name="CAgtNo" sort="no"/>
-    </Table>
+    <!--Table name="SrcToTarget" file="etc/XXXXXX.XML">
+     <Column name="SrcCod" sort="no"/>
+     <Column name="TarCod" sort="no"/>
+    </Table-->
   </CodeSwitching>
 
 	<!-- ÒøÐÐ²éÑ¯½É·ÑÓÃ»§ÐÅÏ¢ -->
@@ -32,11 +16,9 @@
       <AddItem name="ThdCod" expression="$MsgId"/>
       <AddItem name="SMsgLen"  length="4" value="0"/>
       <SwitchCode name="ThdCod" new_name="PBitMap" tab_name="ThdCodToMap" col_name="ThdCod"/>
-			<Quote name="EFEA_Packed"/>
-			<Quote name="EFEA_Body_OUT"/>
 		</Request>
 		<Response necessary="no">
-      <Quote name="EFEA_Body_IN"/>
+      <Quote name="YCTA_Body_IN"/>
       <Quote name="EFEA_Unpack"/>
 		</Response>
 	</Transaction>
