@@ -1,0 +1,48 @@
+1.将app中的文件放到1.6对应文件夹
+
+2.将src中的文件放到1.6对应文件夹
+
+3.app文件夹下建立链接目录
+ln -s /app/ics/dat dat
+ln -s /app/ics/log log
+ln -s /app/ics/tmp tmp
+ln -s /app/ics/trc trc
+
+4.在SYSCFG_441999.XML中配置
+<!--广州电力电费【efea】-->
+<!--广州电力电费【efea】-->
+<!--广州电力电费【efea】-->
+  <CTMAEFEA>
+    <_PORT desc="广州电力前端接入端口">30101</_PORT>
+  </CTMAEFEA>
+  <STDAEFEA>
+    <_IP desc="广州电力接出">172.31.9.107</_IP>
+    <_RQ_PORT desc="广州电力接出端口">18031</_RQ_PORT>
+    <_RS_PORT desc="广州电力接出端口">18030</_RS_PORT>
+  </STDAEFEA>
+  <CTDAEFEA>
+    <_RQ_PORT desc="广州电力第三方接收端口">30111</_RQ_PORT>
+    <_RS_PORT desc="广州电力第三方响应端口">30121</_RS_PORT>
+
+5.ICS自动触发程序配置
+<!--广州电力业务系统,银行发送网管信息-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460247' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='/30' hour='*' monthday='' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+<!--广州电力业务系统,银行自动清算-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460266' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='00' hour='18' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+<!--广州电力业务系统,银行对账文件自动发送-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460250' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='30' hour='18' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+
+6.运行src文件夹中sql里面的所有sql语句，并保证成功
+
+
+修改清算日期
+db2 "update efeaclrtbl set ClrDat='20120421'"

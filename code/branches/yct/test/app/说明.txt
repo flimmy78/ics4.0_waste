@@ -1,0 +1,40 @@
+app文件夹下建立链接目录
+ln -s /app/ics/dat dat
+ln -s /app/ics/log log
+ln -s /app/ics/tmp tmp
+ln -s /app/ics/trc trc
+
+ICS自动触发程序配置
+<!--广州电力业务系统,银行发送网管信息-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460247' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='/30' hour='*' monthday='' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+<!--广州电力业务系统,银行自动清算-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460266' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='00' hour='18' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+<!--广州电力业务系统,银行对账文件自动发送-->
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460250' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='30' hour='18' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+
+
+<!--广州电力业务系统,清算汇总清单发送
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460265' txndatatype='text/etf' txndat='&lt;ROOT&gt;&lt;TBANK&gt;0000&lt;/TBANK&
+gt;&lt;/ROOT&gt;' funcname='' funcpath='' sndflag='0' minute='/1' hour='*' monthday='' weekday='*' monthweek='*' month='*' trace="5"
+>
+                <Data></Data>
+        </SchItem>
+-->
+<!--广州电力业务系统,自动批量处理
+        <SchItem istxn='0' objsvr="OFTAEFEA" txncod='460222' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='/5' hour='*' monthday='' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
+-->
+
+修改清算日期
+db2 "update efeaclrtbl set ClrDat='20120421'"

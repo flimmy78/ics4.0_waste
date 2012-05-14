@@ -1,0 +1,415 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Root>
+	<Define>
+
+<!--½ÓÊÕ½»Ò×ÕýÎÄÌå-->
+	<Macro name="EFEA_Body_IN">
+	  <Item name="MsgLen"    length="4"   /> <!--ÏûÏ¢³¤¶È-->
+		<Item name="MsgId"     length="2"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/> <!--±¨ÎÄÀàÐÍ±êÊ¶·û -->
+		<Item name="BitMapBuf" length="16" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/> <!--Î»Í¼-->
+		<Item name="InBody"    length="SUB(SUB($MsgLen,2),16)" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/> <!-- ÐÅÏ¢ÕýÎÄÌå = ÏûÏ¢³¤¶È - ±¨ÎÄÀàÐÍ±êÊ¶·û³¤¶È - Î»Í¼³¤¶È -->
+	</Macro>
+
+<!--·¢ËÍ½»Ò×ÕýÎÄÌå-->
+  <Macro name="EFEA_Body_OUT">
+    <Item name="SMsgLen"    length="4" expression="ADDCHAR(ADD(ADD($MsgLen,16),2),4,0,1)"  /> <!--ÏûÏ¢³¤¶È-->
+    <Item name="MsgId"	   length="2" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>		<!--±¨ÎÄÀàÐÍ±êÊ¶·û -->
+    <Item name="BitMap"	   length="16" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>		<!--Î»Í¼ -->
+    <Item name="OutBody"   deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>  <!--ÐÅÏ¢ÕýÎÄÌå-->
+  </Macro>
+
+<!--½â°üºê-->
+  <Macro name="EFEA_Unpack">    
+    <AddItem name="BitMap" expression="HEX2BIN(SUBSTR($BitMapBuf,1,32))"/>
+    <AddItem name="Pos" value="1"/>
+    <AddItem name="BmpPos" value="1"/>
+    <AddItem name="MovLen" value="0"/>
+    <While>
+      <AddItem name="BmpPos" expression="GETCHARPOSFROM($BitMap,$BmpPos,1)"/>
+      <If condition="INTCMP($BmpPos,2,0)">
+       <Break/>
+      </If>
+      <Switch expression="$BmpPos">
+       <Case value="2"> <!--Ö÷ÕËºÅ-->
+         <AddItem name="HeadLen" length="2"  expression="SUBSTR($InBody,$Pos,2)"/>
+         <AddItem name="ActNo"  length="$HeadLen" expression="SUBSTR($InBody,ADD($Pos,2),$HeadLen)"/>
+         <If condition="INTCMP(MOD($HeadLen,2),3,0)">
+           <AddItem name="MovLen"  expression="ADD($HeadLen,2)"/>
+         </If>
+         <Else>
+           <AddItem name="MovLen" expression="ADD(ADD($HeadLen,2),1)"/>
+         </Else>    
+         <Break/>
+       </Case>
+       <Case value="3"> <!--½»Ò×ÖÖÀàÏ¸·ÖÀàÐÍ-->
+         <AddItem name="TxnKnd" expression="SUBSTR($InBody,$Pos,6)"/>
+         <AddItem name="MovLen" value="6"/>
+         <Break/>
+       </Case>
+       <Case value="4"> <!--½»Ò×½ð¶î-->
+         <AddItem name="TxnAmt" expression="SUBSTR($InBody,$Pos,12)"/>
+         <AddItem name="MovLen" value="12"/>
+         <Break/>
+       </Case>
+       <Case value="7"> <!--½»Ò×·¢ÆðÈÕÆÚºÍÊ±¼ä -->
+         <AddItem name="ChkTim" expression="SUBSTR($InBody,$Pos,10)"/>
+         <AddItem name="MovLen" value="10"/>
+         <Break/>
+       </Case>
+       <Case value="11"> <!--ÒøÐÐ½»Ò×Á÷Ë®ºÅ -->
+         <AddItem name="BLogNo" expression="SUBSTR($InBody,$Pos,12)"/>
+         <AddItem name="MovLen" value="12"/>
+         <Break/>
+       </Case>
+       <Case value="12"> <!--ÊÜÀí·½ËùÔÚµØÊ±¼ä -->
+         <AddItem name="RcsTim" expression="SUBSTR($InBody,$Pos,6)"/>
+         <AddItem name="MovLen" value="6"/>
+         <Break/>
+       </Case>
+       <Case value="13"> <!--ÊÜÀí·½ËùÔÚµØÈÕÆÚ -->
+         <AddItem name="RcsDat" expression="SUBSTR($InBody,$Pos,4)"/>
+         <AddItem name="MovLen" value="4"/>
+         <Break/>
+       </Case>
+       <Case value="15"> <!--ÇåËãÈÕÆÚ -->
+         <AddItem name="QsDat" expression="SUBSTR($InBody,$Pos,4)"/>
+         <AddItem name="MovLen" value="4"/>
+         <Break/>
+       </Case>
+       <Case value="18"> <!--ÅäÓª²¿ÀàÐÍ -->
+         <AddItem name="DptTyp" expression="SUBSTR($InBody,$Pos,4)"/>
+         <AddItem name="MovLen" value="4"/>
+         <Break/>
+       </Case>
+       <Case value="28"> <!--½»Ò×ÊÖÐø·Ñ-->
+         <AddItem name="Fee" expression="SUBSTR($InBody,$Pos,12)"/>
+         <AddItem name="MovLen" value="12"/>
+         <Break/>
+       </Case>
+       <Case value="32"> <!--ÊÜÀí·½»ú¹¹±êÊ¶Âë-->
+         <AddItem name="HeadLen" expression="SUBSTR($InBody,$Pos,2)"/>
+         <AddItem name="RcsNo" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),$HeadLen))"/>
+         <If condition="INTCMP(MOD($HeadLen,2),3,0)">
+           <AddItem name="MovLen"  expression="ADD($HeadLen,2)"/>
+         </If>
+         <Else>
+           <AddItem name="MovLen" expression="ADD(ADD($HeadLen,2),1)"/>
+         </Else>          
+         <Break/>
+       </Case>
+       <Case value="33"> <!--·¢ËÍ»ú¹¹±êÊ¶Âë-->
+         <AddItem name="HeadLen" expression="SUBSTR($InBody,$Pos,2)"/>
+         <AddItem name="SndNo" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),$HeadLen))"/>
+         <If condition="INTCMP(MOD($HeadLen,2),3,0)">
+           <AddItem name="MovLen"  expression="ADD($HeadLen,2)"/>
+         </If>
+         <Else>
+           <AddItem name="MovLen" expression="ADD(ADD($HeadLen,2),1)"/>
+         </Else>          
+         <Break/>
+       </Case>
+       <Case value="37"> <!--¹©µç¹«Ë¾ÏµÍ³²Î¿¼ºÅ -->
+        <AddItem name="TLogNo" expression="SUBSTR($InBody,$Pos,12)"/>
+        <AddItem name="MovLen" value="12"/>
+        <Break/>
+       </Case>
+       <Case value="39"> <!--ÏìÓ¦Âë -->
+         <AddItem name="TRspCd" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(2,2))"/>         
+         <AddItem name="MovLen" expression="MUL(2,2)"/>
+         <Break/>
+       </Case>
+       <Case value="41"> <!--¹©µç¹«Ë¾ÖÕ¶Ë±êÊ¶Âë -->
+         <AddItem name="TTrmId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(8,2))"/>
+         <AddItem name="MovLen" expression="MUL(8,2)"/>
+         <Break/>
+       </Case>
+       <Case value="42"> <!--¹©µç¹«Ë¾±êÊ¶Âë -->
+         <AddItem name="CrpId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(15,2))"/>
+         <AddItem name="MovLen" expression="MUL(15,2)"/>
+         <Break/>
+       </Case>
+       <Case value="48"> <!--¸½¼ÓÊý¾Ý -->
+         <AddItem name="HeadLen" expression="SUBSTR($InBody,$Pos,2)"/>
+         <AddItem name="OData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL($HeadLen,2)))"/>
+         <If condition="IS_EQUAL_STRING($MsgId,0200)">
+           <AddItem name="TCusId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL(21,2)))"/>      <!--¿Í»§±àºÅ-->
+           <AddItem name="LChkTm" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,44),MUL(8,2)))"/>      <!--µç·ÑÔÂ·Ý-->
+           <AddItem name="PdtNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,60),MUL(2,2)))"/>      <!--²úÆ·´úÂë-->
+           <AddItem name="OTLogNo" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,64),MUL(12,2)))"/>    <!--Ô­ÏµÍ³²Î¿¼ºÅ-->
+           <AddItem name="ActBak" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,88),MUL(20,2)))"/>     <!--¿ª»§ÒøÐÐ±àÂë-->
+         </If>
+         <ElseIf condition="IS_EQUAL_STRING($MsgId,0400)">
+           <AddItem name="TCusId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL(21,2)))"/>      <!--¿Í»§±àºÅ-->
+           <AddItem name="LChkTm" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,44),MUL(8,2)))"/>      <!--µç·ÑÔÂ·Ý-->
+           <AddItem name="PdtNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,60),MUL(2,2)))"/>      <!--²úÆ·´úÂë-->
+           <AddItem name="OTLogNo" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,64),MUL(12,2)))"/>    <!--Ô­ÏµÍ³²Î¿¼ºÅ-->
+           <AddItem name="ActBak" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,88),MUL(20,2)))"/>     <!--¿ª»§ÒøÐÐ±àÂë-->
+         </ElseIf>
+         <ElseIf condition="IS_EQUAL_STRING($MsgId,0110)">
+           <AddItem name="TCusId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL(21,2)))"/>      <!--¿Í»§±àºÅ-->
+           <AddItem name="LChkTm" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,44),MUL(8,2)))"/>      <!--µç·ÑÔÂ·Ý-->
+           <AddItem name="PdtNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,60),MUL(2,2)))"/>      <!--²úÆ·´úÂë-->
+           <AddItem name="OTLogNo" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,64),MUL(12,2)))"/>    <!--Ô­ÏµÍ³²Î¿¼ºÅ-->
+           <AddItem name="UsrDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,88),MUL(56,2)))"/>     <!--ÓÃµçµØÖ·ÓÃ»§-->
+         </ElseIf>
+         <ElseIf condition="IS_EQUAL_STRING($MsgId,0210)">
+           <AddItem name="TCusId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL(21,2)))"/>      <!--¿Í»§±àºÅ-->
+           <AddItem name="LChkTm" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,44),MUL(8,2)))"/>      <!--µç·ÑÔÂ·Ý-->
+           <AddItem name="PdtNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,60),MUL(2,2)))"/>      <!--²úÆ·´úÂë-->
+           <AddItem name="OTLogNo" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,64),MUL(12,2)))"/>    <!--Ô­ÏµÍ³²Î¿¼ºÅ-->
+           <AddItem name="PayTyp" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,88),MUL(2,2)))"/>     <!--ÊÕ·ÑÀàÐÍ-->
+           <AddItem name="ChkNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,92),MUL(25,2)))"/>     <!--Ö§Æ±±àºÅ-->
+         </ElseIf>
+         <ElseIf condition="IS_EQUAL_STRING($MsgId,0410)">
+           <AddItem name="TCusId" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),MUL(21,2)))"/>      <!--¿Í»§±àºÅ-->
+           <AddItem name="LChkTm" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,44),MUL(8,2)))"/>      <!--µç·ÑÔÂ·Ý-->
+           <AddItem name="PdtNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,60),MUL(2,2)))"/>      <!--²úÆ·´úÂë-->
+           <AddItem name="OTLogNo" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,64),MUL(12,2)))"/>    <!--Ô­ÏµÍ³²Î¿¼ºÅ-->
+           <AddItem name="PayTyp" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,88),MUL(2,2)))"/>     <!--ÊÕ·ÑÀàÐÍ-->
+           <AddItem name="ChkNum" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,92),MUL(25,2)))"/>     <!--Ö§Æ±±àºÅ-->
+         </ElseIf>
+         <AddItem name="MovLen"  expression="ADD(MUL($HeadLen,2),2)"/>
+         <Break/>
+       </Case>
+       <Case value="49"> <!--½»Ò×»õ±Ò´úÂë -->
+         <AddItem name="CnyCod" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(3,2))"/>
+         <AddItem name="MovLen" expression="MUL(3,2)"/>
+         <Break/>
+       </Case>
+       <Case value="52"> <!--¸öÈËÃÜÂë -->
+         <AddItem name="Pin" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(8,2))"/>
+         <AddItem name="MovLen" expression="MUL(8,2)"/>
+         <Break/>
+       </Case>
+       <Case value="60"><!--³åÕý¸½¼ÓÊý¾Ý -->
+        <AddItem name="CrcDat" expression="SUBSTR($InBody,$Pos,4)"/>
+        <AddItem name="MovLen" value="4"/>
+        <Break/>
+       </Case>
+       <Case value="70"> <!--Íø¹ÜÐÅÏ¢Âë -->
+        <AddItem name="WebInf" expression="SUBSTR($InBody,$Pos,ADD(3,1))"/>
+        <AddItem name="MovLen" expression="ADD(3,1)"/>
+        <Break/>
+       </Case>
+       <Case value="100"> <!--½ÓÊÕ»ú¹¹±êÊ¶Âë-->
+         <AddItem name="HeadLen" expression="SUBSTR($InBody,$Pos,2)"/>
+         <AddItem name="RcvOrg" expression="DELBOTHSPACE(SUBSTR($InBody,ADD($Pos,2),$HeadLen))"/>
+         <If condition="INTCMP(MOD($HeadLen,2),3,0)">
+           <AddItem name="MovLen"  expression="ADD($HeadLen,2)"/>
+         </If>
+         <Else>
+           <AddItem name="MovLen" expression="ADD(ADD($HeadLen,2),1)"/>
+         </Else> 
+         <Break/>
+       </Case>
+       <Case value="104"> <!--½»Ò×Àà±ð -->
+         <AddItem name="TraTyp" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(2,2))"/>
+         <AddItem name="MovLen" expression="MUL(2,2)"/>
+         <Break/>
+       </Case>
+       <Case value="128"> <!--ÏûÏ¢¼ø±ðÂë -->
+         <AddItem name="MsgMac" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex" expression="SUBSTR($InBody,$Pos,MUL(8,2))"/>
+         <AddItem name="MovLen" expression="MUL(8,2)"/>
+         <Break/>
+       </Case>
+       <Default>
+         <Break/>
+       </Default>
+      </Switch>
+      <AddItem name="Pos" expression="ADD($Pos,$MovLen)"/>
+    </While>
+  </Macro>
+
+<!--×é°üºê,±¨ÎÄ£½STRCAT($MsgId,$BitMap,$OutBody)-->
+  <Macro name="EFEA_Packed">
+  	<AddItem name="MsgLen" value="0"/>
+    <AddItem name="ResvDat" value=" "/>
+    <AddItem name="OldPos" value="0"/>
+    <AddItem name="nDeliPos" value="1"/>
+    <AddItem name="BitMap" value=" "/>
+    <AddItem name="BitMap" expression="DELSPACE($BitMap,all)"/>
+    <While>
+      <If condition="IS_NOEQUAL_STRING($nDeliPos,1)">
+       <AddItem name="OldPos" expression="$NewPos"/>
+      </If>
+      <AddItem name="NewPos" expression="GETWORDDELIMITER($PBitMap,|,$nDeliPos)"/>
+      <If condition="ISNULL($NewPos)">
+       <Break/>
+      </If>
+      <If condition="INTCMP($NewPos,2,$OldPos)">
+       <AddItem name="RetCod" value="-1"/>
+       <Break/>
+      </If>
+      <AddItem name="BitMap" expression="STRCAT(ADDCHAR($BitMap,SUB($NewPos,1),0,0),1)"/>
+      <AddItem name="nDeliPos" expression="ADD($nDeliPos,1)"/>
+      <Switch expression="$NewPos">
+       <Case value="2"><!--Ö÷ÕÊºÅ -->
+        <AddItem name="HeadLen" expression="ADDCHAR(STRLEN(DELBOTHSPACE($ActNo)),2,0,1)"/>
+        <If condition="INTCMP(MOD($HeadLen,2),3,0)"> 
+        	<!--Å¼Êý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($ActNo))"/>  
+          <AddItem name="MsgLen"  expression="ADD(ADD($MsgLen,DIV($HeadLen,2)),1)"/>
+        </If>
+        <Else>
+        	<!--ÆæÊý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($ActNo),F)"/>  
+          <AddItem name="MsgLen"  expression="ADD(ADD(ADD($MsgLen,DIV($HeadLen,2)),1),1)"/>
+        </Else> 
+        <Break/>
+       </Case>
+       <Case value="3"><!--½»Ò×ÖÖÀàÏ¸·ÖÀàÐÍ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($TxnKnd),6,0,1))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,3)"/>
+        <Break/>
+       </Case>
+       <Case value="4"><!--½»Ò×½ð¶î -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,RIGHTSTR(ADDCHAR(DELBOTHSPACE($TxnAmt),12,0,1),12))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,6)"/>
+        <Break/>
+       </Case>
+       <Case value="7"><!--½»Ò×·¢ÆðÈÕÆÚºÍÊ±¼ä -->                           
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($ChkTim),10,0,1))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,5)"/>
+        <Break/>
+       </Case>
+       <Case value="11"><!--ÒøÐÐ½»Ò×Á÷Ë®ºÅ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE(SUBSTR($LogNo,3,12)),12,0,1))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,6)"/>
+        <Break/>
+       </Case>
+       <Case value="12"><!--ÊÜÀí·½ËùÔÚµØÊ±¼ä -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE(SUBSTR($FTxnTm,9,6)),6,0,0))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,3)"/>
+        <Break/>
+       </Case>
+       <Case value="13"><!--ÊÜÀí·½ËùÔÚµØÈÕÆÚ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE(SUBSTR($ClrDat,5,4)),4,0,0))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="15"><!--ÇåËãÈÕÆÚ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE(SUBSTR($ClrDat,5,4)),4,0,1))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="18"><!--ÅäÓª²¿ÀàÐÍ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($DptTyp),4,0,1))"/>
+        <AddItem name="MsgLen" expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="28"><!--½»Ò×ÊÖÐø·Ñ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,RIGHTSTR(ADDCHAR(DELBOTHSPACE($Fee),12,0,1),12))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,6)"/>
+        <Break/>
+       </Case>
+       <Case value="32"><!--ÊÜÀí·½»ú¹¹±êÊ¶Âë -->
+        <AddItem name="HeadLen" expression="ADDCHAR(STRLEN(DELBOTHSPACE($RcsNo)),2,0,1)"/>
+        <If condition="INTCMP(MOD($HeadLen,2),3,0)"> 
+        	<!--Å¼Êý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($RcsNo))"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD($MsgLen,DIV($HeadLen,2)),1)"/>
+        </If>
+        <Else>
+        	<!--ÆæÊý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($RcsNo),F)"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD(ADD($MsgLen,DIV($HeadLen,2)),1),1)"/>
+        </Else> 
+        <Break/>
+       </Case>
+       <Case value="33"><!--·¢ËÍ»ú¹¹±êÊ¶Âë -->
+        <AddItem name="HeadLen" expression="ADDCHAR(STRLEN(DELBOTHSPACE($SndNo)),2,0,1)"/>
+        <If condition="INTCMP(MOD($HeadLen,2),3,0)"> 
+        	<!--Å¼Êý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($SndNo))"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD($MsgLen,DIV($HeadLen,2)),1)"/>
+        </If>
+        <Else>
+        	<!--ÆæÊý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($SndNo),F)"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD(ADD($MsgLen,DIV($HeadLen,2)),1),1)"/>
+        </Else> 
+        <Break/>
+       </Case>        
+       <Case value="37"><!--¹©µç¹«Ë¾ÏµÍ³²Î¿¼ºÅ -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($TLogNo),12,0,1))"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,6)"/>
+        <Break/>
+       </Case>       
+       <Case value="39"><!--ÏìÓ¦Âë -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$TRtnCd"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>       
+       <Case value="41"><!--ÊÜÀí·½ÖÕ¶Ë±êÊ¶Âë -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$TTrmId"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,8)"/>
+        <Break/>
+       </Case>       
+       <Case value="42"><!--ÊÜÀí·½±êÊ¶Âë -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$CrpId"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,15)"/>
+        <Break/>
+       </Case>
+       <Case value="48"><!--¸½¼ÓÊý¾Ý -->
+        <AddItem name="HeadLen" expression="ADDCHAR(STRLEN($OData),2,0,1)"/>
+        <AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$OData"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD(ADD($MsgLen,$HeadLen),1)"/>
+        <Break/>
+       </Case> 
+       <Case value="49"><!--½»Ò×»õ±Ò´úÂë -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$CnyCod"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,3)"/>
+        <Break/>
+       </Case>
+       <Case value="60"><!--³åÕý¸½¼ÓÊý¾Ý -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($CrcDat),4,0,1))"/>
+        <AddItem name="MsgLen" expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="70"><!--Íø¹ÜÐÅÏ¢Âë -->
+        <AddItem name="OutBody" expression="STRCAT($OutBody,ADDCHAR(DELBOTHSPACE($WebInf),ADD(3,1),0,1))"/>
+        <AddItem name="MsgLen" expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="100"><!--½ÓÊÕ»ú¹¹±êÊ¶Âë -->
+        <AddItem name="HeadLen" expression="ADDCHAR(STRLEN($RcvOrg),2,0,1)"/>        
+        <If condition="INTCMP(MOD($HeadLen,2),3,0)"> 
+        	<!--Å¼Êý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($RcvOrg))"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD($MsgLen,DIV($HeadLen,2)),1)"/>
+        </If>
+        <Else>
+        	<!--ÆæÊý-->
+        	<AddItem name="OutBody" expression="STRCAT($OutBody,$HeadLen,DELBOTHSPACE($RcvOrg),F)"/>
+          <AddItem name="MsgLen"  expression="ADD(ADD(ADD($MsgLen,DIV($HeadLen,2)),1),1)"/>
+        </Else>
+        <Break/>
+       </Case>  
+       <Case value="104"><!--½»Ò×Àà±ð -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$TraTyp"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,2)"/>
+        <Break/>
+       </Case>
+       <Case value="128"><!--ÏûÏ¢¼ø±ðÂë -->
+       	<AddItem name="tmpData" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc" expression="$MsgMac"/>
+        <AddItem name="OutBody" expression="STRCAT($OutBody,$tmpData)"/>
+        <AddItem name="MsgLen"  expression="ADD($MsgLen,8)"/>
+        <Break/>
+       </Case>
+       <Default>
+        <Break/>
+       </Default>
+      </Switch>
+    </While>
+    <If condition="INTCMP($NewPos,1,128)">
+     <AddItem name="BitMap" expression="BIN2HEX(ADDCHAR($BitMap,128,0,0))"/>
+    </If>  
+  </Macro>
+	</Define>
+</Root>
