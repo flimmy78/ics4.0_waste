@@ -2,75 +2,11 @@
 <Application name="YCT">
   <MemPool init_size="1000" max_size="5000"/>
   <!--Include file="etc/XXXXXX.XML"/-->
-  <CodeSwitching>
-    <!--Table name="SrcToTarget" file="etc/XXXXXX.XML">
+  <!--CodeSwitching>
+    <Table name="SrcToTarget" file="etc/XXXXXX.XML">
      <Column name="SrcCod" sort="no"/>
      <Column name="TarCod" sort="no"/>
-    </Table-->
-  </CodeSwitching>
-
-	<!-- 银行查询缴费用户信息 -->
-	<Transaction code="460244">
-		<Request>
-			<AddItem name="MsgId"    length="4" value="0100"/>   <!--消息类型-->
-      <AddItem name="ThdCod" expression="$MsgId"/>
-      <AddItem name="SMsgLen"  length="4" value="0"/>
-      <SwitchCode name="ThdCod" new_name="PBitMap" tab_name="ThdCodToMap" col_name="ThdCod"/>
-		</Request>
-		<Response necessary="no">
-      <Quote name="YCTA_Body_IN"/>
-      <Quote name="EFEA_Unpack"/>
-		</Response>
-	</Transaction>
-
-
-	<!-- 银行实时缴费 -->
-	<Transaction code="460245">
-		<Request>
-			<AddItem name="MsgId"    length="4" value="0200"/>   <!--消息类型-->
-      <AddItem name="ThdCod" expression="$MsgId"/>
-      <AddItem name="SMsgLen"  length="4" value="0"/>
-      <SwitchCode name="ThdCod" new_name="PBitMap" tab_name="ThdCodToMap" col_name="ThdCod"/>
-			<Quote name="EFEA_Packed"/>
-			<Quote name="EFEA_Body_OUT"/>
-		</Request>
-		<Response necessary="no">
-      <Quote name="EFEA_Body_IN"/>
-      <Quote name="EFEA_Unpack"/>
-		</Response>
-	</Transaction>
-	
-	<!-- 银行缴费冲正 -->
-	<Transaction code="460246">
-		<Request>
-			<AddItem name="MsgId"    length="4" value="0400"/>   <!--消息类型-->
-      <AddItem name="ThdCod" expression="$MsgId"/>
-      <AddItem name="SMsgLen"  length="4" value="0"/>
-      <SwitchCode name="ThdCod" new_name="PBitMap" tab_name="ThdCodToMap" col_name="ThdCod"/>
-			<Quote name="EFEA_Packed"/>
-			<Quote name="EFEA_Body_OUT"/>
-		</Request>
-		<Response necessary="no">
-      <Quote name="EFEA_Body_IN"/>
-      <Quote name="EFEA_Unpack"/>
-		</Response>
-	</Transaction>
-
-	<!-- 银行发送网管信息 -->
-	<Transaction code="460247">
-		<Request>
-			<AddItem name="MsgId"    length="4" value="0820"/>   <!--消息类型-->
-      <AddItem name="ThdCod" expression="$MsgId"/>
-      <AddItem name="SMsgLen"  length="4" value="0"/>
-      <SwitchCode name="ThdCod" new_name="PBitMap" tab_name="ThdCodToMap" col_name="ThdCod"/>
-			<Quote name="EFEA_Packed"/>
-			<Quote name="EFEA_Body_OUT"/>
-		</Request>
-		<Response necessary="no">
-      <Quote name="EFEA_Body_IN"/>
-      <Quote name="EFEA_Unpack"/>
-		</Response>
-	</Transaction>
-
+    </Table>
+  </CodeSwitching-->
 
 </Application>
