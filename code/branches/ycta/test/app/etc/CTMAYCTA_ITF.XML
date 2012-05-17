@@ -7,4 +7,637 @@
     </Table>
   </CodeSwitching-->
 
+  <Transaction service="484501"  code="484501" desc="终端签到认证1" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="136"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="136"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484502"  code="484502" desc="终端签到认证2" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="136"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="9"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484503"  code="484503" desc="共用交易查询P_TRAN_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="112"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="112"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484504"  code="484504" desc="CPU圈存查询通讯接口P_CPU_LOAD_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="128"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="192"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484505"  code="484505" desc="CPU圈存通讯接口P_CPU_LOAD" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="160"/>             <!-- 请求报文     -->
+      <Item name="ActNo"    length="21" />             <!-- 账号         -->
+      <Item name="PinBlk"   length="20" />             <!-- 交易密码     -->
+      <Item name="TxCck2"   length="40" />             <!-- 第二磁道     -->
+      <Item name="TxCck3"   length="110"/>             <!-- 第三磁道     -->
+      <Item name="TxnAmt"   length="15" />             <!-- 交易金额     -->
+      <Item name="TLogNo"   length="8"  />             <!-- 第三方流水号 -->
+      <Item name="PkiCrd"   length="4"  />             <!-- PKI管理卡号  -->
+      <Item name="PhyCrd"   length="8"  />             <!-- 物理卡号     -->
+      <Item name="LgcCrd"   length="8"  />             <!-- 逻辑卡号     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="224"/>   <!-- 返回报文   -->
+            <Item name="LogNo"  length="12" />   <!-- 银行流水号 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484506"  code="484506" desc="CPU圈存提交通讯接口P_CPU_LOAD_SUBMIT" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="128"/>             <!-- 请求报文     -->
+      <Item name="TVchNo"   length="4"  />             <!-- 充值凭证号   -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="80"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484511"  code="484511" desc="M1圈存查询通讯接口P_M1_LOAD_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="144"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="128"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484512"  code="484512" desc="M1圈存通讯接口P_M1_LOAD" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="160"/>             <!-- 请求报文     -->
+      <Item name="ActNo"    length="21" />             <!-- 账号         -->
+      <Item name="PinBlk"   length="20" />             <!-- 交易密码     -->
+      <Item name="TxCck2"   length="40" />             <!-- 第二磁道     -->
+      <Item name="TxCck3"   length="110"/>             <!-- 第三磁道     -->
+      <Item name="TxnAmt"   length="15" />             <!-- 交易金额     -->
+      <Item name="TLogNo"   length="8"  />             <!-- 第三方流水号 -->
+      <Item name="PkiCrd"   length="4"  />             <!-- PKI管理卡号  -->
+      <Item name="PhyCrd"   length="8"  />             <!-- 物理卡号     -->
+      <Item name="LgcCrd"   length="8"  />             <!-- 逻辑卡号     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="170"/>   <!-- 返回报文   -->
+            <Item name="LogNo"  length="12" />   <!-- 银行流水号 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484513"  code="484513" desc="M1冲正通讯接口P_M1_ROLLBACK" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="176"/>             <!-- 请求报文     -->
+      <Item name="LogNo"    length="12" />             <!-- 银行流水号   -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="80"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484510"  code="484510" desc="CPU卡同步" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="288"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="208"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484516"  code="484516" desc="终端监控P_MONITOR" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="114"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484517"  code="484517" desc="监控配置P_SET_MONITOR" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="87"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="230"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484518"  code="484518" desc="监控配置P_TRANSFOR_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="128"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="112"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484519"  code="484519" desc="转移确认查询P_TRANSFOR_COMFIRM_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="144"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="128"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484520"  code="484520" desc="转移确认查询P_TRANSFOR_PURCHASE" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="224"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="112"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484521"  code="484521" desc="转出消费P_TRANSFOR_PURCHASE_SUBMIT" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="128"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="160"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484522"  code="484522" desc="卡片激活" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="不定"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="不定"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
 </Application>
