@@ -73,4 +73,348 @@
 
   </Define> 
 
+  <Transaction code="484501" desc="终端签到认证1">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484501"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=签到失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484502" desc="终端签到认证2">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484502"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=签到失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484503" desc="共用交易查询P_TRAN_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484503"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=共用交易查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484504" desc="CPU圈存查询通讯接口P_CPU_LOAD_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484504"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=CPU圈存查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+//TODO
+  <Transaction code="484505" desc="CPU圈存通讯接口P_CPU_LOAD">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484505"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=CPU圈存失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+//TODO
+  <Transaction code="484506" desc="CPU圈存提交通讯接口P_CPU_LOAD_SUBMIT">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484506"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=CPU圈存提交失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484511" desc="M1圈存查询通讯接口P_M1_LOAD_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484511"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1圈存查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484512" desc="M1圈存通讯接口P_M1_LOAD">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484512"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1圈存查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484513" desc="M1冲正通讯接口P_M1_ROLLBACK">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484513"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1冲正失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484510" desc="CPU卡同步">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484510"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=CPU卡同步失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484516" desc="终端监控P_MONITOR">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484516"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=终端监控失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484517" desc="监控配置P_SET_MONITOR">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484517"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=监控配置失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484518" desc="转移卡查询P_TRANSFOR_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484518"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=转移卡查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484519" desc="转移确认查询P_TRANSFOR_COMFIRM_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484519"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=转移确认查询失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484520" desc="转移消费P_TRANSFOR_PURCHASE">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484520"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=转移消费失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484521" desc="转出消费P_TRANSFOR_PURCHASE_SUBMIT">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484521"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=转出消费失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484522" desc="卡片激活">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484522"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=卡片激活失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484523" desc="捕获黑名单P_SET_BLACKLIST">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484523"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=捕获黑名单失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484524" desc="黑名单提交P_BLACKLIST_SUBMIT">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484524"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=黑名单提交失败!</Set>
+        <Return/>
+      </If>
+
+    </FlowCtrl>
+  </Transaction>
+
 </Application>

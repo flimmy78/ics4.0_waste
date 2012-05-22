@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Application name="YCT">
-  <MemPool init_size="1000" max_size="5000"/>
   <!--Include file="etc/XXXXXX.XML"/-->
   <!--CodeSwitching>
     <Table name="SrcToTarget" file="etc/XXXXXX.XML">
@@ -8,5 +7,32 @@
      <Column name="TarCod" sort="no"/>
     </Table>
   </CodeSwitching-->
+
+  <Transaction code="484501" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤1" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="136"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="136"/>   <!-- ·µ»Ø±¨ÎÄ -->
+    </Response>
+  </Transaction>
+
+  <Transaction code="484502" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤2" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="136"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="9"/>   <!-- ·µ»Ø±¨ÎÄ -->
+    </Response>
+  </Transaction>
+
+  <Transaction code="484503" desc="¹²ÓÃ½»Ò×²éÑ¯P_TRAN_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="112"/>   <!-- ·µ»Ø±¨ÎÄ -->
+    </Response>
+  </Transaction>
 
 </Application>
