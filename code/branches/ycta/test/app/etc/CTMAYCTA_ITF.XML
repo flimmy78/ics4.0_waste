@@ -1,12 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Application name="YCT"  pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term" server="OFTAYCTA">
-  <!--CodeSwitching>
-    <Table name="SrcToTarget" file="etc/XXXXXX.XML">
-     <Column name="SrcCod" sort="no"/>
-     <Column name="TarCod" sort="no"/>
+  <CodeSwitching>
+    <Table name="GZ_AppNm"  file="etc/YCT_CSW_441999.XML">
+      <Column name="AppNm"   sort="no"/>
+      <Column name="CAgtNo"  sort="no"/>
     </Table>
-  </CodeSwitching-->
-
+  </CodeSwitching>
   <Transaction service="484501"  code="484501" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤1" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
@@ -164,6 +163,9 @@
       <Item name="PkiCrd"   length="4"  />             <!-- PKI¹ÜÀí¿¨ºÅ  -->
       <Item name="PhyCrd"   length="8"  />             <!-- ÎïÀí¿¨ºÅ     -->
       <Item name="LgcCrd"   length="8"  />             <!-- Âß¼­¿¨ºÅ     -->
+      <AddItem name="VchTyp"  value="007"/>            <!-- ÒøÐÐ¿¨       -->
+      <AddItem name="AppNm"  value="GZ_LOTT"/>         <!-- µ¥Î»ÀàÐÍ     -->
+      <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- µ¥Î»ÀàÐÍ×ª»»µ¥Î»Ð­ÒéºÅ -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>

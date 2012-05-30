@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
-<Application name="EFEA" code="445">
+<Application name="YCTA" code="445">
   <!--µçÁ¦µç·ÑÒµÎñ±¾µØÖ÷¿Ø-->
-  <!--ConfigDeclare>
-    <Config name="BatFormat"   value="etc/EFEA_FMT_441999.XML"/>
-    <Config name="ParaFile"    value="etc/CFG_EFEA_441999.XML"/>
-    <Config name="OPFCSW"      value="etc/EFEA_CSW2.XML"/>
-  </ConfigDeclare-->
+  <ConfigDeclare>
+    <!--Config name="BatFormat"   value="etc/YCTA_FMT_441999.XML"/-->
+    <Config name="ParaFile"    value="etc/CFG_YCTA_441999.XML"/>
+    <Config name="OPFCSW"      value="etc/CSW_YCTA_441999.XML"/>
+  </ConfigDeclare>
   <!--BusDefDeclare>
   	<Busdef name="BrNo"      value="441999"/>
     <Busdef name="AplCls"    value="202"/>
@@ -16,9 +16,6 @@
   <TableDeclare>
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--ÒµÎñÁ÷Ë®±í-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--ÅúÁ¿À©Õ¹±í-->
-    <!--Table name="efeaclrtbl"   value="efeaclrtbl"/-->  <!--¹ãÖÝµçÁ¦ÇåËãÈÕÆÚ±í-->
-    <!--Table name="efeaclrlog"   value="efeaclrlog"/-->  <!--¹ãÖÝµçÁ¦ÇåËã²ÎÊýÐÞ¸Ä¼ÇÂ¼±í-->
-    <!--Table name="efeaclrdtl"   value="efeaclrdtl"/-->  <!--¹ãÖÝµçÁ¦ÇåËãÃ÷Ï¸±í±í-->
   </TableDeclare>
   <GlobalFunction>
     <Include file="etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
@@ -44,8 +41,8 @@
     <!--end by xuan_20101108-->
   </GlobalFunction>
   <Define>
-    <!--¼ì²é½»Ò×À´Ô´-->
-    <!--Macro name="Chk_TxnSrc">
+    <!--¼ì²é½»Ò×À´Ô´,²¢Ôö¼Ó½»Ò×ÊÜÀíÇþµÀ(471140½Ó¿Ú)×Ö¶Î-->
+    <Macro name="Chk_TxnSrc">
       <If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
         <Set>TxnCnl=TRM</Set>
         <Set>CnlTyp=0</Set>
@@ -61,6 +58,7 @@
       </Else>
     </Macro>
 
+    <!-- Í¨¹ý½»Ò×À´Ô´,Ôö¼Ó½»Ò×ÇþµÀ×Ö¶Î,ÓÃÓÚ½»Ò×Á÷Ë®±í×Ö¶Î -->
     <Macro name="TxnSrc_TxnCnl">
       <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
       <Exec func="PUB:CodeSwitching">
@@ -69,7 +67,7 @@
         <Arg name="DestNam" value="TxnCnl"/>
         <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
       </Exec>
-    </Macro-->
+    </Macro>
 
   </Define> 
 
@@ -145,21 +143,167 @@
     </FlowCtrl>
   </Transaction>
 
-//TODO
   <Transaction code="484505" desc="CPUÈ¦´æÍ¨Ñ¶½Ó¿ÚP_CPU_LOAD">
+    <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="QryCrpAgr">             <!--²éÑ¯µ¥Î»ÐÅÏ¢ -->
+      <Sentence>
+        SELECT TActNo, BBusTyp FROM savcrpagr WHERE BrNo='%s' AND CAgtNo='%s' AND SvrSts='1'
+      </Sentence>
+      <Fields>BrNo|CAgtNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
+
+      <!--¸ù¾Ý¹ñÔ±ºÅÈ¡BrNo-->
+      <Exec func="PUB:GetBranchNoByTeller"/>
+
+      <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
       <Exec func="PUB:InitTransaction"/>
-      
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484505"/>
-        <Arg name="ObjSvr" value="STDAYCTA"/>
+      <!--È¡Ç°ÖÃÁ÷Ë®ºÅ-->
+      <Exec func="PUB:GetLogNo"/>
+      <!--Ä¬ÈÏ½»Ò×·µ»Ø³É¹¦-->
+      <Set>RspCod=000000</Set>
+
+      <!--¶ÁÈ¡Ð­ÒéÊý¾Ý-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryCrpAgr"/>
       </Exec>
-      <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=CPUÈ¦´æÊ§°Ü!</Set>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=460199</Set>
+        <Set>RspMsg=ÎÞ¸Ãµ¥Î»Ð­Òé»òÊý¾Ý¿â´í</Set>
         <Return/>
       </If>
+
+     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--¶ÔË½-->
+        <Set>HTxnCd=471140</Set>  <!-- Ö÷»ú½»Ò×Âë -->
+        <Set>BusTyp=YCTA1</Set>   <!-- ÒµÎñÀàÐÍ   -->
+        <Quote name="Chk_TxnSrc"/><!-- CnlTyp:½»Ò×ÊÜÀíÇþµÀ-->
+        <Set>ActFlg=4</Set>       <!--¿Û¿îÀ´Ô´ 0£­ÏÖ½ð£¬1£­Ò»±¾Í¨£¬2£­ÆÕÍ¨´æÕÛ£¬4£­¿¨£¬5£­Ö§Æ±-->
+        <Set>Mask=9102</Set>      <!--ÕªÒªÂë£º9102´ú¿Ûµç·Ñ--><!--TODO YCT maskÊÇÊ²Ã´-->
+        <Set>VchCod=00000000</Set>
+        <!--²âÊÔÊ±ÏÈÃÜÂëÑéÖ¤²ÅÓÃ0-->
+        <Set>PayMod=0</Set>       <!--Ö§È¡·½Ê½ 1 Æ¾ÃÜÖ§È¡ 0 ²»ÑéÃÜ-->
+        <Set>VchChk=0</Set>
+        <Set>Fee=000000000000000</Set>
+        <!--ÔÚÇ°±ß¶ÔË½Æ¾Ö¤ÄÚÌí¼Ó<Set>PayMod=0</Set>Ö§È¡·½Ê½ 1 Æ¾ÃÜÖ§È¡ 0 ²»ÑéÃÜ-->
+     </If>
+     <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--¶Ô¹«-->
+        <!-- ¶Ô¹«ÔÝÊ±²»×ö -->
+        <Set>HTxnCd=451240</Set>
+        <Set>ActNod=SUBSTR($TActNo,1,6)</Set>
+        <Set>ActSqn=SUBSTR($TActNo,14,5)</Set>
+        <Delete>TActNo</Delete>
+        <Set>BusTyp=CRP51</Set>
+        <Set>BusSub=01</Set>                   <!--Ó¦ÓÃ×ÓÂë£¬¶ÔÓ¦ÒµÎñÀàÐÍCRP51-->
+        <Set>Smr=</Set>  <!--ÕªÒª-->
+     </ElseIf>
+     <Else>
+        <Return/>
+     </Else>
+
+      <Quote name="TxnSrc_TxnCnl"/>
+
+      <!-- ReadModuleCfg»áÖ±½ÓÔÚConfigDeclare¶¨ÒåµÄParaFileÎÄ¼þÀïÃæÆ¥Åä¶ÔÓ¦µÄÏî -->
+      <Exec func="PUB:ReadModuleCfg">
+        <Arg name="Application" value="GZ_YCTA"/><!--¿ÉÒÔÊ¹ÓÃµ¥Î»±àºÅ-->
+        <Arg name="Transaction" value="484505"/><!--¿ÉÒÔÓÃ½»Ò×Âë»òÕßÄ£¿éÃû-->
+      </Exec>
+
+      <!-- µÚÈý·½±¨ÎÄ×Ö¶ÎÌí¼Ó -->
+      <!-- ÎÞ -->
+      
+      <!--·¢ËÍÖ÷»ú¼ÇÕËºÍµÚÈý·½-->
+      <Call package="AFE" function="AFE_SglBkPay"/>
+      <If condition="$RspCod=000000">
+        <Set>MsgTyp=N</Set>
+      </If>
+      <!--Ö÷»ú¼ÇÕË´íÎó-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,X),IS_EQUAL_STRING($TxnSts,X))">
+        <Set>MsgTyp=E</Set>
+      </ElseIf>
+      <!--Ö÷»ú¼ÇÕË³¬Ê±-->
+      <ElseIf condition="IS_EQUAL_STRING($HTxnSt,T)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=YCT999</Set>
+        <Exec func="PUB:PutResponse"/><!--·µ»Ø²éÑ¯½á¹ûÐÅÏ¢-->
+        <Goto>CRCHOST</Goto>
+        <Return/>
+      </ElseIf>
+      <!--Ö÷»ú¼ÇÕËÊ§°Ü-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
+        <If condition="IS_NOEQUAL_STRING($MsgTyp,A)">
+          <Set>MsgTyp=E</Set>
+        </If>
+        <Return/>
+      </ElseIf>
+      <!--µÚÈý·½·¢ËÍ´íÎó-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($TTxnSt,X),IS_EQUAL_STRING($TxnSts,X))">
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </ElseIf>
+      <!--µÚÈý·½·¢ËÍ»ò·µ»Ø³¬Ê±-->
+      <ElseIf condition="IS_EQUAL_STRING($TTxnSt,T)">
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </ElseIf>
+      <!--µÚÈý·½·µ»ØÊ§°Ü-->
+      <Else condition="AND(IS_EQUAL_STRING($TTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=YCT999</Set>
+        <Goto>CRCHOST</Goto>
+        <Return/>
+      </Else>
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			<Set>RspMsg=½»Ò×³É¹¦!</Set>
+      <Return/>
+
+      <Label>CRCHOST</Label> <!--Ö»ÉÏÖ÷»ú³åÕý-->
+         <Set>OLogNo=$LogNo</Set>
+         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--¶ÔË½-->
+           <Set>HTxnCd=471149</Set>
+         </If>
+         <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--¶Ô¹«-->
+           <!--
+           <Set>HTxnCd=451619</Set>
+           -->
+           <Set>HTxnCd=451249</Set>
+         </ElseIf>
+         <Else>             <!--µÚÈý·½-->
+           <Return/>
+         </Else>
+
+
+         <Set>OHLogNo=$HLogNo</Set>
+         <Set>OTckNo=$TckNo</Set>
+         <Set>OTTxnCd=484505</Set>
+         
+         <Set>TTxnCd=$TxnCod</Set>
+         <Set>OTxnSts=$TxnSts</Set>
+         <Set>OHTxnSt=$HTxnSt</Set>
+         <Set>HLogNo= </Set>
+         <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
+      
+         <Set>TIATyp=C</Set>
+         <Exec func="PUB:BeginWork"/>    <!--Æô¶¯ÍêÕûÐÔ¿ØÖÆ-->
+         <Exec func="PUB:CallHostAcc" error="IGNORE"><!--ÉÏËÍÖ÷»ú½øÐÐ³åÕý½»Ò×-->
+           <Arg name="HTxnCd" value="959999"/>
+           <Arg name="ObjSvr" value="SHSTPUB1"/>
+         </Exec>
+
+        <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--ÉÏÖ÷»ú³åÕý³É¹¦-->
+          <Set>HTxnSt=C</Set>
+          <Set>TxnSts=C</Set>
+          <Exec func="PUB:ExecSql">
+            <Arg name="SqlCmd" value="Upd_TxnSt"/>
+          </Exec>
+          <Return/>
+        </If>
+        <Else>    <!--²»³É¹¦µÇ¼Ç×Ô¶¯³åÕý-->
+          <Exec func="PUB:DefaultErrorProc"/>
+        </Else>
+
 
     </FlowCtrl>
   </Transaction>
@@ -200,7 +344,7 @@
 
     </FlowCtrl>
   </Transaction>
-
+//TODO
   <Transaction code="484512" desc="M1È¦´æÍ¨Ñ¶½Ó¿ÚP_M1_LOAD">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
@@ -218,7 +362,7 @@
 
     </FlowCtrl>
   </Transaction>
-
+//TODO
   <Transaction code="484513" desc="M1³åÕýÍ¨Ñ¶½Ó¿ÚP_M1_ROLLBACK">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
