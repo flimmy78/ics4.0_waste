@@ -2779,9 +2779,9 @@
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
-         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' 
+         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|</Fields>
+      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>    
 
     <FlowCtrl>
@@ -3239,9 +3239,9 @@
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
-         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' 
+         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|</Fields>
+      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>          
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
