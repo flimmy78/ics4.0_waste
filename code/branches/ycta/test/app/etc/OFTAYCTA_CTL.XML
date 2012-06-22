@@ -77,7 +77,7 @@
       
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484501"/>
-        <Arg name="ObjSvr" value="STDAYCTA"/>
+        <Arg name="ObjSvr" value="STHDYCT1"/>
       </Exec>
       <If condition="$RspCod!=000000">
         <Set>RspCod=YCT999</Set>
@@ -97,7 +97,7 @@
       
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484502"/>
-        <Arg name="ObjSvr" value="STDAYCTA"/>
+        <Arg name="ObjSvr" value="STHDYCT1"/>
       </Exec>
       <If condition="$RspCod!=000000">
         <Set>RspCod=YCT999</Set>
@@ -125,6 +125,8 @@
         <Set>RspMsg=共用交易查询失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -143,6 +145,8 @@
         <Set>RspMsg=CPU圈存查询失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -334,6 +338,8 @@
         <Set>RspMsg=CPU圈存提交失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -352,6 +358,8 @@
         <Set>RspMsg=M1圈存查询失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -622,6 +630,8 @@
         <Set>RspMsg=CPU卡同步失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -640,6 +650,8 @@
         <Set>RspMsg=终端监控失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -658,6 +670,8 @@
         <Set>RspMsg=监控配置失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -676,6 +690,8 @@
         <Set>RspMsg=转移卡查询失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -694,6 +710,8 @@
         <Set>RspMsg=转移确认查询失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -712,6 +730,8 @@
         <Set>RspMsg=转移消费失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -730,6 +750,8 @@
         <Set>RspMsg=转出消费失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -748,6 +770,8 @@
         <Set>RspMsg=卡片激活失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -766,6 +790,8 @@
         <Set>RspMsg=捕获黑名单失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -784,6 +810,8 @@
         <Set>RspMsg=黑名单提交失败!</Set>
         <Return/>
       </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
@@ -1036,6 +1064,46 @@
 			<Set>MsgTyp=N</Set>
 			<Set>RspCod=000000</Set>
 			<Set>RspMsg=交易成功!</Set>         
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484527" desc="充值金账户查询P_ACCT_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484527"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=共用交易查询失败!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484528" desc="充值金账户设置P_ACCT_SET">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484528"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=共用交易查询失败!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
     </FlowCtrl>
   </Transaction>
 

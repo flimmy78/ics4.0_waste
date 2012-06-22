@@ -8,32 +8,13 @@
     </Table>
   </CodeSwitching-->
 
-  <Transaction code="484501" desc="终端签到认证1" log_switch="5">
-    <Request>
-      <Item name="ReqDat"   length="136" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" length="136" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-      <AddItem name="TRspCd" length="2" value="00"/>         
-    </Response>
-  </Transaction>
-
-  <Transaction code="484502" desc="终端签到认证2" log_switch="5">
-    <Request>
-      <Item name="ReqDat"   length="136" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" length="9" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-      <AddItem name="TRspCd" length="2" value="00"/>         
-    </Response>
-  </Transaction>
-
   <Transaction code="484503" desc="共用交易查询P_TRAN_QRY" log_switch="5">
     <Request>
       <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -178,6 +159,26 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+    </Response>
+  </Transaction>
+
+  <Transaction code="484527" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484527" desc="充值金账户设置P_ACCT_SET" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="208" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="400" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 

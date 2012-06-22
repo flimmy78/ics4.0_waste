@@ -834,4 +834,76 @@
     </Response>
   </Transaction>
 
+  <Transaction service="484527"  code="484527" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="160"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="160"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484528"  code="484528" desc="充值金账户设置P_ACCT_SET" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="416"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="800"/>   <!-- 返回报文 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
 </Application>
