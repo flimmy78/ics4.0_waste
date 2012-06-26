@@ -9,7 +9,9 @@
   <Transaction service="484501"  code="484501" desc="终端签到认证1" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ReqDat"   length="272"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="272"/>           <!-- 请求报文      -->
+      <!--Item name="ScktID"   length="7"/-->             <!-- 请求socket id -->
+      <AddItem name="Loglvl"  value="1"/>            <!-- 请求阶段      -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -45,7 +47,9 @@
   <Transaction service="484502"  code="484502" desc="终端签到认证2" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ReqDat"   length="272"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="272"/>           <!-- 请求报文      -->
+      <!--Item name="ScktID"   length="7"/-->             <!-- 请求socket id -->
+      <AddItem name="Loglvl"  value="2"/>            <!-- 请求阶段      -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -239,7 +243,7 @@
   <Transaction service="484511"  code="484511" desc="M1圈存查询通讯接口P_M1_LOAD_QRY" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ReqDat"   length="288"/>             <!-- 请求报文     -->
+      <Item name="ReqDat"   length="320"/>             <!-- 请求报文     -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -293,7 +297,7 @@
           <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspDat" length="340"/>   <!-- 返回报文   -->
+            <Item name="RspDat" length="416"/>   <!-- 返回报文   -->
             <Item name="LogNo"  length="12" />   <!-- 银行流水号 -->
             <Item name="ActDat" length="8"  />   <!-- 会计日期 -->
           </PackItem>
@@ -333,7 +337,7 @@
           <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspDat" length="160"/>   <!-- 返回报文   -->
+            <Item name="RspDat" length="192"/>   <!-- 返回报文   -->
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -834,7 +838,7 @@
     </Response>
   </Transaction>
 
-  <Transaction service="484527"  code="484527" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
+  <Transaction service="484528"  code="484528" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="ReqDat"   length="160"/>             <!-- 请求报文 -->
@@ -870,7 +874,7 @@
     </Response>
   </Transaction>
 
-  <Transaction service="484528"  code="484528" desc="充值金账户设置P_ACCT_SET" log_switch="5">
+  <Transaction service="484529"  code="484529" desc="充值金账户设置P_ACCT_SET" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="ReqDat"   length="416"/>             <!-- 请求报文 -->

@@ -24,6 +24,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="192" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -33,6 +34,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="224" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -42,15 +44,17 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
   <Transaction code="484511" desc="M1圈存查询通讯接口P_M1_LOAD_QRY" log_switch="5">
     <Request>
-      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="160" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -59,7 +63,8 @@
       <Item name="ReqDat"   length="160" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="170" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -68,7 +73,8 @@
       <Item name="ReqDat"   length="176" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="96" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -78,6 +84,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -87,6 +94,7 @@
     </Request>
     <Response necessary="no">
       <!--Item name="RspDat" length="112"/-->   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -96,6 +104,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="230" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -105,6 +114,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -114,6 +124,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -123,6 +134,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -132,6 +144,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="160" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 <!--TODO 使用了deli_asc=-1,需要验证是不是能够将所有字节都发送出去-->
@@ -140,7 +153,8 @@
       <Item name="ReqDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat"  deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -150,6 +164,7 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
@@ -159,20 +174,21 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-    </Response>
-  </Transaction>
-
-  <Transaction code="484527" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
-    <Request>
-      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
-  <Transaction code="484527" desc="充值金账户设置P_ACCT_SET" log_switch="5">
+  <Transaction code="484528" desc="充值金账户查询P_ACCT_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484529" desc="充值金账户设置P_ACCT_SET" log_switch="5">
     <Request>
       <Item name="ReqDat"   length="208" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>

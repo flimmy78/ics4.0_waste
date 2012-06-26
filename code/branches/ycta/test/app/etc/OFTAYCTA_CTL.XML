@@ -74,7 +74,12 @@
   <Transaction code="484501" desc="终端签到认证1">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+      <!--由于第一次发送一定会失败,所以先发送一个空链接过去-->
+      <!--Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484501"/>
+        <Arg name="ObjSvr" value="STHDYCT1"/>
+      </Exec-->
+
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484501"/>
         <Arg name="ObjSvr" value="STHDYCT1"/>
@@ -1067,12 +1072,12 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="484527" desc="充值金账户查询P_ACCT_QRY">
+  <Transaction code="484528" desc="充值金账户查询P_ACCT_QRY">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484527"/>
+        <Arg name="HTxnCd" value="484528"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
       </Exec>
       <If condition="$RspCod!=000000">
@@ -1087,12 +1092,12 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="484528" desc="充值金账户设置P_ACCT_SET">
+  <Transaction code="484529" desc="充值金账户设置P_ACCT_SET">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484528"/>
+        <Arg name="HTxnCd" value="484529"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
       </Exec>
       <If condition="$RspCod!=000000">
