@@ -20,10 +20,10 @@
 
   <Transaction code="484504" desc="CPU圈存查询通讯接口P_CPU_LOAD_QRY" log_switch="5">
     <Request>
-      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="192" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="185" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
@@ -44,6 +44,16 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484510" desc="CPU卡同步P_M1_TO_CPU" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="288" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
@@ -78,12 +88,23 @@
     </Response>
   </Transaction>
 
-  <Transaction code="484510" desc="CPU卡同步" log_switch="5">
+  <Transaction code="484522" desc="扩展应用查询" log_switch="5">
     <Request>
-      <Item name="ReqDat"   length="288" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="64" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484534" desc="扩展应用操作" log_switch="5">
+    <Request>
+      <AddItem name="ReqDa2" expression="DELBOTHSPACE($ReqDat)"/>            <!-- 请求报文(定长) -->
+      <Item name="ReqDa2" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文(变长) -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
@@ -103,14 +124,14 @@
       <Item name="ReqDat"   length="87" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="230" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="180" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
 
   <Transaction code="484518" desc="转移卡查询P_TRANSFOR_QRY" log_switch="5">
     <Request>
-      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
@@ -120,40 +141,10 @@
 
   <Transaction code="484519" desc="转移确认查询P_TRANSFOR_COMFIRM_QRY" log_switch="5">
     <Request>
-      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+      <Item name="ReqDat"   length="176" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-      <AddItem name="TRspCd" length="2" value="00"/>
-    </Response>
-  </Transaction>
-
-  <Transaction code="484520" desc="转移消费P_TRANSFOR_PURCHASE" log_switch="5">
-    <Request>
-      <Item name="ReqDat"   length="224" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-      <AddItem name="TRspCd" length="2" value="00"/>
-    </Response>
-  </Transaction>
-
-  <Transaction code="484521" desc="转出消费P_TRANSFOR_PURCHASE_SUBMIT" log_switch="5">
-    <Request>
-      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" length="160" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-      <AddItem name="TRspCd" length="2" value="00"/>
-    </Response>
-  </Transaction>
-<!--TODO 使用了deli_asc=-1,需要验证是不是能够将所有字节都发送出去-->
-  <Transaction code="484522" desc="卡片激活" log_switch="5">
-    <Request>
-      <Item name="ReqDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-    </Request>
-    <Response necessary="no">
-      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
