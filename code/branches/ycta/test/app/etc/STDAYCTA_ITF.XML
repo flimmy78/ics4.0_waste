@@ -23,7 +23,7 @@
       <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>
     <Response necessary="no">
-      <Item name="RspDat" length="185" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <Item name="RspDat" length="192" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
@@ -84,6 +84,36 @@
     </Request>
     <Response necessary="no">
       <Item name="RspDat" length="96" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484535" desc="扣费查询P_PURCHASE_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484536" desc="扣费P_PURCHASE" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="124" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484537" desc="扣费提交P_PURCHASE_SUBMIT" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="160" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>

@@ -349,7 +349,7 @@
       <Exec func="PUB:InitTransaction"/>
       
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484530"/>
+        <Arg name="HTxnCd" value="484505"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
       </Exec>
       <If condition="$RspCod!=000000">
@@ -369,7 +369,7 @@
       <Exec func="PUB:InitTransaction"/>
       
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484531"/>
+        <Arg name="HTxnCd" value="484506"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
       </Exec>
       <If condition="$RspCod!=000000">
@@ -712,6 +712,66 @@
       
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484513"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1»¶¥Ê≤È—Ø ß∞‹!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484535" desc="ø€∑—≤È—ØP_PURCHASE_QRY">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484535"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1»¶¥Ê≤È—Ø ß∞‹!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484536" desc="ø€∑—P_PURCHASE">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484536"/>
+        <Arg name="ObjSvr" value="STDAYCTA"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=M1»¶¥Ê≤È—Ø ß∞‹!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484537" desc="ø€∑—Ã·ΩªP_PURCHASE_SUBMIT">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484537"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
       </Exec>
       <If condition="$RspCod!=000000">
