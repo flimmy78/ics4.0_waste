@@ -180,6 +180,7 @@
             <Item name="OFmtCd" length="3" value="D04" />
             <Item name="RspDat" length="448"/>   <!-- 返回报文   -->
             <Item name="LogNo"  length="14" />   <!-- 银行流水号 -->
+            <Item name="ActDat" length="8"  />   <!-- 会计日期 -->
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -439,6 +440,8 @@
       <Item name="LogNo"    length="14" />             <!-- 银行流水号   -->
       <Item name="ActDat"   length="8"  />             <!-- 会计日期     -->
       <AddItem name="VchTyp"  value="007"/>            <!-- 银行卡       -->
+      <AddItem name="AppNm"  value="GZ_YCT"/>          <!-- 单位类型     -->
+      <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>

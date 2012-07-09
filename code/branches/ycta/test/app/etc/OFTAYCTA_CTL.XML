@@ -611,9 +611,9 @@
     <DynSentence name="Upd_TxnSt"><!--修改交易状态-->
       <Sentence>
         UPDATE afetxnjnl set HTxnSt='%s', TxnSts='%s', TTxnSt='%s'
-        WHERE CAgtNo='%s' and TLogNo='%s'
+        WHERE CAgtNo='%s' and LogNo='%s' and ActDat='%s'
       </Sentence>
-      <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|OTLogNo|</Fields>
+      <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|LogNo|ActDat|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
@@ -652,6 +652,7 @@
      <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
        <Set>HTxnSt=C</Set>
        <Set>TxnSts=C</Set>
+       <Set>TTxnSt=C</Set>
        <Exec func="PUB:ExecSql">
          <Arg name="SqlCmd" value="Upd_TxnSt"/>
        </Exec>
