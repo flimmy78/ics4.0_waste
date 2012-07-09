@@ -607,7 +607,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="484513" desc="M1冲正通讯接口P_M1_ROLLBACK(普通充值)">
+  <Transaction code="484513" desc="银行端冲正通讯接口">
     <DynSentence name="Upd_TxnSt"><!--修改交易状态-->
       <Sentence>
         UPDATE afetxnjnl set HTxnSt='%s', TxnSts='%s', TTxnSt='%s'
@@ -618,70 +618,48 @@
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484513"/>
-        <Arg name="ObjSvr" value="STDAYCTA"/>
-      </Exec>
-      <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=M1冲正失败!</Set>
-        <Return/>
+      <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
+        <Set>HTxnCd=471149</Set>
       </If>
-
-      <!--判断羊城通冲正是否成功-->
-      <Set>TRspCd=SUBSTR($RspDat,25,4)</Set>
-      <Set>RolSuc=STRCMP(HEX2STR($TRspCd),00000000)</Set><!--非00000000表示异常-->
-      <If condition="$RolSuc!=0">
-        <Set>RspCod=YCT999</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=M1冲正失败!</Set>
+      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--对公-->
+        <!--
+        <Set>HTxnCd=451619</Set>
+        -->
+        <Set>HTxnCd=451249</Set>
+      </ElseIf>
+      <Else>             <!--第三方-->
         <Return/>
-      </If>
-      <Else>
-         <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
-           <Set>HTxnCd=471149</Set>
-         </If>
-         <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--对公-->
-           <!--
-           <Set>HTxnCd=451619</Set>
-           -->
-           <Set>HTxnCd=451249</Set>
-         </ElseIf>
-         <Else>             <!--第三方-->
-           <Return/>
-         </Else>
-
-         <!--设置959999请求字段-->
-         <Set>OHLogNo=$HLogNo</Set>
-         <Set>OTckNo=$TckNo</Set>
-         <Set>OTTxnCd=$TxnCod</Set>
-         <!--报文头字段-->
-         <Set>TTxnCd=484512</Set>
-         <!--Set>OTxnSts=$TxnSts</Set>
-         <Set>OHTxnSt=$HTxnSt</Set-->
-         <Set>HLogNo= </Set>
-         <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
-      
-         <Set>TIATyp=C</Set>
-         <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
-         <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机进行冲正交易-->
-           <Arg name="HTxnCd" value="959999"/>
-           <Arg name="ObjSvr" value="SHSTPUB1"/>
-         </Exec>
-
-        <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
-          <Set>HTxnSt=C</Set>
-          <Set>TxnSts=C</Set>
-          <Exec func="PUB:ExecSql">
-            <Arg name="SqlCmd" value="Upd_TxnSt"/>
-          </Exec>
-          <Return/>
-        </If>
-        <Else>    <!--不成功登记自动冲正-->
-          <Exec func="PUB:DefaultErrorProc"/>
-        </Else>
       </Else>
+ 
+      <!--设置959999请求字段-->
+      <Set>OHLogNo=$HLogNo</Set>
+      <Set>OTckNo=$TckNo</Set>
+      <Set>OTTxnCd=$TxnCod</Set>
+      <!--报文头字段-->
+      <Set>TTxnCd=484512</Set>
+      <!--Set>OTxnSts=$TxnSts</Set>
+      <Set>OHTxnSt=$HTxnSt</Set-->
+      <Set>HLogNo= </Set>
+      <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
+   
+      <Set>TIATyp=C</Set>
+      <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
+      <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机进行冲正交易-->
+        <Arg name="HTxnCd" value="959999"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+ 
+     <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
+       <Set>HTxnSt=C</Set>
+       <Set>TxnSts=C</Set>
+       <Exec func="PUB:ExecSql">
+         <Arg name="SqlCmd" value="Upd_TxnSt"/>
+       </Exec>
+       <Return/>
+     </If>
+     <Else>    <!--不成功登记自动冲正-->
+       <Exec func="PUB:DefaultErrorProc"/>
+     </Else>
 
     </FlowCtrl>
   </Transaction>
@@ -706,7 +684,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="484533" desc="M1冲正通讯接口P_M1_ROLLBACK(用户账户充值)">
+  <Transaction code="484533" desc="M1冲正通讯接口P_M1_ROLLBACK">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
