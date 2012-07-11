@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="YCT">
+  <!--Include file="etc/XXXXXX.XML"/-->
+  <!--CodeSwitching>
+    <Table name="SrcToTarget" file="etc/XXXXXX.XML">
+     <Column name="SrcCod" sort="no"/>
+     <Column name="TarCod" sort="no"/>
+    </Table>
+  </CodeSwitching-->
+
+  <Transaction code="484501" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤1" log_switch="5">
+    <Request>
+      <Item name="Loglvl"   length="1"/>                                                      <!-- ÇëÇó½×¶Î      -->
+      <Item name="ScktID"   length="7"/>                                                    <!-- ÇëÇósocket id -->
+      <Item name="ReqDat"   length="272"/>  <!-- ÇëÇó±¨ÎÄ      -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="272"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484502" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤2" log_switch="5">
+    <Request>
+      <Item name="Loglvl"   length="1"/>                                                      <!-- ÇëÇó½×¶Î      -->
+      <Item name="ScktID"   length="7"/>                                                    <!-- ÇëÇósocket id -->
+      <Item name="ReqDat"   length="272"/>  <!-- ÇëÇó±¨ÎÄ      -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="18"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+</Application>

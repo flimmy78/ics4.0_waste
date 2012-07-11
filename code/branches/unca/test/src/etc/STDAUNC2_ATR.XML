@@ -16,14 +16,15 @@
           <MaxBlocks>10</MaxBlocks>
        </ThreadMemoryManager>
     </ProcessMemoryManager>
-         <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrasyncl2_gzdl.so" initfunc="initChannel" donefunc="closeChannel">
-            <Para name="HostIp">_IP</Para>
-            <Para name="RequestPort">_RQ_PORT</Para>
-            <Para name="ResponsePort">_RS_PORT</Para>
-            <Para name="PreLen">0</Para>
+         <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrsync.so" initfunc="initChannel" donefunc="closeChannel">
+           <Para name="HostIp">_IP</Para>
+           <Para name="HostPort">_PORT</Para>
+           <Para name="ConnTyp">0</Para><!-- 0:短连接,1:长连接 -->
+           <Para name="MaxConn">10</Para>
+           <Para name="PreLen">0</Para>
          </DllPriDataCtrl>
          <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
-            <Para name="file1">etc/STDAYCTA_ITF.XML</Para>
+            <Para name="file1">etc/STDAYCT2_ITF.XML</Para>
          </DllPriDataCtrl>
          <QueuePair name="LeftQueuePair">
             <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
@@ -38,7 +39,7 @@
             </RequestProcessor>
          </QueuePair>
          <QueuePair name="RightQueuePair">
-            <RequestProcessor dllfile="dll/ecnsvrasyncl2_gzdl.so" dbapplication="NO">
+            <RequestProcessor dllfile="dll/ecnsvrsync.so" dbapplication="NO">
 				<Entry>
 					<MessageType>PLTOUT</MessageType>
 					<ProcessModule>clientSyncOut</ProcessModule>
