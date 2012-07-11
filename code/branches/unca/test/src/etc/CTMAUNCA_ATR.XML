@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Region>
-  <Server name="CTMAYCTA" type="CCA" ip="_LOCAL_IP">
+  <Server name="CTMAUNCA" type="CCA" ip="_LOCAL_IP">
     <ThreadPool>
       <MinWorkerThreads>20</MinWorkerThreads>
       <MaxWorkerThreads>20</MaxWorkerThreads>
@@ -22,7 +22,7 @@
       <Para name="PreLen">8</Para>
     </DllPriDataCtrl>
     <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
-      <Para name="file1">etc/CTMAYCTA_ITF.XML</Para>
+      <Para name="file1">etc/CTMAUNCA_ITF.XML</Para>
     </DllPriDataCtrl>
     <Connection type="LEFT">
       <Entrance name="TRMTransaction" type="TCP">
@@ -34,11 +34,11 @@
     </Connection>
     <QueuePair name="LeftQueuePair">
       <RequestProcessor dllfile="dll/ecnclisync.so" >
-        <Entry> 
-          <MessageType>UPDIPD</MessageType> 
+        <Entry>
+          <MessageType>UPDIPD</MessageType>
           <ProcessModule>reloadIpList</ProcessModule>
-        </Entry>  
-      </RequestProcessor> 
+        </Entry>
+      </RequestProcessor>
       <RequestProcessor dllfile="dll/dataparser.so">
         <Entry>
           <MessageType>SYSMNG</MessageType>
