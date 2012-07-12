@@ -2,14 +2,14 @@
 SVRLST.XML:注册所有服务器(一个ATR为一个服务器),可以用icsps命令看到
 DAFE_PKG.XML:公用的调用主机接口文件包
 ActJudge_IIT.XML:公用的函数包(如账号判断等)
-CTMAYCTA_ATR.XML:前端接入服务器配置文件，包括线程数，内存分配等
-CTMAYCTA_ITF.XML:前端接入(包括但不限于自助通、个人网银、手机银行)报文接口配置
-OFTAYCTA_ATR.XML:主控配置文件，包括线程数，内存分配等
-OFTAYCTA_CTL.XML:主控流程配置文件
-STDAYCTA_ATR.XML:外发服务器配置文件，包括线程数，内存分配等
-STDAYCTA_ITF.XML:外发服务器报文接口配置
-CFG_YCTA_441999.XML:主机接口与外发第三方配置文件
-CSW_YCTA_441999.XML:代码转换配置文件
+CTMAUNCA_ATR.XML:前端接入服务器配置文件，包括线程数，内存分配等
+CTMAUNCA_ITF.XML:前端接入(包括但不限于自助通、个人网银、手机银行)报文接口配置
+OFTAUNCA_ATR.XML:主控配置文件，包括线程数，内存分配等
+OFTAUNCA_CTL.XML:主控流程配置文件
+STDAUNCA_ATR.XML:外发服务器配置文件，包括线程数，内存分配等
+STDAUNCA_ITF.XML:外发服务器报文接口配置
+CFG_UNCA_441999.XML:主机接口与外发第三方配置文件
+CSW_UNCA_441999.XML:代码转换配置文件
 
 app文件夹下建立链接目录
 ln -s /app/ics/dat dat
@@ -18,19 +18,16 @@ ln -s /app/ics/tmp tmp
 ln -s /app/ics/trc trc
 
 通讯配置/app/ics/app/SYSCFG_441999.XML
-<!--广州羊城通充值【ycta】-->
-<!--广州羊城通充值【ycta】-->
-<!--广州羊城通充值【ycta】-->
-  <CTMAYCTA>
-    <_PORT desc="广州羊城通充值前端接入端口">36400</_PORT>
-  </CTMAYCTA>
-  <STDAYCTA>
+<!--广州羊城通充值【unca】-->
+<!--广州羊城通充值【unca】-->
+<!--广州羊城通充值【unca】-->
+  <CTMAUNCA>
+    <_PORT desc="广州羊城通充值前端接入端口">30300</_PORT>
+  </CTMAUNCA>
+TODO
+  <STDAUNCA>
     <_IP   desc="广州羊城通充值接出">10.240.13.201</_IP>
     <_PORT desc="广州羊城通充值接出端口">5003</_PORT>
-  </STDAYCTA>
+  </STDAUNCA>
 
 ICS自动触发程序配置
-
-
-修改清算日期
-db2 "update efeaclrtbl set ClrDat='20120421'"
