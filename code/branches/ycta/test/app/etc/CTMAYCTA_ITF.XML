@@ -313,42 +313,6 @@
     </Response>
   </Transaction>
 
-  <Transaction service="484510"  code="484510" desc="CPU卡同步P_M1_TO_CPU" log_switch="5">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ReqDat"   length="576"/>             <!-- 请求报文     -->
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspDat" length="416"/>   <!-- 返回报文   -->
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"/>
-            <Item name="OFmtCd" length="3" value="D04"/>
-            <Item name="RspCod" length="6"/>
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="56"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch>
-    </Response>
-  </Transaction>
-
   <Transaction service="484511"  code="484511" desc="M1圈存查询通讯接口P_M1_LOAD_QRY" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
@@ -434,45 +398,6 @@
     </Response>
   </Transaction>
 
-  <Transaction service="484513"  code="484513" desc="银行端冲正通讯接口" log_switch="5">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="LogNo"    length="14" />             <!-- 银行流水号   -->
-      <Item name="ActDat"   length="8"  />             <!-- 会计日期     -->
-      <AddItem name="VchTyp"  value="007"/>            <!-- 银行卡       -->
-      <AddItem name="AppNm"  value="GZ_YCT"/>          <!-- 单位类型     -->
-      <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"/>
-            <Item name="OFmtCd" length="3" value="D04"/>
-            <Item name="RspCod" length="6"/>
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="56"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch>
-    </Response>
-  </Transaction>
-
   <Transaction service="484532"  code="484532" desc="M1圈存通讯接口P_M1_LOAD(用户账户充值)" log_switch="5"  timeout="120">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
@@ -522,6 +447,81 @@
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
             <Item name="RspDat" length="192"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484510"  code="484510" desc="CPU卡同步P_M1_TO_CPU" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ReqDat"   length="576"/>             <!-- 请求报文     -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspDat" length="416"/>   <!-- 返回报文   -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="484513"  code="484513" desc="银行端冲正通讯接口" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="LogNo"    length="14" />             <!-- 银行流水号   -->
+      <Item name="ActDat"   length="8"  />             <!-- 会计日期     -->
+      <AddItem name="VchTyp"  value="007"/>            <!-- 银行卡       -->
+      <AddItem name="AppNm"  value="GZ_YCT"/>          <!-- 单位类型     -->
+      <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
