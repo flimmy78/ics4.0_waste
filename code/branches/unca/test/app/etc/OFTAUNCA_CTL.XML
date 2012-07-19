@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="UNC" code="206">
+  <!--µçÁ¦µç·ÑÒµÎñ±¾µØÖ÷¿Ø-->
+  <ConfigDeclare>
+    <!--Config name="BatFormat"   value="etc/UNCA_FMT_441999.XML"/-->
+    <Config name="ParaFile"    value="etc/CFG_UNCA_441999.XML"/>
+    <Config name="OPFCSW"      value="etc/CSW_UNCA_441999.XML"/>
+  </ConfigDeclare>
+  <BusDefDeclare>
+    <Busdef name="BrNo"      value="441999"/>
+    <Busdef name="AplCls"    value="445"/>
+  </BusDefDeclare>
+  <PackageDeclare>
+    <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
+  </PackageDeclare>
+  <TableDeclare>
+    <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--ÒµÎñÁ÷Ë®±í-->
+    <Table name="afebatrec"    value="afebatrec"/>  <!--ÅúÁ¿À©Õ¹±í-->
+  </TableDeclare>
+  <GlobalFunction>
+    <Include file="etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
+    <!--add by xuan_20101108-->
+    <Function name="_after">
+      <Process>
+        <If condition="ISNULL($MsgTyp)">
+          <If condition="ISNULL(DELBOTHSPACE($RspCod))"> <!--ÈôRspCodÎª¿Õ£¬ÔòÈÏÎª³É¹¦-->
+            <Set>MsgTyp=N</Set>
+            <Set>RspCod=000000</Set>
+          </If>
+          <Else>
+            <If condition="IS_NOEQUAL_STRING($RspCod,000000)"> <!--·µ»ØÂë²»Îª000000-->
+              <Set>MsgTyp=E</Set>
+            </If>
+            <Else>
+              <Set>MsgTyp=N</Set>
+            </Else>
+          </Else>
+        </If>
+      </Process>
+    </Function>
+  <!--end by xuan_20101108-->
+  </GlobalFunction>
+  <Define>
+    <!--¼ì²é½»Ò×À´Ô´,²¢Ôö¼Ó½»Ò×ÊÜÀíÇþµÀ(471140½Ó¿Ú)×Ö¶Î-->
+    <Macro name="Chk_TxnSrc">
+      <If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
+        <Set>TxnCnl=TRM</Set>
+        <Set>CnlTyp=0</Set>
+      </If>
+      <Else>
+        <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
+        <Exec func="PUB:CodeSwitching">
+          <Arg name="DatSrc"  value="OPFCSW"/>
+          <Arg name="SourNam" value="TxnSrc"/>
+          <Arg name="DestNam" value="CnlTyp"/>
+          <Arg name="TblNam"  value="TxnSrc2CnlTyp"/>
+        </Exec>
+      </Else>
+    </Macro>
+  
+    <!-- Í¨¹ý½»Ò×À´Ô´,Ôö¼Ó½»Ò×ÇþµÀ×Ö¶Î,ÓÃÓÚ½»Ò×Á÷Ë®±í×Ö¶Î -->
+    <Macro name="TxnSrc_TxnCnl">
+      <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
+      <Exec func="PUB:CodeSwitching">
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="TxnSrc"/>
+        <Arg name="DestNam" value="TxnCnl"/>
+        <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
+      </Exec>
+    </Macro>
+  
+  </Define>
+
+  <Transaction code="484502" desc="ÖÕ¶ËÇ©µ½ÈÏÖ¤2">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484502"/>
+        <Arg name="ObjSvr" value="STDAYCT2"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=Ç©µ½Ê§°Ü!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+
+</Application>
