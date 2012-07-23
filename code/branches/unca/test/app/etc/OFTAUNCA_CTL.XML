@@ -71,7 +71,104 @@
   
   </Define>
 
-  <Transaction code="484502" desc="终端签到认证2">
+  <Transaction code="460601" desc="终端签到认证2">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484502"/>
+        <Arg name="ObjSvr" value="STDAYCT2"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=签到失败!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="460601" desc="终端签到认证2">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484502"/>
+        <Arg name="ObjSvr" value="STDAYCT2"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=签到失败!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="460606" desc="通过卡号查询缴费会计流水号">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+		<DynSentence name="Cnt">  <!--笔数-->
+			<Sentence>
+        SELECT COUNT(*) FROM afetxnjnl
+        WHERE ActNo='%s' AND BrNo='%s' AND CAgtNo='%s'
+          AND HtxnSt in ('S','T')
+			</Sentence>
+			<Fields>CrdNo|BrNo|CAgtNo|</Fields>
+		</DynSentence>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+        SELECT ActDat, TxnAmt, TckNo FROM afetxnjnl
+        WHERE ActNo='%s' AND BrNo='%s' AND CAgtNo='%s'
+          AND HtxnSt in ('S','T')
+			</Sentence>
+			<Fields>CrdNo|BrNo|CAgtNo|</Fields>
+		</DynSentence>
+	  <FlowCtrl>
+      
+      <Exec func="PUB:GetBranchNoByTeller"/><!--根据柜员号取BrNo-->
+	    <Exec func="PUB:InitTransaction"/><!--交易初始化,预留-->
+	    
+	    <Exec func="PUB:ReadRecord">
+			 	<Arg name="SqlCmd" value="Cnt"/>
+			 </Exec>
+      
+      <Exec func="PUB:MultiQuery">
+         <Args>
+           <Arg name="SqlCmd"  value="MultiQuery"/>
+         </Args>
+       </Exec>
+		</FlowCtrl>
+  </Transaction>
+
+  <Transaction code="460601" desc="终端签到认证2">
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+      
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="484502"/>
+        <Arg name="ObjSvr" value="STDAYCT2"/>
+      </Exec>
+      <If condition="$RspCod!=000000">
+        <Set>RspCod=YCT999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=签到失败!</Set>
+        <Return/>
+      </If>
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="460601" desc="终端签到认证2">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       

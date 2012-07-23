@@ -8,15 +8,15 @@
   </Table>
 </CodeSwitching-->
 
-<Transaction code="484503" desc="共用交易查询P_TRAN_QRY" log_switch="5">
-  <Request>
-    <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
-  </Request>
-  <Response necessary="no">
-    <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
-    <AddItem name="TRspCd" length="2" value="00"/>
-  </Response>
-</Transaction>
+  <Transaction code="460601" desc="共用交易查询P_TRAN_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
 
 
 </Application>
