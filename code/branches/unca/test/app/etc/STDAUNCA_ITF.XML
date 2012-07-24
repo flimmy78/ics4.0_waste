@@ -8,6 +8,14 @@
   </Table>
 </CodeSwitching-->
 
+  <Define>
+    <Macro name="req_head">
+      <!--Item name="CrpCod"  length="10"/>
+      <Item name="AccFlg"  length="1"/-->
+    </Macro>
+  </Define>
+
+<!-- 发送联通流水号为(会计日期+会计流水号) -->
   <Transaction code="460601" desc="共用交易查询P_TRAN_QRY" log_switch="5">
     <Request>
       <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
