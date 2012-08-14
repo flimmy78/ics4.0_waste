@@ -276,7 +276,7 @@
       <Return/>
 
       <Label>CRCHOST</Label> <!--只上主机冲正-->
-         <Set>OLogNo=$TckNo</Set>
+         <Set>OLogNo=$LogNo</Set>
          <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
            <Set>HTxnCd=471149</Set>
          </If>
@@ -559,7 +559,7 @@
       <Return/>
 
       <Label>CRCHOST</Label> <!--只上主机冲正-->
-         <Set>OLogNo=$TckNo</Set>
+         <Set>OLogNo=$LogNo</Set>
          <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
            <Set>HTxnCd=471149</Set>
          </If>
@@ -615,8 +615,25 @@
       </Sentence>
       <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|TckNo|ActDat|</Fields>
     </DynSentence>
+    <DynSentence name="Qry_LogNo"><!--通过会计流水获取LogNo字段-->
+      <Sentence>
+        SELECT LogNo, HLogNo FROM afetxnjnl 
+        WHERE CAgtNo='%s' AND TckNo='%s' AND ActDat='%s'
+      </Sentence>
+      <Fields>CAgtNo|TckNo|ActDat|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:ReadRecord">    <!--获取LogNo字段 -->
+        <Arg name="SqlCmd" value="Qry_LogNo"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=YCT999</Set>
+        <Set>RspMsg=获取日志号失败</Set>
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </If>
       
       <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
         <Set>HTxnCd=471149</Set>
@@ -1216,4 +1233,4 @@
     </FlowCtrl>
   </Transaction>
 
-</Application>
+</Application
