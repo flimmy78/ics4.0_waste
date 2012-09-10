@@ -9,14 +9,70 @@
 </CodeSwitching-->
 
   <Define>
-    <Macro name="req_head">
-      <!--Item name="CrpCod"  length="10"/>
-      <Item name="AccFlg"  length="1"/-->
+    <Macro name="req_head"><!-- 请求报文头 -->
+      <AddItem name="RsFld1" expression="STRCAT(SUBSTR($ActDat,3,6),$LogNo)" /><!-- A2(我方)流水号:会计日期后6位+前置流水号14位 -->
+      <Item name="RsFld1"  length="20"/>
+      <Item name="AccFlg"  length="1" value=" "/><!-- A3(成功)标志,请求包为空格 -->
+      <Item name="TTxnCd"  length="6"/><!-- A4交易类型 -->
+      <Item name="TTxnTy"  length="2" value="00"/><!-- A5业务类型 -->
+      <Item name="TelNum"  length="20"/><!-- A6业务号码 -->
+      <Item name="TelTyp"  length="1"/><!-- A7业务号码类型 -->
+      <Item name="AgenID"  length="6"/><!-- A8代理商(指我行)接入(联通)系统ID -->
+      <Item name="AgenPW"  length="32"/><!-- A9(我行)接入密码 -->
+      <Item name="PdgNum"  length="5" value="00001"/><!-- A10包编号 -->
+      <Item name="PdgFlg"  length="1" value="1"/><!-- A11最后一包标志:1 最后一包数据,无后续包 -->
+      <Item name="ErrCod"  length="5" value="     "/><!-- A12错误码 -->
+    </Macro>
+<!--需要比对一下返回报文头是不是会将原有信息冲掉-->
+    <Macro name="rsp_head"><!-- 返回报文头 -->
+      <Item name="RsFld2"  length="20"/>
+      <Item name="AccFlg"  length="1"/><!-- A3(成功)标志,返回包:1成功,0失败 -->
+      <Item name="TTxnCd"  length="6"/><!-- A4交易类型 -->
+      <Item name="TTxnTy"  length="2"/><!-- A5业务类型 -->
+      <Item name="TelNum"  length="20"/><!-- A6业务号码 -->
+      <Item name="TelTyp"  length="1"/><!-- A7业务号码类型 -->
+      <Item name="AgenID"  length="6"/><!-- A8代理商(指我行)接入(联通)系统ID -->
+      <Item name="AgenPW"  length="32"/><!-- A9(我行)接入密码 -->
+      <Item name="PdgNum"  length="5"/><!-- A10包编号 -->
+      <Item name="PdgFlg"  length="1"/><!-- A11最后一包标志:1 最后一包数据,无后续包 -->
+      <Item name="ErrCod"  length="5"/><!-- A12错误码 -->
     </Macro>
   </Define>
 
-<!-- 发送联通流水号为(会计日期+会计流水号) -->
-  <Transaction code="460601" desc="共用交易查询P_TRAN_QRY" log_switch="5">
+
+<!--TODO-->
+  <Transaction code="460601" desc="被充值号码验证(010201)" log_switch="5">
+    <Request>
+      <Quote name="req_head"/>
+    </Request>
+    <Response necessary="no">
+      <Item name="AreCod" length="4"/><!-- 地区号 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+<!--TODO-->
+  <Transaction code="460602" desc="给被充值号码充值(010202)" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="460604" desc="缴费记录查询(010204)" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- 返回报文 -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="460605" desc="充值结果冲正(010205)" log_switch="5">
     <Request>
       <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- 请求报文 -->
     </Request>

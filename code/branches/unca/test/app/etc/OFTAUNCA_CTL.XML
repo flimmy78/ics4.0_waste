@@ -6,17 +6,21 @@
     <Config name="ParaFile"    value="etc/CFG_UNCA_441999.XML"/>
     <Config name="OPFCSW"      value="etc/CSW_UNCA_441999.XML"/>
   </ConfigDeclare>
-  <BusDefDeclare>
+
+  <!--BusDefDeclare>
     <Busdef name="BrNo"      value="441999"/>
     <Busdef name="AplCls"    value="445"/>
-  </BusDefDeclare>
+  </BusDefDeclare-->
+
   <PackageDeclare>
     <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
   </PackageDeclare>
+
   <TableDeclare>
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
   </TableDeclare>
+
   <GlobalFunction>
     <Include file="etc/ActJudge_IIT.XML"/>     <!--区别对公对私帐号-->
     <!--add by xuan_20101108-->
@@ -40,6 +44,7 @@
     </Function>
   <!--end by xuan_20101108-->
   </GlobalFunction>
+
   <Define>
     <!--检查交易来源,并增加交易受理渠道(471140接口)字段-->
     <Macro name="Chk_TxnSrc">
@@ -71,9 +76,12 @@
   
   </Define>
 
-  <Transaction code="460601" desc="终端签到认证2">
+<!--TODO-->
+  <Transaction code="460601" desc="被充值号码验证(010201)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
+
+
       
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484502"/>
@@ -91,26 +99,44 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460601" desc="终端签到认证2">
+<!--TODO-->
+  <Transaction code="460602" desc="给被充值号码充值(010202)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+      <Exec func="PUB:GetLogNo"/><!--获取流水号-->
+
+      <Set>TTxnCd=010201</Set><!-- 设置第三方交易码 -->
+      <Set>TelTyp=1</Set><!-- 设置业务号码类型 -->
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484502"/>
-        <Arg name="ObjSvr" value="STDAYCT2"/>
+        <Arg name="HTxnCd" value="460601"/>
+        <Arg name="ObjSvr" value="STDAUNCA"/>
       </Exec>
       <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
+        <Set>RspCod=UNC999</Set>
         <Set>MsgTyp=E</Set>
-        <Set>RspMsg=签到失败!</Set>
+        <Set>RspMsg=连接联通服务器失败!</Set>
         <Return/>
       </If>
+      <If condition="OR($AccFlg!=1,$ErrCod!=00000)">
+        <Exec func="PUB:CodeSwitching" error="IGNORE">
+          <Arg name="DatSrc" value="OPFCSW"></Arg>
+          <Arg name="SourNam" value="ErrCod"></Arg>
+          <Arg name="DestNam" value="ErrMsg"></Arg>
+          <Arg name="TblNam" value="ErrCod2ErrMsg"></Arg>
+        </Exec>
+        <Set>RspCod=UNC999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=$ErrMsg</Set>
+        <Return/>
+      </If>
+
       <Set>RspCod=000000</Set>
       <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
 
+<!--TODO-->
   <Transaction code="460606" desc="通过卡号查询缴费会计流水号">
 	  <Attributes>
       <Attribute name="nodatabase" value="2"/>
@@ -148,7 +174,8 @@
 		</FlowCtrl>
   </Transaction>
 
-  <Transaction code="460601" desc="终端签到认证2">
+<!--TODO-->
+  <Transaction code="460604" desc="缴费记录查询(010204)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
@@ -168,7 +195,8 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460601" desc="终端签到认证2">
+<!--TODO-->
+  <Transaction code="460605" desc="充值结果冲正(010205)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       
