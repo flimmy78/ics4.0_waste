@@ -87,7 +87,7 @@
   </Transaction>
 
   <!-- 银电代扣协议变更 -->
-  <Transaction service="460203"  code="460203" log_switch="5">
+  <Transaction service="460203"  code="460203" timeout="60" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="CHT"     length="1 " />              <!--变更方式 0-新增,3-修改,5-查询,9-注销  -->
