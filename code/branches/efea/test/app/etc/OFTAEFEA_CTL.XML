@@ -338,10 +338,10 @@
       </Switch>
 
       <If condition="INTCMP($ActTyp,3,1)"><!--¶Ô¹«-->
-        <Set>TlrId=EPCLBI1</Set>
-        <Set>NodNo=441800</Set>
-        <!--Exec func="PUB:CallThirdOther" error="IGNORE"-->
-        <Exec func="PUB:CallThirdOther">
+         <Exec func="PUB:GetVirtualTeller">
+            <Arg name="TxnCnl" value="EFE"/>
+         </Exec>
+        <Exec func="PUB:CallHostAcc" error="IGNORE">
           <Arg name="HTxnCd" value="109000"/>
           <Arg name="ObjSvr" value="SHSTPUB1"/>
         </Exec>
