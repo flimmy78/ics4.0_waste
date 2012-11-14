@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ½»Í¨ÒøÐÐ¹ã¶«Ê¡·ÖÐÐµçÐÅÖ±Áª½É·ÑÆ¾Ö¤ -->
+<Application dbconnect="YES" trclog="EFE02_RPT.log">
+  <VarDef>  
+		<String alias="CAgtNo_DL" name="$CAgtNo_DL"/>
+		<String alias="CAgtNo_YH" name="$CAgtNo_YH"/>
+		<String alias="CAgtNo_PL" name="$CAgtNo_PL"/>
+		<String alias="BgnDat"    name="$BgnDat"/>
+		<String alias="EndDAt"    name="$EndDAt"/>
+    <String alias="TckNo"     name="$TckNo"/>
+    <String alias="NodNo"     name="$NodNo"/>
+    <String alias="PrtId"     name="$PrtId"/>
+    <String alias="PrtDat"    name="$PrtDat"/>
+    <String alias="IActNo"    name="$IActNo"/>
+    <String alias="IActNm"    name="$IActNm"/>
+  </VarDef>
+  <MsgConvert>
+
+  </MsgConvert>
+  <DataSource object="sql">
+    <Iterative>
+			<Sql sql="SELECT TCusId,ActNo,TxnAmt,TCusNm,CcyCod,ActDat,TlrId,TckNo FROM afetxnjnl 
+				WHERE CAgtNo in ('%s','%s','%s') AND ActDat &gt;='%s' AND ActDat &lt;='%s' AND HTxnSt= 'S' AND BusTyp = 'CRP51' AND TCKNO like '%%%s%%' ORDER BY ActNo,ActDat">
+				<FieldList>$CAgtNo_DL|$CAgtNo_YH|$CAgtNo_PL|$BgnDat|$EndDat|$TckNo|</FieldList>
+      </Sql>
+    </Iterative>
+  </DataSource>
+
+  <FormatDefine>
+    <Iterative line="1">
+      <Para label="01" alias="$ActNo"/>
+      <Para label="02" alias="$TCusNm"/>
+      <Para label="03" alias="$IActNo"/>
+      <Para label="04" alias="$IActNm"/>
+      <Para label="05" alias="$CcyCod"/>
+      <Para label="06" alias="AMTFMT($TxnAmt)"/>
+      <Para label="07" alias="DELBOTHSPACE(AMTTOCAP($TxnAmt))"/>
+      <Para label="08" alias="$ActDat"/>
+      <Para label="09" alias="$TlrId"/>
+      <Para label="10" alias="$TckNo"/>
+      <Para label="11" alias="$PrtDat"/>
+      <Para label="12" alias="$PrtId"/>
+      <Para label="13" alias="$NodNo"/>
+      <Format>
+
+
+
+
+ÒµÎñ    Ãû³Æ£º´úÊÕ¸¶ÒµÎñ                       ÒµÎñ    ÖÖÀà£ºµçÁ¦½É·Ñ
+
+
+¸¶¿îÈË  ÕÊºÅ£º#
+¸¶¿îÈË  Ãû³Æ£º#
+
+
+
+ÊÕ¿îÈË  ÕÊºÅ£º#
+ÊÕ¿îÈË  Ãû³Æ£º#
+
+
+½»Ò×    ±ÒÖÖ£º#                      ½»Ò×    ½ð¶î£º#
+½»Ò×½ð¶î´óÐ´£º#
+Õª        Òª£º
+
+ÈëÕÊ    ÈÕÆÚ£º#                      ÈëÕÊ    ¹ñÔ±£º#                          ÈëÕÊÁ÷Ë®ºÅ£º#
+´òÓ¡    ÈÕÆÚ£º#                      ´òÓ¡    ¹ñÔ±£º#                          ´òÓ¡  »ú¹¹£º#
+
+
+
+
+
+
+
+
+
+
+
+      </Format>
+    </Iterative>
+  </FormatDefine>
+</Application>
