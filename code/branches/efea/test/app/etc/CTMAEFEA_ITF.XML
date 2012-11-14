@@ -261,7 +261,7 @@
 			<Include file="etc/TRMTIA_IIT.XML"/>		
 			<Item name="BgnDat"   length="8" />   <!--开始日期-->
 			<Item name="EndDat"   length="8" />   <!--结束日期-->
-			<Item name="TckNo"    length="11"/>   <!--记账流水号-->
+			<Item name="TckNo"    length="11" expression="DELSPACE($TckNo,all)"/>   <!--记账流水号-->
       <Item name="DptTyp"   length="4" />   <!--配型部类型-->
 
 		</Request>
