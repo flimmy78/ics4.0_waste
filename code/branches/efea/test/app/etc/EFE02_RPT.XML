@@ -13,6 +13,7 @@
     <String alias="PrtDat"    name="$PrtDat"/>
     <String alias="IActNo"    name="$IActNo"/>
     <String alias="IActNm"    name="$IActNm"/>
+    <String alias="ActNo2"    name="$ActNo2"/>
   </VarDef>
   <MsgConvert>
 
@@ -20,8 +21,8 @@
   <DataSource object="sql">
     <Iterative>
 			<Sql sql="SELECT TCusId,ActNo,TxnAmt,TCusNm,CcyCod,ActDat,TlrId,TckNo FROM afetxnjnl 
-				WHERE CAgtNo in ('%s','%s','%s') AND ActDat &gt;='%s' AND ActDat &lt;='%s' AND HTxnSt= 'S' AND BusTyp = 'CRP51' AND TCKNO like '%%%s%%' ORDER BY ActNo,ActDat">
-				<FieldList>$CAgtNo_DL|$CAgtNo_YH|$CAgtNo_PL|$BgnDat|$EndDat|$TckNo|</FieldList>
+				WHERE CAgtNo in ('%s','%s','%s') AND ActDat &gt;='%s' AND ActDat &lt;='%s' AND HTxnSt= 'S' AND BusTyp = 'CRP51' AND TCKNO like '%%%s%%' AND ActNo like '%%%s%%' ORDER BY ActNo,ActDat">
+				<FieldList>$CAgtNo_DL|$CAgtNo_YH|$CAgtNo_PL|$BgnDat|$EndDat|$TckNo|$ActNo2|</FieldList>
       </Sql>
     </Iterative>
   </DataSource>
