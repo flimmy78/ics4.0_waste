@@ -201,6 +201,7 @@
         <Set>PayMod=0</Set>       <!--支取方式 1 凭密支取 0 不验密-->
         <Set>VchChk=0</Set>
         <Set>Fee=000000000000000</Set>
+        <Set>RsFld2=$LgcCrd</Set>  <!--票卡逻辑卡号-->
         <!--在前边对私凭证内添加<Set>PayMod=0</Set>支取方式 1 凭密支取 0 不验密-->
      </If>
      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--对公-->
@@ -325,9 +326,20 @@
   </Transaction>
 
   <Transaction code="484506" desc="CPU圈存提交通讯接口P_CPU_LOAD_SUBMIT(普通充值)">
+    <DynSentence name="Upd_TxnMsg"><!--修改交易状态-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnSt"/>
+      </Exec>
+
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484506"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
@@ -485,6 +497,7 @@
         <Set>ItgTyp=0</Set>  <!--完整性类型-->
         <Set>TCusNm=$ActNam</Set> <!--第三方名称-->
         <Set>TActDt=$ClrDat</Set>     <!--第三方日期日期-->
+        <Set>RsFld2=$LgcCrd</Set>  <!--票卡逻辑卡号-->
      </If>
      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--对公-->
         <!-- 对公暂时不做 -->
@@ -603,6 +616,27 @@
           <Exec func="PUB:DefaultErrorProc"/>
         </Else>
 
+
+    </FlowCtrl>
+  </Transaction>
+
+  <Transaction code="484538" desc="圈存提交通讯接口P_M1_SUBMIT（普通充值）">
+    <DynSentence name="Upd_TxnMsg"><!--修改交易状态-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnSt"/>
+      </Exec>
+
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
