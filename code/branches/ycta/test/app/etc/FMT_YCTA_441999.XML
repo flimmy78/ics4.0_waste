@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="agtfmta.log" err_file="agtfmta.err">
+
+  <!--CodeSwitching>
+    <Table name="H2T_EFE_441"  file="etc/EFEA_CSW2.XML">
+      <Column name="HRspCd" sort="no"/>
+      <Column name="TRspCd" sort="no"/>
+    </Table>
+  </CodeSwitching-->
+
+  <Process name="YCTA_Dtl"   desc="Ñò³ÇÍ¨½»Ò×Ã÷Ï¸">
+    <Data>
+      <Item name="TERMID"  length="12" align_mode="right" />   <!-- ¹©µç¹«Ë¾ÏµÍ³²Î¿¼ºÅ -->
+      <Item name="Flag" length="1" value="	" />
+      <Item name="SYS_SEQ" length="16" align_mode="right" />   <!-- ¹©µç¹«Ë¾ÓÃ»§±àºÅ -->
+      <Item name="ICN"     length="16" align_mode="right" />   <!-- ¹©µç¹«Ë¾ÇåËãÈÕÆÚ -->
+      <Item name="Flag"    length="1"  value="  "/>
+      <Item name="TIM"     length="14" align_mode="right" />   <!-- ÒøÐÐ½»Ò×ÈÕÆÚ -->
+      <Item name="Flag"    length="1"  value="  "/>
+      <Item name="TF"      length="8"  align_mode="right" /> <!-- ÒøÐÐ½»Ò×Ê±¼ä -->
+      <Item name="Flag"    length="1"  value="  "/>
+      <Item name="BAL"     length="8"  align_mode="right" /> <!-- ÒøÐÐ½»Ò×Á÷Ë®ºÅ -->
+      <Item name="Flag"    length="1"  value="  "/>
+      <Item name="TT"      length="2"  align_mode="right" /> <!--¿Í»§ÕÊºÅ-->
+    </Data>
+  </Process>    
+
+
+
+  <Process name="EFEA_CAIWU" desc="½»ÐÐµç×Ó¶ÔÕËÎÄ¼þ¸ñÊ½">   
+    <Data>
+      <Item    name="ActDat"  length="10"  />   <!-- ÈëÕÊÈÕÆÚ -->
+      <Item    name="Flag"    length="1"  value=" "/>      
+      <If condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460230), IS_EQUAL_STRING(TxnCnl,THD))">
+         <Item    name="CWTxnCod"  length="10"  value="9026" />   <!-- ÊµÊ±¿Û¿î½»Ò×´úÂë -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </If>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460245), ,IS_EQUAL_STRING(TxnCnl,TRM)">
+         <If condition="IS_EQUAL_STRING(SUBSTR($RsFld1,44,2),10)">
+            <Item    name="CWTxnCod"  length="10"  value="9018" />   <!-- ¹ñÌ¨ÏÖ½ð½»Ò×´úÂë -->
+            <Item    name="Flag"      length="1"   value=" "/>          
+         </If>
+         <Else>
+            <Item    name="CWTxnCod"  length="10"  value="60003" />   <!-- ¹ñÌ¨Ö§Æ±½»Ò×´úÂë -->
+            <Item    name="Flag"      length="1"   value=" "/>
+         </Else>
+      </ElseIf>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460200), ,IS_EQUAL_STRING(TxnCnl,THD)">
+         <Item    name="CWTxnCod"  length="10"  value="9018" />   <!-- ½»ÐÐÅúÁ¿ÎÄ¼þ´úÊÕ½»Ò×´úÂë -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </ElseIf>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460245), ,IS_NOEQUAL_STRING(TxnCnl,TRM)">
+         <Item    name="CWTxnCod"  length="10"  value="8888" />   <!-- ½»ÐÐÍøÉÏÖ§¸¶½»Ò×´úÂë -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </ElseIf>
+      <Item    name="VchTyp"  length="3"  value=" "/>   <!-- Æ¾Ö¤ÖÖÀà -->
+      <Item    name="Flag"    length="1"  value=" "/>  
+      <Item    name="VchNo"   length="9"  value=" "/>   <!-- Æ¾Ö¤ºÅ -->
+      <Item    name="Flag"    length="1"  value=" "/>  
+      <If condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460230), IS_EQUAL_STRING(TxnCnl,THD))">
+         <Item    name="Summary"   length="20"  value="µç·Ñ504520001" />   <!-- ÊµÊ±¿Û¿îÕªÒª -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </If>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460245), ,IS_EQUAL_STRING(TxnCnl,TRM)">
+         <If condition="IS_EQUAL_STRING(SUBSTR($RsFld1,44,2),10)">
+            <Item    name="Summary"   length="20"  value="µç·Ñ504510001" />   <!-- ¹ñÌ¨ÏÖ½ðÕªÒª -->
+            <Item    name="Flag"      length="1"   value=" "/>          
+         </If>
+         <Else>
+            <Item    name="Summary"   length="20"  expression="STRCAT(µç·Ñ,SUBSTR($RsFld1,46,8))" />   <!-- µç·Ñ+Ö§Æ±ºÅÕªÒª -->
+            <Item    name="Flag"      length="1"   value=" "/>
+         </Else>
+      </ElseIf>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460200), ,IS_EQUAL_STRING(TxnCnl,THD)">
+         <Item    name="Summary"   length="20"  value="µç·Ñ504001001" />   <!-- ½»ÐÐÅúÁ¿ÎÄ¼þ´úÊÕÕªÒª -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </ElseIf>
+      <ElseIf condition="AND(IS_EQUAL_STRING(DELBOTHSPACE($TxnCod),460245), ,IS_NOEQUAL_STRING(TxnCnl,TRM)">
+         <Item    name="Summary"   length="20"  value="ÍøÒø" />   <!-- ÍøÒøÕªÒª -->
+         <Item    name="Flag"      length="1"   value=" "/>          
+      </ElseIf>      
+      <Item    name="CDFlag"  length="1"  value="0"/>   <!-- ½è´û±êÖ¾ -->
+      <Item    name="Flag"    length="1"  value=" "/>        
+      <Item    name="TxnAmt"  length="1"  />            <!-- ·¢Éú¶î -->
+      <Item    name="Flag"    length="1"  value=" "/>        
+      <Item    name="OrgNo"   length="1"  />            <!-- ÍøµãºÅ -->
+      <Item    name="Flag"    length="1"  value=" "/>          
+      <Item    name="TlrId"  length="1"  />             <!-- ¹ñÔ±ºÅ -->
+      <Item    name="Flag"    length="1"  value=" "/>                                
+    </Data>
+  </Process> 
+  
+</BATCH>

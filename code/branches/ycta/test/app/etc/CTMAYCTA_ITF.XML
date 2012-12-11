@@ -418,10 +418,6 @@
           <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspDat" length="416"/>   <!-- 返回报文   -->
-            <Item name="TckNo"  length="12" />   <!-- 银行流水号 -->
-            <Item name="ActDat" length="8"  />   <!-- 会计日期 -->
-            <Item name="LogNo"  length="14" />   <!-- 交易流水号 -->
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -1059,7 +1055,8 @@
   <Transaction code="484527" service="484527" log_switch="5" timeout="240" des="生成对帐文件">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ClrDat"    length="8"/>     <!-- 对账日期 YYYYMMDD -->
+      <Item name="ClrDat"    length="8"/>     <!-- 对账日期 YYYYMMDD -->4410001099
+      <AddItem name="CagtNo"    value="4410001099"/>     <!-- 对账日期 YYYYMMDD -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>

@@ -2,7 +2,7 @@
 <Application name="YCTA" code="445">
   <!--羊城通业务本地主控-->
   <ConfigDeclare>
-    <!--Config name="BatFormat"   value="etc/YCTA_FMT_441999.XML"/-->
+    <Config name="BatFormat"   value="etc/FMT_YCTA_441999.XML"/>
     <Config name="ParaFile"    value="etc/CFG_YCTA_441999.XML"/>
     <Config name="OPFCSW"      value="etc/CSW_YCTA_441999.XML"/>
   </ConfigDeclare>
@@ -337,7 +337,7 @@
       <Exec func="PUB:InitTransaction"/>
 
       <Exec func="PUB:ExecSql" error="IGNORE">
-        <Arg name="SqlCmd" value="Upd_TxnSt"/>
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
       </Exec>
 
       <Exec func="PUB:CallThirdOther">
@@ -632,7 +632,7 @@
       <Exec func="PUB:InitTransaction"/>
 
       <Exec func="PUB:ExecSql" error="IGNORE">
-        <Arg name="SqlCmd" value="Upd_TxnSt"/>
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
       </Exec>
 
       <Set>RspCod=000000</Set>
@@ -1017,125 +1017,97 @@
   </Transaction>
 
   <Transaction code="484527" desc="生成对帐文件">
-    <!--生成文件  只统计主机成功状态的-->
-    <DynSentence name="GetTxnJnl_DL">
-      <Sentence><!--对账文件在BkLog字段会有问题,之前用的字段是LogNo,现在用的字段是TckNo-->
-        SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim,LChkTm
-        FROM afetxnjnl
-        WHERE CAgtNo = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
-      </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
-    </DynSentence>
-    <DynSentence name="GetTxnJnl_YH">
+    <DynSentence name="GetJY"><!--交易明细-->
       <Sentence>
-        SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim, LChkTm, substr(RsFld1,43,2) PayTyp,substr(RsFld1,45,25) ChkNum
+        SELECT RsFld1 as TERMID, TLogNo as SYS_SEQ, RsFld2 as ICN, ChkTim as TIM, TxnAmt as TF, RsFld3 as BAL, '14' as TT
         FROM afetxnjnl
-        WHERE CAgtNo = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-    <!--生成文件 总笔数 只统计主机成功状态的-->
-    <DynSentence name="TotalDeal_DL">
+    <DynSentence name="GetCZ"><!--冲正明细-->
       <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
+        SELECT RsFld1 as TERMID, TLogNo as SYS_SEQ, RsFld2 as ICN, ChkTim as TIM, TxnAmt as TF, RsFld3 as BAL, '14' as TT
         FROM afetxnjnl
-        WHERE CAgtNo  = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-     <DynSentence name="TotalDeal_YH">
+    <DynSentence name="GetJYTol"><!--交易汇总-->
       <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
-        FROM afetxnjnl
-        WHERE CAgtNo  = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        select sum(cast(TxnAmt as bigint)) as JYSum, coalesce(COUNT(*),0) as JYCnt 
+        from afetxnjnl
+        where ActDat = '%s' and CAgtNo= '%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and  TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
-    </DynSentence>   
+      <Fields>TxnDat|CAgtNo|</Fields>
+    </DynSentence>
+    <DynSentence name="GetCZTol"><!--冲正汇总-->
+      <Sentence>
+        select sum(cast(TxnAmt as bigint)) as CZSum, coalesce(COUNT(*),0) as CZCnt 
+        from afetxnjnl
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
+      </Sentence>
+      <Fields>TxnDat|CAgtNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
-
-      <!--Set>Flag=|</Set>
-      <Set>TxnKnd= </Set>
-      <Set>OTlogNo= </Set>
-      <Set>DLDat1= </Set>
-      <Set>DLTim1= </Set-->
+      <!--Set>ClrDat=CALCDATE(GETDATETIME(YYYYMMDD),-,d,1)</Set-->
 
       <Set>LclDir=dat/ycta</Set>
-      
-      <!--01 当前交易数据文件-->
-      <!--02 当前检查数据文件-->
+      <Set>ServId=BCGD</Set><!--服务商代码-->
+      <Set>CollId=0001</Set><!--采集点编号-->
 
-      <Set>LclFil=STRCAT(JY,$FilTyp,_,$ClrDat,_,315810,_001,.bil)</Set> 
-
-      <If condition="IS_EQUAL_STRING($FilTyp,01)">
-      	<Set>tmpTxnCod=460230</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="DptTyp"/>
-          <Arg name="DestNam" value="CAgtNo"/>
-          <Arg name="TblNam"  value="DptTypToCAgtNo_DL"/>
-        </Exec>
-
-        <Exec func="PUB:ReadRecord">
-          <Arg name="SqlCmd" value="TotalDeal_DL"/>
-        </Exec>         
-        <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
-        <!--If condition="INTCMP($TotalDeal,3,0)">
-        	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
-        	<Continue/>
-        </If-->         
-        <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
-          <Arg name="SqlName" value="GetTxnJnl_DL"/>
-          <Arg name="FormatName" value="EFEA_DZ"/>
-          <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
+      <!-- 1 生成当前交易数据文件-->
+        <Set>JYFile=STRCAT(JY,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Exec func="PUB:ExportFromDB">
+          <Arg name="SqlName" value="GetJY"/>
+          <Arg name="FormatName" value="YCTA_Dtl"/>
+          <Arg name="FileName" value="STRCAT($LclDir,/,$JYFile)"/>
           <Arg name="TableName" value="afetxnjnl"/>
         </Exec>
-      </If>
-      <Else>
-      	<Set>tmpTxncod=460245</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="DptTyp"/>
-          <Arg name="DestNam" value="CAgtNo"/>
-          <Arg name="TblNam"  value="DptTypToCAgtNo_YH"/>
+      <!-- 2 生成当前冲正数据文件-->
+        <Set>CZFile=STRCAT(CZ,$ServId,$CollId,$ClrDat,.TXT)</Set> 
+        <Exec func="PUB:ExportFromDB">
+          <Arg name="SqlName" value="GetCZ"/>
+          <Arg name="FormatName" value="YCTA_Dtl"/>
+          <Arg name="FileName" value="STRCAT($LclDir,/,$CZFile)"/>
+          <Arg name="TableName" value="afetxnjnl"/>
         </Exec>
-        <!--If condition="IS_EQUAL_STRING($FilTyp,02)">
-        	<Set>PayTyp=10</Set>
+      <!-- 3 生成审计数据文件-->
+        <Set>LclDir=STRCAT(GETENV(WORKDIR),$LclDir)</Set>
+        <Set>LclFil=STRCAT($LclDir,/,RZ,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Exec func="PUB:ReadRecord">
+          <Arg name="SqlCmd" value="GetJYTol"/>
+        </Exec>
+        <If condition="~RetCod!=0">
+          <Set>RspCod=YCT999</Set>
+          <Set>RspMsg=数据库操作错误</Set>
+          <Return/>
         </If>
-        <Else>
-          <Set>PayTyp=12</Set>
-        </Else-->
         <Exec func="PUB:ReadRecord">
-          <Arg name="SqlCmd" value="TotalDeal_YH"/>
-        </Exec>         
-        <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
-        <!--If condition="INTCMP($TotalDeal,3,0)">
-        	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
-        	<Continue/>
-        </If-->         
-        <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
-          <Arg name="SqlName" value="GetTxnJnl_YH"/>
-          <Arg name="FormatName" value="EFEA_DZ"/>
-          <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
-          <Arg name="TableName" value="afetxnjnl"/>
+          <Arg name="SqlCmd" value="GetCZTol"/>
         </Exec>
-      </Else>
-      
+        <If condition="~RetCod!=0">
+          <Set>RspCod=YCT999</Set>
+          <Set>RspMsg=数据库操作错误</Set>
+          <Return/>
+        </If>
+        <Set>Contnt=STRCAT(    1,ADDCHAR($JYFile,24, ,1),ADDCHAR($JYCnt,10, ,1),ADDCHAR($JYSum,12, ,1),\n)</Set>
+        <Set>Contnt=STRCAT($Contnt,    2,ADDCHAR($CZFile,24, ,1),ADDCHAR($CZCnt,10, ,1),ADDCHAR($CZSum,12, ,1),\n)</Set>
+        <Exec func="PUB:WriteFile">
+          <Arg name="FileName" value="$LclFil"/>
+          <Arg name="OpenMode" value="w"/>
+          <Arg name="Data"   value="$Contnt"/>
+        </Exec>
 
-      <!--test-->
-      <Exec func="PUB:FtpPut">
+      <!--Exec func="PUB:FtpPut">
         <Arg name="FtpId" value="EFE_SND_441"/>
-      </Exec>	
+      </Exec-->	
       
       <Set>MsgInf1=STRCAT(向供电方发送对账文件成功)</Set>
-			<Set>MsgTyp=N</Set>
-			<Set>RspCod=000000</Set>
-			<Set>RspMsg=交易成功!</Set>         
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=交易成功!</Set>
     </FlowCtrl>
   </Transaction>
 
