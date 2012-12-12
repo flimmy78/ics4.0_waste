@@ -1019,7 +1019,13 @@
   <Transaction code="484527" desc="生成对帐文件">
     <DynSentence name="GetJY"><!--交易明细-->
       <Sentence>
-        SELECT RsFld1 as TERMID, TLogNo as SYS_SEQ, RsFld2 as ICN, ChkTim as TIM, TxnAmt as TF, RsFld3 as BAL, '14' as TT
+        SELECT concat(substr(RsFld1,1,12), chr(9)) as TERMID,
+               concat(substr(TLogNo,1,16), chr(9)) as SYS_SEQ,
+               concat(substr(RsFld2,1,16), chr(9)) as ICN,
+               concat(substr(ChkTim,1,14), chr(9)) as TIM,
+               concat(substr(TxnAmt,1,8 ), chr(9)) as TF,
+               concat(substr(RsFld3,1,8 ), chr(9)) as BAL,
+               '14' as TT
         FROM afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
@@ -1027,7 +1033,13 @@
     </DynSentence>
     <DynSentence name="GetCZ"><!--冲正明细-->
       <Sentence>
-        SELECT RsFld1 as TERMID, TLogNo as SYS_SEQ, RsFld2 as ICN, ChkTim as TIM, TxnAmt as TF, RsFld3 as BAL, '14' as TT
+        SELECT concat(substr(RsFld1,1,12), chr(9)) as TERMID,
+               concat(substr(TLogNo,1,16), chr(9)) as SYS_SEQ,
+               concat(substr(RsFld2,1,16), chr(9)) as ICN,
+               concat(substr(ChkTim,1,14), chr(9)) as TIM,
+               concat(substr(TxnAmt,1,8 ), chr(9)) as TF,
+               concat(substr(RsFld3,1,8 ), chr(9)) as BAL,
+               '14' as TT
         FROM afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
       </Sentence>
@@ -1037,9 +1049,9 @@
       <Sentence>
         select sum(cast(TxnAmt as bigint)) as JYSum, coalesce(COUNT(*),0) as JYCnt 
         from afetxnjnl
-        where ActDat = '%s' and CAgtNo= '%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and  TTxnst IN ('S','U') and BusTyp='YCTA1'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>TxnDat|CAgtNo|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
     <DynSentence name="GetCZTol"><!--冲正汇总-->
       <Sentence>
@@ -1047,7 +1059,7 @@
         from afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>TxnDat|CAgtNo|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
@@ -1074,7 +1086,7 @@
           <Arg name="TableName" value="afetxnjnl"/>
         </Exec>
       <!-- 3 生成审计数据文件-->
-        <Set>LclDir=STRCAT(GETENV(WORKDIR),$LclDir)</Set>
+        <Set>LclDir=STRCAT(GETENV(WORKDIR),/,$LclDir)</Set>
         <Set>LclFil=STRCAT($LclDir,/,RZ,$ServId,$CollId,$ClrDat,.TXT)</Set>
         <Exec func="PUB:ReadRecord">
           <Arg name="SqlCmd" value="GetJYTol"/>
@@ -1092,12 +1104,12 @@
           <Set>RspMsg=数据库操作错误</Set>
           <Return/>
         </If>
-        <Set>Contnt=STRCAT(    1,ADDCHAR($JYFile,24, ,1),ADDCHAR($JYCnt,10, ,1),ADDCHAR($JYSum,12, ,1),\n)</Set>
-        <Set>Contnt=STRCAT($Contnt,    2,ADDCHAR($CZFile,24, ,1),ADDCHAR($CZCnt,10, ,1),ADDCHAR($CZSum,12, ,1),\n)</Set>
+        <Set>Contnt=STRCAT(    1,\\t,ADDCHAR($JYFile,24, ,1),\\t,ADDCHAR($JYCnt,10, ,1),\\t,ADDCHAR($JYSum,12, ,1),\\n)</Set>
+        <Set>Contnt=STRCAT($Contnt,    2,\\t,ADDCHAR($CZFile,24, ,1),\\t,ADDCHAR($CZCnt,10, ,1),\\t,ADDCHAR($CZSum,12, ,1),\\n)</Set>
         <Exec func="PUB:WriteFile">
           <Arg name="FileName" value="$LclFil"/>
           <Arg name="OpenMode" value="w"/>
-          <Arg name="Data"   value="$Contnt"/>
+          <Arg name="ESCFMT"   value="$Contnt"/>
         </Exec>
 
       <!--Exec func="PUB:FtpPut">
