@@ -1019,12 +1019,12 @@
   <Transaction code="484527" desc="生成对帐文件">
     <DynSentence name="GetJY"><!--交易明细-->
       <Sentence>
-        SELECT concat(substr(RsFld1,1,12), chr(9)) as TERMID,
-               concat(substr(TLogNo,1,16), chr(9)) as SYS_SEQ,
-               concat(substr(RsFld2,1,16), chr(9)) as ICN,
-               concat(substr(ChkTim,1,14), chr(9)) as TIM,
-               concat(substr(TxnAmt,1,8 ), chr(9)) as TF,
-               concat(substr(RsFld3,1,8 ), chr(9)) as BAL,
+        SELECT concat(rtrim(RsFld1), chr(9)) as TERMID,
+               concat(rtrim(TLogNo), chr(9)) as SYS_SEQ,
+               concat(rtrim(RsFld2), chr(9)) as ICN,
+               concat(rtrim(ChkTim), chr(9)) as TIM,
+               concat(rtrim(char(decimal(decimal(TxnAmt,10,2)/100,7,2))),chr(9)) as TF,
+               case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
                '14' as TT
         FROM afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
@@ -1033,12 +1033,12 @@
     </DynSentence>
     <DynSentence name="GetCZ"><!--冲正明细-->
       <Sentence>
-        SELECT concat(substr(RsFld1,1,12), chr(9)) as TERMID,
-               concat(substr(TLogNo,1,16), chr(9)) as SYS_SEQ,
-               concat(substr(RsFld2,1,16), chr(9)) as ICN,
-               concat(substr(ChkTim,1,14), chr(9)) as TIM,
-               concat(substr(TxnAmt,1,8 ), chr(9)) as TF,
-               concat(substr(RsFld3,1,8 ), chr(9)) as BAL,
+        SELECT concat(rtrim(RsFld1), chr(9)) as TERMID,
+               concat(rtrim(TLogNo), chr(9)) as SYS_SEQ,
+               concat(rtrim(RsFld2), chr(9)) as ICN,
+               concat(rtrim(ChkTim), chr(9)) as TIM,
+               concat(rtrim(char(decimal(decimal(TxnAmt,10,2)/100,7,2))),chr(9)) as TF,
+               case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
                '14' as TT
         FROM afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
@@ -1047,7 +1047,8 @@
     </DynSentence>
     <DynSentence name="GetJYTol"><!--交易汇总-->
       <Sentence>
-        select sum(cast(TxnAmt as bigint)) as JYSum, coalesce(COUNT(*),0) as JYCnt 
+        select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as JYSum,
+               coalesce(COUNT(*),0) as JYCnt 
         from afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
@@ -1055,7 +1056,8 @@
     </DynSentence>
     <DynSentence name="GetCZTol"><!--冲正汇总-->
       <Sentence>
-        select sum(cast(TxnAmt as bigint)) as CZSum, coalesce(COUNT(*),0) as CZCnt 
+        select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as CZSum,
+               coalesce(COUNT(*),0) as CZCnt 
         from afetxnjnl
         WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
       </Sentence>
