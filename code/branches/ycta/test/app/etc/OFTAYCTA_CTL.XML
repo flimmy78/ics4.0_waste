@@ -1089,7 +1089,8 @@
         </Exec>
       <!-- 3 生成审计数据文件-->
         <Set>LclDir=STRCAT(GETENV(WORKDIR),/,$LclDir)</Set>
-        <Set>LclFil=STRCAT($LclDir,/,RZ,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Set>LclFil=STRCAT(RZ,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Set>PthFil=STRCAT($LclDir,/,$LclFil)</Set>
         <Exec func="PUB:ReadRecord">
           <Arg name="SqlCmd" value="GetJYTol"/>
         </Exec>
@@ -1109,15 +1110,23 @@
         <Set>Contnt=STRCAT(    1,\\t,ADDCHAR($JYFile,24, ,1),\\t,ADDCHAR($JYCnt,10, ,1),\\t,ADDCHAR($JYSum,12, ,1),\\n)</Set>
         <Set>Contnt=STRCAT($Contnt,    2,\\t,ADDCHAR($CZFile,24, ,1),\\t,ADDCHAR($CZCnt,10, ,1),\\t,ADDCHAR($CZSum,12, ,1),\\n)</Set>
         <Exec func="PUB:WriteFile">
-          <Arg name="FileName" value="$LclFil"/>
+          <Arg name="FileName" value="$PthFil"/>
           <Arg name="OpenMode" value="w"/>
           <Arg name="ESCFMT"   value="$Contnt"/>
         </Exec>
 
-      <!--Exec func="PUB:FtpPut">
-        <Arg name="FtpId" value="EFE_SND_441"/>
-      </Exec-->	
-      
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="YCT_JYF_441"/>
+      </Exec>	
+
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="YCT_CZF_441"/>
+      </Exec>	
+
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="YCT_RZF_441"/>
+      </Exec>	
+
       <Set>MsgInf1=STRCAT(向供电方发送对账文件成功)</Set>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
