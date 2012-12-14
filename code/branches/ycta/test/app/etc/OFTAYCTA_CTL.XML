@@ -645,16 +645,16 @@
     <DynSentence name="Upd_TxnSt"><!--修改交易状态-->
       <Sentence>
         UPDATE afetxnjnl set HTxnSt='%s', TxnSts='%s', TTxnSt='%s'
-        WHERE CAgtNo='%s' and TckNo='%s' and ActDat='%s'
+        WHERE CAgtNo='%s' and LogNo='%s' and ActDat='%s'
       </Sentence>
-      <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|TckNo|ActDat|</Fields>
+      <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|LogNo|ActDat|</Fields>
     </DynSentence>
     <DynSentence name="Qry_LogNo"><!--通过会计流水获取LogNo字段-->
       <Sentence>
-        SELECT LogNo, HLogNo FROM afetxnjnl 
-        WHERE CAgtNo='%s' AND TckNo='%s' AND ActDat='%s'
+        SELECT TckNo, HLogNo FROM afetxnjnl 
+        WHERE CAgtNo='%s' AND LogNo='%s' AND ActDat='%s'
       </Sentence>
-      <Fields>CAgtNo|TckNo|ActDat|</Fields>
+      <Fields>CAgtNo|LogNo|ActDat|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
