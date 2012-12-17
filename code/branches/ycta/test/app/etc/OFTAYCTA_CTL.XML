@@ -737,9 +737,20 @@
   </Transaction>
 
   <Transaction code="484533" desc="M1冲正通讯接口P_M1_ROLLBACK">
+    <DynSentence name="Upd_TxnMsg"><!--修改交易状态-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
+      </Exec>
+
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484513"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
@@ -1031,7 +1042,7 @@
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-    <DynSentence name="GetCZ"><!--冲正明细-->
+    <DynSentence name="GetCZ"><!--冲正明细--><!--rtrim(RsFld1)<>'':由于圈存提交以及冲正都将更新各统计字段,如果该字段为空就认为是圈存交易返回失败,按照羊城通杨劲(87697151)的说法是不需要在对账文件中体现-->
       <Sentence>
         SELECT concat(rtrim(RsFld1), chr(9)) as TERMID,
                concat(rtrim(TLogNo), chr(9)) as SYS_SEQ,
@@ -1041,7 +1052,7 @@
                case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
                '14' as TT
         FROM afetxnjnl
-        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -1059,7 +1070,7 @@
         select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as CZSum,
                coalesce(COUNT(*),0) as CZCnt 
         from afetxnjnl
-        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -1068,7 +1079,7 @@
       <!--Set>ClrDat=CALCDATE(GETDATETIME(YYYYMMDD),-,d,1)</Set-->
 
       <Set>LclDir=dat/ycta</Set>
-      <Set>ServId=BCGD</Set><!--服务商代码-->
+      <Set>ServId=CMMB</Set><!--服务商代码-->
       <Set>CollId=0001</Set><!--采集点编号-->
 
       <!-- 1 生成当前交易数据文件-->
