@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Application name="YCTA" code="445">
-  <!--µçÁ¦µç·ÑÒµÎñ±¾µØÖ÷¿Ø-->
+  <!--Ñò³ÇÍ¨ÒµÎñ±¾µØÖ÷¿Ø-->
   <ConfigDeclare>
-    <!--Config name="BatFormat"   value="etc/YCTA_FMT_441999.XML"/-->
+    <Config name="BatFormat"   value="etc/FMT_YCTA_441999.XML"/>
     <Config name="ParaFile"    value="etc/CFG_YCTA_441999.XML"/>
     <Config name="OPFCSW"      value="etc/CSW_YCTA_441999.XML"/>
   </ConfigDeclare>
@@ -201,6 +201,7 @@
         <Set>PayMod=0</Set>       <!--Ö§È¡·½Ê½ 1 Æ¾ÃÜÖ§È¡ 0 ²»ÑéÃÜ-->
         <Set>VchChk=0</Set>
         <Set>Fee=000000000000000</Set>
+        <Set>RsFld2=$LgcCrd</Set>  <!--Æ±¿¨Âß¼­¿¨ºÅ-->
         <!--ÔÚÇ°±ß¶ÔË½Æ¾Ö¤ÄÚÌí¼Ó<Set>PayMod=0</Set>Ö§È¡·½Ê½ 1 Æ¾ÃÜÖ§È¡ 0 ²»ÑéÃÜ-->
      </If>
      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--¶Ô¹«-->
@@ -325,9 +326,20 @@
   </Transaction>
 
   <Transaction code="484506" desc="CPUÈ¦´æÌá½»Í¨Ñ¶½Ó¿ÚP_CPU_LOAD_SUBMIT(ÆÕÍ¨³äÖµ)">
+    <DynSentence name="Upd_TxnMsg"><!--ÐÞ¸Ä½»Ò××´Ì¬-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
+      </Exec>
+
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484506"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
@@ -485,6 +497,7 @@
         <Set>ItgTyp=0</Set>  <!--ÍêÕûÐÔÀàÐÍ-->
         <Set>TCusNm=$ActNam</Set> <!--µÚÈý·½Ãû³Æ-->
         <Set>TActDt=$ClrDat</Set>     <!--µÚÈý·½ÈÕÆÚÈÕÆÚ-->
+        <Set>RsFld2=$LgcCrd</Set>  <!--Æ±¿¨Âß¼­¿¨ºÅ-->
      </If>
      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--¶Ô¹«-->
         <!-- ¶Ô¹«ÔÝÊ±²»×ö -->
@@ -607,6 +620,27 @@
     </FlowCtrl>
   </Transaction>
 
+  <Transaction code="484538" desc="È¦´æÌá½»Í¨Ñ¶½Ó¿ÚP_M1_SUBMIT£¨ÆÕÍ¨³äÖµ£©">
+    <DynSentence name="Upd_TxnMsg"><!--ÐÞ¸Ä½»Ò××´Ì¬-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
+      </Exec>
+
+      <Set>RspCod=000000</Set>
+      <Set>MsgTyp=N</Set>
+
+    </FlowCtrl>
+  </Transaction>
+
   <Transaction code="484513" desc="ÒøÐÐ¶Ë³åÕýÍ¨Ñ¶½Ó¿Ú">
     <DynSentence name="Upd_TxnSt"><!--ÐÞ¸Ä½»Ò××´Ì¬-->
       <Sentence>
@@ -615,8 +649,25 @@
       </Sentence>
       <Fields>HTxnSt|TxnSts|TTxnSt|CAgtNo|LogNo|ActDat|</Fields>
     </DynSentence>
+    <DynSentence name="Qry_LogNo"><!--Í¨¹ý»á¼ÆÁ÷Ë®»ñÈ¡LogNo×Ö¶Î-->
+      <Sentence>
+        SELECT TckNo, HLogNo FROM afetxnjnl 
+        WHERE CAgtNo='%s' AND LogNo='%s' AND ActDat='%s'
+      </Sentence>
+      <Fields>CAgtNo|LogNo|ActDat|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
+
+      <Exec func="PUB:ReadRecord">    <!--»ñÈ¡LogNo×Ö¶Î -->
+        <Arg name="SqlCmd" value="Qry_LogNo"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=YCT999</Set>
+        <Set>RspMsg=»ñÈ¡ÈÕÖ¾ºÅÊ§°Ü</Set>
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </If>
       
       <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--¶ÔË½-->
         <Set>HTxnCd=471149</Set>
@@ -686,9 +737,20 @@
   </Transaction>
 
   <Transaction code="484533" desc="M1³åÕýÍ¨Ñ¶½Ó¿ÚP_M1_ROLLBACK">
+    <DynSentence name="Upd_TxnMsg"><!--ÐÞ¸Ä½»Ò××´Ì¬-->
+      <Sentence>
+        UPDATE afetxnjnl set RsFld1='%s', ChkTim='%s', RsFld3='%s'
+        WHERE LogNo='%s'
+      </Sentence>
+      <Fields>TermID|ChkTim|TActBL|LogNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd" value="Upd_TxnMsg"/>
+      </Exec>
+
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="484513"/>
         <Arg name="ObjSvr" value="STDAYCTA"/>
@@ -965,254 +1027,121 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="484525" desc="²éÑ¯ÇåËã×Ü½ð¶îÓë×Ü±ÊÊý">
-    <DynSentence name="QryCrpAgr"><!--²éÑ¯µ¥Î»ÐÅÏ¢ -->
+  <Transaction code="484527" desc="Éú³É¶ÔÕÊÎÄ¼þ">
+    <DynSentence name="GetJY"><!--½»Ò×Ã÷Ï¸-->
       <Sentence>
-        SELECT a.TActNo,b.CrpNam,b.STLACT FROM savcrpagr a,savcrpinf b WHERE a.CAgtNo='%s'
-        AND a.CrpCod=b.CrpCod AND a.BrNo=b.BrNo
-      </Sentence>
-      <Fields>CAgtNo|</Fields>
-    </DynSentence>
-    <DynSentence name="QrySumCnt">
-      <Sentence>
-        select sum(cast(TxnAmt as bigint)) as SumAmt,coalesce(COUNT(*),0) TotCnt from afetxnjnl
-        where CAgtNo= '%s' and TActDt = '%s' and HTxnSt='S' and ChkFlg='0'
-      </Sentence>
-      <Fields>CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <FlowCtrl>
-      <!--¸ù¾Ý¹ñÔ±ºÅÈ¡BrNo-->
-      <Exec func="PUB:GetBranchNoByTeller"/>
-      <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
-      <Exec func="PUB:InitTransaction"/>
-      <!--È¡Ç°ÖÃÁ÷Ë®ºÅ-->
-      <Exec func="PUB:GetLogNo"/>
-      <!--Ä¬ÈÏ½»Ò×·µ»Ø³É¹¦-->
-      <Set>RspCod=000000</Set>
-
-     <Exec func="PUB:ReadRecord">    <!--¼ì²éµ¥Î»Ð­Òé -->
-       <Arg name="SqlCmd" value="QryCrpAgr"/>
-     </Exec>
-     <If condition="~RetCod!=0">
-       <Set>RspCod=460299</Set>
-       <Set>RspMsg=µ¥Î»Ð­Òé²»´æÔÚ</Set>
-       <Return/>
-     </If>
-
-     <Exec func="PUB:ReadRecord">     <!--¹ã¶«µçÁ¦µç·ÑÒµÎñÇåËã-->
-       <Arg name="SqlCmd" value="QrySumCnt"/>
-     </Exec>
-     <If condition="$TotCnt=0">
-         <Set>MsgTyp=E</Set>
-         <Set>RspCod=331012</Set>
-         <Set>RspMsg=Ã»ÓÐÇåËãÊý¾Ý</Set>
-         <Return/>
-     </If>
-    </FlowCtrl>
-  </Transaction>
-
-  <Transaction code="484526" desc="ÇåËã">
-    <DynSentence name="QryCrpAgr"><!--²éÑ¯µ¥Î»ÐÅÏ¢ -->
-      <Sentence>
-        SELECT a.TActNo,b.CrpNam,b.STLACT FROM savcrpagr a,savcrpinf b WHERE a.CAgtNo='%s'
-        AND a.CrpCod=b.CrpCod AND a.BrNo=b.BrNo
-      </Sentence>
-      <Fields>CAgtNo|</Fields>
-    </DynSentence>
-    <DynSentence name="Updafetxnjnl"><!--ÐÞ¸ÄÐÅÏ¢-->
-      <Sentence>
-        update afetxnjnl set ChkFlg='1' WHERE CAgtNo='%s' and TActDt ='%s' and HTxnSt='S'
+        SELECT concat(rtrim(RsFld1), chr(9)) as TERMID,
+               concat(rtrim(TLogNo), chr(9)) as SYS_SEQ,
+               concat(rtrim(RsFld2), chr(9)) as ICN,
+               concat(rtrim(ChkTim), chr(9)) as TIM,
+               concat(rtrim(char(decimal(decimal(TxnAmt,10,2)/100,7,2))),chr(9)) as TF,
+               case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
+               '14' as TT
+        FROM afetxnjnl
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-
-    <FlowCtrl>
-      <!--¸ù¾Ý¹ñÔ±ºÅÈ¡BrNo-->
-      <Exec func="PUB:GetBranchNoByTeller"/>
-      <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
-      <Exec func="PUB:InitTransaction"/>
-      <!--È¡Ç°ÖÃÁ÷Ë®ºÅ-->
-      <Exec func="PUB:GetLogNo"/>
-      <!--Ä¬ÈÏ½»Ò×·µ»Ø³É¹¦-->
-      <Set>RspCod=000000</Set>
-
-
-
-     <Exec func="PUB:AddAuthReason" >
-         <Arg name="AthCod" value="40" />
-         <Arg name="AthMsg" value="YCT000" />
-     </Exec>
-     <Exec  func="PUB:CheckLocalAuth" >
-         <Arg name="ObjSvr" value="SHSTPUB1" />
-     </Exec>
-
-     <Exec func="PUB:ReadRecord">    <!--¼ì²éµ¥Î»Ð­Òé -->
-       <Arg name="SqlCmd" value="QryCrpAgr"/>
-     </Exec>
-     <If condition="~RetCod!=0">
-       <Set>RspCod=460299</Set>
-       <Set>RspMsg=µ¥Î»Ð­Òé²»´æÔÚ</Set>
-       <Return/>
-     </If>
-
-      <Set>HTxnCd=451900</Set>
-      <Set>CrpCod=YCTA99999999</Set>
-      <Set>BusTyp=PCL76</Set>
-      <Set>RgCFlg=1</Set>   <!--´û·½»Øµ¥£¬²»µÇ¼Ç0£¬µÇ¼Ç 1 -->
-      <Set>ActBk1=441999</Set>
-      <Set>ActBr1=441800</Set>
-      <Set>ActSq1=SUBSTR($TActNo,14,5)</Set>
-      <Set>CdFlg1=D</Set>
-      <Set>OuAmt1=$TxnAmt</Set>
-      <Set>PayAt5=$STLACT</Set>
-      <Set>CdFlg5=C</Set>
-      <Set>InAmt5=$TxnAmt</Set>
-
-      <Exec func="PUB:CallHostOther">
-        <Arg name="HTxnCd" value="$HTxnCd"/>
-        <Arg name="ObjSvr" value="SHSTPUB1"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-       <Set>RspCod=EFE999</Set>
-       <Set>RspMsg=ÉÏÖ÷»úÇåËãÊ§°Ü</Set>
-       <Return/>      	
-      </If>
-
-      <Exec func="PUB:ExecSql">
-        <Arg name="SqlCmd" value="Updafetxnjnl"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=ÐÞ¸Ä½»Ò×Ã÷Ï¸ÎªÒÑÇåËãÊ§°Ü</Set>
-        <Return/>
-      </If>  
-
-      <Set>MsgTyp=N</Set>
-      <Set>RspCod=000000</Set>
-      <Set>RspMsg=½»Ò×³É¹¦</Set>
-    </FlowCtrl>
-  </Transaction>
-<!--TODO-->
-  <Transaction code="484527" desc="Éú³É¶ÔÕÊÎÄ¼þ">
-    <!--Éú³ÉÎÄ¼þ  Ö»Í³¼ÆÖ÷»ú³É¹¦×´Ì¬µÄ-->
-    <DynSentence name="GetTxnJnl_DL">
+    <DynSentence name="GetCZ"><!--³åÕýÃ÷Ï¸--><!--rtrim(RsFld1)<>'':ÓÉÓÚÈ¦´æÌá½»ÒÔ¼°³åÕý¶¼½«¸üÐÂ¸÷Í³¼Æ×Ö¶Î,Èç¹û¸Ã×Ö¶ÎÎª¿Õ¾ÍÈÏÎªÊÇÈ¦´æ½»Ò×·µ»ØÊ§°Ü,°´ÕÕÑò³ÇÍ¨Ñî¾¢(87697151)µÄËµ·¨ÊÇ²»ÐèÒªÔÚ¶ÔÕËÎÄ¼þÖÐÌåÏÖ-->
       <Sentence>
-        SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim,LChkTm
+        SELECT concat(rtrim(RsFld1), chr(9)) as TERMID,
+               concat(rtrim(TLogNo), chr(9)) as SYS_SEQ,
+               concat(rtrim(RsFld2), chr(9)) as ICN,
+               concat(rtrim(ChkTim), chr(9)) as TIM,
+               concat(rtrim(char(decimal(decimal(TxnAmt,10,2)/100,7,2))),chr(9)) as TF,
+               case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
+               '14' as TT
         FROM afetxnjnl
-        WHERE CAgtNo = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-    <DynSentence name="GetTxnJnl_YH">
+    <DynSentence name="GetJYTol"><!--½»Ò×»ã×Ü-->
       <Sentence>
-        SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim, LChkTm, substr(RsFld1,43,2) PayTyp,substr(RsFld1,45,25) ChkNum
-        FROM afetxnjnl
-        WHERE CAgtNo = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as JYSum,
+               coalesce(COUNT(*),0) as JYCnt 
+        from afetxnjnl
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-    <!--Éú³ÉÎÄ¼þ ×Ü±ÊÊý Ö»Í³¼ÆÖ÷»ú³É¹¦×´Ì¬µÄ-->
-    <DynSentence name="TotalDeal_DL">
+    <DynSentence name="GetCZTol"><!--³åÕý»ã×Ü-->
       <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
-        FROM afetxnjnl
-        WHERE CAgtNo  = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
+        select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as CZSum,
+               coalesce(COUNT(*),0) as CZCnt 
+        from afetxnjnl
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('C') and HRspcd='SC0000' and TTxnst IN ('C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
+      <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
-     <DynSentence name="TotalDeal_YH">
-      <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
-        FROM afetxnjnl
-        WHERE CAgtNo  = '%s'
-        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
-      </Sentence>
-      <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
-    </DynSentence>   
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
-
-      <!--Set>Flag=|</Set>
-      <Set>TxnKnd= </Set>
-      <Set>OTlogNo= </Set>
-      <Set>DLDat1= </Set>
-      <Set>DLTim1= </Set-->
+      <!--Set>ClrDat=CALCDATE(GETDATETIME(YYYYMMDD),-,d,1)</Set-->
 
       <Set>LclDir=dat/ycta</Set>
-      
-      <!--01 µ±Ç°½»Ò×Êý¾ÝÎÄ¼þ-->
-      <!--02 µ±Ç°¼ì²éÊý¾ÝÎÄ¼þ-->
+      <Set>ServId=CMMB</Set><!--·þÎñÉÌ´úÂë-->
+      <Set>CollId=0001</Set><!--²É¼¯µã±àºÅ-->
 
-      <Set>LclFil=STRCAT(JY,$FilTyp,_,$ClrDat,_,315810,_001,.bil)</Set> 
-
-      <If condition="IS_EQUAL_STRING($FilTyp,01)">
-      	<Set>tmpTxnCod=460230</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="DptTyp"/>
-          <Arg name="DestNam" value="CAgtNo"/>
-          <Arg name="TblNam"  value="DptTypToCAgtNo_DL"/>
-        </Exec>
-
-        <Exec func="PUB:ReadRecord">
-          <Arg name="SqlCmd" value="TotalDeal_DL"/>
-        </Exec>         
-        <!-- ÓÉÓÚµçÁ¦ÒªÇóÎÞ¼ÇÂ¼Ò²Òª·¢ËÍ¶ÔÕËÎÄ¼þ,Òò´Ë¼ÇÂ¼ÎªÁãÅÐ¶Ï×¢ÊÍµô,qm,20120503 -->
-        <!--If condition="INTCMP($TotalDeal,3,0)">
-        	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
-        	<Continue/>
-        </If-->         
-        <Exec func="PUB:ExportFromDB">    <!--²úÉúÉÏËÍ¹©µç·½µÄÎÄ¼þ-->
-          <Arg name="SqlName" value="GetTxnJnl_DL"/>
-          <Arg name="FormatName" value="EFEA_DZ"/>
-          <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
+      <!-- 1 Éú³Éµ±Ç°½»Ò×Êý¾ÝÎÄ¼þ-->
+        <Set>JYFile=STRCAT(JY,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Exec func="PUB:ExportFromDB">
+          <Arg name="SqlName" value="GetJY"/>
+          <Arg name="FormatName" value="YCTA_Dtl"/>
+          <Arg name="FileName" value="STRCAT($LclDir,/,$JYFile)"/>
           <Arg name="TableName" value="afetxnjnl"/>
         </Exec>
-      </If>
-      <Else>
-      	<Set>tmpTxncod=460245</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="DptTyp"/>
-          <Arg name="DestNam" value="CAgtNo"/>
-          <Arg name="TblNam"  value="DptTypToCAgtNo_YH"/>
+      <!-- 2 Éú³Éµ±Ç°³åÕýÊý¾ÝÎÄ¼þ-->
+        <Set>CZFile=STRCAT(CZ,$ServId,$CollId,$ClrDat,.TXT)</Set> 
+        <Exec func="PUB:ExportFromDB">
+          <Arg name="SqlName" value="GetCZ"/>
+          <Arg name="FormatName" value="YCTA_Dtl"/>
+          <Arg name="FileName" value="STRCAT($LclDir,/,$CZFile)"/>
+          <Arg name="TableName" value="afetxnjnl"/>
         </Exec>
-        <!--If condition="IS_EQUAL_STRING($FilTyp,02)">
-        	<Set>PayTyp=10</Set>
+      <!-- 3 Éú³ÉÉó¼ÆÊý¾ÝÎÄ¼þ-->
+        <Set>LclDir=STRCAT(GETENV(WORKDIR),/,$LclDir)</Set>
+        <Set>LclFil=STRCAT(RZ,$ServId,$CollId,$ClrDat,.TXT)</Set>
+        <Set>PthFil=STRCAT($LclDir,/,$LclFil)</Set>
+        <Exec func="PUB:ReadRecord">
+          <Arg name="SqlCmd" value="GetJYTol"/>
+        </Exec>
+        <If condition="~RetCod!=0">
+          <Set>RspCod=YCT999</Set>
+          <Set>RspMsg=Êý¾Ý¿â²Ù×÷´íÎó</Set>
+          <Return/>
         </If>
-        <Else>
-          <Set>PayTyp=12</Set>
-        </Else-->
         <Exec func="PUB:ReadRecord">
-          <Arg name="SqlCmd" value="TotalDeal_YH"/>
-        </Exec>         
-        <!-- ÓÉÓÚµçÁ¦ÒªÇóÎÞ¼ÇÂ¼Ò²Òª·¢ËÍ¶ÔÕËÎÄ¼þ,Òò´Ë¼ÇÂ¼ÎªÁãÅÐ¶Ï×¢ÊÍµô,qm,20120503 -->
-        <!--If condition="INTCMP($TotalDeal,3,0)">
-        	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
-        	<Continue/>
-        </If-->         
-        <Exec func="PUB:ExportFromDB">    <!--²úÉúÉÏËÍ¹©µç·½µÄÎÄ¼þ-->
-          <Arg name="SqlName" value="GetTxnJnl_YH"/>
-          <Arg name="FormatName" value="EFEA_DZ"/>
-          <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
-          <Arg name="TableName" value="afetxnjnl"/>
+          <Arg name="SqlCmd" value="GetCZTol"/>
         </Exec>
-      </Else>
-      
+        <If condition="~RetCod!=0">
+          <Set>RspCod=YCT999</Set>
+          <Set>RspMsg=Êý¾Ý¿â²Ù×÷´íÎó</Set>
+          <Return/>
+        </If>
+        <Set>Contnt=STRCAT(    1,\\t,ADDCHAR($JYFile,24, ,1),\\t,ADDCHAR($JYCnt,10, ,1),\\t,ADDCHAR($JYSum,12, ,1),\\n)</Set>
+        <Set>Contnt=STRCAT($Contnt,    2,\\t,ADDCHAR($CZFile,24, ,1),\\t,ADDCHAR($CZCnt,10, ,1),\\t,ADDCHAR($CZSum,12, ,1),\\n)</Set>
+        <Exec func="PUB:WriteFile">
+          <Arg name="FileName" value="$PthFil"/>
+          <Arg name="OpenMode" value="w"/>
+          <Arg name="ESCFMT"   value="$Contnt"/>
+        </Exec>
 
-      <!--test-->
       <Exec func="PUB:FtpPut">
-        <Arg name="FtpId" value="EFE_SND_441"/>
+        <Arg name="FtpId" value="YCT_JYF_441"/>
       </Exec>	
-      
+
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="YCT_CZF_441"/>
+      </Exec>	
+
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="YCT_RZF_441"/>
+      </Exec>	
+
       <Set>MsgInf1=STRCAT(Ïò¹©µç·½·¢ËÍ¶ÔÕËÎÄ¼þ³É¹¦)</Set>
-			<Set>MsgTyp=N</Set>
-			<Set>RspCod=000000</Set>
-			<Set>RspMsg=½»Ò×³É¹¦!</Set>         
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=½»Ò×³É¹¦!</Set>
     </FlowCtrl>
   </Transaction>
 

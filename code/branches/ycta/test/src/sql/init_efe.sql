@@ -1,10 +1,8 @@
 --添加电子柜员
-insert into pubdumtlr values('441999','YCT','','EPCLBI1');
-
-
+insert into pubdumtlr values('441999','YCT','','EYCTBI1');
 
 --delete from pubaplbus where brno='441999' and  APLCLS='445' and bustyp='YCTA1';
-insert into pubaplbus values('441999','445','','YCTA1','广东电力代收费');
+insert into pubaplbus values('441999','445','','YCTA1','广东羊城通自助充值');
 --单位代码对照表(应用码、应用子码、业务类型、业务类型描述)
 
 --delete from pubaplmng where brno='441999' and  APLCLS='445' and bustyp='YCTA1';
