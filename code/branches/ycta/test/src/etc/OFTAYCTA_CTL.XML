@@ -1038,7 +1038,7 @@
                case when length(rtrim(RsFld3))=0 then concat('00000.00',chr(9)) else concat(rtrim(char(decimal(decimal(RsFld3,10,2)/100,7,2))),chr(9)) end as BAL,
                '14' as TT
         FROM afetxnjnl
-        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U','C') and HRspcd='SC0000' and TTxnst IN ('S','U','C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
@@ -1061,7 +1061,7 @@
         select char(decimal(decimal(coalesce(sum(cast(TxnAmt as bigint)),0),10,2)/100,11,2)) as JYSum,
                coalesce(COUNT(*),0) as JYCnt 
         from afetxnjnl
-        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') and BusTyp='YCTA1'
+        WHERE CAgtNo='%s' and ActDat ='%s' and HTxnSt IN ('S','T','U','C') and HRspcd='SC0000' and TTxnst IN ('S','U','C') and BusTyp='YCTA1' and rtrim(RsFld1)&lt;&gt;''
       </Sentence>
       <Fields>CAgtNo|ClrDat|</Fields>
     </DynSentence>
