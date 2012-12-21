@@ -1,15 +1,19 @@
 文件结构
-SVRLST.XML:注册所有服务器(一个ATR为一个服务器),可以用icsps命令看到
-DAFE_PKG.XML:公用的调用主机接口文件包
 ActJudge_IIT.XML:公用的函数包(如账号判断等)
-CTMAYCTA_ATR.XML:前端接入服务器配置文件，包括线程数，内存分配等
-CTMAYCTA_ITF.XML:前端接入(包括但不限于自助通、个人网银、手机银行)报文接口配置
-OFTAYCTA_ATR.XML:主控配置文件，包括线程数，内存分配等
-OFTAYCTA_CTL.XML:主控流程配置文件
-STDAYCTA_ATR.XML:外发服务器配置文件，包括线程数，内存分配等
-STDAYCTA_ITF.XML:外发服务器报文接口配置
 CFG_YCTA_441999.XML:主机接口与外发第三方配置文件
 CSW_YCTA_441999.XML:代码转换配置文件
+CTMAYCTA_ATR.XML:前端接入服务器配置文件，包括线程数，内存分配等
+CTMAYCTA_ITF.XML:前端接入(包括但不限于自助通、个人网银、手机银行)报文接口配置
+DAFE_PKG.XML:公用的调用主机接口文件包
+FMT_YCTA_441999.XML:对账明细配置文件
+OFTAYCTA_ATR.XML:主控配置文件，包括线程数，内存分配等
+OFTAYCTA_CTL.XML:主控流程配置文件
+RPT_YCTA_441999.XML:成功清单配置文件
+STDAYCT2_ATR.XML:外发签到服务器配置文件，包括线程数，内存分配等
+STDAYCT2_ITF.XML:外发签到服务器报文接口配置
+STDAYCTA_ATR.XML:外发服务器配置文件，包括线程数，内存分配等
+STDAYCTA_ITF.XML:外发服务器报文接口配置
+SVRLST.XML:注册所有服务器(一个ATR为一个服务器),可以用icsps命令看到
 
 app文件夹下建立链接目录
 ln -s /app/ics/dat dat
@@ -25,8 +29,17 @@ ln -s /app/ics/trc trc
     <_PORT desc="广州羊城通充值前端接入端口">36400</_PORT>
   </CTMAYCTA>
   <STDAYCTA>
-    <_IP   desc="广州羊城通充值接出">10.240.13.201</_IP>
-    <_PORT desc="广州羊城通充值接出端口">5003</_PORT>
+    <_IP   desc="广州羊城通充值接出">10.240.18.49</_IP>
+    <_PORT desc="广州羊城通充值接出端口">5006</_PORT>
   </STDAYCTA>
+  <STDAYCT2>
+    <_IP   desc="广州羊城通充值接出">182.53.4.63</_IP>
+    <_PORT desc="广州羊城通充值接出端口">3895</_PORT>
+  </STDAYCT2>
 
 ICS自动触发程序配置
+<!--羊城通业务系统,银行对账文件自动发送-->
+        <SchItem istxn='0' objsvr="OFTAYCTA" txncod='484527' txndatatype='text/xml' txndat='' funcname='' funcpath='' sndflag='0' mi
+nute='29' hour='4' monthday='*' weekday='*' monthweek='*' month='*' trace="5">
+                <Data><ROOT></ROOT></Data>
+        </SchItem>
