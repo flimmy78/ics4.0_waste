@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="YCT">
+  <!--Include file="etc/XXXXXX.XML"/-->
+  <!--CodeSwitching>
+    <Table name="SrcToTarget" file="etc/XXXXXX.XML">
+     <Column name="SrcCod" sort="no"/>
+     <Column name="TarCod" sort="no"/>
+    </Table>
+  </CodeSwitching-->
+
+  <Transaction code="484503" desc="¹²ÓÃ½»Ò×²éÑ¯P_TRAN_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484504" desc="CPUÈ¦´æ²éÑ¯Í¨Ñ¶½Ó¿ÚP_CPU_LOAD_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="192" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484505" desc="CPUÈ¦´æÍ¨Ñ¶½Ó¿ÚP_CPU_LOAD" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="160" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="224" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484506" desc="CPUÈ¦´æÌá½»Í¨Ñ¶½Ó¿ÚP_CPU_LOAD_SUBMIT" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484510" desc="CPU¿¨Í¬²½P_M1_TO_CPU" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="288" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484511" desc="M1È¦´æ²éÑ¯Í¨Ñ¶½Ó¿ÚP_M1_LOAD_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="160" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484512" desc="M1È¦´æÍ¨Ñ¶½Ó¿ÚP_M1_LOAD" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="160" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="208" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484513" desc="M1³åÕýÍ¨Ñ¶½Ó¿ÚP_M1_ROLLBACK" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="176" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="96" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484535" desc="¿Û·Ñ²éÑ¯P_PURCHASE_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="128" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="128" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484536" desc="¿Û·ÑP_PURCHASE" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="224" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484537" desc="¿Û·ÑÌá½»P_PURCHASE_SUBMIT" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="144" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="160" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484522" desc="À©Õ¹Ó¦ÓÃ²éÑ¯" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="64" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484534" desc="À©Õ¹Ó¦ÓÃ²Ù×÷" log_switch="5">
+    <Request>
+      <AddItem name="ReqDa2" expression="DELBOTHSPACE($ReqDat)"/>            <!-- ÇëÇó±¨ÎÄ(¶¨³¤) -->
+      <Item name="ReqDa2" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ(±ä³¤) -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484516" desc="ÖÕ¶Ë¼à¿ØP_MONITOR" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="114" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <!--Item name="RspDat" length="112"/-->   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484517" desc="¼à¿ØÅäÖÃP_SET_MONITOR" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="87" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="180" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484518" desc="×ªÒÆ¿¨²éÑ¯P_TRANSFOR_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="112" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="112" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484519" desc="×ªÒÆÈ·ÈÏ²éÑ¯P_TRANSFOR_COMFIRM_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="176" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484523" desc="²¶»ñºÚÃûµ¥P_SET_BLACKLIST" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484524" desc="ºÚÃûµ¥Ìá½»P_BLACKLIST_SUBMIT" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="80" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484528" desc="³äÖµ½ðÕË»§²éÑ¯P_ACCT_QRY" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="80" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+  <Transaction code="484529" desc="³äÖµ½ðÕË»§ÉèÖÃP_ACCT_SET" log_switch="5">
+    <Request>
+      <Item name="ReqDat"   length="208" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>             <!-- ÇëÇó±¨ÎÄ -->
+    </Request>
+    <Response necessary="no">
+      <Item name="RspDat" length="400" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>   <!-- ·µ»Ø±¨ÎÄ -->
+      <AddItem name="TRspCd" length="2" value="00"/>
+    </Response>
+  </Transaction>
+
+</Application>
