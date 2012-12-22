@@ -1076,7 +1076,12 @@
     </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      <!--Set>ClrDat=CALCDATE(GETDATETIME(YYYYMMDD),-,d,1)</Set-->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="ClrDat" value="ClrDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,1)">  <!--手工发起标志-->
+        <Set>ClrDat=CALCDATE(GETDATETIME(YYYYMMDD),-,d,1)</Set>
+      </If>
 
       <Set>LclDir=dat/ycta</Set>
       <Set>ServId=CMMB</Set><!--服务商代码-->
