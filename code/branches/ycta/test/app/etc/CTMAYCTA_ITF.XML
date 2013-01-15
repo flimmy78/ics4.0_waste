@@ -168,7 +168,7 @@
       <Item name="PhyCrd"   length="16"  />             <!-- 物理卡号     -->
       <Item name="LgcCrd"   length="16"  />             <!-- 逻辑卡号     -->
       <AddItem name="VchTyp"  value="007"/>            <!-- 银行卡       -->
-      <AddItem name="AppNm"  value="GZ_YCT"/>         <!-- 单位类型     -->
+      <AddItem name="AppNm"  value="GZ_YCTZZ"/>         <!-- 单位类型     -->
       <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
     </Request>
     <Response necessary="no">
@@ -366,7 +366,7 @@
       <Item name="PkiCrd"   length="8"  />             <!-- PKI管理卡号  -->
       <Item name="PhyCrd"   length="16"  />             <!-- 物理卡号     -->
       <Item name="LgcCrd"   length="16"  />             <!-- 逻辑卡号     -->
-      <AddItem name="AppNm"  value="GZ_YCT"/>         <!-- 单位类型     -->
+      <AddItem name="AppNm"  value="GZ_YCTZZ"/>         <!-- 单位类型     -->
       <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
     </Request>
     <Response necessary="no">
@@ -556,7 +556,7 @@
       <Item name="LogNo"    length="14" />             <!-- 银行流水号   -->
       <Item name="ActDat"   length="8"  />             <!-- 会计日期     -->
       <AddItem name="VchTyp"  value="007"/>            <!-- 银行卡       -->
-      <AddItem name="AppNm"  value="GZ_YCT"/>          <!-- 单位类型     -->
+      <AddItem name="AppNm"  value="GZ_YCTZZ"/>          <!-- 单位类型     -->
       <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
     </Request>
     <Response necessary="no">
@@ -1059,8 +1059,8 @@
   <Transaction code="484527" service="484527" log_switch="5" timeout="240" des="生成对帐文件">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ClrDat"    length="8"/>     <!-- 对账日期 YYYYMMDD -->4410001099
-      <AddItem name="CagtNo"    value="4410001099"/>     <!-- 对账日期 YYYYMMDD -->
+      <Item name="ClrDat"    length="8"/>     <!-- 对账日期 YYYYMMDD -->
+      <AddItem name="CagtNo"    value="4410001344"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
