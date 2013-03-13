@@ -7,10 +7,11 @@
     <Config name="OPFCSW"      value="etc/CSW_UNCA_441999.XML"/>
   </ConfigDeclare>
 
-  <!--BusDefDeclare>
+  <BusDefDeclare>
     <Busdef name="BrNo"      value="441999"/>
-    <Busdef name="AplCls"    value="445"/>
-  </BusDefDeclare-->
+    <!-- 业务码,不添加的话调用AFE_SglBkPay中GetAppInfo会报错 -->
+    <Busdef name="AplCls"    value="206"/>
+  </BusDefDeclare>
 
   <PackageDeclare>
     <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
@@ -76,86 +77,256 @@
   
   </Define>
 
-<!--TODO-->
   <Transaction code="460601" desc="被充值号码验证(010201)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
 
-
-      
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484502"/>
-        <Arg name="ObjSvr" value="STDAYCT2"/>
-      </Exec>
-      <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=签到失败!</Set>
-        <Return/>
-      </If>
-      <Set>RspCod=000000</Set>
-      <Set>MsgTyp=N</Set>
-
-    </FlowCtrl>
-  </Transaction>
-
-<!--TODO-->
-  <Transaction code="460602" desc="给被充值号码充值(010202)">
-    <FlowCtrl>
-      <Exec func="PUB:InitTransaction"/>
-      <Exec func="PUB:GetLogNo"/><!--获取流水号-->
-
-      <Set>TTxnCd=010201</Set><!-- 设置第三方交易码 -->
-      <Set>TelTyp=1</Set><!-- 设置业务号码类型 -->
+      <!--发送第三方查询-->
+      <Set>TTxnCd=010201</Set>
+      <Set>RsFld1=STRCAT(SUBSTR($ActDat,3,6),$LogNo)</Set>
+      <Set>TCusId=$TelNum</Set>
+      <Set>TelTyp=1</Set>
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460601"/>
         <Arg name="ObjSvr" value="STDAUNCA"/>
       </Exec>
-      <If condition="$RspCod!=000000">
+      <If condition="$RspCod!=000000"><!--判断通讯是否正常-->
         <Set>RspCod=UNC999</Set>
         <Set>MsgTyp=E</Set>
-        <Set>RspMsg=连接联通服务器失败!</Set>
+        <Set>RspMsg=通讯失败!</Set>
         <Return/>
       </If>
-      <If condition="OR($AccFlg!=1,$ErrCod!=00000)">
-        <Exec func="PUB:CodeSwitching" error="IGNORE">
-          <Arg name="DatSrc" value="OPFCSW"></Arg>
-          <Arg name="SourNam" value="ErrCod"></Arg>
-          <Arg name="DestNam" value="ErrMsg"></Arg>
-          <Arg name="TblNam" value="ErrCod2ErrMsg"></Arg>
-        </Exec>
+      <If condition="$AccFlg!=1"><!--判断交易是否失败,并返回错误信息-->
         <Set>RspCod=UNC999</Set>
         <Set>MsgTyp=E</Set>
+        <Exec func="PUB:CodeSwitching">
+          <Arg name="DatSrc"  value="OPFCSW"/>
+          <Arg name="SourNam" value="ErrCod"/>
+          <Arg name="DestNam" value="ErrMsg"/>
+          <Arg name="TblNam"  value="ErrCod2ErrMsg"/>
+        </Exec>
         <Set>RspMsg=$ErrMsg</Set>
         <Return/>
       </If>
-
       <Set>RspCod=000000</Set>
       <Set>MsgTyp=N</Set>
 
     </FlowCtrl>
   </Transaction>
 
-<!--TODO-->
+  <Transaction code="460602" desc="给被充值号码充值(010202)">
+    <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="QryCrpAgr">             <!--查询单位信息 -->
+      <Sentence>
+        SELECT TActNo, BBusTyp FROM savcrpagr WHERE BrNo='%s' AND CAgtNo='%s' AND SvrSts='1'
+      </Sentence>
+      <Fields>BrNo|CAgtNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+
+      <!--根据柜员号取BrNo-->
+      <Exec func="PUB:GetBranchNoByTeller"/>
+
+      <!--交易初始化,预留-->
+      <Exec func="PUB:InitTransaction"/>
+      <!--取前置流水号-->
+      <Exec func="PUB:GetLogNo"/>
+      <!--默认交易返回成功-->
+      <Set>RspCod=000000</Set>
+
+      <!--读取协议数据-->
+      <Set>AppNm=GZ_UNC</Set>  <!-- 单位类型 -->
+      <Exec func="PUB:CodeSwitching"><!--获取单位协议-->
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="AppNm"/>
+        <Arg name="DestNam" value="CAgtNo"/>
+        <Arg name="TblNam"  value="GZ_AppNm"/>
+      </Exec>
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryCrpAgr"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=460199</Set>
+        <Set>RspMsg=无该单位协议或数据库错</Set>
+        <Return/>
+      </If>
+
+      <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
+         <Set>HTxnCd=471140</Set>  <!-- 主机交易码 -->
+         <Set>BusTyp=UNCA1</Set>   <!-- 业务类型   -->
+         <Quote name="Chk_TxnSrc"/><!-- CnlTyp:交易受理渠道-->
+         <Set>ActFlg=4</Set>       <!--扣款来源 0－现金，1－一本通，2－普通存折，4－卡，5－支票-->
+         <Set>Mask=9102</Set>      <!--摘要码：9102代扣电费--><!--TODO UNC mask是什么-->
+         <Set>VchCod=00000000</Set>
+         <!--测试时先密码验证才用0-->
+         <Set>PayMod=0</Set>       <!--支取方式 1 凭密支取 0 不验密-->
+         <Set>VchChk=0</Set>
+         <Set>Fee=000000000000000</Set>
+         <!--在前边对私凭证内添加<Set>PayMod=0</Set>支取方式 1 凭密支取 0 不验密-->
+      </If>
+      <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"><!--对公-->
+         <!-- 对公暂时不做 -->
+         <Set>HTxnCd=451240</Set>
+         <Set>ActNod=SUBSTR($TActNo,1,6)</Set>
+         <Set>ActSqn=SUBSTR($TActNo,14,5)</Set>
+         <Delete>TActNo</Delete>
+         <Set>BusTyp=CRP51</Set>
+         <Set>BusSub=01</Set>                   <!--应用子码，对应业务类型CRP51-->
+         <Set>Smr=</Set>  <!--摘要-->
+      </ElseIf>
+      <Else>
+         <Return/>
+      </Else>
+
+      <Quote name="TxnSrc_TxnCnl"/>
+
+      <!-- ReadModuleCfg会直接在ConfigDeclare定义的ParaFile文件里面匹配对应的项 -->
+      <Exec func="PUB:ReadModuleCfg">
+        <Arg name="Application" value="GZ_UNCA"/><!--可以使用单位编号-->
+        <Arg name="Transaction" value="460602"/><!--可以用交易码或者模块名-->
+      </Exec>
+
+      <!-- 补充afetxnjnl流水表插入字段 -->
+      <Set>TxnTyp=N</Set>  <!--交易类型-->
+      <Set>ItgTyp=0</Set>  <!--完整性类型-->
+      <Set>FRspCd= </Set>  <!--前置响应码-->
+      <Set>MstChk=1</Set>  <!--要求对帐标志-->
+
+      <!-- 第三方报文字段添加 -->
+      <!--发送第三方充值-->
+      <Set>TTxnCd=010202</Set><!-- 设置第三方交易码 -->
+      <Set>RsFld1=STRCAT(SUBSTR($ActDat,3,6),$LogNo)</Set>
+      <Set>TCusId=$TelNum</Set>
+      <Set>TelTyp=1</Set><!-- 设置业务号码类型 -->
+      
+      <!--发送主机记账和第三方-->
+      <Call package="AFE" function="AFE_SglBkPay"/>
+      <!--call pack返回成功-->
+      <If condition="$RspCod=000000">
+        <Set>MsgTyp=N</Set>
+      </If>
+      <!--主机记账错误-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,X),IS_EQUAL_STRING($TxnSts,X))">
+        <Set>MsgTyp=E</Set>
+      </ElseIf>
+      <!--主机记账超时-->
+      <ElseIf condition="IS_EQUAL_STRING($HTxnSt,T)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=YCT999</Set>
+        <Exec func="PUB:PutResponse"/><!--返回查询结果信息-->
+        <Goto>CRCHOST</Goto>
+        <Return/>
+      </ElseIf>
+      <!--主机记账失败-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($HTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
+        <If condition="IS_NOEQUAL_STRING($MsgTyp,A)">
+          <Set>MsgTyp=E</Set>
+        </If>
+        <Return/>
+      </ElseIf>
+      <!--第三方发送错误-->
+      <ElseIf condition="AND(IS_EQUAL_STRING($TTxnSt,X),IS_EQUAL_STRING($TxnSts,X))">
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </ElseIf>
+      <!--第三方发送或返回超时-->
+      <ElseIf condition="IS_EQUAL_STRING($TTxnSt,T)">
+        <Set>MsgTyp=E</Set>
+        <Return/>
+      </ElseIf>
+      <!--第三方返回失败-->
+      <Else condition="AND(IS_EQUAL_STRING($TTxnSt,F),IS_EQUAL_STRING($TxnSts,F))">
+        <If condition="$AccFlg!=1"><!--判断交易是否失败,并返回错误信息-->
+          <Set>RspCod=UNC999</Set>
+          <Set>MsgTyp=E</Set>
+          <Exec func="PUB:CodeSwitching">
+            <Arg name="DatSrc"  value="OPFCSW"/>
+            <Arg name="SourNam" value="ErrCod"/>
+            <Arg name="DestNam" value="ErrMsg"/>
+            <Arg name="TblNam"  value="ErrCod2ErrMsg"/>
+          </Exec>
+          <Set>RspMsg=$ErrMsg</Set>
+          <Return/>
+        </If>
+        <Goto>CRCHOST</Goto>
+        <Return/>
+      </Else>
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			<Set>RspMsg=交易成功!</Set>
+      <Return/>
+
+      <Label>CRCHOST</Label> <!--只上主机冲正-->
+        <Set>OLogNo=$LogNo</Set>
+        <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,722),INTCMP($VchTyp,3,021))"><!--对私-->
+          <Set>HTxnCd=471149</Set>
+        </If>
+        <ElseIf condition="OR(INTCMP($VchTyp,3,117),INTCMP($VchTyp,3,127),INTCMP($VchTyp,3,129),INTCMP($VchTyp,3,105),INTCMP($VchTyp,3,113),INTCMP($VchTyp,3,115))"> <!--对公-->
+          <!--
+          <Set>HTxnCd=451619</Set>
+          -->
+          <Set>HTxnCd=451249</Set>
+        </ElseIf>
+        <Else>             <!--第三方-->
+          <Return/>
+        </Else>
+
+
+        <Set>OHLogNo=$HLogNo</Set>
+        <Set>OTckNo=$TckNo</Set>
+        <Set>OTTxnCd=$TxnCod</Set>
+        
+        <Set>TTxnCd=$TxnCod</Set>
+        <Set>OTxnSts=$TxnSts</Set>
+        <Set>OHTxnSt=$HTxnSt</Set>
+        <Set>HLogNo= </Set>
+        <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
+      
+        <Set>TIATyp=C</Set>
+        <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
+        <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机进行冲正交易-->
+          <Arg name="HTxnCd" value="959999"/>
+          <Arg name="ObjSvr" value="SHSTPUB1"/>
+        </Exec>
+
+        <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
+          <Set>HTxnSt=C</Set>
+          <Set>TxnSts=C</Set>
+          <Exec func="PUB:ExecSql">
+            <Arg name="SqlCmd" value="Upd_TxnSt"/>
+          </Exec>
+          <Return/>
+        </If>
+        <Else>    <!--不成功登记自动冲正-->
+          <Exec func="PUB:DefaultErrorProc"/>
+        </Else>
+
+    </FlowCtrl>
+  </Transaction>
+
+
   <Transaction code="460606" desc="通过卡号查询缴费会计流水号">
 	  <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
 		<DynSentence name="Cnt">  <!--笔数-->
 			<Sentence>
-        SELECT COUNT(*) FROM afetxnjnl
-        WHERE ActNo='%s' AND BrNo='%s' AND CAgtNo='%s'
+        SELECT COUNT(*) SumCnt
+        FROM afetxnjnl
+        WHERE BrNo='%s' AND CAgtNo='%s' AND ActNo='%s'
           AND HtxnSt in ('S','T')
 			</Sentence>
-			<Fields>CrdNo|BrNo|CAgtNo|</Fields>
+			<Fields>BrNo|CAgtNo|CrdNo|</Fields>
 		</DynSentence>
     <DynSentence name="MultiQuery">
 			<Sentence>
-        SELECT ActDat, TxnAmt, TckNo FROM afetxnjnl
-        WHERE ActNo='%s' AND BrNo='%s' AND CAgtNo='%s'
+        SELECT ActDat, TxnAmt, TckNo, TLogNo, RsFld1 FROM afetxnjnl
+        WHERE BrNo='%s' AND CAgtNo='%s' AND ActNo='%s' 
           AND HtxnSt in ('S','T')
 			</Sentence>
-			<Fields>CrdNo|BrNo|CAgtNo|</Fields>
+			<Fields>BrNo|CAgtNo|CrdNo|</Fields>
 		</DynSentence>
 	  <FlowCtrl>
       
@@ -178,15 +349,32 @@
   <Transaction code="460604" desc="缴费记录查询(010204)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <!--发送第三方查询-->
+      <Set>TTxnCd=010204</Set>
+      <Set>RsFld1=STRCAT(SUBSTR($ActDat,3,6),$LogNo)</Set>
+      <Set>TCusId=AAAAA</Set>
+      <Set>TelTyp=1</Set>
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484502"/>
-        <Arg name="ObjSvr" value="STDAYCT2"/>
+        <Arg name="HTxnCd" value="460604"/>
+        <Arg name="ObjSvr" value="STDAUNCA"/>
       </Exec>
-      <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
+      <If condition="$RspCod!=000000"><!--判断通讯是否正常-->
+        <Set>RspCod=UNC999</Set>
         <Set>MsgTyp=E</Set>
-        <Set>RspMsg=签到失败!</Set>
+        <Set>RspMsg=通讯失败!</Set>
+        <Return/>
+      </If>
+      <If condition="$AccFlg!=1"><!--判断交易是否失败,并返回错误信息-->
+        <Set>RspCod=UNC999</Set>
+        <Set>MsgTyp=E</Set>
+        <Exec func="PUB:CodeSwitching">
+          <Arg name="DatSrc"  value="OPFCSW"/>
+          <Arg name="SourNam" value="ErrCod"/>
+          <Arg name="DestNam" value="ErrMsg"/>
+          <Arg name="TblNam"  value="ErrCod2ErrMsg"/>
+        </Exec>
+        <Set>RspMsg=$ErrMsg</Set>
         <Return/>
       </If>
       <Set>RspCod=000000</Set>
@@ -195,19 +383,35 @@
     </FlowCtrl>
   </Transaction>
 
-<!--TODO-->
   <Transaction code="460605" desc="充值结果冲正(010205)">
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
-      
+
+      <!--发送第三方查询-->
+      <Set>TTxnCd=010204</Set>
+      <Set>RsFld1=STRCAT(SUBSTR($ActDat,3,6),$LogNo)</Set>
+      <Set>TCusId=AAAAA</Set>
+      <Set>TelTyp=1</Set>
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="484502"/>
-        <Arg name="ObjSvr" value="STDAYCT2"/>
+        <Arg name="HTxnCd" value="460605"/>
+        <Arg name="ObjSvr" value="STDAUNCA"/>
       </Exec>
-      <If condition="$RspCod!=000000">
-        <Set>RspCod=YCT999</Set>
+      <If condition="$RspCod!=000000"><!--判断通讯是否正常-->
+        <Set>RspCod=UNC999</Set>
         <Set>MsgTyp=E</Set>
-        <Set>RspMsg=签到失败!</Set>
+        <Set>RspMsg=通讯失败!</Set>
+        <Return/>
+      </If>
+      <If condition="$AccFlg!=1"><!--判断交易是否失败,并返回错误信息-->
+        <Set>RspCod=UNC999</Set>
+        <Set>MsgTyp=E</Set>
+        <Exec func="PUB:CodeSwitching">
+          <Arg name="DatSrc"  value="OPFCSW"/>
+          <Arg name="SourNam" value="ErrCod"/>
+          <Arg name="DestNam" value="ErrMsg"/>
+          <Arg name="TblNam"  value="ErrCod2ErrMsg"/>
+        </Exec>
+        <Set>RspMsg=$ErrMsg</Set>
         <Return/>
       </If>
       <Set>RspCod=000000</Set>
