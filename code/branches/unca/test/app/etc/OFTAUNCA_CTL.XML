@@ -79,7 +79,11 @@
 
   <Transaction code="460601" desc="被充值号码验证(010201)">
     <FlowCtrl>
+
+      <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
+      <!--取前置流水号-->
+      <Exec func="PUB:GetLogNo"/>
 
       <!--发送第三方查询-->
       <Set>TTxnCd=010201</Set>

@@ -49,7 +49,7 @@
       <Item name="TelNum"   length="20"/><!-- 被充值号码 -->
       <Item name="CrdNo"    length="21"/><!-- 卡号 -->
       <AddItem name="ActNo"    length="21" expression="$CrdNo"/><!-- 卡号 -->
-      <Item name="TxnAmt"   length="15"/><!-- 充值金额 -->
+      <Item name="TxnAmt"   length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)"/><!-- 充值金额 -->
       <AddItem name="VchTyp"  value="007"/><!-- 缴费凭证为银行卡 -->
     </Request>
     <Response necessary="no">
