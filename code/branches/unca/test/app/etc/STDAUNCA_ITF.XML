@@ -10,22 +10,26 @@
 
   <Define>
     <Macro name="req_head"><!-- 请求报文头 -->
-      <!--A1数据包大小(5位),已经在ATR中配置-->
+      <Item name="BegFlg" length="1" value="@"/><!-- 开始标志 -->
+      <Item name="PreLen"  length="5" value="186"/><!--A1数据包大小(5位),已经在ATR中配置-->
       <Item name="RsFld1"  length="20"/><!-- A2(我方)流水号:会计日期后6位+前置流水号14位 -->
       <Item name="AccFlg"  length="1" value=" "/><!-- A3(成功)标志,请求包为空格 -->
       <Item name="TTxnCd"  length="6"/><!-- A4交易类型,010201:充值号码验证,010202:充值,010204:记录查询,010205:冲正 -->
       <Item name="TTxnTy"  length="2" value="00"/><!-- A5业务类型 -->
       <Item name="TCusId"  length="20"/><!-- A6业务号码 -->
       <Item name="TelTyp"  length="1"/><!-- A7业务号码类型 -->
-      <Item name="AgenID"  length="6" value=" "/><!-- A8代理商(指我行)接入(联通)系统ID TODO-->
-      <Item name="AgenPW"  length="32" value=" "/><!-- A9(我行)接入密码 TODO-->
+      <!--Item name="AgenID"  length="6" value=" "/--><!-- A8代理商(指我行)接入(联通)系统ID TODO-->
+      <!--Item name="AgenPW"  length="32" value=" "/--><!-- A9(我行)接入密码 TODO-->
+      <Item name="AgenID"  length="6" value="000010"/><!-- A8代理商(指我行)接入(联通)系统ID TODO-->
+      <Item name="AgenPW"  length="32" value="C539D4D157C046A9"/><!-- A9(我行)接入密码 TODO-->
       <Item name="PdgNum"  length="5" value="00001"/><!-- A10包编号 -->
       <Item name="PdgFlg"  length="1" value="1"/><!-- A11最后一包标志:1 最后一包数据,无后续包 -->
-      <Item name="ErrCod"  length="5" value="     "/><!-- A12错误码 -->
+      <Item name="ErrCod"  length="5" value="00000"/><!-- A12错误码 -->
     </Macro>
 <!--TODO需要比对一下返回报文头是不是会将原有信息冲掉-->
     <Macro name="rsp_head"><!-- 返回报文头 -->
-      <!--A1数据包大小(5位),已经在ATR中配置-->
+      <Item name="BegFlg" length="1"/><!-- 开始标志 -->
+      <Item name="PreLen"  length="5"/><!--A1数据包大小(5位),已经在ATR中配置-->
       <Item name="RsFld2"  length="20"/>
       <Item name="AccFlg"  length="1"/><!-- A3(成功)标志,返回包:1成功,0失败 -->
       <Item name="TTxnCd"  length="6"/><!-- A4交易类型 -->
@@ -44,8 +48,6 @@
   <Transaction code="460601" desc="被充值号码验证(010201)" log_switch="5">
     <Request>
       <Quote name="req_head"/>
-      <AddItem name="BegFlg" length="1" value="@"/>
-      <Item name="BegFlg" length="1"/><!-- 包体开始标志 -->
       <!--包体为空-->
       <AddItem name="EndFlg" length="2" value="1A"/>
       <Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/><!-- 包体结束标志 -->
@@ -55,6 +57,7 @@
       <!--包体开始-->
       <Item name="AreCod" length="4"/><!-- 地区号 -->
       <!--包体结束-->
+      <Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/><!-- 包体结束标志 -->
       <AddItem name="TRspCd" length="2" value="00"/>
     </Response>
   </Transaction>
@@ -62,24 +65,28 @@
   <Transaction code="460602" desc="给被充值号码充值(010202)" log_switch="5">
     <Request>
       <Quote name="req_head"/>
-      <AddItem name="BegFlg" length="1" value="@"/>
-      <Item name="BegFlg" length="1"/><!-- 包体开始标志 -->
       <!--包体开始-->
-      <Item name="TxnAmt" length="10"/><!-- 缴费金额 -->
-      <Item name="AgenID"  length="20" value=" "/><!-- A8代理商(指我行)接入(联通)系统ID TODO-->
-      <Item name="AgenPW"  length="32" value=" "/><!-- A9(我行)接入密码 TODO-->
+      <AddItem name="TxnAm2" expression="COBOL_TO_NORMAL($TxnAmt,10)"/>
+      <Item name="TxnAm2" length="10"/><!-- 缴费金额 -->
+      <Item name="AgenID"  length="20" value="066000000501"/><!-- A8代理商(指我行)接入(联通)系统ID TODO-->
+      <Item name="AgenPW"  length="32" value="4BE65F6E88E0C367"/><!-- A9(我行)接入密码 TODO-->
       <Item name="RsFld1"  length="20"/><!-- 发起方流水号 -->
       <!--包体结束-->
       <AddItem name="EndFlg" length="2" value="1A"/>
       <Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/><!-- 包体结束标志 -->
     </Request>
     <Response necessary="no">
+      <Item name="Data" deli_asc="-1"/>
+<!--
       <Quote name="rsp_head"/>
+-->
       <!--包体开始-->
-      <Item name="ThdBal" length="10"/><!-- 代理商余额 -->
-      <Item name="TLogNo" length="20"/><!-- 第三方流水号 -->
-      <!--包体结束-->
+<!--
+      <Item name="ThdBal" length="10" desc="代理商余额"/>
+      <Item name="TLogNo" length="20" desc="第三方流水号"/>
       <AddItem name="TRspCd" length="2" value="00"/>
+-->
+      <!--包体结束-->
     </Response>
   </Transaction>
 
