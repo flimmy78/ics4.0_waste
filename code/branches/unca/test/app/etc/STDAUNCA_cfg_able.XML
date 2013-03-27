@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<ComuConfig>
+   <Global>
+      <ConnTyp>0</ConnTyp><!--Á¬½ÓÀàÐÍ, 0¶Ì£¬1³¤-->
+      <MaxConn>30</MaxConn><!--×î´óÁ¬½ÓÊý, Ä¬ÈÏÎª50-->
+      <IpLstFil></IpLstFil><!--ÔÊÐíÁ¬½ÓIP ÁÐ±íÎÄ¼þÃû-->
+      <TmOut>60</TmOut><!--³¬Ê±Ê±¼ä, Ä¬ÈÏÎª30 Ãë-->
+   </Global>
+   <MsgHead>
+      <Receive>
+         <MsgBodyLen startpos="2" length="5"/>
+         <HaveNextMsg end_value="26" end_value_len="1" end_value_type="ASCII"/>
+      </Receive>
+      <Send>
+         <!--MsgHeadLen>0</MsgHeadLen-->
+         <MsgBodyLen startpos="1" length="5" value_type="STRING"/>
+         
+         <DestIp>130.51.15.102</DestIp>
+         <DestPort>8119</DestPort> 
+        
+         
+        <!--
+         <DestIp>182.53.35.110</DestIp>
+         <DestPort>5555</DestPort> 
+        -->
+        
+      </Send>
+   </MsgHead>
+</ComuConfig>

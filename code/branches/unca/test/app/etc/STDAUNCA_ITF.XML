@@ -76,16 +76,17 @@
       <Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/><!-- 包体结束标志 -->
     </Request>
     <Response necessary="no">
-      <Item name="Data" deli_asc="-1"/>
-<!--
+      <!--Item name="Data" deli_asc="26"/-->
       <Quote name="rsp_head"/>
--->
       <!--包体开始-->
-<!--
-      <Item name="ThdBal" length="10" desc="代理商余额"/>
-      <Item name="TLogNo" length="20" desc="第三方流水号"/>
-      <AddItem name="TRspCd" length="2" value="00"/>
--->
+      <If condition="AND(INTCMP($AccFlg,3,1),INTCMP($ErrCod,3,00000))">
+        <Item name="ThdBal" length="10" desc="代理商余额"/>
+        <Item name="TLogNo" length="20" desc="第三方流水号"/>
+        <AddItem name="TRspCd" length="2" value="00"/>
+      </If>
+      <Else>
+        <AddItem name="TRspCd" length="2" value="99"/>
+      </Else>
       <!--包体结束-->
     </Response>
   </Transaction>
