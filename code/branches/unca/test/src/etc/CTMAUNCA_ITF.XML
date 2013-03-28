@@ -7,13 +7,10 @@
     </Table>
   </CodeSwitching>
 
-
-  <Transaction service="484501"  code="484501" desc="终端签到认证1" log_switch="5">
+  <Transaction service="460601"  code="460601" desc="被充值号码验证(010201)" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ReqDat"   length="272"/>           <!-- 请求报文      -->
-      <Item name="ScktID"   length="7"/>             <!-- 请求socket id -->
-      <AddItem name="Loglvl"  value="1"/>            <!-- 请求阶段      -->
+      <Item name="TelNum"   length="20"/><!-- 被充值号码 -->
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -22,7 +19,181 @@
           <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspDat" length="272"/>   <!-- 返回报文 -->
+            <Item name="AreCod" length="4"/><!-- 地区号 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="460602"  code="460602" desc="给被充值号码充值(010202)" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="TelNum"   length="20"/><!-- 被充值号码 -->
+      <Item name="CrdNo"    length="21"/><!-- 卡号 -->
+      <AddItem name="ActNo"    length="21" expression="$CrdNo"/><!-- 卡号 -->
+      <Item name="TxnAmt"   length="15" expression="NORMAL_TO_COBOL($TxnAmt,15)"/><!-- 充值金额 -->
+      <AddItem name="VchTyp"  value="007"/><!-- 缴费凭证为银行卡 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="ActDat" length="8"/><!-- 会计日期 -->
+            <Item name="TckNo" length="12"/><!-- 会计流水号 -->
+            <Item name="TLogNo" length="20"/><!-- 联通流水号 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction code="460606" service="460606" desc="通过卡号查询缴费会计流水号"  log_switch="5">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="CrdNo"    length="15"/><!-- 卡号 -->
+      <Item name="PagIdx"   length="6"/><!-- 页码编号 -->
+      <If condition="IS_NOEQUAL_STRING($PagIdx,000001)">
+        <AddItem name="TIATyp" length="1" value="P"/>
+      </If>
+      <AddItem name="AppNm"  value="GZ_UNC"/><!-- 单位类型 -->
+      <SwitchCode name="AppNm" new_name="CAgtNo"  tab_name="GZ_AppNm"  col_name="AppNm"/>  <!-- 单位类型转换单位协议号 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="SumCnt" length="04"/>
+            <Item name="PagNo"  length="04"/>
+            <Item name="RecNum"   length="4"/>
+            <Group name="Rec" repeat_name="RecNum">
+            <PackItem name="TmpNam">
+              <Item name="ActDat" length="8"/><!-- 会计日期 -->
+              <Item name="TCusId"  length="20"/><!-- 充值号码 -->
+              <Item name="TxnAmt" length="15"/><!-- 交易金额 -->
+              <Item name="TckNo" length="12"/><!-- 会计流水号 -->
+              <Item name="TLogNo" length="20"/><!-- 联通流水号 -->
+              <Item name="RsFld1" length="20"/><!-- 发起方流水号 -->
+            </PackItem>
+              <Item name="TmpNam"   head_len="3"/>
+            </Group>
+            </PackItem>
+             <Item name="TmpDat" head_len="4" include_len="yes"/>
+            <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode1" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  value="0001"/>
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="460604"  code="460604" desc="缴费记录查询(010204)" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ActDat" length="8"/><!-- 会计日期 -->
+      <Item name="RsFld1" length="20"/><!-- 发起方流水号 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="TelNum" length="15"/><!-- 被充值号码 -->
+            <Item name="LogNo" length="20"/><!-- 充值流水号 -->
+            <Item name="TDatTim" length="20"/><!-- 充值时间 -->
+            <Item name="TResult" length="2"/><!-- 充值结构:成功为00,失败为01 -->
+            <Item name="TxnAmt" length="10"/><!-- 充值金额 -->
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+  <Transaction service="460605"  code="460605" desc="充值结果冲正(010205)" log_switch="5">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="TCusId"  length="20"/><!-- 被充值号码 -->
+      <Item name="ActDat" length="8"/><!-- 会计日期 -->
+      <Item name="RsFld1" length="20"/><!-- 发起方流水号 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>

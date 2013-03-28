@@ -18,5 +18,72 @@
     <Default   TxnCnl="TRM"/>
   </Table>
 
+  <Table name="ErrCod2ErrMsg"><!--联通错误码返回-->
+    <!--成功响应-->
+    <Item ErrCod="00000"  ErrMsg="成功"/>
+    <!--操作失败-->
+    <Item ErrCod="01001"  ErrMsg="系统故障"/>
+    <Item ErrCod="01002"  ErrMsg="系统忙"/>
+    <Item ErrCod="01003"  ErrMsg="操作超时"/>
+    <Item ErrCod="01004"  ErrMsg="操作失败"/>
+    <Item ErrCod="01008"  ErrMsg="托收失败"/>
+    <!--托收交易中-->
+    <Item ErrCod="01009"  ErrMsg="托收交易中"/>
+    <!--交易模式代码错误-->
+    <Item ErrCod="01010"  ErrMsg="交易模式代码错误"/>
+    <!--原交易已成功-->
+    <Item ErrCod="01007"  ErrMsg="原交易已成功"/>
+    <!--参数格式错误-->
+    <Item ErrCod="10000"  ErrMsg="包参数格式错误"/>
+    <!--卡数据错误-->
+    <Item ErrCod="20001"  ErrMsg="缴费卡密码错误"/>
+    <Item ErrCod="20002"  ErrMsg="缴费卡归属地区不匹配"/>
+    <Item ErrCod="20003"  ErrMsg="缴费卡序列号错误"/>
+    <!--卡状态错误-->
+    <Item ErrCod="21001"  ErrMsg="缴费卡未激活"/>
+    <Item ErrCod="21002"  ErrMsg="缴费卡被锁定"/>
+    <Item ErrCod="21003"  ErrMsg="缴费卡已被使用"/>
+    <Item ErrCod="21004"  ErrMsg="缴费卡已过期"/>
+    <Item ErrCod="21005"  ErrMsg="缴费卡已注销"/>
+    <!--卡用途错误-->
+    <Item ErrCod="22001"  ErrMsg="专卡专用不提供跨省充值"/>
+    <Item ErrCod="22002"  ErrMsg="卡业务类型受限"/>
+    <Item ErrCod="22003"  ErrMsg="卡使用区域范围受限"/>
+    <!--卡操作错误-->
+    <Item ErrCod="23001"  ErrMsg="流水号错误导致卡冲正失败"/>
+    <Item ErrCod="23002"  ErrMsg="卡密码不符导致卡冲正失败"/>
+    <!--被充值账号错误类型-->
+    <Item ErrCod="05021"  ErrMsg="被充值账号不存在"/>
+    <Item ErrCod="05022"  ErrMsg="缴费帐号不能用于缴费"/>
+    <Item ErrCod="05023"  ErrMsg="帐务系统操作超时"/>
+    <Item ErrCod="05024"  ErrMsg="不在缴费时段"/>
+    <Item ErrCod="30002"  ErrMsg="被充值账号处于冷冻期"/>
+    <Item ErrCod="30004"  ErrMsg="被充值账号处于挂失状态"/>
+    <Item ErrCod="30007"  ErrMsg="跨省后付费用户暂时不提供余额查询"/>
+    <Item ErrCod="30008"  ErrMsg="没有此帐号的当天充值记录，无法冲正"/>
+    <Item ErrCod="30009"  ErrMsg="超过账户金额最大限额"/>
+    <!--代理商错误类型-->
+    <Item ErrCod="05001"  ErrMsg="代理商手机号或密码不正确"/>
+    <Item ErrCod="05002"  ErrMsg="代理商状态不正确"/>
+    <Item ErrCod="05003"  ErrMsg="代理商未激活"/>
+    <Item ErrCod="05004"  ErrMsg="代理商已经注销"/>
+    <Item ErrCod="05005"  ErrMsg="代理商已过期"/>
+    <Item ErrCod="05008"  ErrMsg="代理商余额不足"/>
+    <Item ErrCod="05009"  ErrMsg="代理商处于锁定状态"/> 
+    <Item ErrCod="01017"  ErrMsg="返销流水号不存在"/>
+    <Item ErrCod="01018"  ErrMsg="该账号不支持返销"/>
+    <Item ErrCod="01023"  ErrMsg="流水返销失败"/>
+    <Item ErrCod="01021"  ErrMsg="流水返销成功"/>
+    <Item ErrCod="01020"  ErrMsg="交易时间超出返销时间"/>
+    <Item ErrCod="01022"  ErrMsg="流水返销超时（需转人工处理）"/>
+    <Item ErrCod="01030"  ErrMsg="交易失败，流水号重复"/>
+    <Item ErrCod="01024"  ErrMsg="接入IP错误"/>
+    <Item ErrCod="01025"  ErrMsg="接口权限认证失败"/>
+    <Item ErrCod="01026"  ErrMsg="接入密码验证失败"/>
+    <Item ErrCod="01027"  ErrMsg="流量超过阀值"/>
+    <Item ErrCod="01028"  ErrMsg="系统连接达到最大连接数"/>
+    <Item ErrCod="01029"  ErrMsg="非本省号码"/>
 
+    <Default ErrMsg="未知错误"/>
+  </Table>
 </root>
