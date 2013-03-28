@@ -1,56 +1,57 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Region>
-   <Server name="STDAUNCA" type="SCA" ip="_LOCAL_IP">
-      <ThreadPool>
-         <MinWorkerThreads>40</MinWorkerThreads>
-         <MaxWorkerThreads>40</MaxWorkerThreads>
-      </ThreadPool>
-  <ProcessMemoryManager>
-    <BlockSize>102400</BlockSize>
-    <PoolInitSize>1</PoolInitSize>
-    <PoolMaxSize>1024</PoolMaxSize>
-    <PoolAddStep>1</PoolAddStep>
-    <TimeOut>1</TimeOut>
-    <ThreadMemoryManager>   
-      <PageSize>64</PageSize>   
-      <MaxBlocks>10</MaxBlocks>
-    </ThreadMemoryManager>
-  </ProcessMemoryManager>
-      <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrsync_cfg_able.so" initfunc="initChannel" donefunc="closeChannel">
-         <Para name="para">etc/STDAUNCA_cfg_able.XML</Para>
-      </DllPriDataCtrl>
-      <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
-         <Para name="file1">etc/STDAUNCA_ITF.XML</Para>
-      </DllPriDataCtrl>
-      <QueuePair name="LeftQueuePair">
-         <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
-            <Entry>
-               <MessageType>SYSMNG</MessageType>
-               <ProcessModule>mngDataParser</ProcessModule>
-            </Entry>
-            <Entry>
-               <MessageType>OTHERS</MessageType>
-               <ProcessModule>dataParser</ProcessModule>
-            </Entry>
-         </RequestProcessor>
-      </QueuePair>
-      <QueuePair name="RightQueuePair">
-         <RequestProcessor dllfile="dll/ecnsvrsync_cfg_able.so" dbapplication="NO">
-            <Entry>
-               <MessageType>PLTIN0</MessageType>
-               <ProcessModule>clientSyncOut</ProcessModule>
-            </Entry>
-            <Entry>
-               <MessageType>PLTOUT</MessageType>
-               <ProcessModule>clientSyncOut</ProcessModule>
-            </Entry>
-         </RequestProcessor>
-         <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
-            <Entry>
-               <MessageType>OTHERS</MessageType>
-               <ProcessModule>dataParser</ProcessModule>
-            </Entry>
-         </ResponseProcessor>
-      </QueuePair>
-   </Server>
+  <Server name="STDAUNCA" type="SCA" trace="6" ip="_LOCAL_IP">
+    <ThreadPool>
+      <MinWorkerThreads>20</MinWorkerThreads>
+      <MaxWorkerThreads>20</MaxWorkerThreads>
+    </ThreadPool>
+    <ProcessMemoryManager>
+      <BlockSize>409600</BlockSize>
+      <PoolInitSize>2</PoolInitSize>
+      <PoolMaxSize>1024</PoolMaxSize>
+      <PoolAddStep>1</PoolAddStep>
+      <TimeOut>1</TimeOut>
+      <ThreadMemoryManager>
+        <PageSize>256</PageSize>
+        <MaxBlocks>10</MaxBlocks>
+      </ThreadMemoryManager>
+    </ProcessMemoryManager>
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecnsvrsync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HostIp">_IP</Para>
+      <Para name="HostPort">_PORT</Para>
+      <Para name="ConnTyp">0</Para><!-- 0:¶ÌÁ¬½Ó,1:³¤Á¬½Ó -->
+      <Para name="MaxConn">10</Para>
+      <Para name="PreLen">0</Para>
+    </DllPriDataCtrl>
+    <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="file1">etc/STDAUNCA_ITF.XML</Para>
+    </DllPriDataCtrl>
+    <QueuePair name="LeftQueuePair">
+      <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>SYSMNG</MessageType>
+          <ProcessModule>mngDataParser</ProcessModule>
+        </Entry>
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+      <RequestProcessor dllfile="dll/ecnsvrsync.so" dbapplication="NO">
+        <Entry>
+          <MessageType>PLTOUT</MessageType>
+          <ProcessModule>clientSyncOut</ProcessModule>
+        </Entry>
+
+      </RequestProcessor>
+      <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+      </ResponseProcessor>
+    </QueuePair>
+  </Server>
 </Region>

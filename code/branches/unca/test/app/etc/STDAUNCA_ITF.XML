@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
-<Application name="UNC">
+<Application name="UNC" pre_dll="dll/pre_unca.so" pre_func="pre_unca" spe_dll="dll/spe_unca.so" spe_func="spe_unca">
   <!--Include file="etc/XXXXXX.XML"/-->
   <!--CodeSwitching>
   <Table name="SrcToTarget" file="etc/XXXXXX.XML">
@@ -10,8 +10,8 @@
 
   <Define>
     <Macro name="req_head"><!-- ÇëÇó±¨ÎÄÍ· -->
-      <Item name="BegFlg" length="1" value="@"/><!-- ¿ªÊ¼±êÖ¾ -->
-      <Item name="PreLen"  length="5" value="186"/><!--A1Êý¾Ý°ü´óÐ¡(5Î»),ÒÑ¾­ÔÚATRÖÐÅäÖÃ-->
+      <!--Item name="BegFlg" length="1" value="@"/--><!-- ¿ªÊ¼±êÖ¾ -->
+      <!--Item name="PreLen"  length="5" value="186"/--><!--A1Êý¾Ý°ü´óÐ¡(5Î»),ÒÑ¾­ÔÚATRÖÐÅäÖÃ-->
       <Item name="RsFld1"  length="20"/><!-- A2(ÎÒ·½)Á÷Ë®ºÅ:»á¼ÆÈÕÆÚºó6Î»+Ç°ÖÃÁ÷Ë®ºÅ14Î» -->
       <Item name="AccFlg"  length="1" value=" "/><!-- A3(³É¹¦)±êÖ¾,ÇëÇó°üÎª¿Õ¸ñ -->
       <Item name="TTxnCd"  length="6"/><!-- A4½»Ò×ÀàÐÍ,010201:³äÖµºÅÂëÑéÖ¤,010202:³äÖµ,010204:¼ÇÂ¼²éÑ¯,010205:³åÕý -->
@@ -72,8 +72,8 @@
       <Item name="AgenPW"  length="32" value="4BE65F6E88E0C367"/><!-- A9(ÎÒÐÐ)½ÓÈëÃÜÂë TODO-->
       <Item name="RsFld1"  length="20"/><!-- ·¢Æð·½Á÷Ë®ºÅ -->
       <!--°üÌå½áÊø-->
-      <AddItem name="EndFlg" length="2" value="1A"/>
-      <Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/><!-- °üÌå½áÊø±êÖ¾ -->
+      <!--AddItem name="EndFlg" length="2" value="1A"/-->
+      <!--Item name="EndFlg" length="1" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/--><!-- °üÌå½áÊø±êÖ¾ -->
     </Request>
     <Response necessary="no">
       <!--Item name="Data" deli_asc="26"/-->
