@@ -1,0 +1,21 @@
+MODULE = Gz/unca
+
+include $(RULES_MAKEFILE)
+
+USERLIBS	= -lbptrandata -lhibase -lbponlbs -lbpdb -lhipex -lhicrc -lhirdo -lhisaf -lhiafp -lhimon
+USERFLAG	= -D_HI_VARARGS -DDEBUG
+
+DLLNAME1	= pre_unca.so
+OBJNAME1	= pre_unca.o
+
+ALL		= $(DLLNAME1) 
+
+all: $(ALL) install clean
+
+$(DLLNAME1): $(OBJNAME1) 
+
+install:
+	cp -f ../dll/pre_unca.so  $(HOME)/app/unca/dll
+
+clean:
+	-rm *.o  *.exp 
