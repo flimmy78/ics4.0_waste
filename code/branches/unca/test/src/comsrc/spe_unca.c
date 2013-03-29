@@ -24,43 +24,42 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 * Return   : 
 * Describe : 广州联通直联报文解析特殊处理函数
 * Others   : 广州联通报文格式：
-*       1.报文前添加“@”,报文后添加“(char)26”，这两个字符不算入报文长度；
+*       1.添加报文长度；
+*       2.报文前添加“@”,报文后添加“(char)26”，这两个字符不算入报文长度；
 *******************************************************************/
 int spe_unca(CurrInf *curr_inf, char *in_data, int in_len, char **out_data, int *out_len)
 {
+   herrlog(LOG_LOCATION, "---->>>>交易[%s]正在进行报文特殊处理>>>>----",curr_inf->req_id);
+   herrlog(LOG_LOCATION,"收到待处理报文[%s]",in_data);
 
-   int   ret;
    char head_char = '@';
    char end_char = 26;
    char off_by_one = '\0';
    int ext_char_len = sizeof(head_char)+sizeof(end_char);
+   herrlog(LOG_LOCATION,"添加头尾长度共[%d]",ext_char_len);
 
    int int_pre_len = 5;
    int pointer = 0;
-/*char tmp[5]="     ";*/
    char *pre_len = (char *)malloc(int_pre_len+sizeof(off_by_one));
    if(pre_len == NULL){
       herrlog(LOG_LOCATION, "分配内存失败");
       return(DP_FAIL);
    }
+
    sprintf(pre_len, "%d", in_len+int_pre_len);
    pointer = strlen(pre_len);
-   herrlog(LOG_LOCATION,"报文长度[%s]",pre_len);
    memset(pre_len+pointer, 0x20, int_pre_len-pointer);
    memset(pre_len+int_pre_len, off_by_one, sizeof(off_by_one));
    herrlog(LOG_LOCATION,"报文长度[%s]",pre_len);
 
-   herrlog(LOG_LOCATION, "---->>>>交易[%s]正在进行报文特殊处理>>>>----",curr_inf->req_id);
-   herrlog(LOG_LOCATION,"收到待处理报文[%s]",in_data);
-   herrlog(LOG_LOCATION,"添加头尾长度共[%d]",ext_char_len);
-   
-   *out_len = int_pre_len+in_len+ext_char_len;
-   int totle_len = int_pre_len+*out_len+sizeof(off_by_one);
+   *out_len = int_pre_len + in_len + ext_char_len;
+   int totle_len = *out_len + sizeof(off_by_one);
    *out_data = (char *)malloc(totle_len);
    if(*out_data == NULL){
       herrlog(LOG_LOCATION, "分配内存失败");
       return(DP_FAIL);
    }
+
    memset(*out_data, 0x00, totle_len);
    memset(*out_data, head_char, sizeof(head_char));   /* 添加头字符 */
    memcpy(*out_data+sizeof(head_char), pre_len, int_pre_len);   /* 先把输入数据转储到输出数据 */
