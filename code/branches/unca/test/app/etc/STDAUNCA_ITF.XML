@@ -28,8 +28,8 @@
     </Macro>
 <!--TODO需要比对一下返回报文头是不是会将原有信息冲掉-->
     <Macro name="rsp_head"><!-- 返回报文头 -->
-      <Item name="BegFlg" length="1"/><!-- 开始标志 -->
-      <Item name="PreLen"  length="5"/><!--A1数据包大小(5位),已经在ATR中配置-->
+      <!--Item name="BegFlg" length="1"/--><!-- 开始标志 -->
+      <!--Item name="PreLen"  length="5"/--><!--A1数据包大小(5位),已经在ATR中配置-->
       <Item name="RsFld2"  length="20"/>
       <Item name="AccFlg"  length="1"/><!-- A3(成功)标志,返回包:1成功,0失败 -->
       <Item name="TTxnCd"  length="6"/><!-- A4交易类型 -->
