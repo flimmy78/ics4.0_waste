@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="FBPALL_RPT.trc" dbconnect="YES">
+	<VarDef>
+		<String alias="CAgtNo"           name="$CAgtNo"/>
+		<String alias="OrnCnt"           name="$OrnCnt"/>
+		<String alias="OrnAmt"           name="$OrnAmt"/>
+		<String alias="BgnDat"           name="$BgnDat"/>
+		<String alias="EndDAt"           name="$EndDAt"/>
+		<String alias="TlrId"            name="$TlrId"/>
+		<String alias="ActDat"           name="$ActDat"/>
+	</VarDef>
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="SELECT TCusId,ActNo,TxnAmt,TCusNm FROM afetxnjnl 
+				WHERE CAgtNo='%s' AND ActDat &gt;='%s' AND ActDat &lt;='%s' AND HTxnSt= 'S'">
+				<FieldList>$CAgtNo|$BgnDat|$EndDat|</FieldList>
+			</Sql>
+		</Iterative>
+	</DataSource>
+	<FormatDefine pagerows="50" pagesum="YES">
+		<ReportHeader>
+			<Format>
+                             ¹ã¶«Ê¡·ÖÐÐµçÐÅ¶ÔÕÊ¶ÔÕÊ³É¹¦Çåµ¥
+
+			</Format>
+		</ReportHeader>
+		<TableHeader>
+			<Para label="01" alias="$CAgtNo"  spread="left"/>
+			<Para label="02" alias="$PAGESUM" spread="left"/>
+			<Para label="03" alias="$PAGENUM" spread="left"/>
+			<Format>
+   µ¥Î»±àºÅ: #  
+¹² # Ò³    µÚ # Ò³
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+  µç»°ºÅÂë          ¿¨ºÅ/ÕËºÅ                    ½ð¶î            ¿Í»§ÐÕÃû     
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+      <Para label="01" alias="DELBOTHSPACE($TCusId)"/>
+			<Para label="02" alias="$ActNo"/>
+			<Para label="03" alias="AMTFMT($TxnAmt)" spread="left" />
+			<Para label="04" alias="DELBOTHSPACE($TCusNm)"/>
+			<Format>
+  #                 #                               #            # 
+			</Format>
+		</Iterative>
+		<TableFooter>
+			<Para label="01" alias="$TlrId"               spread="left"/>
+			<Para label="02" alias="FMTDATE($ActDat,,1)"  spread="left"/>
+			<Para label="03" alias="$OrnCnt" spread="right"/>
+			<Para label="04" alias="AMTFMT($OrnAmt)" spread="right"/>
+			<Format>
+©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+     ²Ù×÷¹ñÔ±: #   ²Ù×÷ÈÕÆÚ: #       ×Ü±ÊÊý:#   ½ð¶î: £¤#   
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>
+

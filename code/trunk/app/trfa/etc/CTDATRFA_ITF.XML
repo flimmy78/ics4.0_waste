@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TRF" server="OFTATRFA">
+   <GetTxnCode>
+      <Item type="deli" deli_asc="4" pos="4"/>
+   </GetTxnCode>
+   <Define>
+    <Macro name="HeadMsgR"> <!--½ÓÊÜÏûÏ¢Í·-->
+      <Item name="MQMsg"   deli_asc="2"  expression="DELCTRL($MQMsg)"/>
+      <Item name="ItemNum" deli_asc="4" expression="DELCTRL($MQMsg)"/>   <!--×Ö¶ÎÊý-->
+      <Item name="BnkCod"  deli_asc="4" value="07"/>   <!--½ðÈÚµ¥Î»±àÂë-->
+      <Item name="TelCod"  deli_asc="4" value="01"/>   <!--µçÐÅµ¥Î»±àÂë-->
+      <Item name="RTXNCD"  deli_asc="4"/>   <!--ÏûÏ¢ÀàÐÍ£ºµçÐÅ½»Ò×Âë-->
+      <Item name="TLogNo"  deli_asc="4"/>   <!--µÚÈý·½Á÷Ë®ºÅ-->
+      <!--Item name="FTXNTM"  deli_asc="4"/-->   <!--ÏûÏ¢Ê±¼ä-->
+      <!--Item name="TTXNTM"  deli_asc="4"/-->   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="ChkTim"  deli_asc="4"/>   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="SucFlg"  deli_asc="4" value=""/>   <!--³É¹¦±êÖ¾:Y:³É¹¦(²»ÓÃÅÐ¶Ï±¸×¢×Ö¶Î)£»N:Ê§°Ü-->
+      <Item name="TRspCd"  deli_asc="4" value=""/>   <!--±¸×¢£ºµÚÈý·½Ô¼¶¨·µ»ØÂë-->
+      <Item name="MsgBodyFlg" deli_asc="4" expression="DELCTRL($MsgBodyFlg)"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶-->
+    </Macro>
+    <Macro name="HeadMsgS"> <!--·¢ËÍ»ØÓ¦ÏûÏ¢Í·-->
+      <Item name="STX"     length="1"  fill_asc="2"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->
+      <Item name="ItemNum" deli_asc="4" />   <!--×Ö¶ÎÊý-->
+      <Item name="BnkCod"  deli_asc="4" />   <!--½ðÈÚµ¥Î»±àÂë-->
+      <Item name="TelCod"  deli_asc="4" />   <!--µçÐÅµ¥Î»±àÂë-->
+      <Item name="RTXNCD"  deli_asc="4" />   <!--ÏûÏ¢ÀàÐÍ£ºµçÐÅ½»Ò×Âë-->
+      <Item name="TLogNo"  deli_asc="4" />   <!--µÚÈý·½Á÷Ë®ºÅ-->
+      <!--Item name="FTXNTM"  deli_asc="4"/-->   <!--ÏûÏ¢Ê±¼ä-->
+      <!--Item name="TTXNTM"  deli_asc="4"/-->   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="ChkTim"  deli_asc="4"/>   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="SucFlg"  deli_asc="4" />   <!--³É¹¦±êÖ¾:Y:³É¹¦(²»ÓÃÅÐ¶Ï±¸×¢×Ö¶Î)£»N:Ê§°Ü-->
+      <If condition="IS_EQUAL_STRING($SucFlg,Y)">
+        <AddItem name="TRspCd"  value="00"/>
+      </If>
+      <Item name="TRspCd"  deli_asc="4" expression="DELCTRL($TRspCd)"/>   <!--±¸×¢£ºµÚÈý·½Ô¼¶¨·µ»ØÂë-->
+      <If condition="IS_EQUAL_STRING($MsgBodyFlg,0)">
+        <Item name="MsgBodyFlg" deli_asc="3" expression="DELCTRL($MsgBodyFlg)"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶: 0:²»´æÔÚ£»1:´æÔÚ-->
+      </If>
+      <Else>
+      	<Item name="MsgBodyFlg" deli_asc="4" expression="DELCTRL($MsgBodyFlg)"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶£º0:²»´æÔÚ£»1:´æÔÚ-->
+      </Else>
+    </Macro>
+   </Define>
+   <Transaction code="00007"  service="481503"  desc="µçÐÅ»®¿î" log_switch="5">
+      <Request>
+         <AddItem name="TxnCnl" value="THD" /> <!--ÔÊÐíµ±Ç°½»Ò×µÄ½»Ò×ÇþµÀ-->
+         <AddItem name="TTxnCd" value="481503" /> <!--µÚÈý·½½»Ò×Âë-->
+         <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·--> 
+         <Item name="RsFld2"  deli_asc="4"/>    <!--½»Ò×ÀàÐÍ-->
+         <Item name="ActNo"   deli_asc="4"/>    <!--ÕËºÅ-->
+         <Item name="ActTyp"  deli_asc="4"/>    <!--ÕË»§ÀàÐÍ-->
+         <Item name="TxnAmt"  deli_asc="4"/>    <!--½»Ò×½ð¶î-->
+         <Item name="TCusNm"  deli_asc="4"/>    <!--ÓÃ»§Ãû-->
+         <Item name="TCusId"  deli_asc="4"/>    <!--µçÐÅ²ÎÊý-->
+         <Item name="ParaTyp" deli_asc="4"/>    <!--µçÐÅ²ÎÊýÀàÐÍ-->
+         <Item name="Rmk"     deli_asc="4"/>    <!--±¸×¢-->
+         <Item name="HKmsg"   deli_asc="4"/>    <!--»®¿îÐÅÏ¢Í·-->
+         <Item name="FulChk"  deli_asc="4"/>    <!--²¿·Ö¿Û¿î±êÖ¾-->
+         <Item name="PLAmt"   deli_asc="4"/>    <!--²¿·Ö¿Û·Ñ×îµÍÏÞ¶î-->
+         <Item name="BEAmt"   deli_asc="3" expression="DELCTRL($BEAmt)"/>    <!--Óà¶î³ä×ã×îµÍÏÞ¶î-->
+				 <DelItem name="STX"/>
+      </Request>
+      <Response necessary="no">
+         <AddItem name="ItemNum"   value="11"/>
+         <AddItem name="RTXNCD"    value="80007"/><!--µçÐÅ»®¿î»ØÓ¦-->
+         <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+         <Item name="FroAmt"  deli_asc="4" expression="DELCTRL($TxnAmt)"/>    <!--Êµ¼Ê»®¿î·ÑÓÃ-->
+         <Item name="FulRtn"  deli_asc="4"/>    <!--²¿·Ö¿Û¿î±êÖ¾-->
+         <Item name="BEChk"   deli_asc="3"/>    <!--Óà¶î³ä×ã±êÊ¶-->
+      </Response>
+   </Transaction>
+
+   <Transaction code="90007"  service="481504" desc="µçÐÅ»®¿î³åÕý" log_switch="5">
+      <Request>
+         <AddItem name="TxnCnl" value="THD" /> <!--ÔÊÐíµ±Ç°½»Ò×µÄ½»Ò×ÇþµÀ-->
+         <AddItem name="TTxnCd" value="481504" /> <!--µÚÈý·½½»Ò×Âë-->
+         <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·--> 
+      </Request>
+      <Response necessary="no">
+      	<AddItem name="ItemNum"   value="8"/>
+         <AddItem name="RTXNCD"  value="70007"/><!--µçÐÅ»®¿î³åÕý»ØÓ¦-->
+         <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      </Response>
+   </Transaction>
+
+   <Transaction code="00009"  service="481505" desc="µçÐÅ¶ÔÕË" log_switch="5">
+      <Request>
+         <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+         <Item name="TxnDat"  deli_asc="4"/>    <!--¶ÔÕËÈÕÆÚ-->
+         <Item name="QryMod"  deli_asc="4"/>    <!--²éÑ¯·½Ê½-->
+         <Item name="TxnTyp"  deli_asc="4"/>    <!--½»Ò×ÀàÐÍ¼¯-->
+         <Item name="FilNam"  deli_asc="3" expression="DELCTRL($FilNam)"/>    <!--Çåµ¥ÎÄ¼þÃû-->
+      </Request>
+      <Response necessary="no">
+      	 <AddItem name="ItemNum" value="9"/>
+      	 <AddItem name="RTXNCD"  value="80009"/>
+         <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+         <Item name="FilNam"     deli_asc="4"/>    <!--Çåµ¥ÎÄ¼þÃû-->
+         <Item name="ETX"        length="1"   type="fixed" fill_asc="3" necessary="no"/>
+      </Response>
+   </Transaction>
+
+   <Transaction  code="00014"  service="481516" desc="µçÐÅÎÄ¼þµ½´ïÈ·ÈÏ" log_switch="5">
+      <Request>
+         <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+         <Item name="FilNam"  deli_asc="4"/>    <!--ÎÄ¼þÃû-->
+         <Item name="FilTyp"  deli_asc="4"/>    <!--ÎÄ¼þÀàÐÍ-->
+      </Request>
+      <Response necessary="no">
+         <AddItem name="STX"   fill_asc="2"/>
+         <AddItem name="RTXNCD"  value="80014"/><!--µçÐÅÎÄ¼þµ½´ïÈ·ÈÏ»ØÓ¦-->
+         <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+         <Item name="FilNam"  deli_asc="4"/>    <!--ÎÄ¼þÃû-->
+         <Item name="FilTyp"  deli_asc="4"/>    <!--ÎÄ¼þÀàÐÍ-->
+         <Item name="DestTim" deli_asc="4"/>    <!--ÎÄ¼þµ½´ïÊ±¼ä-->
+      </Response>
+   </Transaction>
+
+   <Transaction  code="00016"  service="481517" desc="×ÊÁÏºË¶ÔÓë°ìÀí" log_switch="5">
+      <Request>
+         <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+         <Item name="TxnTyp"  deli_asc="4"/>    <!--½»Ò×ÀàÐÍ-->
+         <Item name="ActNo"   deli_asc="4"/>    <!--ÕËºÅ-->
+         <Item name="ActTyp"  deli_asc="4"/>    <!--ÕË»§ÀàÐÍ-->
+         <Item name="TCusNm"  deli_asc="4"/>    <!--ÓÃ»§Ãû-->
+         <Item name="TCusId"  deli_asc="4"/>    <!--µçÐÅ²ÎÊý-->
+         <Item name="ParaTyp" deli_asc="4"/>    <!--²ÎÊýÀàÐÍ1£º²éÑ¯£»2£º²éÑ¯²¢°ó¶¨£»3£ºÐÞ¸ÄÇ©Ô¼×ÊÁÏ£»4£ºÈ¡ÏûÇ©Ô¼¹ØÏµ-->
+         <Item name="Rmk"     deli_asc="3"/>    <!--±¸×¢-->
+      </Request>
+      <Response necessary="no">
+         <AddItem name="ItemNum"   value="11"/>
+         <AddItem name="RTXNCD"  value="80016"/><!--×ÊÁÏ°ìÀí»ØÓ¦-->
+         <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+         <Item name="RslDes"  deli_asc="4"/>    <!--°ìÀíËµÃ÷-->
+         <Item name="TCusId"  deli_asc="4"/>    <!--¸½´ø²ÎÊý-->
+         <Item name="Rmk"     deli_asc="3"/>    <!--±¸×¢-->
+      </Response>
+   </Transaction>
+
+</Application>

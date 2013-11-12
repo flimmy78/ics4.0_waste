@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="TRFfmt.log" err_file="TRFfmt.err">
+	<Process name="ChkFormat">   <!--¶ÔÕÊÎÄ¼þ¸ñÊ½-->
+		<Head>
+			<Item name="BnkCod"  length="05" value="07"/>
+			<Item name="OrnCnt"  length="10" />
+			<Item name="OrnAmt"  length="15" />
+		</Head>
+		<Data>
+			<Item name="TLogNo"  deli_asc="4"/>  <!-- ½»Ò×Á÷Ë® -->
+			<Item name="ChkTim"  deli_asc="4"/>  <!-- ½»Ò×Ê±¼ä -->
+			<If condition="STRCMP($TxnCod,481501)=0">  <!-- µçÐÅ´úÊÕ·Ñ --> 
+			  <Item name="TxnTyp1" deli_asc="4" value="T01" /> <!-- ½»Ò×ÀàÐÍ -->
+			  <Item name="TxnAmt"  deli_asc="4"/>  <!-- ½»Ò×½ð¶î -->
+			  <Item name="TxnTyp1" deli_str="|" value="T01" /> <!-- ½»Ò×ÀàÐÍ -->
+			  <Item name="ThdKey"  deli_str="|"/>  <!-- ½É·Ñ±àºÅ -->
+			  <Item name="TxnAmt"  deli_str="|"/>  <!-- ½É·Ñ½ð¶î -->
+			  <Item name="IPrnFlg" deli_str="|" value="0" />  <!-- ·¢Æ±ÊÇ·ñ´òÓ¡±êÊ¶ -->
+			  <Item name="ActNo"   deli_str="|"/>  <!-- ÕÊºÅ -->
+			  <Item name="ActTyp"  deli_str="|" value=" "/>  <!-- ÕÊºÅÀàÐÍ -->
+			  <Item name="CclInf"  expression="HEX2STR($CclInf)"/>  <!-- ÏúÕÊÐÅÏ¢ -->
+			</If>
+			<If condition="STRCMP($TxnCod,481503)=0">  <!-- µçÐÅ»®¿î -->
+			  <Item name="RsFld2"  deli_asc="4" /> <!-- ½»Ò×ÀàÐÍ -->
+			  <Item name="TxnAmt"  deli_asc="4" /> <!-- ½»Ò×½ð¶î -->
+			  <Item name="RsFld2"  deli_str="|" /> <!-- ½»Ò×ÀàÐÍ -->
+			  <Item name="ActNo"   deli_str="|"/>  <!-- ½ðÈÚÕËºÅ -->
+			  <Item name="ActTyp"  deli_str="|"/>  <!-- ÕË»§ÀàÐÍ -->
+			  <Item name="TxnAmt"  deli_str="|"/>  <!-- ½»Ò×½ð¶î -->
+			  <Item name="TCusNm"  deli_str="|"/>  <!-- ÓÃ»§Ãû   -->
+			  <Item name="TCusId"  deli_str="|"/>  <!-- µçÐÅ²ÎÊý -->
+			  <Item name="CclInf"  expression="HEX2STR($CclInf)"/>  <!-- ÏúÕÊÐÅÏ¢ -->
+			</If>
+		</Data>
+	</Process>
+
+	<Process name="InvHead">   <!--·¢Æ±ÎÄ¼þ¸ñÊ½Í·¼ÇÂ¼-->
+		<Item name="InFilNo"    length="10"/>
+		<Item name="BnkCod"     length="5" />
+		<Item name="InvRecNum"  length="10"/>
+	</Process>
+
+	<Process name="trfinvtmp">   <!--·¢Æ±ÎÄ¼þ¸ñÊ½Ã÷Ï¸¼ÇÂ¼-->
+		<Head>
+			<Item name="InFilNo"    length="10"/>
+			<Item name="BnkCod"     length="5" />
+			<Item name="InvRecNum"  length="10"/>
+		</Head>
+		<Data deli_asc="10">
+			<Item name="InvRec" />  <!-- ÕËµ¥ÐÅÏ¢-->
+			<AddItem name="InvIdx" expression="SUBSTR($InvRec,11,10)"/>  <!-- Ë÷Òý-->
+		</Data>
+	</Process>
+	
+	<Process name="trfinvret">   <!--·¢Æ±ÎÄ¼þ¸ñÊ½Ã÷Ï¸¼ÇÂ¼-->
+		<Head>
+			<Item name="InFilNo"    length="10"/>
+			<Item name="BnkCod"     length="5" />
+			<Item name="InvRecNum"  length="10"/>
+		</Head>
+		<Data>
+			<Item name="InvRec" />  <!-- ÕËµ¥ÐÅÏ¢-->
+		</Data>
+	</Process>
+
+	<!--ÒÑ²»Ê¹ÓÃ-->
+	<Process name="InvRec1">   <!--·¢Æ±ÎÄ¼þ¸ñÊ½Ã÷Ï¸¼ÇÂ¼-->
+		<Item name="InvId"      length="10" />  <!-- ·¢Æ±±êÊ¶ -->
+		<Item name="InvIdx"     length="10" />  <!-- ·¢Æ±Ë÷Òý -->
+		<Item name="TCusId"     length="14" />  <!-- ´ú±íºÅÂë -->
+		<Item name="InvAmt"     length="12" />  <!-- ±¨Ïú·ÑÓÃ -->
+		<Item name="PayAmt"     length="12" />  <!-- Êµ¿Û·ÑÓÃ -->
+		<Item name="PreAmt"     length="12" />  <!-- Ô¤½É·Ñ -->
+		<Item name="PayNo"      length="20" />  <!-- ½É·Ñ±àºÅ -->
+		<Item name="StaPayTim"  length="8" />  <!-- »°·Ñ¿ªÊ¼Ê±¼ä -->
+		<Item name="EndPayTim"  length="8" />  <!-- »°·Ñ½ØÖ¹Ê±¼ä -->
+		<Item name="ActNo"      length="40" />  <!-- ½ðÈÚÕÊºÅ -->
+		<Item name="UsrNm"      length="60" />  <!-- ÓÃ»§Ãû³Æ -->
+		<Item name="UsrAdr"     length="80" />  <!-- ÓÃ»§µØÖ·-->
+		<Item name="InvItemNum" length="5" />  <!-- ÕËµ¥ÏîÊý-->
+		<Item name="InvInf"     deli_asc="-1" expression="DELCTRL($InvInf)" />  <!-- ÕËµ¥ÐÅÏ¢-->
+	</Process>
+</BATCH>

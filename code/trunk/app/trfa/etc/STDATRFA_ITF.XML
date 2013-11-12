@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TRF">
+  <Define>
+    <Macro name="HeadMsgS"> <!--ÏûÏ¢Í·-->
+      <Item name="STX"     length="1"  type="fixed" fill_asc="2" necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->
+      <Item name="ItemNum" deli_asc="4"/>   <!--×Ö¶ÎÊý-->
+      <Item name="BnkCod"  deli_asc="4" value="07"/>   <!--½ðÈÚµ¥Î»±àÂë-->
+      <Item name="TelCod"  deli_asc="4" value="03"/>   <!--µçÐÅµ¥Î»±àÂë-->
+      <Item name="RTXNCD"  deli_asc="4"/>   <!--ÏûÏ¢ÀàÐÍ£ºµçÐÅ½»Ò×Âë-->
+      <Item name="TLogNo"  deli_asc="4"/>   <!--µÚÈý·½Á÷Ë®ºÅ-->
+      <Item name="FTXNTM"  deli_asc="4"/>   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="SucFlg"  deli_asc="4" value=""/>   <!--³É¹¦±êÖ¾:Y:³É¹¦(²»ÓÃÅÐ¶Ï±¸×¢×Ö¶Î)£»N:Ê§°Ü-->
+      <Item name="TRspCd"  deli_asc="4" value=""/>   <!--±¸×¢£ºµÚÈý·½Ô¼¶¨·µ»ØÂë-->
+    </Macro>
+    <Macro name="HeadMsgR"> <!--·µ»ØÏûÏ¢Í·-->
+    	<Item name="MQMsg"   deli_asc="2"   expression="DELCTRL($MQMsg)"/>
+      <Item name="ItemNum" deli_asc="4" expression="DELCTRL($ItemNum)"/>   <!--×Ö¶ÎÊý-->
+      <Item name="BnkCod"  deli_asc="4" expression="DELCTRL($BnkCod)"/>   <!--½ðÈÚµ¥Î»±àÂë-->
+      <Item name="TelCod"  deli_asc="4" expression="DELCTRL($TelCod)"/>   <!--µçÐÅµ¥Î»±àÂë-->
+      <Item name="RTXNCD"  deli_asc="4" expression="DELCTRL($RTXNCD)"/>   <!--ÏûÏ¢ÀàÐÍ£ºµçÐÅ½»Ò×Âë-->
+      <Item name="TLogNo"  deli_asc="4" expression="DELCTRL($TLogNo)"/>   <!--µÚÈý·½Á÷Ë®ºÅ-->
+      <Item name="FTXNTM"  deli_asc="4" expression="DELCTRL($FTXNTM)"/>   <!--ÏûÏ¢Ê±¼ä-->
+      <Item name="SucFlg"  deli_asc="4" expression="DELCTRL($SucFlg)"/>   <!--³É¹¦±êÖ¾:Y:³É¹¦(²»ÓÃÅÐ¶Ï±¸×¢×Ö¶Î)£»N:Ê§°Ü-->
+      <AddItem name="QySucFlg"  value="$SucFlg"/>   <!--ÆóÒµ·µ»Ø±êÖ¾-->
+      <Item name="TRspCd"  deli_asc="4" expression="DELCTRL($TRspCd)"/>   <!--±¸×¢£ºµÚÈý·½Ô¼¶¨·µ»ØÂë-->
+      <AddItem name="QyTRspCd"  value="$SucFlg"/>   <!--ÆóÒµ·µ»ØÂë-->
+      <If condition="IS_EQUAL_STRING($SucFlg,Y)">
+        <AddItem name="TRspCd"  value="000000"/>
+      </If>
+      <!--Else>
+        <AddItem name="TRspCd"  value="481599"/>
+      </Else-->
+      <Item name="MsgBodyFlg" deli_asc="4" expression="DELCTRL($MsgBodyFlg)"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶-->
+    </Macro>
+  </Define>
+  <Transaction code="00001"  desc="µçÐÅ´úÊÕ·Ñ²éÑ¯">
+    <Request>
+      <AddItem name="ItemNum" value="16"/>
+      <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      <Item name="MsgBodyFlg" deli_asc="4" value="1"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶-->
+      <Item name="TCusId"   deli_asc="4" expression="DELBOTHSPACE($TCusId)"/><!--µç»°ºÅÂë-->
+      <Item name="ParaTyp"  deli_asc="4" value="A01"/><!--²ÎÊýÀàÐÍ-->
+      <Item name="TxnTyp1"  deli_asc="4" value="T01"/><!--½»Ò×ÀàÐÍ-->
+      <Item name="QryPwd"   deli_asc="4" value=""   /><!--²éÑ¯ÃÜÂë-->
+      <Item name="RsFld1"   deli_asc="4" value=""   /><!--±¸ÓÃ×Ö¶Î1-->
+      <Item name="RsFld2"   deli_asc="4" value=""   /><!--±¸ÓÃ×Ö¶Î2-->
+      <Item name="RsFld3"   deli_asc="4" value=""   /><!--±¸ÓÃ×Ö¶Î3-->
+      <Item name="RsFld4"   value=""/>  <!--±¸ÓÃ×Ö¶Î4-->
+      <Item name="ETX"      length="1"   type="fixed" fill_asc="3" necessary="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+      <Item name="ThdKey"  deli_asc="4" expression="DELCTRL($ThdKey)"/>               <!--½É·Ñ±àºÅ-->
+      <Item name="TxnAmt"  deli_asc="4" expression="FDIV(DELCTRL($TxnAmt),100,2)"/>   <!--Ó¦ÊÕ×Ü·ÑÓÃ-->
+      <Item name="OrnAmt"  deli_asc="4" expression="FDIV(DELCTRL($OrnAmt),100,2)"/>   <!--Ô­Ê¼·ÑÓÃ½ð¶î-->
+      <Item name="PreAmt"  deli_asc="4" expression="FDIV(DELCTRL($PreAmt),100,2)"/>   <!--Ô¤¸¶½ð×Ü¶î-->
+      <Item name="PstAmt"  deli_asc="4" expression="FDIV(DELCTRL($PstAmt),100,2)"/>   <!--ÖÍÄÉ½ð×Ü¶î-->
+      <Item name="TCusIdX" deli_asc="4" expression="DELCTRL($TCusIdX)"/>              <!--µç»°ºÅÂë-->
+      <Item name="TCusNm"  deli_asc="4" expression="DELCTRL($TCusNm)"/>               <!--ÓÃ»§Ãû-->
+      <Item name="AAAAA"   deli_asc="4" expression="DELCTRL($AAAAA)"/>                <!--Ô¤Áô×Ö¶Î-->
+      <AddItem name="TrType"    value="1"/>               <!--½É·Ñµ¥Î»(1-µçÐÅ£¬2-ÁªÍ¨£¬3-ÒÆ¶¯)-->
+      <AddItem name="ThdKey"    expression="$ThdKey"/>    <!--½É·Ñ±àºÅ-->
+      <!--AddItem name="ActNo"     expression="$ActNo"/-->     <!--ÕÊºÅ-->
+      <AddItem name="TCusId"    expression="$TCusIdX"/>   <!--½É·ÑºÅÂë-->
+      <AddItem name="FCusId"    expression="$TCusIdX"/>   <!--¸¶·ÑºÅÂë-->
+      <!--AddItem name="TrDate"    expression="$ActDat"/-->    <!--½»Ò×ÈÕÆÚ-->
+      <AddItem name="TCusNm"    expression="$TCusNm"/>    <!--ÓÃ»§Ãû³Æ-->
+      <AddItem name="IPrnCnt"   value="0"/>               <!--´òÓ¡´ÎÊý-->
+      <AddItem name="TxnAmt"    expression="$TxnAmt"/>    <!--Ó¦ÊÕ×Ü·ÑÓÃ-->
+      <Item name="PayNum"  deli_asc="4" expression="DELCTRL($PayNum)"/>       <!--½É·Ñ¼ÇÂ¼Êý-->
+      <!--Group name="REC" repeat_name="PayNum"-->
+        <Item name="PaySqn"   deli_asc="4" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/><!--½É·Ñ¼ÇÂ¼ÐòºÅ-->
+        <Item name="PMsgHead" deli_asc="4" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/><!--ÏúÕËÐÅÏ¢Í·-->
+        <Item name="PayTyp"   deli_asc="4" expression="DELCTRL($PayTyp)"/>                  <!--½É·Ñ¼ÇÂ¼ÀàÐÍ-->
+        <Item name="TotPay"   deli_asc="4" expression="FDIV(DELCTRL($TotPay),100,2)"/>      <!--Ó¦ÊÕ×Ü·ÑÓÃ-->
+        <Item name="OrnPay"   deli_asc="4" expression="FDIV(DELCTRL($OrnPay),100,2)"/>      <!--Ô­Ê¼·ÑÓÃ×Ü¶î-->
+        <Item name="PrePay"   deli_asc="4" expression="FDIV(DELCTRL($PrePay),100,2)"/>      <!--Ô¤¸¶½ð×Ü¶î-->
+        <Item name="PstPay"   deli_asc="4" expression="FDIV(DELCTRL($PstPay),100,2)"/>      <!--ÖÍÄÉ½ð×Ü¶î-->
+        <Item name="TelNo"    deli_asc="4" expression="DELCTRL($TelNo)"/>                   <!--µç»°ºÅÂë-->
+        <Item name="UsrNm"    deli_asc="4" expression="DELCTRL($UsrNm)"/>                   <!--ÓÃ»§Ãû-->
+        <Item name="BBBBB"    deli_asc="4" expression="DELCTRL($BBBBB)"/>                   <!--Ô¤Áô×Ö¶Î-->
+      <!--/Group-->
+      <Item name="FpCount"    deli_asc="4" expression="DELCTRL($FpCount)"/>   <!--·¢Æ±¼ÇÂ¼Êý-->
+      <Group name="FpRec" repeat_name="FpCount">
+        <Item name="PaySqn"   deli_asc="4" expression="DELCTRL($PaySqn)"/>    <!--½É·Ñ¼ÇÂ¼ÐòºÅ-->
+        <Item name="TelNo"    deli_asc="4" expression="DELCTRL($TelNo)"/>     <!--´ú±íºÅÂë-->
+        <Item name="nStaMon"  deli_asc="4" expression="DELCTRL($nStaMon)"/>   <!--»°·ÑÆðÊ¼ÔÂ·Ý-->
+        <Item name="nEndMon"  deli_asc="4" expression="DELCTRL($nEndMon)"/>   <!--»°·Ñ½áÊøÔÂ·Ý-->
+        <Item name="UsrNm"    deli_asc="4" expression="DELCTRL($UsrNm)"/>     <!--ÓÃ»§Ãû-->
+        <Item name="TelNum"   deli_asc="4" expression="DELCTRL($TelNum)"/>    <!--µç»°Êý-->
+        <Item name="nITotAmt" deli_asc="4" expression="FDIV(DELCTRL($nITotAmt),100,2)"/>  <!--·¢Æ±×Ü¶î-->
+        <Item name="nIPayAmt" deli_asc="4" expression="FDIV(DELCTRL($nIPayAmt),100,2)"/>  <!--·¢Æ±ÊµÊÕ·ÑÓÃ-->
+        <Item name="StaPre"   deli_asc="4" expression="FDIV(DELCTRL($StaPre),100,2)"/>    <!--·¢Æ±ÆðÊ¼Ô¤¸¶½ð-->
+        <Item name="EndPre"   deli_asc="4" expression="FDIV(DELCTRL($EndPre),100,2)"/>    <!--·¢Æ±½ØÖ¹Ô¤¸¶½ð-->
+        <Item name="IPrnTyp"  deli_asc="4" expression="DELCTRL($IPrnTyp)"/>   <!--·¢Æ±´òÓ¡ÀàÐÍ-->
+        <Item name="RsFld1"   deli_asc="4" expression="DELCTRL($RsFld1)"/>    <!--Ô¤±¸×Ö¶Î-->
+        <Item name="RsFld2"   deli_asc="4" expression="DELCTRL($RsFld2)"/>    <!--Ô¤±¸×Ö¶Î-->
+        <Item name="nMxCount" deli_asc="4" expression="DELCTRL($nMxCount)"/>  <!--·¢Æ±ÏîÊý-->
+        <AddItem name="nBillDate" expression="STRCAT(DELBOTHSPACE($nStaMon),--,DELBOTHSPACE($nEndMon))"/><!--ÕÊµ¥ÖÜÆÚ-->
+        <AddItem name="nLastBal"  expression="$StaPre"/>        <!--ÉÏ´ÎÔ¤´æÓà¶î-->
+        <AddItem name="nThisBal"  expression="$EndPre"/>        <!--±¾´ÎÔ¤´æÓà¶î-->
+        <AddItem name="nIPayAmt"  expression="$nIPayAmt"/>      <!--·¢Æ±½É·Ñ½ð¶î-->
+        <AddItem name="nITotAmt"  expression="$nITotAmt"/>      <!--·¢Æ±×Ü½ð¶î-->
+        <AddItem name="nStaMon"   expression="$nStaMon"/>       <!--ÆðÊ¼ÈÕÆÚ-->
+        <AddItem name="nEndMon"   expression="$nEndMon"/>       <!--½áÊøÈÕÆÚ-->
+        <AddItem name="nMxCount"  expression="$nMxCount"/>      <!--Ã÷Ï¸ÏîÊý-->
+        <AddItem name="nFpInf"    value="" />
+        <AddItem name="MxRecCnt"  value="1"/>
+        <While condition="INTCMP($MxRecCnt,2,$nMxCount)">
+            <Item name="BillMark"   deli_asc="4" expression="DELCTRL($BillMark)"/>              <!--·¢Æ±ÏîÃû³Æ-->
+            <Item name="BillAmt"    deli_asc="4" expression="FDIV(DELCTRL($BillAmt),100,2)"/>   <!--·¢Æ±ÏîÖµ-->
+            <AddItem name="nFpInf"    expression="STRCAT($nFpInf,ADDCHAR(DELBOTHSPACE($BillMark),14, ,0),ADDCHAR(DELBOTHSPACE($BillAmt),8, ,1),|)"/><!--×éºÏºó·¢Æ±ÏîÄÚÈÝ-->
+            <AddItem name="MxRecCnt"  expression="ADD($MxRecCnt,1)"/>
+        </While>
+        <AddItem name="MxRecCnt"   expression="SUB($MxRecCnt,1)"/>
+      </Group>
+    </Response>
+  </Transaction>
+
+  <Transaction code="00002"  desc="µçÐÅ´úÊÕ·Ñ">
+    <Request>
+      <AddItem name="ItemNum" expression="ADD(15,MUL($PayNum,2))"/>
+      <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      <Item name="MsgBodyFlg" deli_asc="4" value="1"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶-->
+      <Item name="TxnTyp1" deli_asc="4" value="T01"/><!--½»Ò×ÀàÐÍ-->
+      <Item name="ThdKey"  deli_asc="4" expression="DELBOTHSPACE($ThdKey)"/><!--½É·Ñ±àºÅ-->
+      <Item name="TxnAmt"  deli_asc="4"/><!--Ó¦ÊÕ×Ü·ÑÓÃ-->
+      <Item name="IPrnFlg" deli_asc="4" value="0"/><!--·¢Æ±ÊÇ·ñ´òÓ¡±êÊ¶-->
+      <Item name="ActNo"   deli_asc="4" expression="DELBOTHSPACE($ActNo)"/><!--½ðÈÚÕËºÅ-->
+      <Item name="ActTyp"  deli_asc="4" value=""/><!--½ðÈÚÕËºÅÀàÐÍ-->
+      <Item name="PayNum"  value="1"/>
+      <!--Group name="REC" repeat_name="PayNum"-->
+      	<Item name="AAA"      length="1" type="fixed" fill_asc="4" necessary="no"/>
+        <Item name="PaySqn"   pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/><!--½É·Ñ¼ÇÂ¼ÐòºÅ-->
+        <Item name="AAA"      length="1" type="fixed" fill_asc="4" necessary="no"/>
+        <Item name="PMsgHead" pro_dll="dll/pre_sp.so" pro_func="spe_asctohex"/>
+      <!--/Group-->
+      <Item name="ETX"     length="1"   type="fixed" fill_asc="3" necessary="no"/>
+    </Request>
+    <Response necessary="no">
+       <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+    </Response>
+  </Transaction>
+
+  <Transaction code="90002"  desc="µçÐÅ´úÊÕ·ÑÄ¨ÕÊ">
+    <Request>
+      <AddItem name="ItemNum" value="8"/>
+      <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      <Item name="MsgBodyFlg" value="0"/>   <!--ÏûÏ¢Ìå´æÔÚ±êÊ¶-->
+      <Item name="ETX"        length="1" type="fixed" fill_asc="3" necessary="no"/>
+    </Request>
+    <Response necessary="no">
+       <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+    </Response>
+  </Transaction>
+
+  <Transaction code="80009"  desc="µçÐÅ´úÊÕ·ÑÄ¨ÕÊ">
+    <Request>
+      <AddItem name="ItemNum" value="9"/>
+      <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      <Item name="FilNam"     deli_asc="4"/>    <!--Çåµ¥ÎÄ¼þÃû-->
+      <Item name="ETX"        length="1" type="fixed" fill_asc="3" necessary="no"/>
+    </Request>
+    <Response necessary="no">
+    </Response>
+  </Transaction>
+
+  <Transaction code="00010"  desc="·¢µçÐÅÎÄ¼þ£¨ÒøÐÐ·¢Æð£©">
+    <Request>
+      <AddItem name="STX"   fill_asc="2"/>
+      <Quote name="HeadMsgS" />  <!--ÏûÏ¢Í·-->
+      <Item name="OrnFil"   deli_asc="4"/><!--Ô´ÎÄ¼þÃû-->
+      <Item name="ObjFil"   deli_asc="4"/><!--Ä¿±êÎÄ¼þÃû-->
+      <Item name="FilTyp"   deli_asc="4"/><!--ÎÄ¼þÀàÐÍ-->
+      <Item name="RsFld"    deli_asc="4"/><!--Ô¤Áô×Ö¶Î-->
+      <Item name="RsFld"    deli_asc="4"/><!--Ô¤Áô×Ö¶Î-->
+      <Item name="RsFld"    deli_asc="4"/><!--Ô¤Áô×Ö¶Î-->
+    </Request>
+    <Response necessary="no">
+      <Quote name="HeadMsgR" />  <!--ÏûÏ¢Í·-->
+    </Response>
+  </Transaction>
+
+</Application>

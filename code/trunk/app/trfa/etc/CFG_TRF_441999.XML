@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<ParaFile  name="AFE" desc="´ú½É·Ñ¹¦ÄÜÄ£¿é">
+  <Application name="TRF"><!--¶¨Òå´úÊÕµÄ¹«¹²²ÎÊý-->
+    <Public><!--¶¨Òå¹«¹²²ÎÊý,ÊÊÓÃÓÚ±¾Ó¦ÓÃµÄËùÓÐ½»Ò×-->
+      <Arg name="CnlLst" value="|TRM|FRT|TBS|MMT|THD|WEB|"/>
+      <!--Ð­ÒéÖÐµÄÇþµÀ£º¹ñÌ¨1µç»°2ÍøÒø3ATM/CDM4POS5¶àÃ½Ìå6ÊÖ»úÒøÐÐ7Ð­ÒéÅú¿Û19µÚÈý·½20-->
+      <!--½»Ò×·¢ÆðÇþµÀ£º¹ñÌ¨-TRM;µç»°ÒøÐÐ-TBS;ÍøÒø-WEB;ATM-ATM;´æ¿î»ú-CDM;POS-POS;¶àÃ½Ìå¡¢×ÔÖúÒøÐÐ-MMT;ÊÖ»úÒøÐÐ-MOB;ÏµÍ³×Ô·¢Æð(Ð­ÒéÅú¿Û)-FRT;µÚÈý·½ÏµÍ³-THD;-->
+      <Arg name="ChkCrp" value="0"/>
+      <!--ÊÇ·ñ¼ì²éµ¥Î»Ð­Òé£¬0:²»¼ì²é,1:¼ì²é -->
+      <Arg name="IsSignIn" value="0"/>
+      <!--ÊÇ·ñ¼ì²éµ¥Î»ÒÑÇ©µ½£¬0:²»¼ì²é,1:¼ì²é-->
+      <Arg name="ChkPsn" value="0"/>
+      <!--ÊÇ·ñ¼ì²é¸öÈËÐ­Òé£¬0:²»¼ì²é,1:¼ì²é-->
+      <Arg name="CBHost" value="SHSTPUB1"/><!--ÒøÐÐºËÐÄÖ÷»ú½»Ò×·þÎñÃû-->
+      <Arg name="HTxnCd_P2C" value="|471140|451610|"/><!--´úÊÕ´ú½É½»Ò×½Ó¿Ú-->
+      <Arg name="HTxnCd_DSCal" value="|471149|451619|"/><!--´úÊÕ´ú½ÉÄ¨ÕË½»Ò×½Ó¿Ú-->
+      <Arg name="HTxnCd_Cfm" value="458980"/><!--²éÊµ¿ÉÒÉ½»Ò× -->
+      <Arg name="HTxnCd_Cancel" value="959999"/><!--ºËÐÄÄ¨ÕË½Ó¿Ú-->
+      <Arg name="HTxnCd_SeekJnl" value="458970"/><!--²éÑ¯»á¼ÆÁ÷Ë®-->
+      <Arg name="RepeatJnl" value="|SC6128|"/><!--ÒøÐÐºËÐÄ½»Ò×ÖØ¸´·µ»ØÂëÁÐ±í-->
+      <Arg name="HstNoJnl" value="|SC6129|AG8001|AG8981|"/><!--ÒøÐÐºËÐÄÎÞ´ËÁ÷Ë®·µ»ØÂëÁÐ±í-->
+      <Arg name="HRspCd_Del" value="SC6034"/><!--ÒøÐÐºËÐÄÖ÷»ú½»Ò×·þÎñÃû-->
+    </Public>
+
+    <!--¹ã¶«µçÐÅ-->
+    <Transaction code="481500" desc="µçÐÅ´úÊÕ·Ñ²éÑ¯"><!--²éÑ¯´ý½É·ÑÓÃ×Ü¶îÅäÖÃ²ÎÊ-->
+      <Arg name="CnlLst" value="|TRM|MMT|WEB|"/><!--ÔÊÐíµ±Ç°½»Ò×µÄ½»Ò×ÇþµÀ-->
+      <Arg name="TxnMod" value="1"/><!--²éÑ¯Ä£Ê½£¬0²éÑ¯±¾µØ¹«¹²·ÑÓÃ±í 1½öµ÷ÓÃµÚÈý·½½»Ò×²éÑ¯ 2¸öÐÔ¶¨ÖÆ-->
+      <Arg name="TTxnCd" value="00001"/>
+      <Arg name="ThdSvr" value="STDATRFA"/>
+      <Arg name="TRsp_Suc" value="|00|"/>
+    </Transaction>
+
+    <Transaction code="481501" desc="µçÐÅ´úÊÕ·Ñ"><!--½É·ÑÅäÖÃ²ÎÊý-->
+      <Arg name="CnlLst" value="|TRM|MMT|WEB|"/><!--ÔÊÐíµ±Ç°½»Ò×µÄ½»Ò×ÇþµÀ-->
+      <Arg name="TxnMod" value="1"/><!--²éÑ¯Ä£Ê½£¬0²éÑ¯±¾µØ¹«¹²·ÑÓÃ±í 1½öµ÷ÓÃµÚÈý·½½»Ò× 2¸öÐÔ¶¨ÖÆ-->
+      <arg name="QryCnd" value="STRCAT(where ActNo=',$ActNo,')"/><!--ÒÔwhere¿ªÊ¼µÄÌõ¼þÖµ£¬TxnMod=0Ê±±ØÓÐ-->
+      <Arg name="NeedLogNo" value="1"/><!--ÊÇ·ñÉêÇëÆ½Ì¨Á÷Ë®ºÅ,0²»ÉêÇë,1ÉêÇë-->
+      <Arg name="HTxnCd_P2C" value="$HTxnCd"/><!--Ö÷»ú½»Ò×Âë£¬ÈôpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="CBHost" value="SHSTPUB1"/><!--Ö÷»ú½Ó¿Ú·þÎñÃû£¬ÈôÊ¹ÓÃpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="TTxnCd" value="00002"/><!--µÚÈý·½½»Ò×Âë£¬TxnModÎª1Ê±±ØÓÐ-->
+      <Arg name="ThdSvr" value="STDATRFA"/><!--Íâ·¢µÚÈý·½·þÎñÃû-->
+      <Arg name="TRsp_Suc" value="|00|000000|"/><!--µÚÈý·½³É¹¦·µ»ØÂëÁÐ±í-->
+      <Arg name="RollBack" value="1"/><!--ÊÇ·ñÆô¶¯ÍêÕûÐÔ¿ØÖÆ£º1Æô¶¯,0²»Æô¶¯-->
+      <Arg name="RollBackCnls" value="|WEB|MMT|"/><!--Æô¶¯ÍêÕûÐÔ¿ØÖÆÇþµÀÁÐ±í-->
+    </Transaction>
+
+    <Transaction code="481502" desc="µçÐÅ´úÊÕ·ÑÄ¨ÕË£¨³åÕý£©"><!--½É·ÑÄ¨ÕÊÅäÖÃ²ÎÊý-->
+      <Arg name="TxnMod" value="0"/><!--Ä¨ÕÊÄ£Ê½£¬0Õû¸ö 1Ä¨Ö÷»ú 2Ä¨µÚÈý·½-->
+      <Arg name="TTxnMod" value="0"/><!--µÚÈý·½Ä¨ÕËÄ£Ê½£¬0µ÷µÚÈý·½ 1 ¸öÐÔ´¦Àí-->
+      <Arg name="TTxnCd" value="90002"/><!--µÚÈý·½½»Ò×Âë-->
+      <Arg name="ThdSvr" value="STDATRFA"/><!--Íâ·¢µÚÈý·½·þÎñÃû-->
+      <Arg name="TRsp_Suc" value="|000000|00|91|90|"/><!--µÚÈý·½³É¹¦·µ»ØÂëÁÐ±í-->
+      <Arg name="HTxnCd_DSCal" value="$HTxnCd"/>
+      <Arg name="HTxnCd_Cancel" value="959999"/><!--Ä¨ÕËÖ÷»ú½»Ò×Âë£¬ÈôpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="CBHost" value="SHSTPUB1"/><!--Ö÷»ú½Ó¿Ú·þÎñÃû£¬ÈôÊ¹ÓÃpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="HstNoJnl" value="|SC6129|AG8001|AG8981|SC6034|"/><!--ÒøÐÐºËÐÄÎÞ´ËÁ÷Ë®·µ»ØÂëÁÐ±í-->
+    </Transaction>
+
+    <Transaction code="481503" desc="µçÐÅ»®¿î£¨µçÐÅ·¢ÆðµÄ£©"><!--½É·ÑÅäÖÃ²ÎÊý-->
+      <Arg name="CnlLst" value="|THD|"/><!--ÔÊÐíµ±Ç°½»Ò×µÄ½»Ò×ÇþµÀ-->
+      <Arg name="RepeatChk" value="2"/><!--½»Ò×ÖØ¸´ÐÔ¼ì²é 1¹«¹²¼ì²é 1¸öÐÔ¶¨ÖÆ 2²»¼ì²é-->
+      <Arg name="IddFunc_RepeatChk" value="2"/><!--½»Ò×ÖØ¸´ÐÔ¼ì²é 1¹«¹²¼ì²é 1¸öÐÔ¶¨ÖÆ 2²»¼ì²é-->
+      <Arg name="HTxnCd_P2C"   value="$HTxnCd"/>
+      <Arg name="CBHost"       value="SHSTPUB1"/>
+      <Arg name="RollBack"     value="1"/><!--ÊÇ·ñÆô¶¯ÍêÕûÐÔ¿ØÖÆ£º1Æô¶¯,0²»Æô¶¯-->
+      <Arg name="RollBackCnls" value="|WEB|MMT|"/><!--Æô¶¯ÍêÕûÐÔ¿ØÖÆÇþµÀÁÐ±í-->
+    </Transaction>
+
+    <Transaction code="481504" desc="µçÐÅ»®¿î³åÕý£¨µçÐÅ·¢Æð£©"><!--µÚÈý·½Ä¨ÕÊÅäÖÃ²ÎÊý-->
+      <Arg name="SeekMod" value="0"/><!--²éÑ¯Á÷Ë®Ä£Ê½£¬0°´µÚÈý·½¼üÖµ²éÑ¯ 1°´Ç°ÖÃÁ÷Ë®ºÅ²éÑ¯ 2¸öÐÔ»¯²éÑ¯-->
+      <Arg name="HTxnCd_DSCal" value="$HTxnCd"/><!--´úÊÕ´ú½ÉÄ¨ÕË½»Ò×½Ó¿Ú£¬ÈôpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="HTxnCd_Cancel" value="959999"/><!--Ä¨ÕËÖ÷»ú½»Ò×Âë£¬ÈôpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="CBHost" value="SHSTPUB1"/><!--Ö÷»ú½Ó¿Ú·þÎñÃû£¬ÈôÊ¹ÓÃpublicÏÂµÄ²ÎÊý,Ôò¿ÉÂÔ-->
+      <Arg name="ThdKey" value="481508"/><!--µÚÈý·½¼üÖµ-->
+      <Arg name="HstNoJnl" value="|SC6129|AG8001|AG8981|SC6034|"/><!--ÒøÐÐºËÐÄÎÞ´ËÁ÷Ë®·µ»ØÂëÁÐ±í-->
+    </Transaction>
+    
+  </Application>
+</ParaFile>
