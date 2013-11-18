@@ -975,9 +975,7 @@
             <Case value="-1"><!--第三方交易超时 -->
                <Set>TxnSts=U</Set>
                <Set>TTxnSt=T</Set>
-               <!--将总行返回LogNo存放为HLogNo-->
-               <Set>HLogNo=$LogNo</Set>
-               <Set>LogNo=$BLogNo</Set>
+               <Set>LogNo=$BLogNo</Set><!--还原LogNo-->
                <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
                   <Arg name="TblNam" value="afetxnjnl"/>
                   <Arg name="CndSts" value="UpdThdJnl"/>
@@ -999,9 +997,7 @@
             <Case value="-10"><!--第三方交易未发送成功 -->
                <Set>TxnSts=X</Set>
                <Set>TTxnSt=X</Set>
-               <!--将总行返回LogNo存放为HLogNo-->
-               <Set>HLogNo=$LogNo</Set>
-               <Set>LogNo=$BLogNo</Set>
+               <Set>LogNo=$BLogNo</Set><!--还原LogNo-->
                <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
                   <Arg name="TblNam" value="afetxnjnl"/>
                   <Arg name="CndSts" value="UpdThdJnl"/>
@@ -1020,9 +1016,7 @@
             <Case value="-2"><!--第三方交易系统错误 -->
                <Set>TxnSts=X</Set>
                <Set>TTxnSt=X</Set>
-               <!--将总行返回LogNo存放为HLogNo-->
-               <Set>HLogNo=$LogNo</Set>
-               <Set>LogNo=$BLogNo</Set>
+               <Set>LogNo=$BLogNo</Set><!--还原LogNo-->
                <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
                   <Arg name="TblNam" value="afetxnjnl"/>
                   <Arg name="CndSts" value="UpdThdJnl"/>
@@ -1045,9 +1039,7 @@
                   <Set>HTxnSt=F</Set>
                   <Set>HRspCd=$TRspCd</Set>
                   <Set>RspCod=$TRspCd</Set><!--第三方交易失败-->        
-                  <!--将总行返回LogNo存放为HLogNo-->
-                  <Set>HLogNo=$LogNo</Set>
-                  <Set>LogNo=$BLogNo</Set>
+                  <Set>LogNo=$BLogNo</Set><!--还原LogNo-->
                   <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
                      <Arg name="TblNam" value="afetxnjnl"/>
                      <Arg name="CndSts" value="UpdThdJnl"/>
@@ -1066,9 +1058,7 @@
                   <Set>HTxnSt=S</Set>
                   <Set>HRspCd=SC0000</Set>
                   <Set>RspCod=000000</Set>
-                  <!--将总行返回LogNo存放为HLogNo-->
-                  <Set>HLogNo=$LogNo</Set>
-                  <Set>LogNo=$BLogNo</Set>
+                  <Set>LogNo=$BLogNo</Set><!--还原LogNo-->
                   <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--更新第三方记账信息-->
                      <Arg name="TblNam" value="afetxnjnl"/>
                      <Arg name="CndSts" value="UpdThdJnl"/>
