@@ -1,0 +1,273 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="TBC" server="OFRTTBCA" pre_dll="dll/pre_tbc.so" pre_func="pre_tbc" spe_dll="dll/pre_tbc.so" spe_func="spe_tbc" trace="yes">
+  <GetTxnCode type="xml">
+    <Item value="DLMAPS.PUB.TRADE_ID"/>
+  </GetTxnCode>
+  <CodeSwitching>
+		<Table name="GDYC_DPTID"  file="etc/TBC_CSW_441999.XML">
+			<Column name="DptId"  sort="no"/>
+			<Column name="CAgtNo" sort="no"/>
+		</Table>
+  </CodeSwitching>
+
+
+  <Define>
+    <!--½ÓÊÕ±¨ÎÄÍ·¸ñÊ½-->
+    <Macro name="RCV_MSG_HEAD">
+      <ReadElement name="PUB">
+        <ReadElement name="TRADE_ID"      ETF_name="TRANID"/><!--½»Ò×´úÂë-->
+        <ReadElement name="TRAN_TIME"     ETF_name="TRANTM"/><!--·¢ÆðÊ±¼ä-->
+        <ReadElement name="BANK_ID"       ETF_name="BANKID"/><!--ÒøÐÐ±àºÅ-->
+        <ReadElement name="DPT_ID"        ETF_name="DptId" /><!--ÒøÐÐ¹«Ë¾±àÂë-->
+        <ReadElement name="TRADE_SEQ"     ETF_name="TLogNo"/><!--½»Ò×ÐòºÅ-->
+        <ReadElement name="APP_TYPE"      ETF_name="APPTYP"/><!--Ó¦ÓÃÀàÐÍ-->
+      </ReadElement>
+    </Macro>
+    <!--·¢ËÍ±¨ÎÄÍ·¸ñÊ½-->
+	  <Macro name="SND_MSG_HEAD">
+      <WriteElement name="PUB">
+        <WriteElement name="TRADE_ID"     ETF_name="TRANID"/><!--½»Ò×´úÂë-->    
+        <WriteElement name="TRAN_TIME"    ETF_name="TRANTM"/><!--·¢ÆðÊ±¼ä-->    
+        <WriteElement name="BANK_ID"      ETF_name="BANKID"/><!--ÒøÐÐ±àºÅ-->    
+        <WriteElement name="DPT_ID"       ETF_name="DptId" /><!--ÒøÐÐ¹«Ë¾±àÂë-->
+        <WriteElement name="TRADE_SEQ"    ETF_name="TLogNo"/><!--½»Ò×ÐòºÅ-->    
+        <WriteElement name="APP_TYPE"     ETF_name="APPTYP"/><!--Ó¦ÓÃÀàÐÍ-->    
+      </WriteElement>		
+	  </Macro>
+	</Define>
+
+  <Transaction code="8910" service="483801" log_switch="5" timeout="30" desc="Ç©µ½">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+          <ReadElement name="DEV_ID" ETF_name="DevId"  desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER" ETF_name="Teller" desc="²Ù×÷ºÅ"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+          <WriteElement name="NEW_KEY"    ETF_name="NewKey"/> <!--ÐÂÍ¨Ñ¶ÃÜÔ¿-->
+          <SwitchCode name="DptId" new_name="CAgtNo"  tab_name="GDYC_DPTID"  col_name="DptId"/><!--¸´ÖÆDptIdÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8911" service="483802" log_switch="5" timeout="30" desc="Ç©ÍË">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+          <ReadElement name="DEV_ID" ETF_name="DevId"  desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER" ETF_name="Teller" desc="²Ù×÷ºÅ"/>
+          <SwitchCode name="DptId" new_name="CAgtNo"  tab_name="GDYC_DPTID"  col_name="DptId"/><!--¸´ÖÆDptIdÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="8912" service="483803" log_switch="5" timeout="30" desc="¿ª»§">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+      		<ReadElement name="CUST_ID"   ETF_name="CustId"  desc="¿Í»§ºÅ"/>
+      		<ReadElement name="COM_ID"    ETF_name="ComId"   desc="¹«Ë¾±àºÅ"/>
+      		<ReadElement name="CUST_NAME" ETF_name="TCusNm"  desc="¿Í»§ÐÕÃû"/>
+      		<ReadElement name="CUST_TYPE" ETF_name="CusTyp"  desc="¿Í»§ÀàÐÍ"/>
+      		<ReadElement name="PASS_TYPE" ETF_name="PasTyp"  desc="Ö¤¼þÀàÐÍ"/>
+      		<ReadElement name="PASS_ID"   ETF_name="PasId"   desc="Ö¤¼þºÅÂë"/>
+          <ReadElement name="LICE_ID"   ETF_name="LiceId"  desc="ÓªÒµÖ´ÕÕºÅÂë"/>
+          <ReadElement name="ACC_TYPE"  ETF_name="AccTyp"  desc="¿¨/ÕË»§ÀàÐÍ"/>
+          <ReadElement name="ACC"       ETF_name="ActNo"   desc="¿¨/ÕË»§ºÅÂë"/>
+          <ReadElement name="PASS_FLAG" ETF_name="PasFlg"  desc="ÃÜÂëÐ£Ñé±êÖ¾"/>
+          <ReadElement name="PASSWORD"  ETF_name="PasWrd"  desc="ÃÜÂë"/>
+          <ReadElement name="ADDR"      ETF_name="Addres"  desc="ÁªÏµµØÖ·"/>
+          <ReadElement name="TEL"       ETF_name="TelNum"  desc="µç»°ºÅÂë"/>        
+          <ReadElement name="DEV_ID"    ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"    ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+          <SwitchCode name="DptId" new_name="CAgtNo"  tab_name="GDYC_DPTID"  col_name="DptId"/><!--¸´ÖÆDptIdÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8913" service="483804" log_switch="5" timeout="30" desc="Ïú»§">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+      		<ReadElement name="CUST_ID"   ETF_name="CustId"  desc="¿Í»§ºÅ"/>
+      		<ReadElement name="CUST_NAME" ETF_name="TCusNm"  desc="¿Í»§ÐÕÃû"/>
+      		<ReadElement name="CUST_TYPE" ETF_name="CusTyp"  desc="¿Í»§ÀàÐÍ"/>
+      		<ReadElement name="PASS_ID"   ETF_name="PasId"   desc="Ö¤¼þºÅÂë"/>
+          <ReadElement name="LICE_ID"   ETF_name="LiceId"  desc="ÓªÒµÖ´ÕÕºÅÂë"/>
+          <ReadElement name="ACC_TYPE"  ETF_name="AccTyp"  desc="¿¨/ÕË»§ÀàÐÍ"/>
+          <ReadElement name="ACC"       ETF_name="ActNo"   desc="¿¨/ÕË»§ºÅÂë"/>      
+          <ReadElement name="DEV_ID"    ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"    ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8914" service="483805" log_switch="5" timeout="30" desc="¿Û¿î">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+      		<ReadElement name="CUST_ID"   ETF_name="CustId"  desc="¿Í»§ºÅ"/>
+      		<ReadElement name="CO_NUM"    ETF_name="RsFld1"  desc="¶©µ¥ºÅ"/>
+          <ReadElement name="PASS_FLAG" ETF_name="PasFlg"  desc="ÃÜÂëÐ£Ñé±êÖ¾"/>
+          <ReadElement name="PASSWORD"  ETF_name="PasWrd"  desc="ÃÜÂë"/>
+          <ReadElement name="QTY_TRADE" ETF_name="TxnAmt"  desc="Ö§¸¶½ð¶î"/>
+          <ReadElement name="DEV_ID"    ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"    ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+          <SwitchCode name="DptId" new_name="CAgtNo"  tab_name="GDYC_DPTID"  col_name="DptId"/><!--¸´ÖÆDptIdÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+          <AddItem name="TxnCnl"  value="THD"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+          <WriteElement name="BANK_SEQ"   ETF_name="LogNo"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8926" service="483806" log_switch="5" timeout="30" desc="Ð£Õý">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+      		<ReadElement name="TRADE_SEQ_OLD" ETF_name="OTLogNo" desc="´ý²éÑ¯ÑÌ²Ý½»Ò×Á÷Ë®ºÅ"/>
+      		<ReadElement name="TRADE_ID_OLD"  ETF_name="OTTxnCd" desc="Ô­½»Ò×Âë"/>
+          <ReadElement name="CUST_ID_OLD"   ETF_name="CustId"  desc="ÑÌ²Ý¹«Ë¾¿Í»§ºÅ"/>
+          <ReadElement name="DEV_ID"        ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"        ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"      ETF_name="RspCod"/>
+          <WriteElement name="MSG"           ETF_name="RspMsg"/>
+          <WriteElement name="RET_CODE_OLD"  ETF_name="ORspCd"/>
+          <WriteElement name="MSG_OLD"       ETF_name="ORspMg"/>
+          <WriteElement name="BANK_SEQ_OLD"  ETF_name="OLogNo"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8924" service="483807" log_switch="5" timeout="30" desc="²éÑ¯¿Í»§Óà¶î">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+          <ReadElement name="CUST_ID"       ETF_name="CustId"  desc="ÑÌ²Ý¹«Ë¾¿Í»§ºÅ"/>
+          <ReadElement name="DEV_ID"        ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"        ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+          <SwitchCode name="DptId" new_name="CAgtNo"  tab_name="GDYC_DPTID"  col_name="DptId"/><!--¸´ÖÆDptIdÖµÎªÒ»¸öÐÂ×Ö¶ÎCAgtNoµÄÖµ-->
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"      ETF_name="RspCod"/>
+          <WriteElement name="MSG"           ETF_name="RspMsg"/>
+          <WriteElement name="ACCOUNT"       ETF_name="Bal" expression="AMTDELZERO($Bal)"/> <!--ÕË»§Óà¶î-->
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8918" service="483808" log_switch="5" timeout="30" desc="¶ÔÕË">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+          <ReadElement name="BANK_SEQ"      ETF_name="OLogNo"  desc="ÒøÐÐÁ÷Ë®ºÅ"/>
+          <ReadElement name="TRADE_DATE"    ETF_name="OActDt"  desc="²éÑ¯ÈÕÆÚ"/>
+          <ReadElement name="DEV_ID"        ETF_name="DevId"   desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER"        ETF_name="Teller"  desc="²Ù×÷ºÅ"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"      ETF_name="RspCod"/>
+          <WriteElement name="MSG"           ETF_name="RspMsg"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="8888" service="483888" log_switch="5" timeout="30" desc="Í¨Ñ¶×´Ì¬²âÊÔ">
+    <Request>
+      <ReadElement name="DLMAPS">
+      	<Quote name="RCV_MSG_HEAD"/>
+      	<ReadElement name="IN">
+          <ReadElement name="DEV_ID" ETF_name="DevId"  desc="Éè±¸ºÅ"/>
+          <ReadElement name="TELLER" ETF_name="Teller" desc="²Ù×÷ºÅ"/>
+        </ReadElement>
+     </ReadElement>
+    </Request>
+    <Response necessary="no">
+      <WriteElement name="DLMAPS">
+      	<Quote name="SND_MSG_HEAD"/>
+      	<WriteElement name="OUT">
+          <WriteElement name="RET_CODE"   ETF_name="RspCod"/>
+          <WriteElement name="MSG"        ETF_name="RspMsg"/>
+        </WriteElement>
+      </WriteElement>
+    </Response>
+  </Transaction>
+
+</Application>
