@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<BATCH debug_file="agtfmta.log" err_file="agtfmta.err">
+
+	<CodeSwitching>
+		<Table name="H2T_EFE_441"  file="etc/EFE_CSW_441999.XML">
+			<Column name="HRspCd" sort="no"/>
+			<Column name="TRspCd" sort="no"/>
+		</Table>
+		<Table name="DL_OAN"  file="etc/EFE_CSW_441999.XML">
+			<Column name="OAN" sort="no"/>
+			<Column name="CAgtNo" sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+  
+	<Process name="DL_PROTOCOL"><!--Öéº£µçÁ¦ºË¶Ô´ú¿ÛÐ­Òé¸ñÊ½-->
+		<Head>
+			<Item name="OCC"     length="2" value="02"/> <!--½»Ò×Âë-->
+			<Item name="WTC"     length="3"/>  <!--ÒøÐÐ´úÂë-->
+			<Item name="CTC"     length="8"/> <!--×Ü¿Í»§ÊýÁ¿-->
+			<AddItem name="DTN"  length="12" expression="$CTC"/> <!--Ã÷Ï¸±ÊÊý-->
+		</Head>
+		<Data>
+			<Item name="LogNo"   length="16"/>   <!--ÒøÐÐÒµÎñÁ÷Ë®ºÅ-->
+			<Item name=""        length="15" value=""/>   <!--»§ºÅ-->
+			<Item name="JLD"     length="5"/> <!--¼ÆÁ¿µãºÅ-->
+			<Item name="MDAT"    length="16"/> <!--ÈÕÆÚ-->
+			<Item name="ACTNO"   length="32"/> <!--ÕÊºÅ-->			
+			<Item name="ACTNAM"  length="32"/> <!--ÕÊºÅÃû³Æ-->
+			<Item name="CHT"     length="1"/> <!--±ä¸üÀàÐÍ 0 ÐÂÔö 3ÐÞ¸Ä 9×¢Ïú-->
+			<Item name="ACT"     length="1"/> <!--µç´¢»§ÀàÐÍ-->
+			<Item name="TEL"     length="16"/> <!--ÕÊºÅ»§Ö÷ÁªÏµµç»°-->			
+			<Item name="MOB"     length="16"/> <!--ÕÊºÅ»§Ö÷ÁªÏµÊÖ»ú-->
+			<Item name="ZPF"     length="1"/> <!--Í¨Öªµ¥·þÎñÒªÇó-->
+			<Item name="ZPA"     length="64"/> <!--Í¨ÖªËÍ´ïµØÖ·-->
+			<Item name="ZPC"     length="10"/> <!--Í¨ÖªËÍ´ïÓÊ±à-->
+			<Item name="YBF"     length="1"/> <!--Óà¶î²»×ãÍ¨Öª·½Ê½-->
+			<Item name="EMAIL"   length="64"/> <!--E-MAIL-->
+		</Data>
+	</Process>
+	
+	<Process name="EFE_in_441999"   desc="µç·ÑÅúÁ¿¿Û¿î½ÓÊÕ" sqn_flag="Y" sqn_node_name="SeqNo">   <!-- µç·ÑÊäÈë -->
+		<Head>
+			<Item name="PID"     length="20"/>  <!--ÅúÁ¿´úÊÕÐÅÏ¢±êÊ¶-->
+			<Item name="CUN"     length="3"/>   <!--»õ±Ò·ûºÅ-->
+			<Item name="FPBB"    length="1"/>   <!--ÊÕ¸¶±êÖ¾,¹Ì¶¨ÎªÊÕ1-->
+			<Item name="EDD"     length="3"/>   <!--·ÑÏî´úÂë-->
+			<Item name="TotCnt"  length="10"/>  <!--×Ü¼ÇÂ¼Êý-->
+			<Item name="TotAmt"  length="14"/>  <!--×Ü½ð¶î-->
+			<Item name="SetDat"  length="8"/>   <!--ËÍÒøÐÐÈÕÆÚ-->
+			<Item name="TxnDat"  length="8"/>   <!--Ó¦»®¿îÈÕÆÚ-->
+			<Item name="RSFLD1"  length="128" expression="DELBOTHSPACE($RSFLD1)"/> <!--´¦ÀíËµÃ÷-->
+			<Item name="TLogNo"  length="16"  expression="DELBOTHSPACE($TLogNo)"/> <!--Á÷Ë®ºÅ-->
+			<Item name="BankCd"  length="12"/>   <!--ÒøÐÐ´úÂë-->
+		</Head>
+		<Data>
+			<Item name="PNO"     length="10"/>  <!--±àºÅ-->
+			<Item name="JFH"     length="32"/>  <!--½É·ÑºÅ-->
+			<Item name="KKB"     length="12"/>  <!--¿Í»§¿ª»§ÐÐÐÐºÅ-->
+			<Item name="ActNo"   length="32" expression="DELBOTHSPACE($ActNo)"/>  <!--ÕËºÅ-->
+			<Item name="ActNam"  length="40"/>  <!--ÕËºÅ¿Í»§Ãû³Æ-->
+			<Item name="TxnAmt"  length="12"/>  <!--½ð¶î-->
+			<Item name="KFG"     length="1"/>   <!--¿Û¿î·½Ê½-->
+			<Item name="DMO"     length="40"/>  <!--ËµÃ÷-->
+			<Item name="DEPT"    length="8"/>   <!--ÓÃ»§ËùÔÚ²¿ÃÅ-->
+			<Item name="MON"     length="6"/>   <!--µç·ÑÔÂ·Ý-->
+			<Item name="MNS"     length="2"/>   <!--µç·Ñ´ÎÊý-->
+			<Item name="CusNam"  length="40" expression="DELBOTHSPACE($CusNam)"/>  <!--¿Í»§Ãû³Æ-->
+			<Item name="GDZH"    length="32" expression="DELBOTHSPACE($GDZH)"/>  <!--¹©µçÆóÒµÕËºÅ-->
+			<Item name="YKDF"    length="12"/>  <!--Ó¦¿Ûµç·Ñ-->
+			<Item name="PCC"     length="12"/>  <!--Î¥Ô¼½ð-->
+			<Item name="JLD"     length="5"/>   <!--¼ÆÁ¿µãºÅ-->
+			<Item name="YSH"     length="16"/>  <!--Ó¦ÊÕÆ¾Ö¤ºÅ-->
+			<SwitchCode name="GDZH" new_name="CAgtNo"  tab_name="DL_OAN"  col_name="OAN"/>
+			<!--AddItem name="SeqNo"    expression="ADDCHAR($SeqNo,5,0,1)"/ÐòºÅ¸Ä´ÓPNOÈ¡-->
+			<AddItem name="SeqNo"    expression="SUBSTR($PNO,6,5)"/>
+		</Data>
+	</Process>
+  
+	<Process name="EFE_out_441999" desc="µç·ÑÅúÁ¿¿Û¿î·µ»Ø">   <!-- µç·ÑÊä³ö -->
+		<Head>
+			<Item name="PID"     length="20"/>  <!--ÅúÁ¿´úÊÕÐÅÏ¢±êÊ¶-->
+			<Item name="CUN"     length="3"/>   <!--»õ±Ò·ûºÅ-->
+			<AddItem name="FPBB" length="1" value="1"/> 
+			<Item name="FPBB"    length="1"/>   <!--ÊÕ¸¶±êÖ¾,¹Ì¶¨ÎªÊÕ1-->
+			<Item name="EDD"     length="3" value=" "/>   <!--·ÑÏî´úÂë-->
+			<Item name="TotCnt"  length="10"/>  <!--×Ü¼ÇÂ¼Êý-->
+			<Item name="TotAmt"  length="14"/>  <!--×Ü½ð¶î-->
+			<Item name="STotCnt" length="10"/>  <!--ÒÑ»®¿î»§Êý-->
+			<Item name="STotAmt" length="14"/>  <!--ÒÑ»®¿î½ð¶î-->
+			<Item name="FTotCnt" length="10"/>  <!--Ê§°Ü»§Êý-->
+			<Item name="FTotAmt" length="14"/>  <!--Ê§°Ü½ð¶î-->
+			<Item name="ActDat"  length="8"/>   <!--»®¿îÈÕÆÚ-->
+			<AddItem name="FPCC" length="4" value="0000"/> <!--´¦Àí½á¹ûÒ»°ãÎª¹Ì¶¨Öµ£¬ÐèÓëµçÁ¦È·ÈÏ -->
+			<Item name="FPCC"    length="4"/>   <!--´¦Àí½á¹û-->
+			<AddItem name="FPDD" length="128" value="´¦Àí³É¹¦"/> <!--´¦Àí½á¹ûÒ»°ãÎª¹Ì¶¨Öµ£¬ÐèÓëµçÁ¦È·ÈÏ -->
+			<Item name="FPDD"    length="128"/> <!--´¦ÀíËµÃ÷-->
+			<AddItem name="BankCd" length="12" value="301"/> 
+			<Item name="BankCd"  length="12" /> <!--ÒøÐÐ´úÂë-->
+			<Item name="WYSB"    length="30"/>  <!--Î¨Ò»Ê¶±ðÂë-->
+		</Head>
+		<Data>
+			<Item name="PNO"     length="10" /> <!-- ±àºÅ -->
+			<Item name="JFH"     length="32"/> <!--½É·ÑºÅ-->
+			<Item name="KKB"     length="12"/> <!--¿Í»§¿ª»§ÐÐÐÐºÅ-->
+			<Item name="ActNo"   length="32" expression="DELBOTHSPACE($ActNo)"/>  <!-- ÕÊºÅ -->
+			<Item name="TxnAmt"  length="12"/>  <!-- Ó¦¿Û½ð¶î -->
+			<SwitchCode name="HRspCd" new_name="SucFlg" tab_name="H2T_EFE_441" col_name="HRspCd"/> <!--×¢Òâ×ª»»-->
+			<Item name="SucFlg"  length="01"/>  <!-- ±êÊ¶ -->
+			<AddItem name="SKDF" length="12"/> 
+			<If condition="STRCMP($SucFlg,1)=0">
+			  <Item name="SKDF"    length="12" expression="$TxnAmt"/>  <!--Êµ¿Ûµç·Ñ-->
+			</If>
+			<Else>
+				<Item name="SKDF"    length="12" value="0"/>  <!--Êµ¿Ûµç·Ñ-->
+			</Else>
+			<Item name="LogNo"   length="16" expression="STRCAT(301,SUBSTR($LogNo,1,6),SUBSTR($LogNo,8,7))"/>  <!--ÒøÐÐÊÕ·ÑÁ÷Ë®ºÅ-->
+			<Item name="DMO"     length="40"/>  <!--ËµÃ÷-->
+			<Item name="TlrId"   length="8"/>   <!--ÊÕ·ÑÔ±,ÐèÒªÓë¶Ô·½È·ÈÏ£¬ÊÇ·ñÊÇÒøÐÐ¹ñÔ±ºÅ-->
+			<Item name="ActDat"  length="8"/>   <!--¿Û¿îÈÕÆÚ-->
+			<AddItem name="TrTime" length="6" expression="GETDATETIME(HHMISS)"/> <!-- ÊÕ·ÑÊ±¼ä -->
+			<Item name="TrTime"  length="6"/>   <!-- ÊÕ·ÑÊ±¼ä -->
+			<Item name="DEPT"    length="8"/>   <!--ÓÃ»§ËùÔÚ²¿ÃÅ-->
+			<Item name="MON"     length="6"/>   <!--µç·ÑÔÂ·Ý-->
+			<Item name="MNS"     length="2"/>   <!--µç·Ñ´ÎÊý-->
+			<Item name="JLD"     length="5"/>   <!--¼ÆÁ¿µãºÅ-->
+			<Item name="YSH"     length="16"/>  <!--Ó¦ÊÕÆ¾Ö¤ºÅ-->
+			<Item name="PCC"     length="12"/>  <!--ÊµÊÕÎ¥Ô¼½ð-->
+			<Item name="YKDF"    length="12"/>  <!--ÊµÊÕµç·Ñ-->   <!--ÐèÒªÓëµçÁ¦È·¶¨-->
+			<Item name="CusNam"  length="40"/>  <!--¿Í»§Ãû³Æ-->
+			<Item name="GDZH"    length="32"/>  <!--¹©µçÆóÒµÕËºÅ-->
+			<AddItem name="FPDD" length="15" value=" "/>
+			<Item name="FPDD"    length="15"/>  <!--ÒøÐÐ·½ºÅ-->
+			<Item name="ActNo"   length="32"/>  <!--ÒøÐÐ·½¿Í»§ÕËºÅ-->
+		</Data>
+	</Process>  	
+  
+	<Process name="EFE_DZ" desc="µç·Ñ¶ÔÕÊ">   <!--µçÁ¦·¢Æðµ¥±Ê-->
+		<Head>
+			<Item name="OCC"     length="2" value="50"/>  <!--½»Ò×Âë-->
+			<Item name="YHC"     length="3" value="301"/>     <!--ÒøÐÐ´úÂë -->
+			<Item name="FSC"     length="8"/>   <!--ÊµÊ±»§Êý-->
+			<Item name="FSM"     length="12"/>  <!--ÊµÊ±½ð¶î-->
+			<Item name="FMC"     length="8"/>   <!--µ±ÈÕÄ¨ÕÊ»§Êý-->
+			<Item name="FMM"     length="12"/>   <!--µ±ÈÕÄ¨ÕÊ½ð¶î-->
+			<Item name="FGC"     length="8" value="0"/>  <!--¸ôÈÕÄ¨ÕÊ»§Êý-->
+			<Item name="FGM"     length="12" value="0"/>  <!--¸ôÈÕÄ¨ÕÊ½ð¶î-->
+			<Item name="FDC"     length="8"/>  <!--µ¥±Ê¿Û¿î»§Êý-->
+			<Item name="FDM"     length="12"/>  <!--µ¥±Ê¿Û¿î½ð¶î-->
+			<Item name="FEC"     length="8" value="0"/>  <!--ÅúÁ¿´ú¿Û»§Êý-->
+			<Item name="FEM"     length="14" value="0"/>  <!--ÅúÁ¿´ú¿Û½ð¶î-->
+			<Item name="CCD"     length="8"/>   <!--ÒøÐÐ´¦ÀíÈÕÆÚ-->
+			<Item name="CCT"     length="6" value=""/>    <!--ÒøÐÐ´¦ÀíÊ±¼ä-->
+			<Item name="LogNo"   length="12" value=""/> <!--ÒøÐÐÁ÷Ë®-->
+			<Item name="RBN"     length="12" value="5850"/>   <!--ÆóÒµ´úÂë-->
+			<Item name="WDO"     length="8"/>  <!--¹¤×÷ÈÕÆÚ-->
+			<Item name="CJG"     length="4" value=""/>  <!--´¦Àí½á¹û-->
+			<Item name="CSM"     length="128" value=""/>  <!--´¦ÀíËµÃ÷-->
+			<Item name="DTN"     length="12"/>  <!--Ã÷Ï¸±ÊÊý-->
+		</Head>
+		<Data>
+			<Item name="ActDat"  length="8" /> <!-- ÊÕ·ÑÈÕÆÚ -->
+			<Item name="MON"     length="6"/>   <!--µç·ÑÔÂ·Ý-->
+			<Item name="MNS"     length="2"/>   <!--µç·Ñ´ÎÊý-->
+			<Item name="JLD"     length="5"/>   <!--¼ÆÁ¿µãºÅ-->
+			<Item name="YSH"     length="16"/>  <!--Ó¦ÊÕÆ¾Ö¤ºÅ-->
+			<Item name="GDBM"    length="12" value=""/> <!--¹©µç¹«Ë¾±àºÅ-->
+			<Item name="ActNo"   length="32"/> <!--¿Í»§ÕÊºÅ-->
+			<Item name="ActNam"  length="32"/>  <!-- ¿Í»§ÕÊºÅÃû³Æ -->
+			<Item name="KAT"     length="1"/>  <!-- ÊôºÎÀàÐÍ -->
+			<Item name="OAN"     length="32" value=""/>  <!--¹©µç¿ª»§ÒøÐÐÕÊºÅ-->
+			<Item name="NUM"     length="8" value=""/> <!--Ã÷Ï¸ÐòºÅ-->
+			<If condition="STRCMP($HTxnSt,C)=0"> <!--³åÏú½»Ò×-->
+				<If condition="STRCMP($TxnCod,460221)=0">
+				  <Item name="ZLDM"    length="3" value="21"/>  <!--Ö¸Áî´úÂë-->
+				</If>
+				<Else>
+					<Item name="ZLDM"    length="3" value="12"/>  <!--Ö¸Áî´úÂë-->
+				</Else>
+			</If>
+			<Else>
+				<If condition="STRCMP($TxnCod,460220)=0">
+				  <Item name="ZLDM"    length="3" value="20"/>  <!--Ö¸Áî´úÂë-->
+				</If>
+				<Else>
+				   <Item name="ZLDM"    length="3" value="11"/>  <!--Ö¸Áî´úÂë-->
+				</Else>
+			</Else>
+			<Item name="WTC"     length="12" value="301"/>  <!--Î¯ÍÐ½Úµã´úÂë-->
+			<If condition="STRCMP($HTxnSt,C)=0"> <!--³åÏú½»Ò×-->
+				<Item name="Rsfld1"  length="16"/>   <!--Á÷Ë®-->
+			</If>
+			<Else>
+				<Item name="TLogNo"  length="16"/>   <!--Á÷Ë®-->
+			</Else>
+			<Item name="LogNo"   length="16"/>        <!--ÈëÕËÁ÷Ë®ºÅ-->
+			<Item name="WDO"     length="8"/>   <!--Î¯ÍÐÈÕÆÚ-->
+			
+			<If condition="STRCMP($HTxnSt,C)=0"> <!--³åÏú½»Ò×-->
+				<Item name="OZLM"     length="3"  value="20"/>   <!--Ô­Ö¸ÁîÂë-->
+				<Item name="OWTC"     length="12" value=""/>   <!--Ô­Î¯ÍÐ½Úµã´úÂë-->
+				<Item name="OWD"      length="8"  value=""/>  <!--Ô­Î¯ÍÐÈÕÆÚ-->
+				<Item name="TLogNo"   length="16"/>  <!--Ô­Á÷Ë®-->
+			</If>
+			<Else>
+				<Item name="OZLM"     length="3"   value=""/>   <!--Ô­Ö¸ÁîÂë-->
+				<Item name="OWTC"     length="12"  value=""/>   <!--Ô­Î¯ÍÐ½Úµã´úÂë-->
+				<Item name="OWD"      length="8"   value=""/>  <!--Ô­Î¯ÍÐÈÕÆÚ-->
+				<Item name="OLogNo"   length="16"  value=""/>  <!--Ô­Á÷Ë®-->
+			</Else>
+			<Item name="ECD"     length="12"/>  <!---ÊÕ·ÑÆóÒµ´úÂë-->   
+			<Item name="WTC"     length="3" value="301"/>  <!--ÒøÐÐ±àÂë-->
+			<Item name="JFH"     length="32"/>  <!--½É·ÑºÅ-->
+			<Item name="KKB"     length="12" value="301"/>  <!--¿Û¿îÐÐÐÐºÅ-->
+			<Item name="ActNo"   length="32"/>  <!--¿Û¿îÕËºÅ-->
+			<Item name="HBC"     length="3" value="RMB"/>  <!--»õ±Ò·ûºÅ-->
+			<Item name="TxnAmt"  length="12"/>  <!--¿Û¿î½ð¶î-->
+			<Item name="MXT"     length="2" value=""/>  <!--½»Ò×Ã÷Ï¸×´Ì¬-->
+			<Item name="FTXNTM"  length="14"/>  <!--´¦ÀíÊ±¼ä-->
+		</Data>
+	</Process>  	
+  
+</BATCH>
