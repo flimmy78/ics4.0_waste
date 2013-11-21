@@ -1,0 +1,525 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<ActNoJudge>
+  <!--ÕâÊÇÒ»¸öº¯Êý£¬ÓÉ·ÖÐÐ×ÔÐÐÊµÏÖ£¬ÇÒÃ¿¸ö·ÖÐÐ¶¼ÓÐÒ»¸öÊµÏÖ-->
+  <!--º¯ÊýÓÃÓÚÅÐ¶ÏÕËºÅÀàÐÍ£¬Ö÷ÒªÓÃÓÚ¶Ô¹«¶ÔË½ÕËºÅµÄÇø·Ö-->
+  <!--µ÷ÓÃ·½·¨
+  <Call function="º¯ÊýÃû">
+  <Input name="ActNo|NewFlg|"/>
+  <Output name="OActNo|ActCls|"/>
+  </Call>
+  -->
+  <!--ÐèÒªETFÊ÷ÉÏµÄÁ½¸ö½Úµã£º
+  ActNo      ´ýÅÐ¶ÏµÄÕËºÅ
+  NewFlg     (¿ÉÑ¡)ÊÇ·ñÐèÒª×ª»»ÎªÐÂÕËºÅ£¬´æÔÚ½ÚµãÇÒ£½1ÇÒÕËºÅÎª¶ÔË½ÕËºÅÊ±³¢ÊÔ×ª»»
+  ºêµÄ×îÖÕ½á¹ûÐèÒªÌîÐ´ÒÔÏÂ½Úµã£º
+  ActCls     ÕËºÅÀà±ð£¬ÓÉÁ½Î»×Ö·û×é³
+  0¶Ô¹«ÐÂÕËºÅÍâ²¿»§
+  1¶Ô¹«ÐÂÕËºÅÄÚ²¿»§
+  2¶ÔË½ÐÂÕËºÅ
+  3¶ÔË½¿¨ºÅ
+  4¶Ô¹«¾ÉÕËºÅ
+  5¶ÔË½¾ÉÕËºÅ
+  6ÆäËû(¿ÉÊÜÀíÕËºÅ)
+  7ÆäËû(²»¿ÉÊÜÀíÕËºÅ)
+  ´Ó×óÖÁÓÒµÚ1Î»£º0¶Ô¹«ÕËºÅ»ò¿¨ºÅ 1¶ÔË½ÕËºÅ»ò¿¨ºÅ
+  ´Ó×óÖÁÓÒµÚ2Î»£ºÕËºÅ×ÓÀà£¬¸ù¾ÝµÚÒ»Î»²»Í¬ÓÐ²»Í¬µÄº¬Ò
+  µ±µÚ1Î»Îª0Ê±£º0ÄÚ²¿»§ÕËºÅ£¬1Íâ²¿»§ÕËºÅ,ÆäËûÓÉ·ÖÐÐ×Ô¶¨Òå²¢Ê¹ÓÃ
+  µ±µÚ2Î»Îª1Ê±£º0¾ÉÕËºÅ£¬1ÐÂÕËºÅ£¬3¿¨ºÅ£¬ÆäËûÓÉ·ÖÐÐ×Ô¶¨ºÍÊ¹ÓÃ
+  -->
+   <Function name="AcJud_441999"><!--¹ã¶«Ê¡·ÖÐÐÕËºÅÅÐ¶Ï-->
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+          	<!--
+            <If condition="INTCMP(SUBSTR($OActNo,1,4),3,4411)">
+            -->
+            <If condition="INTCMP(SUBSTR($OActNo,20,2),4,99)">
+              <Set>ActCls=0</Set>
+            </If>
+            <Else>
+              <Set>ActCls=1</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+  
+  <Function name="AcJud_484999"><!--ÖÐÉ½·ÖÐÐÕËºÅÅÐ¶Ï-->
+    <!--20070720dynsentence add by huang-->
+    <DynSentence name="QryNActNo"><!--²éÑ¯ÐÂ¾ÉÕÊºÅ¶ÔÕÕ±í=-->
+      <Sentence>
+        SELECT ActNo FROM savoldact WHERE OldAct='%s'
+      </Sentence>
+      <Fields>OActNo|</Fields>
+    </DynSentence>
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+            <If condition="INTCMP(SUBSTR($OActNo,1,4),3,4846)">
+              <Set>ActCls=0</Set>
+            </If>
+            <Else>
+              <Set>ActCls=1</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <!--20070720case add by huang-->
+        <Case value="20"><!--¶ÔË½¾ÉÕËºÅ-->
+          <Set>RspCod=000000</Set>
+          <If condition="IS_EQUAL_STRING(SUBSTR($OActNo,1,3),075)">
+            <Set>ActCls=5</Set>
+            <Exec func="PUB:IsExistNode" error="IGNORE"> <!--´æÔÚ×ª»»±êÖ¾½Úµã-->
+              <Arg name="FieldName" value="NewFlg"/>
+            </Exec>
+            <Set>ActCls=5</Set>
+            <If condition="~RetCod=1">
+              <Exec func="PUB:ReadRecord" error="IGNORE">
+                <Arg name="SqlCmd" value="QryNActNo"/>
+              </Exec>
+              <If condition="~RetCod!=0">
+                <Set>ActCls=7</Set>
+                <Set>RspCod=478617</Set>
+              </If>
+            </If>
+            <!--20070726if add by huang¿¨ÕÛÍ¨-->
+            <If condition="IS_EQUAL_STRING(SUBSTR($ActNo,1,1),6)"> 
+              <Set>ActCls=3</Set>
+              <Set>RspCod=478617</Set>
+            </If>
+          </If>
+          <Else>
+            <Set>ActCls=7</Set>
+            <Set>RspCod=478617</Set>
+          </Else>
+          <Return/>
+          <Break/>
+        </Case>
+        <!--20071116case add by huang-->
+        <Case value="18">
+          <Set>ActCls=0</Set>
+            <If condition="INTCMP(SUBSTR($OActNo,1,2),3,60)">
+              <Set>ActNo=STRCAT(484,$OActNo)</Set>
+            </If>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+  
+  <!--
+	Öéº£ÕûÀí¶ÔË½ÕÊºÅ¹æÔò£¨Öéº£ÓÐ¾ÉÕÊºÅµ½3.0ÕÊºÅ¶ÔÕÕ±í£©£º
+	¾É¿¨ºÅ£º¾É15Î»£¬"63420"¿ªÍ·£¨Ô­Öéº£ÍòÍ¨¿¨£¬Ðè×ª»»£©¡£
+	¾É16Î»£¬"62225"¿ªÍ·£¨Ô­×ÜÐÐ×¼´û¼Ç¿¨£©¡£
+	¾É17Î»£¬"405512"¡¢"601428"¡¢"62225"¿ªÍ·£¨Ô­×ÜÐÐ½è¼Ç¿¨£©¡£
+	¾ÉÕÊºÅ£º¾É18Î»£¬"63420"¿ªÍ·£¨Öéº£ÀÏÏµÍ³ÕÊºÅ£¬Ðè×ª»»£©¡£
+	¾É18Î»£¬"64320"¿ªÍ·£¨Öéº£ÀÏÏµÍ³ÕÊºÅ£¬Ðè×ª»»£©¡£ ¶ÔË½
+	¾É20Î»£¬"078"¿ªÍ·£¨Ô­ÁãÊÛ3.0ÕÊºÅ£¬º¬ÆÕÍ¨ÕÊ»§¡¢Ò»±¾Í¨£¬Ðè×ª»»£©¡£
+	ÐÂ¿¨ºÅ£ºÐÂ19Î»£¬"62226"¿ªÍ·£¨ÐÂ×ÜÐÐºËÐÄ½è¼Ç¿¨£©¡£
+	ÐÂÕÊºÅ£ºÐÂ21Î»£¬"444"¿ªÍ·£¨ÐÂ×ÜÐÐºËÐÄÖéº£ÕÊºÅ£©¡£
+
+	Öéº£ÕûÀí¶Ô¹«ÕÊºÅ¹æÔò£¨Öéº£¶Ô¹«¾ÉÕÊºÅÓÐµ½ºËÐÄÕÊºÅµÄÉýÎ»¹æÂÉ£©£º
+	¾ÉÕÊºÅ£º¾É15Î»£¬"60"¿ªÍ·£¨Öéº£ÀÏ×ÛºÏ¿¨ºÅÕÊºÅ£©£¬ÐèÉýÎ»£¬Ç°¼Ó"444000"£¬¼ÓÔ­ÕÊºÅ3-5Î»£¬¼Ó01£¬¼ÓÔ­ÕÊºÅ6-15Î»¡£
+	¾É18Î»£¬"000"¿ªÍ·£¨Öéº£×ÛºÏ3.0ÕÊºÅ£©£¬ÐèÉýÎ»£¬Ç°¼Ó"444"¡£
+	ÐÂÕÊºÅ£ºÐÂ21Î»£¬"444"¿ªÍ·£¨ÐÂ×ÜÐÐºËÐÄÖéº£ÕÊºÅ£©¡£
+
+	¾ÙÀý£º
+	600920210037454    ÉýÎª 444000092010210037454¡£
+	000091018000642477 ÉýÎª 444000091018000642477¡£
+	-->
+
+	<!--ActTyp 1 Ò»±¾Í¨ 2 ÕÊºÅ 4 ¿¨ºÅ 6 CD»§ 9ÕÊºÅ´íÎó-->
+	<Function name="AcJud_444999"><!--Öéº£·ÖÐÐÕËºÅÅÐ¶Ï-->
+		<DynSentence name="QryActInf"><!--²éÑ¯ÕÊ»§ÐÅÏ¢-->
+			<Sentence>
+				SELECT * FROM ActNoInf444 WHERE OldAct='%s' OR ActNo='%s' FETCH FIRST 1 ROWS ONLY
+			</Sentence>
+			<Fields>OActNo|OActNo|</Fields>
+		</DynSentence>
+		<Process>
+			<Set>OActNo=DELBOTHSPACE($ActNo)</Set>
+			<Set>OldAct=$OActNo</Set>
+			<Delete>ActNam</Delete>
+			<Delete>OpnNod</Delete>
+			<Delete>CusId</Delete>
+			<Delete>ACTSQN</Delete>
+			<Delete>ACTTYP</Delete>
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+				<Arg name="SqlCmd" value="QryActInf"/>
+			</Exec>
+			<If condition="~RetCod=-1">
+				<Set>RspCod=481599</Set>
+				<Set>RspMsg=Êý¾Ý¿â²Ù×÷´íÎó</Set>
+				<Return/>
+			</If>
+			<ElseIf condition="~RetCod=-2">
+				<Set>ActLen=STRLEN($OActNo)</Set>
+				<If condition="INTCMP($ActLen,3,21)"> <!--ÕÊºÅ-->
+					<If condition="INTCMP(SUBSTR($OActNo,4,1),3,9)">  <!--ÐÂ¶ÔË½ÕÊºÅ-->
+ 					  <Set>HTxnCd=476520</Set>
+ 					  <Set>TTxnCd=476520</Set>
+            <Set>ActTyp=2</Set>
+            <Set>CCYCOd=CNY</Set>
+					</If>
+					<Else>
+						<Set>HTxnCd=109000</Set>
+						<Set>TTxnCd=109000</Set>
+					  <Set>ActTyp=6</Set>
+					</Else>
+				</If>
+				<Else>   <!--¾É¶Ô¹«ÕÊºÅ»òÕß¿¨ºÅ-->
+					<If condition="OR(INTCMP(SUBSTR($OActNo,1,3),3,000),AND(INTCMP(SUBSTR($OActNo,1,2),3,60),INTCMP($ActLen,3,15)))">  <!--¿¨ºÅ-->
+ 					  <If condition="INTCMP($ActLen,3,18)"> <!--¾É¶Ô¹«ÕÊºÅ-->
+ 					  	<Set>ActNo=STRCAT(444,$OActNo)</Set>
+ 					  </If>
+ 					  <ElseIf condition="INTCMP($ActLen,3,15)"> <!--ÀÏÀÏ¶Ô¹«ÕÊºÅ-->
+ 					  	<Set>ActNo=STRCAT(444000,SUBSTR($OActNo,3,3),01,SUBSTR($OActNo,6,10))</Set>
+ 					  </ElseIf>
+ 					  <Set>HTxnCd=109000</Set>
+ 					  <Set>TTxnCd=109000</Set>
+					  <Set>ActTyp=6</Set>
+					</If>
+					<Else>  <!--¿¨ºÅ-->
+						<Set>HTxnCd=476520</Set>
+						<Set>TTxnCd=476520</Set>
+            <Set>ActTyp=4</Set>
+            <Set>CCYCOd=CNY</Set>
+					</Else>
+				</Else>
+				<Exec func="PUB:CallHostOther" error="IGNORE">
+					<Arg name="HTxnCd" value="$HTxnCd"/>
+					<Arg name="ObjSvr" value="SHSTPUB1"/>
+				</Exec>
+				<If condition="~RetCod=0">  
+				  <Exec func="PUB:InsertRecord">
+					  <Arg name="TblNam" value="actnoinf444"/>
+				  </Exec>
+				</If>
+				<Else>    <!--ÕÊºÅ²»´æÔÚ-->
+					<Set>ActTyp=9</Set>   <!--ÕÊºÅ²»´æÔÚ-->
+				</Else>
+			</ElseIf>
+		</Process>
+	</Function>
+	
+  <Function name="AcJud_446999"><!--·ðÉ½·ÖÐÐÕËºÅÅÐ¶Ï-->
+    <DynSentence name="QryNActNo"><!--²éÑ¯ÐÂ¾ÉÕÊºÅ¶ÔÕÕ±í=-->
+      <Sentence>
+        SELECT ActNo FROM savoldac WHERE OldAct='%s'
+      </Sentence>
+      <Fields>OActNo|</Fields>
+    </DynSentence>
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($OActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+            <If condition="INTCMP(SUBSTR($OActNo,1,3),3,446)">
+              <Set>ActCls=0</Set>
+            </If>
+            <Else>
+              <Set>ActCls=1</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="20"><!--¶ÔË½¾ÉÕËºÅ-->
+          <Set>RspCod=000000</Set>
+          <If condition="IS_EQUAL_STRING(SUBSTR($OActNo,1,3),371)">
+            <Set>ActCls=5</Set>
+            <Exec func="PUB:IsExistNode" error="IGNORE"> <!--´æÔÚ×ª»»±êÖ¾½Úµã-->
+              <Arg name="FieldName" value="NewFlg"/>
+            </Exec>
+            <Set>ActCls=5</Set>
+            <If condition="~RetCod=1">
+              <Exec func="PUB:ReadRecord" error="IGNORE">
+                <Arg name="SqlCmd" value="QryNActNo"/>
+              </Exec>
+              <If condition="~RetCod!=0">
+                <Set>ActCls=7</Set>
+                <Set>RspCod=478617</Set>
+              </If>
+            </If>
+          </If>
+          <Else>
+            <Set>ActCls=7</Set>
+            <Set>RspCod=478617</Set>
+          </Else>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+
+  <!--ÕâÊÇÒ»¸öº¯Êý£¬ÓÉ·ÖÐÐ×ÔÐÐÊµÏÖ£¬ÇÒÃ¿¸ö·ÖÐÐ¶¼ÓÐÒ»¸öÊµÏÖ-->
+  <!--º¯ÊýÓÃÓÚÅÐ¶ÏÕËºÅÀàÐÍ£¬Ö÷ÒªÓÃÓÚ¶Ô¹«¶ÔË½ÕËºÅµÄÇø·Ö-->
+  <!--µ÷ÓÃ·½·¨
+  <Call function="º¯ÊýÃû">
+  <Input name="ActNo|NewFlg|"/>
+  <Output name="OActNo|ActCls|"/>
+  </Call>
+  -->
+  <!--ÐèÒªETFÊ÷ÉÏµÄÁ½¸ö½Úµã£º
+  ActNo      ´ýÅÐ¶ÏµÄÕËºÅ
+  NewFlg     (¿ÉÑ¡)ÊÇ·ñÐèÒª×ª»»ÎªÐÂÕËºÅ£¬´æÔÚ½ÚµãÇÒ£½1ÇÒÕËºÅÎª¶ÔË½ÕËºÅÊ±³¢ÊÔ×ª»»
+  ºêµÄ×îÖÕ½á¹ûÐèÒªÌîÐ´ÒÔÏÂ½Úµã£º
+  ActCls     ÕËºÅÀà±ð£¬ÓÉÁ½Î»×Ö·û×é?  0¶Ô¹«ÐÂÕËºÅÍâ²¿»§
+  1¶Ô¹«ÐÂÕËºÅÄÚ²¿»§
+  2¶ÔË½ÐÂÕËºÅ
+  3¶ÔË½¿¨ºÅ
+  4¶Ô¹«¾ÉÕËºÅ
+  5¶ÔË½¾ÉÕËºÅ
+  6ÆäËû(¿ÉÊÜÀíÕËºÅ)
+  7ÆäËû(²»¿ÉÊÜÀíÕËºÅ)
+  ´Ó×óÖÁÓÒµÚ1Î»£º0¶Ô¹«ÕËºÅ»ò¿¨ºÅ 1¶ÔË½ÕËºÅ»ò¿¨ºÅ
+  ´Ó×óÖÁÓÒµÚ2Î»£ºÕËºÅ×ÓÀà£¬¸ù¾ÝµÚÒ»Î»²»Í¬ÓÐ²»Í¬µÄº¬?  µ±µÚ1Î»Îª0Ê±£º0ÄÚ²¿»§ÕËºÅ£¬1Íâ²¿»§ÕËºÅ,ÆäËûÓÉ·ÖÐÐ×Ô¶¨Òå²¢Ê¹ÓÃ
+  µ±µÚ2Î»Îª1Ê±£º0¾ÉÕËºÅ£¬1ÐÂÕËºÅ£¬3¿¨ºÅ£¬ÆäËûÓÉ·ÖÐÐ×Ô¶¨ºÍÊ¹ÓÃ
+  -->
+   <Function name="AcJud_485999"><!--½ÒÑôÖ§ÐÐÕËºÅÅÐ¶Ï-->
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+            <If condition="INTCMP(SUBSTR($OActNo,20,2),3,99)">
+              <Set>ActCls=1</Set>
+            </If>
+            <Else>
+              <Set>ActCls=0</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+
+
+  <!--ÕâÊÇÒ»¸öº¯Êý£¬ÓÉ·ÖÐÐ×ÔÐÐÊµÏÖ£¬ÇÒÃ¿¸ö·ÖÐÐ¶¼ÓÐÒ»¸öÊµÏÖ-->
+  <!--º¯ÊýÓÃÓÚÅÐ¶ÏÕËºÅÀàÐÍ£¬Ö÷ÒªÓÃÓÚ¶Ô¹«¶ÔË½ÕËºÅµÄÇø·Ö-->
+  <!--µ÷ÓÃ·½·¨
+  <Call function="º¯ÊýÃû">
+  <Input name="ActNo|NewFlg|"/>
+  <Output name="OActNo|ActCls|"/>
+  </Call>
+  -->
+  <!--ÐèÒªETFÊ÷ÉÏµÄÁ½¸ö½Úµã£º
+  ActNo      ´ýÅÐ¶ÏµÄÕËºÅ
+  NewFlg     (¿ÉÑ¡)ÊÇ·ñÐèÒª×ª»»ÎªÐÂÕËºÅ£¬´æÔÚ½ÚµãÇÒ£½1ÇÒÕËºÅÎª¶ÔË½ÕËºÅÊ±³¢ÊÔ×ª»»
+  ºêµÄ×îÖÕ½á¹ûÐèÒªÌîÐ´ÒÔÏÂ½Úµã£º
+  ActCls     ÕËºÅÀà±ð£¬ÓÉÁ½Î»×Ö·û×é?  0¶Ô¹«ÐÂÕËºÅÍâ²¿»§
+  1¶Ô¹«ÐÂÕËºÅÄÚ²¿»§
+  2¶ÔË½ÐÂÕËºÅ
+  3¶ÔË½¿¨ºÅ
+  4¶Ô¹«¾ÉÕËºÅ
+  5¶ÔË½¾ÉÕËºÅ
+  6ÆäËû(¿ÉÊÜÀíÕËºÅ)
+  7ÆäËû(²»¿ÉÊÜÀíÕËºÅ)
+  ´Ó×óÖÁÓÒµÚ1Î»£º0¶Ô¹«ÕËºÅ»ò¿¨ºÅ 1¶ÔË½ÕËºÅ»ò¿¨ºÅ
+  ´Ó×óÖÁÓÒµÚ2Î»£ºÕËºÅ×ÓÀà£¬¸ù¾ÝµÚÒ»Î»²»Í¬ÓÐ²»Í¬µÄº¬?  µ±µÚ1Î»Îª0Ê±£º0ÄÚ²¿»§ÕËºÅ£¬1Íâ²¿»§ÕËºÅ,ÆäËûÓÉ·ÖÐÐ×Ô¶¨Òå²¢Ê¹ÓÃ
+  µ±µÚ2Î»Îª1Ê±£º0¾ÉÕËºÅ£¬1ÐÂÕËºÅ£¬3¿¨ºÅ£¬ÆäËûÓÉ·ÖÐÐ×Ô¶¨ºÍÊ¹ÓÃ
+¾É16Î»£¬"62225"¿ªÍ·£¨Ô­×ÜÐÐ×¼´û¼Ç¿¨£©;
+¾É17Î»£¬"405512"¡¢"601428"¡¢"62225"¿ªÍ·£¨Ô­×ÜÐÐ½è¼Ç¿¨£©;
+ ÐÂ¿¨ºÅ£ºÐÂ19Î»£¬"62226"¿ªÍ·£¨ÐÂ×ÜÐÐºËÐÄ½è¼Ç¿¨£©;
+  ÐÂÕÊºÅ£ºÐÂ21Î»£¬"445"¡¢"486"¡¢"487" ¿ªÍ·£¨×ÜÐÐºËÐÄÕÊºÅ£©;
+          ×îºóÁ½Î»Îª99µÄÊÇÄÚ²¿ÕÊ»§!
+
+  -->
+   <Function name="AcJud_445999"><!--ÉÇÍ··ÖÐÐÕËºÅÅÐ¶Ï-->
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+            <If condition="INTCMP(SUBSTR($OActNo,20,2),3,99)">
+              <Set>ActCls=1</Set>
+            </If>
+            <Else>
+              <Set>ActCls=0</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+  
+  <!--ÕâÊÇÒ»¸öº¯Êý£¬ÓÉ·ÖÐÐ×ÔÐÐÊµÏÖ£¬ÇÒÃ¿¸ö·ÖÐÐ¶¼ÓÐÒ»¸öÊµÏÖ-->
+  <!--º¯ÊýÓÃÓÚÅÐ¶ÏÕËºÅÀàÐÍ£¬Ö÷ÒªÓÃÓÚ¶Ô¹«¶ÔË½ÕËºÅµÄÇø·Ö-->
+  <!--µ÷ÓÃ·½·¨
+  <Call function="º¯ÊýÃû">
+  <Input name="ActNo|NewFlg|"/>
+  <Output name="OActNo|ActCls|"/>
+  </Call>
+  -->
+  <!--ÐèÒªETFÊ÷ÉÏµÄÁ½¸ö½Úµã£º
+  ActNo      ´ýÅÐ¶ÏµÄÕËºÅ
+  NewFlg     (¿ÉÑ¡)ÊÇ·ñÐèÒª×ª»»ÎªÐÂÕËºÅ£¬´æÔÚ½ÚµãÇÒ£½1ÇÒÕËºÅÎª¶ÔË½ÕËºÅÊ±³¢ÊÔ×ª»»
+  ºêµÄ×îÖÕ½á¹ûÐèÒªÌîÐ´ÒÔÏÂ½Úµã£º
+  ActCls     ÕËºÅÀà±ð£¬ÓÉÁ½Î»×Ö·û×é?  0¶Ô¹«ÐÂÕËºÅÍâ²¿»§
+  1¶Ô¹«ÐÂÕËºÅÄÚ²¿»§
+  2¶ÔË½ÐÂÕËºÅ
+  3¶ÔË½¿¨ºÅ
+  4¶Ô¹«¾ÉÕËºÅ
+  5¶ÔË½¾ÉÕËºÅ
+  6ÆäËû(¿ÉÊÜÀíÕËºÅ)
+  7ÆäËû(²»¿ÉÊÜÀíÕËºÅ)
+  ´Ó×óÖÁÓÒµÚ1Î»£º0¶Ô¹«ÕËºÅ»ò¿¨ºÅ 1¶ÔË½ÕËºÅ»ò¿¨ºÅ
+  ´Ó×óÖÁÓÒµÚ2Î»£ºÕËºÅ×ÓÀà£¬¸ù¾ÝµÚÒ»Î»²»Í¬ÓÐ²»Í¬µÄº¬?  µ±µÚ1Î»Îª0Ê±£º0ÄÚ²¿»§ÕËºÅ£¬1Íâ²¿»§ÕËºÅ,ÆäËûÓÉ·ÖÐÐ×Ô¶¨Òå²¢Ê¹ÓÃ
+  µ±µÚ2Î»Îª1Ê±£º0¾ÉÕËºÅ£¬1ÐÂÕËºÅ£¬3¿¨ºÅ£¬ÆäËûÓÉ·ÖÐÐ×Ô¶¨ºÍÊ¹ÓÃ
+¾É16Î»£¬"62225"¿ªÍ·£¨Ô­×ÜÐÐ×¼´û¼Ç¿¨£©;
+¾É17Î»£¬"405512"¡¢"601428"¡¢"62225"¿ªÍ·£¨Ô­×ÜÐÐ½è¼Ç¿¨£©;
+ ÐÂ¿¨ºÅ£ºÐÂ19Î»£¬"62226"¿ªÍ·£¨ÐÂ×ÜÐÐºËÐÄ½è¼Ç¿¨£©;
+  ÐÂÕÊºÅ£ºÐÂ21Î»£¬"445"¡¢"486"¡¢"487" ¿ªÍ·£¨×ÜÐÐºËÐÄÕÊºÅ£©;
+          ×îºóÁ½Î»Îª99µÄÊÇÄÚ²¿ÕÊ»§!
+
+  -->
+   <Function name="AcJud_445999"><!--½­ÃÅ·ÖÐÐÕËºÅÅÐ¶Ï-->
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+            <If condition="INTCMP(SUBSTR($OActNo,20,2),3,99)">
+              <Set>ActCls=1</Set>
+            </If>
+            <Else>
+              <Set>ActCls=0</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
+
+</ActNoJudge>

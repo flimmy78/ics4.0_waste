@@ -1,0 +1,123 @@
+74a75,96
+> 		<!--20121020 反洗钱接口调用 begin-->
+> 		<Macro name="AntiMoneylaudry">
+>        <!--反洗钱需要增加主机接口调用BEGIN-->
+>        <Set>LogNo= </Set>
+>        <Set>TxnDat=$ActDat</Set> <!--交易日期-->
+>        <Set>HstTrc=$HLogNo</Set> <!--日志号-->
+>        <Set>HLogNo= </Set>
+>        <Set>OTckNo=$TckNo</Set>  <!--流水号-->
+>        <Set>TxnMod=000151</Set>  <!--交易方式:人民币非现金其他-->
+>        <Set>TCommNm=交通银行</Set>      <!--对方金融机构名称-->
+>        <Set>TCusNm= </Set>       <!--对方客户名称-->
+>        <Set>TIdTyp= </Set>       <!--对方证件种类-->
+>        <Set>TIdNo= </Set>        <!--对方证件号码-->
+>        <Set>StlActNo=$TActNo</Set> <!--交易对手账号-->
+>        
+>        <Exec func="PUB:CallHostOther" error="IGNORE">
+>           <Arg name="TxnCod" value="472600"></Arg>
+>           <Arg name="ObjSvr" value="SHSTPUB2"></Arg>
+>        </Exec>
+>        <!--反洗钱需要增加主机接口调用END-->
+> 		</Macro>
+> 		<!--20121020 end-->
+324c346
+<       <Set>TxnCnl=TBC</Set> 
+---
+>       <Set>TxnCnl=TBC</Set>       <!--取电子柜员号用-->
+629,634c651,656
+<       <!--会计日期和交易发起日期是否一致 test暂时封闭-->
+<       <If condition="IS_NOEQUAL_STRING($ActDat,$TranDt)">
+<       	 <Set>RspCod=9999</Set>
+<       	 <Set>RspMsg=银行日期与交易发起日期不一致</Set>
+<       	 <Return/>
+<       </If>
+---
+>       <!--会计日期和交易发起日期是否一致 test暂时封闭-->
+>       <If condition="IS_NOEQUAL_STRING($ActDat,$TranDt)">
+>       	 <Set>RspCod=9999</Set>
+>       	 <Set>RspMsg=银行日期与交易发起日期不一致</Set>
+>       	 <Return/>
+>       </If>
+867,872c889,894
+<       <!--会计日期和交易发起日期是否一致 test暂时封闭-->
+<       <If condition="IS_NOEQUAL_STRING($ActDat,$TranDt)">
+<       	 <Set>RspCod=9999</Set>
+<       	 <Set>RspMsg=银行日期与交易发起日期不一致</Set>
+<       	 <Return/>
+<       </If>
+---
+>       <!--会计日期和交易发起日期是否一致 test暂时封闭-->
+>       <If condition="IS_NOEQUAL_STRING($ActDat,$TranDt)">
+>       	 <Set>RspCod=9999</Set>
+>       	 <Set>RspMsg=银行日期与交易发起日期不一致</Set>
+>       	 <Return/>
+>       </If>
+1611,1613c1633,1635
+<      <Set>FtpStr=STRCAT(TBC,$DptId)</Set>
+<      <Exec func="PUB:FtpPut" error="IGNORE">
+<      	<Arg name="FtpId" value="$FtpStr"/>
+---
+>      <Set>FtpStr=STRCAT(TBC,$DptId)</Set>
+>      <Exec func="PUB:FtpPut" error="IGNORE">
+>      	<Arg name="FtpId" value="$FtpStr"/>
+1801,1810c1823,1832
+<         <Exec func="PUB:IsExistNode" error="IGNORE">
+<           <Arg name="FieldName" value="ROOT.RTNDAT"/>
+<         </Exec>
+<         <If condition="INTCMP(~RetCod,3,1)">  <!--手工发起回应-->
+<           <Set>ClrDat=$ROOT.RTNDAT</Set>
+<         </If>
+<         <Else>
+<           <Set>ClrDat=$ActDat</Set>
+<         </Else>
+< 
+---
+>         <Exec func="PUB:IsExistNode" error="IGNORE">
+>           <Arg name="FieldName" value="ROOT.RTNDAT"/>
+>         </Exec>
+>         <If condition="INTCMP(~RetCod,3,1)">  <!--手工发起回应-->
+>           <Set>ClrDat=$ROOT.RTNDAT</Set>
+>         </If>
+>         <Else>
+>           <Set>ClrDat=$ActDat</Set>
+>         </Else>
+> 
+1924a1947,1949
+>           <!--20121020 begin 反洗钱接口调用-->
+>           <Quote name="AntiMoneylaudry"/>
+>           <!--20121020 end 反洗钱接口调用-->
+2210a2236,2238
+>         <!--20121020 begin 反洗钱接口调用-->
+>         <Quote name="AntiMoneylaudry"/>
+>         <!--20121020 end 反洗钱接口调用-->
+2482,2491c2510,2519
+<      <Exec func="PUB:IsExistNode" error="IGNORE">
+<        <Arg name="FieldName" value="ROOT.RTNDAT"/>
+<      </Exec>
+<      <If condition="INTCMP(~RetCod,3,1)">  <!--手工发起回应-->
+<        <Set>OActDt=$ROOT.RTNDAT</Set>
+<      </If>
+<      <Else>
+<        <Set>OActDt=CALCDATE($ActDat,-,d,1)</Set>
+<      </Else>
+< 
+---
+>      <Exec func="PUB:IsExistNode" error="IGNORE">
+>        <Arg name="FieldName" value="ROOT.RTNDAT"/>
+>      </Exec>
+>      <If condition="INTCMP(~RetCod,3,1)">  <!--手工发起回应-->
+>        <Set>OActDt=$ROOT.RTNDAT</Set>
+>      </If>
+>      <Else>
+>        <Set>OActDt=CALCDATE($ActDat,-,d,1)</Set>
+>      </Else>
+> 
+2816,2818c2844,2846
+<      <Set>FtpStr=STRCAT(TBC,$DptId)</Set>
+<      <Exec func="PUB:FtpPut" error="IGNORE">
+<      	<Arg name="FtpId" value="$FtpStr"/>
+---
+>      <Set>FtpStr=STRCAT(TBC,$DptId)</Set>
+>      <Exec func="PUB:FtpPut" error="IGNORE">
+>      	<Arg name="FtpId" value="$FtpStr"/>
