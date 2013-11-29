@@ -186,6 +186,28 @@
       <!--MAC结束-->
 
     </Macro>
+		<!--20121020 反洗钱接口调用 begin-->
+		<Macro name="AntiMoneylaudry">
+       <!--反洗钱需要增加主机接口调用BEGIN-->
+       <Set>LogNo= </Set>
+       <Set>TxnDat=$ActDat</Set> <!--交易日期-->
+       <Set>HstTrc=$HLogNo</Set> <!--日志号-->
+       <Set>HLogNo= </Set>
+       <Set>OTckNo=$TckNo</Set>  <!--流水号-->
+       <Set>TxnMod=000151</Set>  <!--交易方式:人民币非现金其他-->
+       <Set>TCommNm=交通银行</Set>      <!--对方金融机构名称-->
+       <Set>TCusNm= </Set>       <!--对方客户名称-->
+       <Set>TIdTyp= </Set>       <!--对方证件种类-->
+       <Set>TIdNo= </Set>        <!--对方证件号码-->
+       <Set>StlActNo=$TActNo</Set> <!--交易对手账号-->
+       
+       <Exec func="PUB:CallHostOther" error="IGNORE">
+          <Arg name="TxnCod" value="472600"></Arg>
+          <Arg name="ObjSvr" value="SHSTPUB2"></Arg>
+       </Exec>
+       <!--反洗钱需要增加主机接口调用END-->
+		</Macro>
+		<!--20121020 end-->
   </Define> 
 
   <Transaction code="460230" desc="电力实时划帐">
@@ -215,13 +237,13 @@
     </DynSentence>
     <DynSentence name="QryAgrNum"><!-- 检查零余额账户-->
        <Sentence>
-          SELECT COUNT(*) ZeroNum FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+          SELECT COUNT(*) ZeroNum FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='734916755'
        </Sentence>
        <Fields>ActNo</Fields>
     </DynSentence>
     <DynSentence name="QryPfaAgr"><!-- 查询零余额对应协议号-->
        <Sentence>
-          SELECT distinct BCusId,AgrNo,PfaSub,SubCod FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+          SELECT distinct BCusId,AgrNo,PfaSub,SubCod FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='734916755'
        </Sentence>
        <Fields>ActNo</Fields>
     </DynSentence>
@@ -272,9 +294,6 @@
         <Goto>EXIT_RETURN</Goto>
       </If>
 
-      <!--取前置流水号-->
-      <Exec func="PUB:GetLogNo"/>
-      
       <!--校验各分行账号-->
       <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
       <Call function="$AcJudFunc">
@@ -318,7 +337,22 @@
         </Default>
       </Switch>
 
+      <If condition="INTCMP($ActTyp,3,1)"><!--对公-->
+         <Exec func="PUB:GetVirtualTeller">
+            <Arg name="TxnCnl" value="EFE"/>
+         </Exec>
+        <Exec func="PUB:CallHostAcc" error="IGNORE">
+          <Arg name="HTxnCd" value="109000"/>
+          <Arg name="ObjSvr" value="SHSTPUB1"/>
+        </Exec>
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>TCusNm=$ActNam</Set>
 
+      </If>
+
+      <!--取前置流水号-->
+      <Exec func="PUB:GetLogNo"/>
 
       <If condition="OR(INTCMP($ActTyp,3,0),INTCMP($ActTyp,3,2),INTCMP($ActTyp,3,4))"><!--对私-->
         <Set>HTxnCd=471140</Set>
@@ -426,6 +460,31 @@
               <Set>TOIFlg=O</Set>             <!--交易方向-->
               <Set>AgrNo=$AgrNo</Set>         <!--协议编码-->
               <Set>VchSmr=电力扣费</Set>      <!--摘要-->
+              <Set>ActSqn=$ActSqn</Set>       <!--入帐帐号顺序号-->
+              <Set>ActNod=$ActNod</Set>       <!--入帐网点-->
+              <Set>TxnAmt=$TxnAmt</Set>       <!--金额-->
+              <Set>NodNo=$ActNod</Set>        <!--凭证登记部门-->
+              <Set>HSubCd=001</Set>           <!--借零余额户贷26201-->
+              <Set>TTXnCd=461181</Set>
+              <Set>THD_TRNCOD=461181</Set>
+              <Set>THD_SVROBJ=STHDPFA3</Set>
+      	      <!--省零余额记账-->
+      	      <Call package="AFE" function="AFE_SglPrvZeroPay"/>      
+              <Break/>
+            </Case>
+            <Case value="102" > <!--省财政支付-->
+            	<Set>PfaSub=$PfaSub</Set>       <!--财政应用编码-->
+            	<Set>BCusId=$BCusId</Set>       <!--基层预算单位编码-->
+            	<Set>PayAct=$ActNo</Set>        <!--付款人帐号-->
+            	<Set>PayNam=$TCusNm</Set>       <!--付款名称单位-->
+            	<Set>PayBNm=交通银行</Set>      <!--开户银行-->
+            	<Set>PyeAct=$StlAct</Set>       <!--收款人帐号-->
+              <Set>PyeNam=$CrpNam</Set>       <!--收款人名称-->
+              <Set>PyeBNm=交通银行</Set>      <!--收款银行-->
+              <Set>VchDat=$ActDat</Set>       <!--签发日期-->
+              <Set>TOIFlg=O</Set>             <!--交易方向-->
+              <Set>AgrNo=$AgrNo</Set>         <!--协议编码-->
+              <Set>VchSmr=电信扣费</Set>      <!--摘要-->
               <Set>ActSqn=$ActSqn</Set>       <!--入帐帐号顺序号-->
               <Set>ActNod=$ActNod</Set>       <!--入帐网点-->
               <Set>TxnAmt=$TxnAmt</Set>       <!--金额-->
@@ -2115,7 +2174,7 @@
         SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim,LChkTm
         FROM afetxnjnl
         WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
+        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>
@@ -2124,7 +2183,7 @@
         SELECT TLogNo,TCusId,TActDt,ActDat,substr(FTxnTm,9,6) BkTim, substr(LogNo,3,12) BkLog, ActNo, TxnAmt,substr(ActDat,1,4)||substr(ChkTim,1,4) DLDat, substr(ChkTim,5,6) DLTim, LChkTm, substr(RsFld1,43,2) PayTyp,substr(RsFld1,45,25) ChkNum
         FROM afetxnjnl
         WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
+        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>
@@ -2134,7 +2193,7 @@
         SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
         FROM afetxnjnl
         WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
+        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>
@@ -2143,10 +2202,16 @@
         SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
         FROM afetxnjnl
         WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod='%s'
+        AND TActDt='%s' AND HTxnSt='S' AND TxnCod='%s'
       </Sentence>
       <Fields>CAgtNo|ClrDat|tmpTxnCod|</Fields>
     </DynSentence>   
+    <DynSentence name="CntClrRst">    <!--查询当天有没清算 -->
+      <Sentence>
+         select count(*) RstCnt from  efeaclrdtl where BrNo='441999' and ClrDat='%s' and ClrRst='1'
+      </Sentence>
+      <Fields>ClrDat|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
       <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
@@ -2157,8 +2222,24 @@
       <Set>DLDat1= </Set>
       <Set>DLTim1= </Set>
       
+      <!-- 判断是否自动触发, add 20120502 -->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="ClrDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
+        <Set>ClrDat=GETDATETIME(YYYYMMDD)</Set>
+      </If>
       
-      
+      <Exec func="PUB:ReadRecord"><!-- 查询清算是否完成 -->
+        <Arg name="SqlCmd" value="CntClrRst"/>
+      </Exec>         
+      <!-- 由于有三个内部账号,因此不等于3的就返回 -->
+      <If condition="INTCMP($RstCnt,4,3)">
+        <Return/>
+      </If>    
+
+      <!-- 配型部类型 -->
+      <Set>DptTyp=0000</Set>
       
       <Set>LclDir=dat/efea</Set>
       
@@ -2179,13 +2260,15 @@
             <Arg name="DestNam" value="CAgtNo"/>
             <Arg name="TblNam"  value="DptTypToCAgtNo_DL"/>
           </Exec>
+
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_DL"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_DL"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -2210,10 +2293,11 @@
           <Exec func="PUB:ReadRecord">
             <Arg name="SqlCmd" value="TotalDeal_YH"/>
           </Exec>         
-          <If condition="INTCMP($TotalDeal,3,0)">
+          <!-- 由于电力要求无记录也要发送对账文件,因此记录为零判断注释掉,qm,20120503 -->
+          <!--If condition="INTCMP($TotalDeal,3,0)">
           	<Set>FilTyp=ADDCHAR(ADD($FilTyp,1),2,0,1)</Set>	
           	<Continue/>
-          </If>         
+          </If-->         
           <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
             <Arg name="SqlName" value="GetTxnJnl_YH"/>
             <Arg name="FormatName" value="EFEA_DZ"/>
@@ -2295,64 +2379,35 @@
       <Set>PrtId=$TlrId</Set>
       <Set>PrtDat=$ActDat</Set>
       
-      <If condition="ISNULL(DELSPACE($TckNo,all))">
-			  <Set>FilNam=STRCAT(电力对公缴费记账回执,$BgnDat,-,$EndDat,.rpt)</Set>
-			  <Set>FmtFil=etc/EFE02_RPT.XML</Set><!--根据单位编号取得相应的清单格式名称-->
-			  <Exec func="PUB:GenerateReport">
-			  	<Arg name="ObjFil" value="STRCAT(dat/term/send/,$FilNam)"/>
-			  	<Arg name="FmtFil" value="$FmtFil"/>
-			  	<Arg name="Para1"  value="$CAgtNo_DL"/>
-			  	<Arg name="Para2"  value="$CAgtNo_YH"/>
-			  	<Arg name="Para3"  value="$CAgtNo_PL"/>
-			  	<Arg name="Para4"  value="$BgnDat"/>
-			  	<Arg name="Para5"  value="$EndDat"/>
-          <Arg name="Para6"  value="$NodNo"/>
-          <Arg name="Para7"  value="$PrtId"/>
-          <Arg name="Para8"  value="$PrtDat"/>
-          <Arg name="Para9"  value="$IActNo"/>
-          <Arg name="Para10" value="$IActNm"/>
-			  </Exec>
-			  <Exec func="PUB:SendFileMessage2"><!--发出文件打印指令-->
-			  	<Arg name="MsgTyp" value="4"/><!-- 消息类型，1通知2广播3文件4打印，一般传文件时用3，需要在前置打印时用4-->
-			  	<Arg name="ObjNod" value="$NodNo"/><!-- 目标网点-->
-			  	<Arg name="BusTyp" value="46"/><!-- 业务类型-->
-			  	<Arg name="AplCod" value="0251"/><!-- 应用码-->
-			  	<Arg name="FilNam" value="$FilNam"/><!-- 文件名-->
-			  	<Arg name="Summary" value="电力对公缴费记账回执"/><!-- 消息内容-->
-			  	<Arg name="ObjTlr" value="$TlrId"/><!-- 目标柜员-->
-			  	<Arg name="SrcNod" value="$NodNo"/><!-- 消息来源网点-->
-			  	<Arg name="SrcTlr" value="Billlp2"/><!-- 消息来源柜员-->
-			  </Exec>
-      </If>
-      <Else>
-			  <Set>FilNam=STRCAT(电力对公缴费记账回执,$BgnDat,-,$EndDat,.rpt)</Set>
-			  <Set>FmtFil=etc/EFE03_RPT.XML</Set><!--根据单位编号取得相应的清单格式名称-->
-			  <Exec func="PUB:GenerateReport">
-			  	<Arg name="ObjFil" value="STRCAT(dat/term/send/,$FilNam)"/>
-			  	<Arg name="FmtFil" value="$FmtFil"/>
-			  	<Arg name="Para1"  value="$CAgtNo_DL"/>
-			  	<Arg name="Para2"  value="$CAgtNo_YH"/>
-			  	<Arg name="Para3"  value="$CAgtNo_PL"/>
-			  	<Arg name="Para4"  value="$BgnDat"/>
-			  	<Arg name="Para5"  value="$EndDat"/>
-          <Arg name="Para6"  value="$NodNo"/>
-          <Arg name="Para7"  value="$PrtId"/>
-          <Arg name="Para8"  value="$PrtDat"/>
-          <Arg name="Para9"  value="$IActNo"/>
-          <Arg name="Para10" value="$IActNm"/>
-			  </Exec>
-			  <Exec func="PUB:SendFileMessage2"><!--发出文件打印指令-->
-			  	<Arg name="MsgTyp" value="4"/><!-- 消息类型，1通知2广播3文件4打印，一般传文件时用3，需要在前置打印时用4-->
-			  	<Arg name="ObjNod" value="$NodNo"/><!-- 目标网点-->
-			  	<Arg name="BusTyp" value="46"/><!-- 业务类型-->
-			  	<Arg name="AplCod" value="0251"/><!-- 应用码-->
-			  	<Arg name="FilNam" value="$FilNam"/><!-- 文件名-->
-			  	<Arg name="Summary" value="电力对公缴费记账回执"/><!-- 消息内容-->
-			  	<Arg name="ObjTlr" value="$TlrId"/><!-- 目标柜员-->
-			  	<Arg name="SrcNod" value="$NodNo"/><!-- 消息来源网点-->
-			  	<Arg name="SrcTlr" value="Billlp2"/><!-- 消息来源柜员-->
-			  </Exec>
-      </Else>
+		  <Set>FilNam=STRCAT(电力对公缴费记账回执,$BgnDat,-,$EndDat,.rpt)</Set>
+		  <Set>FmtFil=etc/EFE02_RPT.XML</Set><!--根据单位编号取得相应的清单格式名称-->
+		  <Exec func="PUB:GenerateReport">
+		  	<Arg name="ObjFil" value="STRCAT(dat/term/send/,$FilNam)"/>
+		  	<Arg name="FmtFil" value="$FmtFil"/>
+		  	<Arg name="Para1"  value="$CAgtNo_DL"/>
+		  	<Arg name="Para2"  value="$CAgtNo_YH"/>
+		  	<Arg name="Para3"  value="$CAgtNo_PL"/>
+		  	<Arg name="Para4"  value="$BgnDat"/>
+		  	<Arg name="Para5"  value="$EndDat"/>
+        <Arg name="Para6"  value="$NodNo"/>
+        <Arg name="Para7"  value="$PrtId"/>
+        <Arg name="Para8"  value="$PrtDat"/>
+        <Arg name="Para9"  value="$IActNo"/>
+        <Arg name="Para10" value="$IActNm"/>
+        <Arg name="Para11" value="$ActNo2"/>
+		  </Exec>
+		  <Exec func="PUB:SendFileMessage2"><!--发出文件打印指令-->
+		  	<Arg name="MsgTyp" value="4"/><!-- 消息类型，1通知2广播3文件4打印，一般传文件时用3，需要在前置打印时用4-->
+		  	<Arg name="ObjNod" value="$NodNo"/><!-- 目标网点-->
+		  	<Arg name="BusTyp" value="46"/><!-- 业务类型-->
+		  	<Arg name="AplCod" value="0251"/><!-- 应用码-->
+		  	<Arg name="FilNam" value="$FilNam"/><!-- 文件名-->
+		  	<Arg name="Summary" value="电力对公缴费记账回执"/><!-- 消息内容-->
+		  	<Arg name="ObjTlr" value="$TlrId"/><!-- 目标柜员-->
+		  	<Arg name="SrcNod" value="$NodNo"/><!-- 消息来源网点-->
+		  	<Arg name="SrcTlr" value="Billlp2"/><!-- 消息来源柜员-->
+		  </Exec>
+
 
 		</FlowCtrl>
 	</Transaction>
@@ -2754,9 +2809,9 @@
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
-         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' 
+         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|</Fields>
+      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>    
 
     <FlowCtrl>
@@ -2891,6 +2946,9 @@
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
       <Set>RspMsg=交易成功</Set>
+      <!--20121020 begin 反洗钱接口调用-->
+      <Quote name="AntiMoneylaudry"/>
+      <!--20121020 end 反洗钱接口调用-->
     </FlowCtrl>
   </Transaction>
 
@@ -3214,9 +3272,9 @@
     </DynSentence>
     <DynSentence name="UpdClrDtl">    <!--修改清算记录 -->
       <Sentence>
-         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' 
+         update efeaclrDtl set ClrRst='%s',ClrTyp='%s',ClrTot='%s',ClrAmt='%s' where BrNo='%s' and CAgtNo='%s' and ClrDat='%s'
       </Sentence>
-      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|</Fields>
+      <Fields>ClrRst|ClrTyp|ClrTot|ClrAmt|BrNo|CAgtNo|ClrDat|</Fields>
     </DynSentence>          
     <FlowCtrl>
       <Exec func="PUB:InitTransaction"/>
@@ -3392,18 +3450,20 @@
           <If condition="~RetCod!=0">
             <!--上主机清算失败,做下一个协议单位号清算-->
             <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	
+            <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
             <Continue/>
           </If>
+          <!-- 更新清算标志为已清算 -->
+          <Exec func="PUB:ExecSql" error="IGNORE">
+            <Arg name="SqlCmd" value="Updafetxnjnl"/>
+          </Exec>
+          <If condition="~RetCod!=0">
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=修改交易明细为已清算失败</Set>
+            <Return/>
+          </If>        
         </If>
   
-        <Exec func="PUB:ExecSql">
-          <Arg name="SqlCmd" value="Updafetxnjnl"/>
-        </Exec>
-        <If condition="~RetCod!=0">
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=修改交易明细为已清算失败</Set>
-          <Return/>
-        </If>        
 
         <Set>ClrTim=GETDATETIME(HHMI)</Set> <!--清算时间-->
         <Set>ClrRst=1</Set> <!--清算情况:1已清算-->
@@ -3420,6 +3480,7 @@
         </If> 
         
         <Set>NUM=ADDCHAR(ADD($NUM,1),2,0,1)</Set>	   	
+        <Delete>LogNo</Delete> <!-- 删除logno节点,不然下次循环会影响到098061,查询账户交易 -->
       </While>
 
       <Set>ClrSts=0</Set> <!--设置成交易状态-->
@@ -3518,5 +3579,5 @@
 				<Arg name="SqlCmd" value="MultiQuery" />
 			</Exec>
     </FlowCtrl>
-  </Transaction>  
+  </Transaction>
 </Application>
