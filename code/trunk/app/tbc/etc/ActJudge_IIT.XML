@@ -522,4 +522,45 @@
     </Process>
   </Function>
 
+  <Function name="AcJud_491999"><!--»ÝÖÝ·ÖÐÐÕËºÅÅÐ¶Ï-->
+    <Process>
+      <Set>AcLen=STRLEN($ActNo)</Set>
+      <Set>OActNo=$ActNo</Set>
+      <Switch expression="$AcLen">
+        <Case value="21"><!--ÐÂÕËºÅ-->
+          <If condition="INTCMP(SUBCMP($ActNo,4,1,9),3,0)">
+            <Set>ActCls=2</Set><!--¶ÔË½ÐÂÕËºÅ-->
+          </If>
+          <Else>
+          	<!--
+            <If condition="INTCMP(SUBSTR($OActNo,1,4),3,4411)">
+            -->
+            <If condition="INTCMP(SUBSTR($OActNo,20,2),4,99)">
+              <Set>ActCls=0</Set>
+            </If>
+            <Else>
+              <Set>ActCls=1</Set>
+            </Else>
+          </Else>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Case value="19"/><!--ÐÂ¿¨ºÅ-->
+        <Case value="17"/><!--¾É¿¨ºÅ-->
+        <Case value="16"><!--¾É¿¨ºÅ-->
+          <Set>ActCls=3</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>ActCls=7</Set>
+          <Set>RspCod=478617</Set>
+          <Return/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Process>
+  </Function>
 </ActNoJudge>
