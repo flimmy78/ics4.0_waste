@@ -208,7 +208,7 @@
    </DynSentence>
 	 <FlowCtrl>
      <!--构成分行号-->
-     <Set>BrNo=STRCAT(SUBSTR($CAgtNo,1,3),999)</Set>
+     <!--Set>BrNo=STRCAT(SUBSTR($CAgtNo,1,3),999)</Set-->
      <!--交易初始化,预留-->
      <Exec func="PUB:InitTransaction"/>
      <!--默认交易返回成功-->
@@ -345,7 +345,7 @@
       <!--取电子柜员号-->
       <Set>TxnCnl=TBC</Set>       <!--取电子柜员号用-->
       <Set>TxnObj=OFRTTBCA</Set>
-      <Exec func="PUB:GetVirtualTeller">
+      <Exec func="PUB:GetVirtualTeller"><!--TODO-->
         <Arg name="TxnCnl" value="TBC"/>
       </Exec>
       <Set>TlrId=$TlrId</Set>
@@ -1830,7 +1830,7 @@
           <Set>ClrDat=$ActDat</Set>
         </Else>
 
-        <Set>ClrDat=$ActDat</Set>
+        <Set>ClrDat=$ActDat</Set><!--TODO-->
         
         <Exec func="PUB:ReadRecord">
           <Arg name="SqlCmd" value="QryTbcTot"/>
@@ -1960,6 +1960,7 @@
 
 
   <Transaction code="483811" desc="广东烟草清算报表打印">
+  <!--注意更新图形前端 GDTBC单位编码-->
     <FlowCtrl>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
