@@ -12,7 +12,7 @@
     <Item DptId="2002"    IActNo="491491001018010122448"/>    <!--491999惠州分行-->
     <Item DptId="2022"    IActNo="761761001018010062385"/>    <!--761999江门分行-->
     <Item DptId="2090"    IActNo="448448168018010011089"/>    <!--441999湛江分行-->
-    <Item DptId="2008"    IActNo="xxxx"/>    <!--441999清远分行-->
+    <Item DptId="2008"    IActNo="493493181018010023233"/>    <!--441999清远分行-->
     <Item DptId="2063"    IActNo="xxxx"/>    <!--441999潮州分行-->
     <Default IActNo=""/>
   </Table>
@@ -45,12 +45,28 @@
     <Item DptId="2002"    CAgtNo="4910000397"/>    <!--491999惠州分行-->
     <Item DptId="2022"    CAgtNo="7610000394"/>    <!--761999江门分行-->
     <Item DptId="2090"    CAgtNo="4410003243"/>    <!--441999湛江分行-->
-    <Item DptId="2008"    CAgtNo="xxxxxxxxxx"/>    <!--441999清远分行-->
+    <Item DptId="2008"    CAgtNo="4910000397"/>    <!--441999清远分行-->
     <Item DptId="2063"    CAgtNo="xxxxxxxxxx"/>    <!--441999潮州分行-->
     <Default CAgtNo="xxxxxxxxxx"/>
   </Table>
 
-  <Table name="DL_BrNo2DstCod"><!--deprecated-->
+  <Table name="DptId2TlrId">
+    <Item DptId="2001"    TlrId="xxxxxxx"/>    <!--441999广东省分行-->
+    <Item DptId=""    TlrId="xxxxxxx"/>    <!--444999珠海分行-->
+    <Item DptId=""    TlrId="xxxxxxx"/>    <!--446999佛山分行-->
+    <Item DptId="2032"    TlrId="EPA0FB1"/>    <!--445999汕头分行-->
+    <Item DptId=""    TlrId="xxxxxxx"/>    <!--483999东莞分行-->
+    <Item DptId=""    TlrId="xxxxxxx"/>    <!--484999中山分行-->
+    <Item DptId=""    TlrId="xxxxxxx"/>    <!--485999揭阳供电局-->
+    <Item DptId="2002"    TlrId="EYYTDT1"/>    <!--491999惠州分行-->
+    <Item DptId="2022"    TlrId="xxxxxxx"/>    <!--761999江门分行-->
+    <Item DptId="2090"    TlrId="EYYTBI1"/>    <!--441999湛江分行-->
+    <Item DptId="2008"    TlrId="xxxxxxx"/>    <!--441999清远分行-->
+    <Item DptId="2063"    TlrId="xxxxxxx"/>    <!--441999潮州分行-->
+    <Default DstCod=""/>
+  </Table>
+
+  <Table name="DL_BrNo2DstCod"><!--deprecated，由于省分行模式441999被多个占用-->
     <Item BrNo="441999"    DstCod="5810"/>    <!--441999广东省分行-->
     <Item BrNo="444999"    DstCod="5850"/>    <!--444999珠海分行-->
     <Item BrNo="446999"    DstCod="5880"/>    <!--446999佛山分行-->

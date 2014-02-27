@@ -463,12 +463,12 @@
 
          <Exec func="PUB:GetAppInfo"/>
          <Exec func="PUB:GetLogNo"/>
+         <!--由于省分行模式，无法通过分行号获取，因此屏蔽
          <Exec func="PUB:GetVirtualTeller">
             <Arg name="TxnCnl" value="TBC"/>
-            <!--
             <Arg name="CnlSub" value="$BrNo"/>
-            -->
          </Exec>
+         -->
          <Exec func="PUB:InsertRecordExt" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
          </Exec>
