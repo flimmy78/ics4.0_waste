@@ -34,12 +34,19 @@
 			<Item name="ICBak"  expression="DELBOTHSPACE($ICBak)"    /> <!-- 电子现金银行卡号（贷方） -->
       <Item name="CrdNo"  expression="DELBOTHSPACE($CrdNo)"    /> <!-- 借方银行卡号 -->
       <Item name="TxnAmt" expression="DELBOTHSPACE($TxnAmt)"    /> <!-- 圈存金额 -->
-      <Item name="TxnDat" expression="DELBOTHSPACE($TxnDat)"    /> <!-- 交易日期 -->
+      <Item name="TxnDat" expression="AMTADDDOT(DELBOTHSPACE($TxnDat))"    /> <!-- 交易日期 -->
       <Item name="TxnTim" expression="DELBOTHSPACE($TxnTim)"    /> <!-- 交易时间 -->
       <AddItem name="HTxnSt" expression="DELBOTHSPACE($HTxnSt)"    /> <!-- 标志 -->
       <SwitchCode name="HTxnSt" new_name="HTxnS2" tab_name="CurCod" col_name="HTxnSt"/>
       <Item name="HTxnS2" expression="DELBOTHSPACE($HTxnS2)"    /> <!-- 标志 -->
       <Item name="Remark" expression="DELBOTHSPACE($Remark)"    /> <!-- 备注 -->
+      <AddItem name="HRspCd" expression="DELBOTHSPACE($HRspCd)"    /> <!-- 返回码 -->
+      <SwitchCode name="HRspCd" new_name="RetCod" tab_name="RspCod2RetCod" col_name="RspCod"/>
+      <Item name="RetCod" expression="DELBOTHSPACE($RetCod)"    /> <!-- 返回码 -->
+      <Item name="MchID" expression="DELBOTHSPACE($MchID)"    /> <!-- 商户号 -->
+      <Item name="ICSch" expression="DELBOTHSPACE($ICSch)"    /> <!-- 校园卡号 -->
+      <Item name="PosNo" expression="DELBOTHSPACE($PosNo)"    /> <!-- 圈存机号 -->
+      <Item name="BusCls" expression="DELBOTHSPACE($BusCls)"    /> <!-- 校园卡号 -->
 		</Data>
 	</Process>
 
