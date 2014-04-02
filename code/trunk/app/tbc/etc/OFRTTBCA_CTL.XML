@@ -1850,10 +1850,12 @@
         
         <!--自动清算,需要添加必要数据-->
         <Set>TxnAmt=$SumAmt</Set> 
-        <Set>TTxnCd=483810</Set>  
+        <Set>TTxnCd=483810</Set> 
+        <!--xuan 20140319		
         <Exec func="PUB:GetVirtualTeller">
           <Arg name="TxnCnl" value="TBC"/>
-        </Exec>    
+        </Exec>
+         -->		
         <!--添加结束-->
         
         <Set>HTxnCd=451900</Set>
@@ -1909,7 +1911,7 @@
           </Case>
           <Case value="485999">
              <Set>ActBk1=485999</Set>
-             <Set>ActBr1=485730</Set>
+             <Set>ActBr1=485800</Set>
              <Set>NodNo=485800</Set>  
             <Break/>
           </Case>
@@ -2006,7 +2008,7 @@
     <If condition="$PrtFlg=1">
       <!--成功报表-->
       <Set>FmtFil=etc/TBC_RPT_CFG.XML</Set>
-      <Set>FilNam=STRCAT(EFE,$BrNo,$TxnDat,GETDATETIME(HHMISS))</Set>
+      <Set>FilNam=STRCAT(TBC,$BrNo,$TxnDat,GETDATETIME(HHMISS))</Set>
       <Exec func="EXT:GenerateReport">
         <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
         <Arg name="FmtFil" value="$FmtFil"/>
