@@ -1850,10 +1850,12 @@
         
         <!--自动清算,需要添加必要数据-->
         <Set>TxnAmt=$SumAmt</Set> 
-        <Set>TTxnCd=483810</Set>  
+        <Set>TTxnCd=483810</Set> 
+        <!--xuan 20140319		
         <Exec func="PUB:GetVirtualTeller">
           <Arg name="TxnCnl" value="TBC"/>
-        </Exec>    
+        </Exec>
+         -->		
         <!--添加结束-->
         
         <Set>HTxnCd=451900</Set>
@@ -1870,9 +1872,11 @@
           <!--761999江门分行-->
         <Switch  expression="$BrNo">
           <Case value="441999">
+
             <Set>ActBk1=441999</Set>
             <Set>ActBr1=441800</Set>
             <Set>NodNo=441800</Set>
+
             <Break/>
           </Case>
           <Case value="444999">
@@ -1907,7 +1911,7 @@
           </Case>
           <Case value="485999">
              <Set>ActBk1=485999</Set>
-             <Set>ActBr1=485730</Set>
+             <Set>ActBr1=485800</Set>
              <Set>NodNo=485800</Set>  
             <Break/>
           </Case>
@@ -1943,6 +1947,14 @@
         <Set>CdFlg5=C</Set>
         <Set>InAmt5=$TxnAmt</Set>
         
+        <!--用地区号区分电子柜员，解决省分行模式问题-->
+        <Exec func="PUB:CodeSwitching">
+          <Arg name="DatSrc"  value="OPFCSW"/>
+          <Arg name="SourNam" value="DptId"/>
+          <Arg name="DestNam" value="TlrId"/>
+          <Arg name="TblNam"  value="DptId2TlrId"/>
+        </Exec>
+
         <Exec func="PUB:CallHostOther">
           <Arg name="HTxnCd" value="$HTxnCd"/>
           <Arg name="ObjSvr" value="SHSTPUB1"/>
@@ -1996,7 +2008,7 @@
     <If condition="$PrtFlg=1">
       <!--成功报表-->
       <Set>FmtFil=etc/TBC_RPT_CFG.XML</Set>
-      <Set>FilNam=STRCAT(EFE,$BrNo,$TxnDat,GETDATETIME(HHMISS))</Set>
+      <Set>FilNam=STRCAT(TBC,$BrNo,$TxnDat,GETDATETIME(HHMISS))</Set>
       <Exec func="EXT:GenerateReport">
         <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
         <Arg name="FmtFil" value="$FmtFil"/>
@@ -2137,8 +2149,8 @@
     </DynSentence>
 
     <FlowCtrl>
-      <!--根据柜员号取BrNo-->
-      <Exec func="PUB:GetBranchNoByTeller"/>
+      <!--根据柜员号取BrNo,由于省辖行共用441999，因此屏蔽-->
+      <!--Exec func="PUB:GetBranchNoByTeller"/-->
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
       <!--取前置流水号-->
@@ -2238,6 +2250,14 @@
       <Set>PayAt5=$STLACT</Set>
       <Set>CdFlg5=C</Set>
       <Set>InAmt5=$TxnAmt</Set>
+
+      <!--用地区号区分电子柜员，解决省分行模式问题-->
+      <Exec func="PUB:CodeSwitching">
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="DptId"/>
+        <Arg name="DestNam" value="TlrId"/>
+        <Arg name="TblNam"  value="DptId2TlrId"/>
+      </Exec>
 
       <Exec func="PUB:CallHostOther">
         <Arg name="HTxnCd" value="$HTxnCd"/>
