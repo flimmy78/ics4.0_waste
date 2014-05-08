@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application trclog="LSHA_RPT_441999.trc">
+  <VarDef>
+    <String alias="CAgtNo"  pos="1"/>
+    <String alias="TxnDat"  pos="2"/>
+    <String alias="PNodNo"  pos="3"/>
+    <String alias="PTlrId"  pos="4"/>
+  </VarDef>
+
+  <MsgConvert>
+    <Item alias="CAgtNo">
+      <Convert value="4410001344" msg="Ñò³ÇÍ¨×ÔÖú³äÖµ"/>
+      <DEFAULT msg="´úÀíÒµÎñ"/>
+    </Item>
+    <Item alias="HTxnSt">
+      <Convert value="S" msg="½»Ò×³É¹¦"/>
+      <DEFAULT msg="¿ÉÒÉ,Çë²éÑ¯"/>
+    </Item>
+  </MsgConvert>
+ 
+  <DataSource object="sql">
+    <Iterative>
+       <Sql sql="select ActNo,RsFld2,TLogNo,LogNo,TckNo,TxnAmt,HTxnSt from afetxnjnl where ActDat ='%s' and CAgtNo='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U') order by RSFLD2">
+       <FieldList>$TxnDat|$CAgtNo|</FieldList>
+	   </Sql>
+    </Iterative>
+		<Summed type="field">
+			<Field sum="TXNAMT" sum_alias="sumamt" count="TotCnt"/>
+		</Summed>   
+
+  </DataSource>
+  <FormatDefine pagerows="41" pagesum="YES">
+    <TableHeader line="1">
+       <Para label="01"  alias="$CAgtNo" convert="YES" spread="right" ></Para>
+       <Para label="02"  alias="SUBSTR($TxnDat,1,4)" spread="right" ></Para>
+       <Para label="03"  alias="SUBSTR($TxnDat,5,2)" spread="right"></Para>
+       <Para label="04"  alias="SUBSTR($TxnDat,7,2)" spread="right"></Para>
+       <Para label="05"  alias="$PAGESUM" spread="mid"></Para>
+       <Para label="06"  alias="$PAGENUM" spread="mid"></Para>
+       <Format>
+                                   Ñò³ÇÍ¨×ÔÖú³äÖµÒµÎñÏµÍ³Çåµ¥
+
+                                  ÒµÎñÀàÐÍ:#             ÈÕÆÚ:     #Äê  #ÔÂ  #ÈÕ     ¹² # Ò³     µÚ # Ò³
+©³©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©×©¥©¥©¥©¥©¥©¥©¥©·
+©§          ¿¨ºÅ      ©§  Ñò³ÇÍ¨Æ±¿¨Âß¼­¿¨ºÅ  ©§    Ñò³ÇÍ¨Á÷Ë®ºÅ      ©§  Ç°ÖÃÁ÷Ë®ºÅ  ©§  »á¼ÆÁ÷Ë®ºÅ  ©§    ½ð¶î      ©§   ½»Ò××´Ì¬   ©§
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©ï©¥©¥©¥©¥©¥©¥©¥©Ï
+       </Format>
+    </TableHeader>
+    <Iterative line="1">
+       <Para label="01" alias="DELBOTHSPACE($ActNo)"  spread="right"></Para>
+       <Para label="02" alias="DELBOTHSPACE($RsFld2)"  spread="right"></Para>
+       <Para label="03" alias="DELBOTHSPACE($TLogNo)"  spread="right"></Para>
+       <Para label="04" alias="DELBOTHSPACE($LogNo)"  spread="right"></Para>
+       <Para label="05" alias="DELBOTHSPACE($TckNo)"  spread="right"></Para>
+       <Para label="06" alias="AMTFMT($TxnAmt)" spread="left"></Para>   
+       <Para label="07" alias="$HTxnSt"  convert="YES" spread="right" ></Para>
+       <Format>
+©§#                   ©§   #                  ©§ #                    ©§#             ©§#             ©§             #©§#             ©§
+       </Format>
+    </Iterative>
+    <Summed line='1'>
+       <Para label="01" alias="$TotCnt"         spread="left"></Para>
+       <Para label="02" alias="AMTFMT($sumamt)" spread="left"></Para>
+       <Format>
+©Ç©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©ß©¥©¥©¥©¥©¥©¥©¥©Ï
+©§ ºÏ¼Æ                                                 ±ÊÊý:   #                              ½ð¶î£º            #                    ©§
+©§                                                                                                                                    ©§
+       </Format>
+    </Summed>
+    <TableFooter line="1">
+       <Para label="01" alias="$PNodNo" spread="right"></Para>
+       <Para label="02" alias="$PTlrId" spread="right"></Para>
+       <Para label="03" alias="GETDATETIME(YYYY-MM-DD)" spread="left"></Para>
+       <Format>
+©»©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¿
+	                  ´òÓ¡²¿ÃÅ£º#           ´òÓ¡¹ñÔ±£º#          ´òÓ¡ÈÕÆÚ£º#
+       </Format>
+    </TableFooter>
+  </FormatDefine>
+</Application>
