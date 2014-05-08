@@ -1,0 +1,491 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LSH" code="421">
+	<!--¹ã¶«Ê¡¿çÐÐ×ªÕÊÖ÷¿Ø-->
+	<ConfigDeclare>
+	  <Config name="BatFormat"   value="etc/LSH_FMT_441999.XML"/>
+	  <Config name="ParaFile"    value="etc/CFG_LSH_441999.XML"/>
+		<Config name="OPFCSW"      value="etc/LSH_CSW_441999.XML"/>
+	</ConfigDeclare>
+	<PackageDeclare>
+		<Package name="AFE"      value="etc/DAFE_PKG.XML"/>
+	</PackageDeclare>
+	<TableDeclare>
+		<Table name="afetxnjnl"   value="afetxnjnl"/>  <!--ÒµÎñÁ÷Ë®±í-->
+		<Table name="savthdinf"   value="savthdinf"/>  <!--µÚÈý·½ÐÅÏ¢±í-->
+		<Table name="savcusagt"   value="savcusagt"/>  <!--Ð­ÒéÐÅÏ¢±í-->
+		<Table name="pmsbankno441"   value="pmsbankno441"/>  <!--Ö§¸¶ÐÐºÅ±í-->
+		<Table name="lshcbank441"   value="lshcbank441"/>  <!--ÐÐÃû±í-->
+		<Table name="lshcnode441"   value="lshcnode441"/>  <!--Ê¡Ãû±í-->
+		<Table name="lshccity441"   value="lshccity441"/>  <!--³ÇÊÐ±í-->
+		<Table name="midtxnjnl"     value="midtxnjnl"/>    <!--Á÷Ë®±í-->
+	</TableDeclare>
+	<BusDefDeclare>
+		<Busdef name="BrNo"  value="441999"/>
+		<Busdef name="AplCls"   value="421"/>
+	</BusDefDeclare>
+	<GlobalFunction>
+		<Include file="etc/ActJudge_IIT.XML"/>  <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
+		<Function name="_after">
+       <Process>
+          <If condition="ISNULL($MsgTyp)">
+             <If condition="ISNULL(DELBOTHSPACE($RspCod))"> <!--ÈôRspCodÎª¿Õ£¬ÔòÈÏÎª³É¹¦-->
+                <Set>MsgTyp=N</Set>
+                <Set>RspCod=000000</Set>
+             </If>
+             <Else>
+                <If condition="IS_NOEQUAL_STRING($RspCod,000000)"> <!--·µ»ØÂë²»Îª000000-->
+                   <Set>MsgTyp=E</Set>
+                </If>
+                <Else>
+                   <Set>MsgTyp=N</Set>
+                </Else>
+             </Else>
+          </If>
+       </Process>
+   </Function>
+	</GlobalFunction>
+	 
+
+	<Define>
+		<Macro name="Chk_TxnSrc">  <!--¼ì²é½»Ò×À´Ô´-->
+			<If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
+				<Set>TxnCnl=TRM</Set>   <!--²âÊÔÎªD441,Éú²úÓ¦¸ÃÎªTRM-->
+				<Set>CnlTyp=0</Set>
+			</If>
+			<Else>
+				<Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
+				<Exec func="PUB:CodeSwitching">
+					<Arg name="DatSrc"  value="OPFCSW"/>
+					<Arg name="SourNam" value="TxnSrc"/>
+					<Arg name="DestNam" value="CnlTyp"/>
+					<Arg name="TblNam"  value="TxnSrc2CnlTyp"/>
+				</Exec>
+			</Else>
+		</Macro>
+	</Define>
+
+<Transaction code="482101" desc="²éÑ¯ÊÖÐø·Ñ½»Ò×">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	   <Exec func="PUB:GetAppInfo"/>
+    
+     
+			<!--ÏÈ²éÑ¯¿Í»§¼¶±ð-->
+			<Set>ChkPin=1</Set>
+			<Set>Pin= </Set>
+			<Set>ChkLst=1</Set>  
+			<Exec func="PUB:CallHostOther" error="IGNORE"><!--ÉÏÖ÷»ú²éÑ¯ÊÖÐø·Ñ-->
+        <Arg name="HTxnCd" value="011855"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <Switch expression="$SvrLvl"> 
+        <Case value="07"/>     
+        <Case value="10"/>
+        <Case value="15"/>
+        <Case value="20"/>
+        <Case value="25">
+          <Set>PmsFlg=0</Set>  
+          <Set>RemFee2=000000000000000</Set> 
+          <Set>Fee2=000000000000000</Set>
+          <Break/>   
+        </Case>
+        <Default>    
+     			<Set>CcyCod=CNY</Set>
+    			<Set>FeeFlg=1</Set> 
+     			<Set>TTxnCd=469902</Set>
+     			<Set>NodNo=441800</Set>
+     			<!--ÏÈ²éÑ¯×ß´ó¶îÊÖÐø·Ñ-->   
+     			<Set>BchFlg=0</Set>
+
+     			<Exec func="PUB:CallThirdOther" error="IGNORE"> <!--ÉÏÖ÷»ú²éÑ¯ÊÖÐø·Ñ-->
+           	<Arg name="TxnCod" value="469902"/>
+           	<Arg name="ObjSvr" value="STDALSHC"/>
+     			</Exec>
+          <!-- add by xuan begin 20140306 -->
+          <If condition="INTCMP(~RetCod,1,0)">
+             <Set>MsgTyp=E</Set>
+             <Set>RspCod=LSH999</Set>
+             <Set>RspMsg=µ÷ÓÃµÚÈý·½Ê±:ÏµÍ³´íÎó»ò³¬Ê±»òÎ´·¢ËÍ,Çë¼ì²éºóÖØ×ö </Set>
+            <Return/>
+          </If>
+          <!-- add by xuan end 20140306 -->
+     
+     			<Set>PmsFlg=0</Set>
+     			<Set>RemFee2=$RemFee</Set>
+     			<Set>Fee2=$Fee</Set>
+					<Break/>
+       	</Default>
+     	</Switch>  
+
+     <!--Í¬³ÇÏÈ²»×ß--> 
+     <Set>LbeFlg=0</Set>
+     <Set>RemFee1=0</Set>
+     <Set>Fee1=0</Set>  
+     
+		</FlowCtrl>
+	</Transaction>
+
+	<Transaction code="482102" desc="×ªÕÊ">
+	  <!--Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes-->
+    <DynSentence name="Qryjnlrec">   <!--¼ì²é½ð¶îÏÞ¶î-->
+      <Sentence>
+        SELECT coalesce(SUM(cast(TxnAmt as bigint)),0) SUMAMT
+           FROM afetxnjnl
+        WHERE ActNo='%s' and ActDat='%s' and CAgtNo='%s' and HtxnSt in ('S','T')
+      </Sentence>
+      <Fields>ActNo|ActDat|CAgtNo|</Fields>
+    </DynSentence>
+	  <FlowCtrl>
+	  	<Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯-->
+
+      <If condition="AND(INTCMP($FTxnTm,6,163000),INTCMP($FTxnTm,1,173000))">
+		        <Set>RspCod=482199</Set>
+						<Set>MsgTyp=E</Set>
+						<Set>RspMsg=ÏµÍ³·±Ã¦,ÇëÉÔºóÔÙÊÔ!</Set>
+		        <Return/>
+			</If>
+
+	  	<Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Qryjnlrec"/>
+			</Exec>
+	  	
+	  	
+	  	<!--Ã¿ÈÕÀÛ¼Æ½»Ò×¶î²»ÄÜ³¬¹ý¶àÃ½ÌåÇ©Ô¼×ªÕÊµÄ×î¸ß¶î¶È-->
+	  	<Set>TotAmt=ADD(AMTDELZERO($TxnAmt),$SUMAMT)</Set>
+	  	 
+	  	<Set>TotFee=ADD(AMTDELZERO($Fee),AMTDELZERO($RemFee))</Set> 
+	  	 
+	  	<Exec func="PUB:GetAppInfo"/>
+      <Exec func="PUB:GetLogNo"/>
+    
+			<Set>CcyCod=CNY</Set>
+      <Set>ActTyp=4</Set>
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="HTxnCd" value="476520"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="$MsgTyp!=N">
+        <Set>RspCod=$HRspCd</Set>
+        <Return/> 
+      </If>
+      
+			<Exec func="PUB:CallHostOther" error="IGNORE">
+				<Arg name="HTxnCd" value="010420"/>
+				<Arg name="ObjSvr" value="STDALSH3"/>
+			</Exec>
+      <!-- add by xuan begin 20140306 -->
+      <If condition="INTCMP(~RetCod,1,0)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=LSH999</Set>
+        <Set>RspMsg=µ÷ÓÃµÚÈý·½Ê±:ÏµÍ³´íÎó»ò³¬Ê±»òÎ´·¢ËÍ,Çë¼ì²éºóÖØ×ö </Set>
+        <Return/>
+      </If>
+      <!-- add by xuan end 20140306 -->
+			<If condition="IS_NOEQUAL_STRING($TRspCd,SC0000)">
+        <Set>RspCod=$HRspCd</Set>
+				<Set>MsgTyp=E </Set>
+				<Set>RspMsg=·µ»Ø²»ÕýÈ·! </Set>
+        <Return/> 
+			</If>
+      
+      <If condition="INTCMP($TotAmt,6,2000000)">			 <!--ÓÉ´óÓÚ2ÍòÒªÇ©×ÔÖú×ªÕÊÔ¼-->
+      	<If condition="SUBCMP($CnlTyp,9,1,1)!=0">
+        	<Set>RspCod=482199</Set>
+        	<Set>RspMsg=ÈÕ×ªÕËÀÛ¼ÆÏÞ¶î³¬¹ý2Íò£¬Çëµ½¹ñÌ¨°ìÀí×ÔÖú×ªÕË»ã¿îÇ©Ô¼!</Set>
+        	<Return/> 
+				</If>
+			</If>
+			<Else>
+				<If condition="SUBCMP($CnlTyp,6,1,1)!=0">
+        	<Set>RspCod=482199</Set>
+        	<Set>RspMsg=Çëµ½¹ñÌ¨°ìÀí×ÔÖúÇþµÀÇ©Ô¼!</Set>
+        	<Return/> 
+				</If>
+    	</Else>
+    	
+			<If condition="AND(INTCMP($TotAmt,6,AMTDELZERO($MulAmt)),INTCMP($MulAmt,4,0))">
+				<Set>RspCod=482199</Set>
+				<Set>RspMsg=µ±ÈÕ×ªÕÊ³¬¹ýÇ©Ô¼ÏÞ¶î</Set>
+				<Return/> 
+			</If>
+   
+			     <Set>TxnCod=469901</Set>
+           <Set>TTxnCd=469901</Set>
+           <Set>BokFlg=0</Set>   <!--¼ÇÕÊ±êÖ¾£¨0£­¼ÇÕÊ¡¢1£­²»¼ÇÕÊ-->
+           <Set>BchFlg=0</Set>  <!--±¨ÎÄÖÖÀà£¨0£­´ó¶î¡¢1£­Ð¡¶î¡¢2-ÁªÐÐ¡¢9£­½ðÈÚÆ½Ì¨-->
+           <Set>RpdFlg=2</Set>   <!--¼Ó¼±±êÖ¾1-ÆÕÍ¨¡¢2-½ô¼±¡¢3-ÌØ¼±-->
+           <Set>CcyCod=CNY</Set> 
+           <Set>PMBTyp=11</Set> 
+           <Set>ActTyp=4</Set>
+           <Set>CclNo= </Set>   <!--ÏúÕÊºÅ-->
+           <Set>SndAct=$ActNo</Set>  <!--¸¶¿îÈËÕËºÅ-->
+           <Set>SndNam=$ActNam</Set>  <!--¸¶¿îÈËÃû³Æ-->
+           <Set>SndAdr=¹ã¶«Ê¡·ÖÐÐ</Set> 
+           <Set>SndBNm=¹ã¶«Ê¡·ÖÐÐ</Set>
+           <Set>SndBNo= </Set>
+         
+           <Set>RcvBNm=$RcvAdr</Set>
+           <Set>VchTyp= </Set>
+           <Set>VchNo= </Set> 
+           <Set>BilDat=$ActDat</Set> 
+           <Set>PmtPwd= </Set>
+           <Set>FeeTyp=1</Set>
+           <Set>TckNo= </Set>
+					<Exec func="PUB:GetBranchNoByNodeNo"/> <!--¸ù¾ÝÍøµãºÅÈ¡·ÖÐÐºÅ-->
+           <Set>NodNo=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
+           
+         <Exec func="PUB:InsertRecordExt" error="IGNORE">
+            <Arg name="TblNam" value="afetxnjnl"/>
+         </Exec>
+         <If condition="INTCMP(~RetCod,4,0)">
+            <Set>RspCod=478399</Set>
+            <Set>RspMsg=²åÈëÁ÷Ë®±íÊ§°Ü</Set>
+            <Return/>
+         </If>
+        
+         <Exec func="PUB:CallThirdOther">
+           <Arg name="TxnCod" value="469901"/>
+           <Arg name="ObjSvr" value="STDALSHC"/>
+         </Exec>
+             
+         <If condition="~RetCod!=0">
+              <Set>MsgTyp=E</Set>
+              <Set>HRspCd=$TRspCd</Set>
+              <Set>HtxnSt=T</Set>
+              <Exec func="PUB:UpdateJournalHost">
+                  <Arg name="TxnSts" value="T"/>
+               </Exec>
+               <Return/>
+         </If>
+       
+         <If condition="IS_EQUAL_STRING($TRspCd,000000)">
+              <Set>MsgTyp=N</Set>
+              <Set>HtxnSt=S</Set>
+              <Set>TxnSts=S</Set>
+              <Set>HRspCd=SC0000</Set>
+              <Exec func="PUB:UpdateJournalHost"/>
+          </If>
+          <Else>
+              <Set>MsgTyp=E</Set>
+              <Set>HtxnSt=F</Set>
+              <Set>HRspCd=$TRspCd</Set>
+              <Exec func="PUB:UpdateJournalHost">
+                  <Arg name="TxnSts" value="F"/>
+               </Exec>
+               <Return/>
+          </Else>
+
+		</FlowCtrl>
+	</Transaction>
+
+<Transaction code="482103" desc="²éÑ¯ÊÕ¿îÐÐÐÐºÅ">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT BkNo,Benelx,CtyCod from pmsbankno441 where BnkTyp='%s' and PosNo='%s' order by BkNo desc
+			</Sentence>
+			<Fields>BnkTyp|PosNo|</Fields>
+		</DynSentence>
+		<DynSentence name="Cnt">
+			<Sentence>
+			  SELECT Count(*) SumCnt from pmsbankno441 where BnkTyp='%s' and PosNo='%s' 
+			</Sentence>
+			<Fields>BnkTyp|PosNo|</Fields>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	    
+	   <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+			</Exec> 
+			
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+        </Args>
+      </Exec>
+					
+		</FlowCtrl>
+	</Transaction>
+
+<Transaction code="482104" desc="²éÑ¯ÒøÐÐÀàÐÍ">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT BnkTyp,BnkNam from lshcbank441 order by BnkTyp 
+			</Sentence>
+		</DynSentence>
+		<DynSentence name="Cnt">  <!--±ÊÊý-->
+			<Sentence>
+				SELECT Count(*) SumCnt FROM lshcbank441 
+			</Sentence>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	   
+	   <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+			</Exec>
+     
+     
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+        </Args>
+      </Exec>
+			
+			
+		</FlowCtrl>
+	</Transaction>
+
+<Transaction code="482105" desc="²éÑ¯Ê¡·Ý±í">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT NodCod,NodNam from lshcnode441 order by NodCod
+			</Sentence>
+		</DynSentence>
+		<DynSentence name="Cnt">
+			<Sentence>
+			  SELECT count(*) SumCnt from lshcnode441 
+			</Sentence>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	       
+     <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+		 </Exec>
+			
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+        </Args>
+      </Exec>
+					
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="482106" desc="²éÑ¯³ÇÊÐ±í">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT CtyCod,NodCod,CtyNam from lshccity441 where NodCod='%s' order by NodCod
+			</Sentence>
+			<Fields>NodCod|</Fields>
+		</DynSentence>
+		<DynSentence name="Cnt">
+			<Sentence>
+			  SELECT count(*) SumCnt from lshccity441 where NodCod='%s' 
+			 </Sentence>
+			<Fields>NodCod|</Fields>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	  
+	  <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+		 </Exec>
+     
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+        </Args>
+      </Exec>
+					
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="482107" desc="¸ù¾ÝÒøÐÐÀàÐÍ,Ê¡,ÊÐ²éÒøÐÐÐÐºÅ">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT BkNo,Benelx,CtyCod from pmsbankno441 where BnkTyp='%s' and NodCod='%s' and CtyCod='%s' order by BkNo
+			</Sentence>
+			<Fields>BnkTyp|NodCod|CtyCod|</Fields>
+		</DynSentence>
+		<DynSentence name="Cnt">
+			<Sentence>
+			  SELECT count(*) SumCnt from pmsbankno441 where BnkTyp='%s' and NodCod='%s' and CtyCod='%s' 
+			</Sentence>
+			<Fields>BnkTyp|NodCod|CtyCod|</Fields>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	  
+	   <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+		 </Exec>
+     
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+        </Args>
+      </Exec>
+					
+		</FlowCtrl>
+	</Transaction>
+
+	<Transaction code="482108" desc="¸ù¾ÝÒøÐÐÕÊºÅ²éÑ¯×ªÕÊÐÅÏ¢">
+	  <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <DynSentence name="MultiQuery">
+			<Sentence>
+			  SELECT ActDat,RcvAct,RcvNam,RcvAdr,TxnAmt,TckNo,Fee from midtxnjnl where ActNo='%s' order by LogNo desc 
+			</Sentence>
+			<Fields>ActNo|</Fields>
+		</DynSentence>
+		<DynSentence name="Cnt">
+			<Sentence>
+			  SELECT count(*) SumCnt from  midtxnjnl where ActNo='%s' 
+			</Sentence>
+			<Fields>ActNo|</Fields>
+		</DynSentence>
+	  <FlowCtrl>
+	   <Exec func="PUB:InitTransaction"/>            <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+	  
+	   <Exec func="PUB:ReadRecord">
+				<Arg name="SqlCmd" value="Cnt"/>
+		 </Exec>
+     <If condition="$SumCnt=0">
+        <If condition="~RetCod=-1">
+            <Set>RspCod=RX9999</Set>
+            <Set>RspMsg=Êý¾Ý¿â´íÎó</Set>
+            <Return/>
+        </If>
+        <Set>RspCod=RX9999</Set>
+        <Set>RspMsg=Ã»ÓÐ¿çÐÐ×ªÕÊµÄ¼ÇÂ¼</Set>
+        <Return/>
+     </If>
+     
+     <Exec func="PUB:MultiQuery">
+        <Args>
+          <Arg name="SqlCmd"  value="MultiQuery"/>
+          <Arg name="RecNumPerPage"  value="20"/>
+        </Args>
+      </Exec>
+      
+			<If condition="INTCMP($SumCnt,6,20)">	
+				<Set>SumCnt=20</Set>
+			</If>
+			
+		</FlowCtrl>
+	</Transaction>
+	
+</Application>

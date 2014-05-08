@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--¹ã¶«Ê¡·ÖÐÐ¿çÐÐ×ªÕÊ½Ó¿Ú-->
+<Application name="LSH">
+          
+    <Transaction code="010420" log_switch="5"  desc="×ÔÖúÇþµÀÇ©Ô¼²éÑ¯½Ó¿Ú">
+		<Request>
+		   <Item name="CCSCo2"      length="4 " value="TLU6"   />
+       <Item name="TTxnC2"  	  length="6"  value="010420" />
+       <Item name="FeCo2"   	  length="6"  value="010420" />
+       <Item name="TrmNo"   	  length="7"       />
+       <Item name="TxnSrc"  	  length="5 " />
+       <Item name="NodTrc"  	  length="15" />
+       <Item name="TlrId"   	  length="7"  />
+       <Item name="TIATyp"  	  length="1 " />
+       <Item name="AthLvl"  	  length="2 " />
+       <Item name="Sup1Id"  	  length="7 " />
+       <Item name="Sup2Id"  	  length="7 " />
+       <Item name="Sup1Pw"  	  length="6 " />
+       <Item name="Sup2Pw"  	  length="6 " />
+       <Item name="Sup1Dv"  	  length="1 " />
+       <Item name="Sup2Dv"  	  length="1 " />
+       <Item name="AthTbl"  	  length="60" />
+       <Item name="AthLog"  	  length="1 " />
+       <Item name="HLogNo"  	  length="9 " />
+       <Item name="CprInd"  	  length="1 " />
+       <Item name="EnpInd"  	  length="1 " />
+       <Item name="NodNo2"   	  length="6"  value="441900" />
+       <Item name="OprLvl2"  	  length="1 " value="7"      />
+       <Item name="TrmVer"  	  length="8 " />
+       <Item name="OutSys"  	  length="1 " />
+       <Item name="Fil"     	  length="2 " />
+			 <Item name="ActNo"       length="19"  desc="¿¨ºÅ"/>
+			 <Item name="PinBlk"      length="20"       />    <!--½»Ò×ÃÜÂë-->
+			 <Item name="IDTyp"      	length="2"        />		 <!--Ö¤¼þÀàÐÍ-->
+			 <Item name="IDNo"      	length="30"       />		 <!--Ö¤¼þºÅÂë-->
+	  </Request>
+		<Response necessary="no">
+		  <Include file="etc/HSTTOA_IIT.XML" />
+		  <AddItem name="TRspCd" expression="$HRspCd"/>
+       <Switch expression="$MsgTyp">
+         <Case value="N">
+           <Item name="ApFmt"       length="5" />     <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+           <Item name="RecNum"      length="4" />
+    			 <Item name="ActNo"       length="19"  desc="¿¨ºÅ"/>
+           <Item name="CnlTyp"  		length="20"/>			<!--Ç©Ô¼ÇþµÀ¿ØÖÆ×Ö-->
+           <Item name="MulAmt"      length="15"/>			<!--×ÔÖú×ªÕÊ»ã¿îÈÕ×î¸ß¿ØÖÆ-->
+           <Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+           <Break/>
+         </Case>
+         <Case value="E">
+            <Item name="RspMsg" head_len="4" include_len="yes"/>
+            <Break/>
+         </Case>
+         <Case value="A">
+            <Item name="BillText" deli_asc="-1"/>
+            <Break/>
+         </Case>
+       </Switch>
+		</Response>
+	</Transaction>
+
+    <Transaction code="014860" log_switch="5"  desc="ÍâÎ§ÌØÉ«Áª¶¯¼ÇÕÊ½Ó¿Ú">
+		<Request>
+		    <Item name="CCSCo2"     length="4 " value="TLU6"/>
+       <Item name="TTxnC2"  	 length="6"  value="014860"/>
+       <Item name="FeCo2"   	 length="6"  value="014860" />
+       <Item name="TrmNo"   	  length="7"/>
+       <Item name="TxnSrc"  	  length="5 " />
+       <Item name="NodTrc"  	  length="15" />
+       <Item name="TlrId"   	  length="7"/>
+       <Item name="TIATyp"  	  length="1 " />
+       <Item name="AthLvl"  	  length="2 " />
+       <Item name="Sup1Id"  	  length="7 " />
+       <Item name="Sup2Id"  	  length="7 " />
+       <Item name="Sup1Pw"  	  length="6 " />
+       <Item name="Sup2Pw"  	  length="6 " />
+       <Item name="Sup1Dv"  	  length="1 " />
+       <Item name="Sup2Dv"  	  length="1 " />
+       <Item name="AthTbl"  	  length="60" />
+       <Item name="AthLog"  	  length="1 " />
+       <Item name="HLogNo"  	  length="9 " />
+       <Item name="CprInd"  	  length="1 " />
+       <Item name="EnpInd"  	  length="1 " />
+       <Item name="NodNo2"   	  length="6" value="441900"/>
+       <Item name="OprLvl2"  	  length="1 " value="6"/>
+       <Item name="TrmVer"  	  length="8 " />
+       <Item name="OutSys"  	  length="1 " />
+       <Item name="Fil"     	  length="2 " />
+       <Item name="VchCod"       length="3" desc="Æ¾Ö¤ºÅÂë"/>
+		   <Item name="VchTyp"      length="1" desc="Æ¾Ö¤ÀàÐÍ"/>
+			 <Item name="ActNo"       length="19" desc="¿¨ºÅ"/>
+			 <Item name="ActNo2"      length="21" desc="ÕÊºÅ"/>
+			 <Item name="PinBlk"      length="20"/>    <!--½»Ò×ÃÜÂë-->
+	  </Request>
+		<Response necessary="no">
+		  <Include file="etc/HSTTOA_IIT.XML" />
+		  <AddItem name="TRspCd" expression="$HRspCd"/>
+       <Switch expression="$MsgTyp">
+         <Case value="N">
+           <Item name="AAAA"        length="35"/>
+           <Item name="ActNam"      length="30"/>
+           <Item name="MulFlg"      offset="140" length="1"/>
+           <Item name="MulAmt"      length="15"/>
+           <Item name="DatBuf"      length="42"/>
+           <Item name="BillText" deli_asc="-1" pro_dll="dll/pre_sp.so" pro_func="spe_hextoasc"/>
+           <Break/>
+         </Case>
+         <Case value="E">
+            <Item name="RspMsg" head_len="4" include_len="yes"/>
+            <Break/>
+         </Case>
+         <Case value="A">
+            <Item name="BillText" deli_asc="-1"/>
+            <Break/>
+         </Case>
+       </Switch>
+		
+		<!--
+		   <Item name="Fil1"        length="3 " /> 
+       <Item name="MsgTyp"  	  length="1 " /> 
+       <Item name="TRspCd"  	  length="6 " /> 
+       <Item name="ErrFld"  	  length="4 " />  
+       <Item name="TrmNo"   	  length="7 " /> 
+       <Item name="TrmSqn"  	  length="6 " /> 
+       <Item name="STxnCd"  	  length="4 " value="0000"/> 
+       <Item name="SAplCd"  	  length="2 " value="00"/> 
+       <Item name="TxnSym"  	  length="3 " /> 
+       <Item name="TxnDat"  	  length="8 " /> 
+       <Item name="TxnTm"  	    length="6 " /> 
+       <Item name="ActDat"  	  length="8 " /> 
+       <Item name="HLogNo"  	  length="9 " /> 
+       <Item name="TckNo"   	  length="11" /> 
+       <Item name="PagId"   	  length="1 " /> 
+       <Item name="CprInd"  	  length="1 " /> 
+       <Item name="EnpInd"  	  length="1 " /> 
+       <Item name="NodNo"   	  length="6 " /> 
+       <Item name="AthLog"  	  length="1 " /> 
+       <Item name="FinFlg"  	  length="1 " /> 
+       <Item name="AthLvl"  	  length="2 " /> 
+       <Item name="Sup1Id"  	  length="7 " /> 
+       <Item name="Sup2Id"  	  length="7 " /> 
+       <Item name="Fil2"  	    length="5 " /> 
+       <Item name="DatLen"  	  length="4 " /> 
+       <Item name="AppCod"      length="5 " />
+       <Item name="AAAA"        length="30"/>
+       <Item name="ActNam"      length="30"/>
+       <Item name="MulFlg"      offset="140" length="1"/>
+       <Item name="MulAmt"      length="15"/>
+       <Item name="DatBuf"      length="42"/> -->
+		</Response>
+	</Transaction>
+
+
+</Application>
