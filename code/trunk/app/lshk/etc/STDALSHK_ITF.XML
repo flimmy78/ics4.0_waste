@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LSH" pre_dll="dll/pre_lshk.so" pre_func="pre_lshk" spe_dll="dll/pre_lshk.so" spe_func="spe_lshk" trace="yes" >
+	<Define>
+		<Macro name="HEADMSG">
+			<Item name="BusinessId" length="6"  value="016001"/>	 <!--½ÓÈëÉÌ±àºÅ-->
+			<Item name="ReqCode"	  length="6" />	                 <!--½»Ò×ÇëÇóÂë-->
+			<Item name="RetCode"    length="10"  value="0000000000"/> <!--´¦Àí½á¹û·µ»ØÂë-->
+			<AddItem name="TransLine"  length="20" expression="ADDCHAR(DELBOTHSPACE($LogNo),20,0,1)" />
+			<Item name="TransLine"  length="20"  /> <!--½»Ò×Á÷Ë®-->
+			<Item name="BodyLen"    length="4"   value="    "/>  <!--°üÌå³¤¶È-->
+			<Item name="BodyMac"    length="32"  value="                                "/> <!--°üÌåÄÚÈÝµÄMacÂë-->	
+		</Macro>
+		
+		<Macro name="HEADMSG_RESQ">
+			<Item name="BusinessId_RESQ" length="6" />	 <!--½ÓÈëÉÌ±àºÅ-->
+			<Item name="ReqCode_RESQ"	   length="6" />	 <!--½»Ò×ÇëÇóÂë-->
+			<Item name="TRspCd"          length="10" expression="ADDCHAR(SUBSTR($TRspCd,7,4),6,0,1)"/> <!--´¦Àí½á¹û·µ»ØÂë-->
+			<Item name="TransLine_RESQ"  length="20" /> <!--½»Ò×Á÷Ë®-->
+			<Item name="BodyLen_RESQ"    length="4" />  <!--°üÌå³¤¶È-->
+			<Item name="BodyMac_RESQ"    length="32" /> <!--°üÌåÄÚÈÝµÄMacÂë-->	
+		</Macro>
+	</Define>
+	<!-- ¹º²Ê½»Ò× -->
+	<Transaction code="482101">
+		<Request>
+			<AddItem name="ReqCode"  value="101811" />
+			<AddItem name="Paymod"   value="10" />
+			<Quote name="HEADMSG"/> 
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->
+      <Item name="RcvMod" deli_asc="124" value="42"/>   <!--½ÓÈë·½Ê½-->
+      <Item name="Paymod" deli_asc="124" />   <!--Ö§¸¶·½Ê½-->
+      <Item name="TikMod" deli_asc="124" />   <!--¹ºÆ±·½Ê½-->
+      <Item name="LotTyp" deli_asc="124" />   <!--²ÊÆ±ÀàÐÍ-->
+      <Item name="SigDup" deli_asc="124" />   <!--µ¥¸´Ê½Çø·Ö-->
+      <Item name="LotNum" deli_asc="124" />   <!--Í¶×¢ºÅÂë-->
+      <Item name="Crdno"  deli_asc="124" />   <!--ÕÊºÅ-->
+      <Item name="PasWrd" deli_asc="124" />   <!--ÃÜÂë-->
+      <Item name="MulTip" deli_asc="124" />   <!--±¶Êý-->
+      <Item name="ExtNum" deli_asc="124" />   <!--À©Õ¹ºÅÂë-->
+      <Item name="TxnAmt" deli_asc="124" expression="DIV(AMTDELZERO($TxnAmt),100)"/>   <!--¹º²ÊÖ§¸¶½ð¶î-->
+      <Item name="LogNo"  deli_asc="124" />   <!--ÒøÐÐÖ§¸¶µ¥ºÅ-->
+      <Item name="BankId" deli_asc="124" />   <!--ËùÊôÒøÐÐ-->
+      <Item name="CntTel" deli_asc="124" />   <!--ÁªÏµµç»°-->
+      <Item name="TCusNm" deli_asc="124" expression="DELBOTHSPACE($ActNam)"/>   <!--ÓÃ»§Ãû³Æ-->
+      <Item name="IDNo"   deli_asc="124" />   <!--Éí·ÝÖ¤ºÅ-->    
+		</Request>
+		<Response necessary="no">
+			<Quote name="HEADMSG_RESQ"/>
+			<Item  name="AAA"     deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+			<Item  name="TLogNo"  deli_asc="124" necessary="no"/>  <!--¹º²ÊÁ÷Ë®ºÅ-->
+			<Item  name="NotNum"  deli_asc="124" necessary="no"/>  <!--×¢Êý--> 
+			<Item  name="LotNm1"  deli_asc="124" necessary="no"/>  <!--×¢1-->
+			<Item  name="LotNm2"  deli_asc="124" necessary="no"/>  <!--×¢2-->
+			<Item  name="LotNm3"  deli_asc="124" necessary="no"/>  <!--×¢3-->
+			<Item  name="LotNm4"  deli_asc="124" necessary="no"/>  <!--×¢4-->
+			<Item  name="LotNm5"  deli_asc="124" necessary="no"/>  <!--×¢5-->
+			<Item  name="LotNm6"  deli_asc="124" necessary="no"/>  <!--¸´Ê½×¢-->
+			<Item  name="TxnAmt"  deli_asc="124" necessary="no" expression="ADDCHAR(MUL($TxnAmt,100),15,0,1)"/>  <!--½ð¶î-->
+			<Item  name="MulTip"  deli_asc="124" necessary="no"/>  <!--±¶Êý-->
+			<Item  name="TrmCod"  deli_asc="124" necessary="no" expression="SUBSTR($TrmCod,1,SUB(STRLEN($TrmCod),2))"/>  <!--ÆÚºÅ-->
+		</Response>
+	</Transaction>
+
+	<!--  ¹º²ÊºÅÂëÐ£Ñé -->
+	<Transaction code="482102">
+		<Request>
+			<AddItem name="ReqCode"  value="101307" />
+			<Quote name="HEADMSG"/> 
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->
+      <Item name="RcvMod" deli_asc="124" value="42"/>   <!--½ÓÈë·½Ê½-->
+      <Item name="TikMod" deli_asc="124" expression="DELBOTHSPACE($TikMod)"/>   <!--¹ºÆ±·½Ê½-->
+      <Item name="SigDup" deli_asc="124" expression="DELBOTHSPACE($SigDup)"/>   <!--µ¥¸´Ê½Çø·Ö-->
+      <Item name="NotNum" deli_asc="124" expression="DELBOTHSPACE($NotNum)"/>   <!--»úÑ¡×¢Êý-->
+      <Item name="LotNum" deli_asc="124" expression="DELBOTHSPACE($LotNum)"/>   <!--Í¶×¢ºÅÂë-->
+      <Item name="LotTyp" deli_asc="124" expression="DELBOTHSPACE($LotTyp)"/>   <!--²ÊÆ±ÀàÐÍ-->
+      <Item name="MulTip" deli_asc="124" expression="DELBOTHSPACE($MulTip)"/>   <!--±¶Êý-->
+      <Item name="ExtNum" deli_asc="124" expression="DELBOTHSPACE($ExtNum)"/>   <!--À©Õ¹ºÅÂë-->     
+		</Request>
+		<Response necessary="no">
+			<Quote name="HEADMSG_RESQ"/>
+			<Item  name="AAA"     deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+			<Item  name="Space"   deli_asc="124" necessary="no"/>  <!--¿Õ¸ñ-->
+			<Item  name="NotNum"  deli_asc="124" necessary="no"/>  <!--×¢Êý--> 
+			<Item  name="LotNm1"  deli_asc="124" necessary="no"/>  <!--×¢1-->
+			<Item  name="LotNm2"  deli_asc="124" necessary="no"/>  <!--×¢2-->
+			<Item  name="LotNm3"  deli_asc="124" necessary="no"/>  <!--×¢3-->
+			<Item  name="LotNm4"  deli_asc="124" necessary="no"/>  <!--×¢4-->
+			<Item  name="LotNm5"  deli_asc="124" necessary="no"/>  <!--×¢5-->
+			<Item  name="LotNm6"  deli_asc="124" necessary="no"/>  <!--¸´Ê½×¢-->
+			<Item  name="TxnAmt"  deli_asc="124" necessary="no" expression="ADDCHAR(MUL($TxnAmt,100),15,0,1)"/>  <!--½ð¶î-->
+			<Item  name="MulTip"  deli_asc="124" necessary="no"/>  <!--±¶Êý-->
+			<Item  name="TrmCod"  deli_asc="124" necessary="no"/>  <!--ÆÚºÅ-->
+		</Response>
+	</Transaction>
+	
+	<!-- ²éÑ¯Í¶×¢Çé¿ö -->
+	<Transaction code="482103">
+		<Request>
+			<AddItem name="ReqCode"  value="101400" />
+			<Quote name="HEADMSG"/> 
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->
+      <Item  name="TLogNo"  deli_asc="124" expression="ADDCHAR(DELBOTHSPACE($TLogNo),20,0,1)"/>  <!--¹º²ÊÁ÷Ë®ºÅ-->
+		</Request>
+		<Response necessary="no">
+			<Quote name="HEADMSG_RESQ"/>
+			<Item  name="AAA"     deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+      <!--<Item  name="RcvMod" deli_asc="124" necessary="no"/>  ½ÓÈë·½Ê½-->
+      <!--<Item  name="Crdno"  deli_asc="124" necessary="no"/>  ÕÊºÅ-->
+      <Item  name="TrmCod" deli_asc="124" necessary="no"/>  <!--ÆÚºÅ-->
+      <Item  name="SigDup" deli_asc="124" necessary="no"/>  <!--µ¥¸´Ê½Çø·Ö-->
+      <Item  name="LotTyp" deli_asc="124" necessary="no"/>  <!--²ÊÆ±ÀàÐÍ-->
+      <Item  name="TLogNo" deli_asc="124" necessary="no"/>  <!--¹º²ÊÁ÷Ë®ºÅ-->
+			<Item  name="LotNum" deli_asc="124" necessary="no"/> <!--Í¶×¢ºÅÂë-->
+      <Item  name="NotNum" deli_asc="124" necessary="no"/>  <!--×¢Êý--> 
+      <Item  name="TxnAmt" deli_asc="124" necessary="no" expression="ADDCHAR(MUL($TxnAmt,100),15,0,1)"/>  <!--½ð¶î-->   
+		</Response>
+	</Transaction>
+
+</Application>

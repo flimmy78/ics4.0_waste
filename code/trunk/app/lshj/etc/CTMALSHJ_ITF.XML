@@ -9,7 +9,7 @@
   </CodeSwitching>
   <Define>
 		<Macro  name="MQ_Head">    <!--MQ通讯配置参数-->
-			<AddItem name="MqAddress"        value="10.44.1.197"/> <!-- MQ通讯IP -->
+			<AddItem name="MqAddress"        value="10.44.1.193"/> <!-- MQ通讯IP -->
 			<AddItem name="MqPort"				   value="9900"/>			 <!-- MQ通讯端口 -->
 			<AddItem name="MqUserName"			 value="mqplus"/>	 <!-- MQ登陆用户 -->
 			<AddItem name="MqPassWord"			 value="cwy123"/>		 <!-- MQ登陆用户密码 -->
@@ -18,7 +18,7 @@
 		</Macro>
  </Define>
 
-  <Transaction code="482146" service="482146" log_switch="1"> <!-- 粤通卡获取终端流水-->
+  <Transaction code="482146" service="482146" log_switch="5"> <!-- 粤通卡获取终端流水-->
 	    <Request necessary="yes">
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 	    </Request>
@@ -54,7 +54,7 @@
 	    </Response>
 	</Transaction> 
   
-  <Transaction code="482144" service="482144" log_switch="1"> <!-- 粤通卡签到初始化-->
+  <Transaction code="482144" service="482144" log_switch="5"> <!-- 粤通卡签到初始化-->
 	    <Request necessary="yes">
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 			<Item name="LoginReq"				length="256" />			    <!-- 签到初始化报文 -->
@@ -91,7 +91,7 @@
 	    </Response>
 	</Transaction> 
 	
-	<Transaction code="482145" service="482145" log_switch="1"> <!-- 粤通卡签到认证-->
+	<Transaction code="482145" service="482145" log_switch="5"> <!-- 粤通卡签到认证-->
 	    <Request necessary="yes">
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 			<Item name="AuthReq"				length="256" />			    <!-- 签到认证报文 -->
@@ -126,7 +126,7 @@
 	    </Response>
 	</Transaction>
 	
-	<Transaction code="482143" service="482143" log_switch="1"> <!-- 粤通卡查询回退金额-->
+	<Transaction code="482143" service="482143" log_switch="5"> <!-- 粤通卡查询回退金额-->
 	    <Request necessary="yes">
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 	    <Item name="ReturnReq"				length="256" />			    <!-- 回退查询报文 -->
@@ -161,7 +161,7 @@
 	    </Response>
 	</Transaction>
 	
-	<Transaction code="482140" service="482140" log_switch="1"> <!-- 粤通卡充值申请-->
+	<Transaction code="482140" service="482140" log_switch="5"> <!-- 粤通卡充值申请-->
 	    <Request necessary="yes">
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 			<Item name="ActTyp"					length="1"/>        <!--帐号类型-->
@@ -215,7 +215,7 @@
 	    </Response>
 	</Transaction>
 	
-	<Transaction code="482141" service="482141" log_switch="1"> <!-- 粤通卡充值确认-->
+	<Transaction code="482141" service="482141" log_switch="5"> <!-- 粤通卡充值确认-->
 	    <Request necessary="yes">
 	        <Include file="etc/TRMTIA_IIT.XML"/>
 	        <!--Item name="CardNo"       			length="12" />				< 储值卡序列号     -->
@@ -264,7 +264,7 @@
 	    </Response>
 	</Transaction>
 	
-	<Transaction code="482142" service="482142" log_switch="1"> <!-- 粤通卡补打凭条-->
+	<Transaction code="482142" service="482142" log_switch="5"> <!-- 粤通卡补打凭条-->
 	    <Request necessary="yes">
 	        <Include file="etc/TRMTIA_IIT.XML"/>
 	        <Item    name="ActNo"       				length="32"/>              <!--代扣帐号-->
@@ -316,7 +316,7 @@
 	    </Response>
 	</Transaction>
 	
-	<Transaction code="482156" service="482156"  desc="粤通卡对帐" log_switch="1" > 
+	<Transaction code="482156" service="482156"  desc="粤通卡对帐" log_switch="5" > 
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="ClrDat"      length="8" />          <!--交易日期-->  
@@ -355,7 +355,7 @@
     </Response>
   </Transaction>
   
-  <Transaction code="482139" service="482139" desc="粤通卡自动冲正" log_switch="1">
+  <Transaction code="482139" service="482139" desc="粤通卡自动冲正" log_switch="5">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="LogNo" length="14"/>           <!--前置流水-->

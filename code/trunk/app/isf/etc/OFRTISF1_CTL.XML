@@ -4,6 +4,26 @@
   <LibDeclare>
     <Library name="YCT"  value="dll/yct.so" />
   </LibDeclare>	
+	<GlobalFunction>
+   <Function name="_after">
+       <Process>
+          <If condition="ISNULL($MsgTyp)">
+             <If condition="ISNULL(DELBOTHSPACE($RspCod))"> <!--若RspCod为空，则认为成功-->
+                <Set>MsgTyp=N</Set>
+                <Set>RspCod=000000</Set>
+             </If>
+             <Else>
+                <If condition="IS_NOEQUAL_STRING($RspCod,000000)"> <!--返回码不为000000-->
+                   <Set>MsgTyp=E</Set>
+                </If>
+                <Else>
+                   <Set>MsgTyp=N</Set>
+                </Else>
+             </Else>
+          </If>
+       </Process>
+   </Function>
+	</GlobalFunction>
 	<ConfigDeclare>
 		<Config name="BatFormat"   value="etc/LSH_FMT_441999.XML"/>
 		<Config name="ParaFile"    value="etc/CFG_LSH_441999.XML"/>
@@ -19,7 +39,7 @@
 	</TableDeclare>
 	<BusDefDeclare>
 		<Busdef name="BrNo"  value="441999"/>
-                <Busdef name="AplCls"    value="421"/><!--Added by wu_20100208-->
+		<Busdef name="AplCls" value="421"/><!--Added by ylw_20100208-->
 	</BusDefDeclare>
 	<GlobalFunction>
 		<Include file="etc/ActJudge_IIT.XML"/>     <!--区别对公对私帐号-->
@@ -120,9 +140,10 @@
 
 		<FlowCtrl>
 
-			<!-- 设置初始化数据 -->
+      <Exec func="PUB:InitTransaction"/>            <!--交易初始化,预留-->
 			
-			
+      <Exec func="PUB:GetLogNo"/>
+
 			<!-- 查询该帐户是否有签约记录 -->
 			<Exec func="PUB:ReadRecord">
 					<Arg name="SqlCmd" value="Cnt"/>
@@ -144,6 +165,28 @@
 				<Return/>
 			</If>
 
+      <Set>OTxnCn=$TxnCnl</Set>
+      <Set>TxnCnl=1</Set>
+      <Set>ActNo=$bank_acc</Set>
+      <Set>ActTyp=4</Set>
+      <Set>PayTyp=1</Set>
+      <Set>Pin=$PinBlk</Set>
+      <Set>PinTyp=2</Set>
+      <Set>CcyCod=CNY</Set>
+      <Set>TlrId=EYCTBI1</Set>
+          <Exec func="PUB:CallHostAcc">
+              <Arg name="HTxnCd" value="476510"/>
+              <Arg name="ObjSvr" value="SHSTPUB1"/>
+          </Exec>
+          <If condition="IS_NOEQUAL_STRING($HRspCd,SC0000)">
+              <Set>MsgTyp=E</Set>
+              <Set>RspCod=$HRspCd</Set>
+              <Set>RspMsg=客户资料校验不符</Set>
+              <Return/>
+          </If>
+      <Set>TxnCnl=$OTxnCn</Set>
+
+
 			<!-- 产生合同编号 -->
 			<Exec func="PUB:GetLogNo"/>
 
@@ -156,19 +199,6 @@
 			<!-- 过程代码 -->
 			<Set>reserve3=$Code</Set>
 			
-			
-			<!-- 羊城通签约操作 -->
-			<Exec func="PUB:ExecSql" error="IGNORE">
-				<Args>
-					<Arg name="SqlCmd" value="InSertYct"/>
-				</Args>
-			</Exec>
-
-			<If condition="~RetCod=-1">
-				<Set>RspCod=331000</Set>
-				<Return/>
-			</If> 
-			 
 			<!-- 设置参与运算MAC的原始数据  -->
 			<Set>mac_data=STRCAT($Code,$yct_bank_acc,$TransDateTime,$sys_no,$acc_type,$sign_type,$contact_no,$cust_name,$sex_code,$phone_no,$mobile_no,$post_no,$address,$email)</Set>
 			<Set>mac_data=STRCAT($mac_data,$card1,$card2,$card3,$card4,$limite,$frequence,$reg_date,$paper_no)</Set>
@@ -192,23 +222,30 @@
 			<If condition="IS_NOEQUAL_STRING($YCTRETCODE,00)">
 				<Set>RspCod=333000</Set>
 				<Set>RspMsg=$YCTRETMSG</Set>
-				<Exec func="PUB:RollbackWork" error="IGNORE" />
 				<Return/>
 			</If>
 			
-			<!-- 更新签约响应码数据 -->
 			<Set>ret_code=00</Set>
+			<Set>cncl_flag=0</Set>
+
+			<!-- 羊城通签约操作 -->
 			<Exec func="PUB:ExecSql" error="IGNORE">
 				<Args>
-					<Arg name="SqlCmd" value="UpdateYct"/>
+					<Arg name="SqlCmd" value="InSertYct"/>
 				</Args>
 			</Exec>
+
+			<If condition="~RetCod=-1">
+				<Set>RspCod=331000</Set>
+				<Return/>
+			</If> 
+
 		</FlowCtrl>
 	</Transaction>
 
 	<Transaction code="482139" desc="羊城通帐户解约">
 	<Attributes>
-      <Attribute name="nodatabase" value="2"/>
+    <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <DynSentence name="MultiQuery"> <!-- 查询签约信息表 -->
 		<Sentence>
@@ -554,7 +591,7 @@
         <Set>VchChk=0</Set>
         <Set>PayMod=0</Set>
         <Set>VchCod=00000000</Set>
-        <Set>CnlTyp=0</Set>
+        <Set>CnlTyp=L</Set>
         <If condition="INTCMP(STRLEN($ActNo),3,21)">
           <Set>ActFlg=2</Set>  <!--对私帐号-->
           <Set>ActTyp=2</Set>
@@ -570,7 +607,7 @@
       <Set>AplCls=421</Set>
       <Set>BusTyp=LSHA1</Set>
 			<!--Set>TxnCnl=TRM</Set-->
-			<Set>TxnCnl=WEB</Set>
+			<Set>TxnCnl=THD</Set>
 			<Set>NodNo=441800</Set>
 															   
       <Exec func="PUB:ReadModuleCfg">
@@ -587,7 +624,12 @@
 				<Set>ret_code=00</Set>
 			</If>
 			<Else>      
-				<Set>ret_code=YE</Set>
+			  <If condition="$RspCod=PD5100">
+				  <Set>ret_code=03</Set>
+        </If>
+        <Else>
+				  <Set>ret_code=YE</Set>
+        </Else>
       </Else>
       
 	  <!-- 计算返回包的MAC -->
@@ -713,6 +755,7 @@
 </Transaction>
 
 
+M
 <Transaction code="482156" desc="羊城通划款冲正" log_switch="1">
 	  <Attributes>
       <Attribute name="nodatabase" value="2"/>
@@ -720,9 +763,9 @@
     
 	<DynSentence name="MultiQuery"> <!-- 检查该交易是否为划款冲正,需再增加单位代码在里面 -->
 		<Sentence>
-		  SELECT ACTNO,TXNAMT,LogNo,HTXNST,TxnCnl FROM afetxnjnl  WHERE RsFld1='%s' AND RsFld2='%s' AND ThdKey='%s' AND RsFld3='%s'
+		  SELECT ACTNO,TXNAMT,LogNo,HTXNST,TxnCnl FROM afetxnjnl  WHERE RsFld1='%s' AND RsFld2='%s' AND ThdKey='%s' 
 		</Sentence>
-		<Fields>Old_Type|Old_Code|Old_sys_no|Old_TransDateTime|</Fields>
+		<Fields>Old_Type|Old_Code|Old_sys_no|</Fields>
 	</DynSentence>
 
 	  <FlowCtrl>
@@ -1049,12 +1092,20 @@
 				<Arg name="LclDir" value="dat/opf"/>
 				<Arg name="LclFil" value="$DatFil1"/>
 			</Exec>
-			
+			<Exec func="PUB:FtpPut" error="IGNORE">
+				<Arg name="IpAdr" value="130.22.4.56"/>
+				<Arg name="UsrNam" value="gdmobile"/>
+				<Arg name="UsrPwd" value="gdmobile"/>
+				<Arg name="ObjDir" value="ZDCZ"/>
+				<Arg name="LclDir" value="dat/opf"/>
+				<Arg name="LclFil" value="$DatFil1"/>
+			</Exec>
 			<If condition="~RetCod=-1">						
 				<Set>RspCod=478715</Set>
 				<Set>RspMsg=向第三方发送文件失败</Set>
 				<Return/>
 			</If>	
+			
 		</FlowCtrl>
 </Transaction>
 
@@ -1181,7 +1232,14 @@
 				<Arg name="LclDir" value="dat/opf"/>
 				<Arg name="LclFil" value="$DatFil1"/>
 			</Exec>
-			
+			<Exec func="PUB:FtpPut" error="IGNORE">
+				<Arg name="IpAdr" value="130.22.4.56"/>
+				<Arg name="UsrNam" value="gdmobile"/>
+				<Arg name="UsrPwd" value="gdmobile"/>
+				<Arg name="ObjDir" value="ZDCZ"/>
+				<Arg name="LclDir" value="dat/opf"/>
+				<Arg name="LclFil" value="$DatFil1"/>
+			</Exec>
 			<If condition="~RetCod=-1">						
 				<Set>RspCod=478715</Set>
 				<Set>RspMsg=向第三方发送文件失败</Set>
@@ -1396,7 +1454,14 @@
 				<Arg name="LclDir" value="dat/opf"/>
 				<Arg name="LclFil" value="$DatFil1"/>
 			</Exec>
-			
+			<Exec func="PUB:FtpPut" error="IGNORE">
+				<Arg name="IpAdr" value="130.22.4.56"/>
+				<Arg name="UsrNam" value="gdmobile"/>
+				<Arg name="UsrPwd" value="gdmobile"/>
+				<Arg name="ObjDir" value="ZDCZ"/>
+				<Arg name="LclDir" value="dat/opf"/>
+				<Arg name="LclFil" value="$DatFil1"/>
+			</Exec>
 			<If condition="~RetCod=-1">						
 				<Set>RspCod=478715</Set>
 				<Set>RspMsg=向第三方发送文件失败</Set>
@@ -1410,14 +1475,12 @@
       <Attribute name="nodatabase" value="2"/>
   </Attributes>
 	<DynSentence name="MultiQuery">
-			<Sentence>
-				SELECT TckNo,ActDat,TCUSID,Rsfld2,TxnAmt from
-			  (SELECT TckNo,ActDat,TCUSID,Rsfld2,TxnAmt from afetxnjnl WHERE ActNo='%s' and Rsfld2='Z01051' and HTXNST='S'
-			  union SELECT TckNo,ActDat,TCUSID,Rsfld2,TxnAmt from afetxnjnl WHERE ActNo='%s' and Rsfld2='Z02011' 
-			  and HTXNST='S' and ChkFlg='1')
-			  as tmp order by ActDat DESC FETCH FIRST 20 ROWS ONLY
-			</Sentence>
-			<Fields>ActNo|ActNo|</Fields>
+		<Sentence>
+			SELECT TckNo,ActDat,TCUSID,Rsfld2,TxnAmt from afetxnjnl 
+				WHERE ActNo='%s' and HTXNST='S' and (  Rsfld2='Z01051' or ( Rsfld2='Z02011'  and ChkFlg='1')) 
+					order by ActDat DESC FETCH FIRST 20 ROWS ONLY
+		</Sentence>
+		<Fields>ActNo|</Fields>
 	</DynSentence>
 	<FlowCtrl>
 	  <Exec func="PUB:InitTransaction"/>            <!--交易初始化,预留-->

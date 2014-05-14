@@ -237,13 +237,13 @@
     </DynSentence>
     <DynSentence name="QryAgrNum"><!-- 检查零余额账户-->
        <Sentence>
-          SELECT COUNT(*) ZeroNum FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+          SELECT COUNT(*) ZeroNum FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='EFE'
        </Sentence>
        <Fields>ActNo</Fields>
     </DynSentence>
     <DynSentence name="QryPfaAgr"><!-- 查询零余额对应协议号-->
        <Sentence>
-          SELECT distinct BCusId,AgrNo,PfaSub,SubCod FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='CBS' AND SUBSTR(AgrNo,7,9)='589527752'
+          SELECT distinct BCusId,AgrNo,PfaSub,SubCod FROM pfacusagr WHERE　ActNo='%s' AND BusCnl='EFE'
        </Sentence>
        <Fields>ActNo</Fields>
     </DynSentence>
@@ -793,6 +793,14 @@
         <Arg name="HTxnCd" value="460244"/>
         <Arg name="ObjSvr" value="STDAEFEA"/>
       </Exec>
+      <!-- add by xuan begin 20140306 -->
+      <If condition="INTCMP(~RetCod,1,0)">
+       <Set>MsgTyp=E</Set>
+         <Set>RspCod=EFE999</Set>
+         <Set>RspMsg=调用第三方时:系统错误或超时或未发送,请检查后重做 </Set>
+         <Return/>
+      </If>
+      <!-- add by xuan end 20140306 -->
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
       </If>
@@ -900,7 +908,7 @@
         <Set>ActFlg=4</Set>  <!--对私卡号-->
         <Set>ActTyp=4</Set>
         <!--测试时先密码验证先用0-->
-        <Set>PayMod=0</Set><!--支取方式 1 凭密支取 0 不验密-->
+        <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
         <Set>PayTyp=10</Set><!--收费类型:10现金;11支票预交;12支票实交-->
         <Set>ChkNum=$VchNo</Set><!--支票编号-->
         <Break/>
@@ -1350,6 +1358,14 @@
         <Arg name="HTxnCd" value="460247"/>
         <Arg name="ObjSvr" value="STDAEFEA"/>
       </Exec>
+      <!-- add by xuan begin 20140306 -->
+      <If condition="INTCMP(~RetCod,1,0)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=LSH999</Set>
+        <Set>RspMsg=调用第三方时:系统错误或超时或未发送,请检查后重做 </Set>
+        <Return/>
+      </If>
+      <!-- add by xuan end 20140306 -->
       <If condition="IS_EQUAL_STRING($TRspCd,00)">
       	<Set>RspCod=000000</Set>
       	<Set>MsgTyp=N</Set>

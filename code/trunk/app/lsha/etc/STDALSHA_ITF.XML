@@ -1,0 +1,592 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>       <!--¹ãÖÝµçÐÅ½»Ò×½Ó¿Ú-->
+<Application name="LSH"  spe_dll="dll/gz_pre.so" spe_func="spe_tele" pre_dll="dll/gz_pre.so" pre_func="pre_tele">
+	<CodeSwitching>
+		<Table  name="RetCod2TRspCd" file="etc/LSH_CSW_441999.XML"> 
+			<Column name="TspCd" sort="no"/>
+			<Column name="TRspCd" sort="no"/>
+		</Table>
+		
+		<Table  name="RetCod2RspMsg" file="etc/LSH_CSW_441999.XML"> 
+			<Column name="TspCd" sort="no"/>
+			<Column name="RspMsg" sort="no"/>
+		</Table>
+	</CodeSwitching>
+	<Define>
+		<Macro  name="head_snd">    <!--·¢ËÍµ½µçÐÅÍ¨Ñ¶°üÍ·-->
+		  <Item name="Len"      length="4"/>
+		  <Item name="RsFld1"   length="4"/>         	<!--½»Ò×Âë-->
+		  <Item name="ActNo"    length="30"/>        <!--ÒøÐÐ¿¨ÕÊºÅ-->
+		  <AddItem name="SLogNo" expression="SUBSTR($LogNo,9,6)"/>                 
+		  <Item name="SLogNo"   length="6"/>   <!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+		 	<!--Item name="ActDat"   length="8"/>                      ½»Ò×ÈÕÆÚYYYYMMDD-->
+		 	<!--AddItem name="TxnTim"   expression="GETDATETIME()"/>   ½»Ò×Ê±¼äYYYYMMDDhhmmss-->
+			<Item name="FTxnTm"   length="14"/>
+			<Item name="RefNo"    length="12" value=" "/>                     <!--ÏµÍ³²Î¿¼ºÅ-->
+			<Item name="RsFld2"   length="4"/>                      <!--ÒµÎñ´úÂë-->
+			<Item name="TremNo"    value="51000003"/>                      <!--ÖÕ¶ËºÅ-->                 
+	    <Item name="BusNo"    length="15" value="000000000000000"/>                     <!--ÉÌ»§ºÅ-->
+			<Item name="BankId"   length="6" value="646810"/>                      <!--»ú¹¹´úÂë-->
+			<AddItem name="TTxnAmt"   expression="SUBSTR($TxnAmt,4,12)"/>                     <!--½ð¶î-->
+			<Item name="TTxnAmt"  length="12"/>
+			<Item name="TspCd"    value="    "/>                      <!--ÏìÓ¦Âë-->
+		</Macro>
+		<Macro  name="head_rcv">  <!--½ÓÊÕµÄÍ¨Ñ¶°üÍ·-->
+		  <Item name="Len"      length="4"/>
+		  <Item name="sTThdCd"   length="4"/>                      <!--½»Ò×Âë-->
+		  <Item name="sActNo"    length="30"/>                     <!--ÒøÐÐ¿¨ÕÊºÅ-->
+		  <Item name="SLogNo"   length="6"/>                      <!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+		 	<Item name="sTxnTim"   length="14"/>
+			<Item name="TLogNo"    length="12"/>                     <!--ÏµÍ³²Î¿¼ºÅ-->
+			<Item name="sTxnTyp"   length="4"/>                      <!--ÒµÎñ´úÂë-->
+			<Item name="TermNo"   length="8"/>                      <!--ÖÕ¶ËºÅ-->                 
+	    <Item name="BusNo"    length="15"/>                     <!--ÉÌ»§ºÅ-->
+			<Item name="BankId"   length="6"/>                      <!--»ú¹¹´úÂë-->
+			<Item name="STxnAmt"   length="12"/>                     <!--½ð¶î-->
+			<Item name="TspCd"    length="4"/>                      <!--ÏìÓ¦Âë-->
+			<SwitchCode name="TspCd" new_name="RspMsg" tab_name="RetCod2RspMsg" col_name="TspCd"/>
+			<SwitchCode name="TspCd" new_name="TRspCd" tab_name="RetCod2TRspCd" col_name="TspCd"/>
+		</Macro>
+	</Define>
+
+	<!--»°·Ñ²éÑ¯-->
+	<Transaction code="482101" desc="»°·Ñ²éÑ¯"  log_switch="5">
+		<Request necessary="yes">
+			<Quote  name="head_snd"/>                                 	<!--Í¨Ñ¶°üÍ·-->
+			<Item name="Mac"  length="8" value="00000000"/>           	<!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                           	<!--ÓÐ°üÌå-->
+			<Item name="TCusID"  head_len="2" include_len="No"/>      	<!--½»·ÑºÅÂë-->
+			<If condition="OR(INTCMP($RsFld2,3,0001),INTCMP($RsFld2,3,0010),INTCMP($RsFld2,3,0013),INTCMP($RsFld2,3,0047),INTCMP($RsFld2,3,0241),INTCMP($RsFld2,3,0242))">
+				<AddItem name="AddFlg" length="2" value=" 1"/>
+				<Item name="AddFlg" length="2" value=" 1"/>  
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>	
+			<ElseIf condition="INTCMP($RsFld2,3,0071) ">
+				<AddItem name="AddFlg" length="2" value=" 2"/>
+				<AddItem name="AddFld" length="2" value="71"/>
+				<Item name="AddFlg" length="2" value=" 2"/>               <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="AddFld"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</ElseIf>
+			<Else>
+			</Else>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                 <!--Í¨Ñ¶°üÍ·-->
+			<!--Item name="Mac"  length="8" "/>                           MACÖµ-->
+			<Item name="BodFlg"  offset="8" length="1"/>              <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TCusID"  head_len="2" include_len="no"/>  <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>   <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                      <!--½É·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/> <!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>     									<!--Ã÷Ï¸Ïî-->             
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group>
+			    <Item name="FildCnt" length="2"/>                       <!--Ìí¼ÓÓò¸öÊý-->
+			    <Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+            </ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+	<!--½»»°·Ñ-->
+	<Transaction code="482102" desc="½»»°·Ñ"   log_switch="5">
+	 	<Request necessary="yes">
+			<Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>               <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                               <!--ÓÐ°üÌå-->
+			<Item name="TCusID"  head_len="2" include_len="No"/>          <!--½»·ÑºÅÂë-->
+			<If condition="OR(INTCMP($RsFld2,3,0001),INTCMP($RsFld2,3,0010),INTCMP($RsFld2,3,0013),INTCMP($RsFld2,3,0047),INTCMP($RsFld2,3,0241),INTCMP($RsFld2,3,0242))">
+				<AddItem name="AddFlg" length="2" value=" 1"/>
+				<Item name="AddFlg" length="2" value=" 1"/>  
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>	
+			<ElseIf condition="INTCMP($RsFld2,3,0071) ">
+				<AddItem name="AddFlg" length="2" value=" 2"/>
+				<AddItem name="AddFld" length="2" value="71"/>
+				<Item name="AddFlg" length="2" value=" 2"/>               <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="AddFld"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</ElseIf>
+			<Else>
+			</Else>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<!--Item name="Mac"  length="8"/>                                MACÖµ-->
+			<Item name="BodFlg" offset="8" length="1"/>                   <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TCusID"  head_len="2" include_len="no"/>      <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>       <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                          <!--½É·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/>   	<!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>     											<!--Ã÷Ï¸Ïî-->							             
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	  
+			    </Group>
+			    <Item name="FildCnt" length="2"/>                       	<!--Ìí¼ÓÓò¸öÊý-->
+			    <Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+
+<!--³åÕý-->
+	<Transaction code="482107" desc="½»»°·Ñ³åÕý"   log_switch="5">
+	 <Request necessary="yes">
+	    <Item name="Len"      length="4"/>
+		  <AddItem name="RsFld3"   length="4" value="P003"/>         		<!--½»Ò×Âë-->
+		  <Item name="RsFld3"   length="4"/>
+		  <Item name="ActNo"    length="30"/>        										<!--ÒøÐÐ¿¨ÕÊºÅ-->
+		  <AddItem name="SLogNo" expression="SUBSTR($NodTrc,8,6)"/>                 
+		  <Item name="SLogNo"   length="6"/>   													<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+		 	<Item name="FTxnTm"   length="14"/>
+			<Item name="RefNo"    length="12" value=" "/>               	<!--ÏµÍ³²Î¿¼ºÅ-->
+			<Item name="RsFld2"   length="4"/>                      			<!--ÒµÎñ´úÂë-->
+			<Item name="TremNo"    value="51000003"/>                   	<!--ÖÕ¶ËºÅ-->                 
+	    <Item name="BusNo"    length="15" value="000000000000000"/>   <!--ÉÌ»§ºÅ-->
+			<Item name="BankId"   length="6" value="646810"/>             <!--»ú¹¹´úÂë-->
+			<AddItem name="TTxnAmt"   expression="SUBSTR($TxnAmt,4,12)"/> <!--½ð¶î-->
+			<Item name="TTxnAmt"  length="12"/>
+			<Item name="TspCd"    value="    "/>      
+			<!--Quote  name="head_snd"/--> 
+			<Item name="Mac"  length="8" value="00000000"/>               <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                         			<!--ÓÐ°üÌå-->
+			 <AddItem name="SLogNo" expression="SUBSTR($LogNo,9,6)"/>                 
+		  <Item name="SLogNo"   length="6"/>   													<!--ÖÕ¶ËÁ÷Ë®ºÅ-->  
+			<AddItem name="SCusID" length="30" expression="ADDCHAR($TCusID,30, ,0)"/>
+			<Item name="SCusID"  head_len="2" include_len="No"/>          <!--½»·ÑºÅÂë-->
+		  <Item name="TTxnAmt" length="12"/> 
+		 </Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>  
+			<!--Item name="Mac"  length="8"/>                                MACÖµ-->
+			<Item name="BodFlg" offset="8" length="1"/>                         <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">                       		<!--Í¨Ñ¶°üÍ·-->
+			<Item name="TLogNo" length="6"/>                           		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			<Item name="TCusID"  head_len="2" include_len="No"/>        	<!--½»·ÑºÅÂë-->
+			<Item name="TxnAmt" length="12"/>                          		<!--½ð¶î-->
+			</If> 
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>                            
+		</Response>
+	</Transaction>
+
+<!--ÒÆ¶¯»°·Ñ²éÑ¯-->
+	<Transaction code="482108" desc="ÒÆ¶¯»°·Ñ²éÑ¯"  log_switch="5">
+		<Request necessary="yes">
+			<Quote  name="head_snd"/>                                 <!--Í¨Ñ¶°üÍ·-->
+			<Item name="Mac"  length="8" value="00000000"/>           <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/> 
+			<AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>                          <!--ÓÐ°üÌå-->
+			<Item name="TTCusId"  head_len="2" include_len="No"/>      <!--½»·ÑºÅÂë-->
+			<If condition="INTCMP($RsFld2,3,3012)">
+				<AddItem name="AddFlg" length="2" value=" 2"/>
+				<AddItem name="AddFld" length="6" expression="DELBOTHSPACE($TxnPin)"/>
+				<Item name="AddFlg" length="2" value=" 2"/>               <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="AddFld"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                 <!--Í¨Ñ¶°üÍ·-->
+		  <Item name="BodFlg"  offset="8" length="1"/>              <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TCusID"  head_len="2" include_len="no"/>  <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>   <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                      <!--½»·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/> <!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>                       <!--Ã÷Ï¸Ïî¸öÊý-->            
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group>
+			    <Item name="FildCnt" length="2"/>                       <!--Ìí¼ÓÓò¸öÊý,È¡ÒÆ¶¯·ÑÓÃ-->            
+			    <Item name="OldAmt" head_len="2" include_len="no"/>     <!--ÍùÔÂÇ··Ñ-->
+			    <Item name="PreAmt" head_len="2" include_len="no"/>	 	  <!--Ô¤¸¶·Ñ-->
+			    <Item name="PayAmt" head_len="2" include_len="no"/>	    <!--ÒÆ¶¯Ó¦½É»°·Ñ-->  
+			    <!--Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group-->
+			    <Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+            </ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+<!--½»ÒÆ¶¯»°·Ñ-->
+	<Transaction code="482110" desc="½»ÒÆ¶¯»°·Ñ"   log_switch="5">
+	 	<Request necessary="yes">
+			<Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>                     <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                               <!--ÓÐ°üÌå-->
+			<AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>                          <!--ÓÐ°üÌå-->
+			<Item name="TTCusId"  head_len="2" include_len="No"/>      <!--½»·ÑºÅÂë-->
+		  <If condition="INTCMP($RsFld2,3,3002)">
+				<AddItem name="AddFlg" length="2" value=" 2"/>
+				<AddItem name="AddFld" length="6" expression="DELBOTHSPACE($TxnPin)"/>
+				<Item name="AddFlg" length="2" value=" 2"/>               <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="AddFld"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<!--Item name="Mac"  length="8"/>                                MACÖµ-->
+			<Item name="BodFlg" offset="8" length="1"/>                              <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TCusID"  head_len="2" include_len="no"/>      <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>       <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                          <!--½É·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/>   <!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>                  
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group>
+			    <Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+<!--ÁªÍ¨»°·Ñ²éÑ¯-->
+	<Transaction code="482111" desc="ÁªÍ¨»°·Ñ²éÑ¯"  log_switch="5">
+		<Request necessary="yes">
+			<Quote  name="head_snd"/>                                 <!--Í¨Ñ¶°üÍ·-->
+			<Item name="Mac"  length="8" value="00000000"/>           <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                           <!--ÓÐ°üÌå-->
+		  <AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>                          <!--ÓÐ°üÌå-->
+			<Item name="TTCusId"  head_len="2" include_len="No"/>      <!--½»·ÑºÅÂë-->
+			<If condition="INTCMP($RsFld2,3,0049)">
+				<Item name="AddFlg" length="2" value=" 3"/>               <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="FeeFlg"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò1,Ç··Ñ±êÖ¾-->
+				<Item name="FeeFld"  head_len="2" include_len="No"/>      <!--¸½¼ÓÓò1,×ÓÒµÎñ´úÂë-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                 <!--Í¨Ñ¶°üÍ·-->
+		  <Item name="BodFlg"  offset="8" length="1"/>              <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TCusID"  head_len="2" include_len="no"/>  <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>   <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                      <!--½»·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/> <!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>                       <!--Ã÷Ï¸Ïî¸öÊý-->            
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group>
+			    <Item name="FildCnt" length="2"/>                       <!--Ìí¼ÓÓò¸öÊý-->            
+			    <Item name="OldAmt" head_len="2" include_len="no"/>     <!--½áÓàºÏ¼Æ-->
+			    <Item name="PayAmt" head_len="2" include_len="no"/>	 	  <!--Ç··ÑºÏ¼Æ-->
+			    <Item name="FeeFlg" head_len="2" include_len="no"/>	    <!--·ÑÓÃ±êÖ¾-->
+			    <Item name="Feefld" head_len="2" include_len="no"/>     <!--×ÓÒµÎñ´úÂë-->  
+			    <Item name="Arefld" head_len="2" include_len="no"/>     <!--ÇøÓòÂë-->  
+			    <Item name="BusId"  head_len="2" include_len="no"/>     <!--¸¶·ÑÕÊºÅ-->
+			    <!--Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group-->
+			    <Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+            </ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+<!--½»ÁªÍ¨»°·Ñ-->
+	<Transaction code="482112" desc="½»ÁªÍ¨»°·Ñ"   log_switch="5">
+	 	<Request necessary="yes">
+			<Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>                     <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                               <!--ÓÐ°üÌå-->
+			<AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>                          <!--ÓÐ°üÌå-->
+			<Item name="TTCusId"  head_len="2" include_len="No"/>      		<!--½»·ÑºÅÂë-->
+		 	<If condition="INTCMP($RsFld2,3,0049)">
+				<Item name="AddFlg"  length="2" value=" 5"/>               	<!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="FeeFlg"  head_len="2" include_len="No"/>      	<!--¸½¼ÓÓò1,Ç··Ñ±êÖ¾-->
+				<Item name="FeeFld"  head_len="2" include_len="No"/>      	<!--¸½¼ÓÓò1,×ÓÒµÎñ´úÂë-->
+			  <Item name="Arefld"  head_len="2" include_len="no"/>     		<!--ÇøÓòÂë-->  
+			  <Item name="BusId"   head_len="2" include_len="no"/>     		<!--¸¶·ÑÕÊºÅ-->  
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   			<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<!--Item name="Mac"  length="8"/>                                MACÖµ-->
+			<Item name="BodFlg" offset="8" length="1"/>                   <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+			    <Item name="TTCusID"  head_len="2" include_len="no"/>     <!--½»·ÑºÅÂë-->
+			    <Item name="TCusNm" head_len="2" include_len="no"/>       <!--ÐÕÃû-->
+			    <Item name="ItmCnt" length="2"/>                          <!--½É·ÑÏî¸öÊý-->
+			    <Group name="Rec"    repeat_name="ItmCnt">
+				    <Item name="ItmFee" head_len="2" include_len="no"/>   	<!--½É·ÑÏî-->
+			    </Group>
+			    <Item name="AddCnt" length="2"/>                  
+			    <Group name="Rec"    repeat_name="AddCnt">
+			       <Item name="AddFid" head_len="2" include_len="no"/>	 
+			    </Group>
+					<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+			   <Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+	
+<!-- add by yangliwen 20090206 begin -->	
+<!--³µ´¬Ë°²éÑ¯-->
+	<Transaction code="482115" desc="³µ´¬Ë°²éÑ¯"  log_switch="5">
+		<Request necessary="yes">
+			<Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<Item name="Mac"  length="8" value="00000000"/>               <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/> 
+			<AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>
+			<Item name="TTCusId"  head_len="2" include_len="No"/>         <!--½»·ÑºÅÂë-->
+			<If condition="IS_EQUAL_STRING($RsFld2,0065)">				
+				<Item name="AddFlg" length="2" value=" 2"/>                 <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="CTypNo"  head_len="2" include_len="No"/>        <!--¸½¼ÓÓò1,³µÁ¾ÀàÐÍ+Ê¡·Ý´úÂë+³ÇÊÐ´úÂë+³µÅÆÐòÁÐºÅ-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<Item name="BodFlg"  offset="8" length="1"/>                  <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+				<Item name="TTCusID" head_len="2" include_len="no"/>        <!--½»·ÑºÅÂë-->
+				<Item name="TCusNm"  head_len="2" include_len="no"/>        <!--ÐÕÃû-->
+				<Item name="ItmCnt" length="2"/>                            <!--½»·ÑÏî¸öÊý-->
+				<Group name="Rec"    repeat_name="ItmCnt">
+					<Item name="ItmFee" head_len="2" include_len="no"/>       <!--½É·ÑÏî-->
+				</Group>
+				<Item name="AddCnt" length="2"/>                            <!--Ã÷Ï¸Ïî¸öÊý-->
+				<Group name="Rec"    repeat_name="AddCnt">
+					<Item name="AddFid" head_len="2" include_len="no"/>       <!--Ã÷Ï¸Ïî-->
+				</Group>
+				<Item name="FildCnt" length="2"/>                           <!--Ìí¼ÓÓò¸öÊý-->   
+				<Item name="CTypNo"  head_len="2" include_len="No"/>        <!--¸½¼ÓÓò1,³µÁ¾ÀàÐÍ+Ê¡·Ý´úÂë+³ÇÊÐ´úÂë+³µÅÆÐòÁÐºÅ-->
+				<Item name="LoSeq" 	 head_len="2" include_len="no"/>       	<!--¸½¼ÓÓò2,µØË°Á÷Ë®ºÅ-->
+				<Item name="PayAmt"  head_len="2" include_len="no"/>       	<!--¸½¼ÓÓò3,Ó¦½ÉµÄË°¿î½ð¶î-->
+				<Item name="FeeAmt"  head_len="2" include_len="no"/>       	<!--¸½¼ÓÓò4,Ó¦½ÉµÄ·£¿î½ð¶î-->
+				<Item name="LatAmt"  head_len="2" include_len="no"/>       	<!--¸½¼ÓÓò5,Ó¦½ÉµÄÖÍÄÉ½ð½ð¶î-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   			<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+				<Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+
+<!--³µ´¬Ë°½»·Ñ-->
+	<Transaction code="482116" desc="½»³µ´¬Ë°"  log_switch="5">
+		<Request necessary="yes">
+			<Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<Item name="Mac"  length="8" value="00000000"/>               <!--MACÖµ-->
+			<Item name="BodFlg" value="1"/>                               <!--ÓÐ°üÌå-->
+			<AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>
+			<Item name="TTCusId"  head_len="2" include_len="No"/>         <!--½»·ÑºÅÂë-->			
+			<If condition="IS_EQUAL_STRING($RsFld2,0065)">
+				<Item name="AddFlg" length="2" value=" 3"/>                 <!--¸½¼ÓÓò±êÖ¾-->
+				<Item name="CTypNo" head_len="2" include_len="No"/>         <!--¸½¼ÓÓò1,³µÁ¾ÀàÐÍ+Ê¡·Ý´úÂë+³ÇÊÐ´úÂë+³µÅÆÐòÁÐºÅ-->
+				<Item name="LoSeq" 	head_len="2" include_len="no"/>         <!--¸½¼ÓÓò2,µØË°Á÷Ë®ºÅ-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   			<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+		</Request>
+		<Response necessary="no">
+			<Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+			<Item name="BodFlg"  offset="8" length="1"/>                  <!--°üÌå´æÔÚ±êÖ¾-->
+			<If condition="INTCMP($BodFlg,3,1)">
+				<Item name="TTCusID"  head_len="2" include_len="no"/>       <!--½»·ÑºÅÂë-->
+				<Item name="TCusNm" head_len="2" include_len="no"/>         <!--ÐÕÃû-->
+				<Item name="ItmCnt" length="2"/>                            <!--½É·ÑÏî¸öÊý-->
+				<Group name="Rec"    repeat_name="ItmCnt">
+					<Item name="ItmFee" head_len="2" include_len="no"/>       <!--½É·ÑÏî-->
+				</Group>
+				<Item name="AddCnt" length="2"/>                            <!--Ã÷Ï¸Ïî¸öÊý-->
+				<Group name="Rec"    repeat_name="AddCnt">
+					<Item name="AddFid" head_len="2" include_len="no"/>       <!--Ã÷Ï¸Ïî-->
+				</Group>
+				<Item name="FildCnt" length="2"/>                           <!--Ìí¼ÓÓò¸öÊý-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   			<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+			</If>
+			<ElseIf condition="INTCMP($BodFlg,3,2)">
+				<Item name="RspMsg" length="40"/>
+			</ElseIf>
+			<Else>
+			</Else>
+		</Response>
+	</Transaction>
+<!-- add by yangliwen 20090206 end -->	
+
+<!-- add by yangliwen 20090105 begin -->
+
+<!--ÓÐÏßµçÊÓÔÂ×â·Ñ²éÑ¯-->
+  <Transaction code="482118" desc="ÓÐÏßµçÊÓÔÂ×â·Ñ²éÑ¯(Éí·ÝÖ¤)"  log_switch="5">
+    <Request necessary="yes">
+      <Quote  name="head_snd"/>                                   <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>             <!--MACÖµ-->
+      <Item name="BodFlg" value="1"/>                             <!--ÓÐ°üÌå-->
+      <AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>
+      <Item name="TTCusId"  head_len="2" include_len="No"/>       <!--½»·ÑºÅÂë-->
+      <If condition="OR(IS_EQUAL_STRING($RsFld2,0100),IS_EQUAL_STRING($RsFld2,0112),IS_EQUAL_STRING($RsFld2,0114))">
+        <Item name="AddFlg" length="2" value=" 3"/>               <!--¸½¼ÓÓò±êÖ¾-->
+        <Item name="IdTyp"  head_len="2" include_len="No"/>       <!--¸½¼ÓÓò1,¸¶·ÑºÅÂëÀàÐÍ-->
+        <Item name="CusNo"  head_len="2" include_len="No"/>       <!--¸½¼ÓÓò2,ÓÃ»§ÊÖ²áºÅ»òÉí·ÝÖ¤ºÅ-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+      </If>
+    </Request>
+    <Response necessary="no">
+      <Quote  name="head_rcv"/>                                   <!--Í¨Ñ¶°üÍ·-->
+      <Item name="BodFlg"  offset="8" length="1"/>                <!--°üÌå´æÔÚ±êÖ¾-->
+      <If condition="INTCMP($BodFlg,3,1)">
+        <Item name="TTCusID"  head_len="2" include_len="no"/>     <!--½»·ÑºÅÂë-->
+        <Item name="TCusNm" head_len="2" include_len="no"/>       <!--ÐÕÃû-->
+        <Item name="ItmCnt" length="2"/>                          <!--½»·ÑÏî¸öÊý-->
+        <Group name="Rec"    repeat_name="ItmCnt">
+          <Item name="ItmFee" head_len="2" include_len="no"/>     <!--½É·ÑÏî-->
+        </Group>
+        <Item name="AddCnt" length="2"/>                          <!--Ã÷Ï¸Ïî¸öÊý-->
+        <Group name="Rec"    repeat_name="AddCnt">
+          <Item name="AddFid" head_len="2" include_len="no"/>     <!--Ã÷Ï¸Ïî-->
+        </Group>
+        <Item name="FildCnt" length="2"/>                       <!--Ìí¼ÓÓò¸öÊý-->
+        <Item name="IdNum"   head_len="2" include_len="No"/>    <!--¸½¼ÓÓò1,ÓÃ»§ÊÖ²áºÅ¸öÊý-->
+        <Group name="Rec" repeat_name="IdNum">
+          <Item name="IdCod"   head_len="2" include_len="No"/>  <!--¸½¼ÓÓò2,ÓÃ»§ÊÖ²áºÅ-->
+          <Item name="Address" head_len="2" include_len="No"/>  <!--¸½¼ÓÓò3,µØÖ·-->
+        </Group>
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+      </If>
+      <ElseIf condition="INTCMP($BodFlg,3,2)">
+        <Item name="RspMsg" length="40"/>
+      </ElseIf>
+      <Else>
+      </Else>
+    </Response>
+  </Transaction>
+
+<!--ÓÐÏßµçÊÓÔÂ×â·Ñ²éÑ¯-->
+  <Transaction code="482119" desc="ÓÐÏßµçÊÓÔÂ×â·Ñ²éÑ¯(ÊÖ²áºÅ)"  log_switch="5">
+    <Request necessary="yes">
+      <Quote  name="head_snd"/>                                   <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>             <!--MACÖµ-->
+      <Item name="BodFlg" value="1"/>                             <!--ÓÐ°üÌå-->
+      <AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>
+      <Item name="TTCusId"  head_len="2" include_len="No"/>       <!--½»·ÑºÅÂë-->
+      <If condition="OR(IS_EQUAL_STRING($RsFld2,0100),IS_EQUAL_STRING($RsFld2,0112),IS_EQUAL_STRING($RsFld2,0114))">
+        <Item name="AddFlg" length="2" value=" 3"/>               <!--¸½¼ÓÓò±êÖ¾-->
+        <Item name="IdTyp"  head_len="2" include_len="No"/>       <!--¸½¼ÓÓò1,¸¶·ÑºÅÂëÀàÐÍ-->
+        <Item name="CusNo"  head_len="2" include_len="No"/>       <!--¸½¼ÓÓò2,ÓÃ»§ÊÖ²áºÅ»òÉí·ÝÖ¤ºÅ-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+      </If>
+      <CopyItem sour_name="IdTyp" dest_name="IdType"/>
+    </Request>
+    <Response necessary="no">
+      <Quote  name="head_rcv"/>                                   <!--Í¨Ñ¶°üÍ·-->
+      <Item name="BodFlg"  offset="8" length="1"/>                <!--°üÌå´æÔÚ±êÖ¾-->
+      <If condition="INTCMP($BodFlg,3,1)">
+        <Item name="TTCusID"  head_len="2" include_len="no"/>     <!--½»·ÑºÅÂë-->
+        <Item name="TCusNm" head_len="2" include_len="no"/>       <!--ÐÕÃû-->
+        <Item name="ItmCnt" length="2"/>                          <!--½»·ÑÏî¸öÊý-->
+        <Group name="Rec"    repeat_name="ItmCnt">
+          <Item name="ItmFee" head_len="2" include_len="no"/>     <!--½É·ÑÏî-->
+        </Group>
+        <Item name="AddCnt" length="2"/>                          <!--Ã÷Ï¸Ïî¸öÊý-->
+        <Group name="Rec"    repeat_name="AddCnt">
+          <Item name="AddFid" head_len="2" include_len="no"/>     <!--Ã÷Ï¸Ïî-->
+        </Group>
+        <Item name="FildCnt" length="2"/>                       <!--Ìí¼ÓÓò¸öÊý-->
+        <Item name="Address" head_len="2" include_len="No"/>    <!--¸½¼ÓÓò1,µØÖ·-->
+        <Item name="CarNum"  head_len="2" include_len="No"/>    <!--¸½¼ÓÓò2,¿¨ºÅ¸öÊý-->
+        <Group name="Rec" repeat_name="CarNum">
+          <Item name="IdCod"   head_len="2" include_len="No"/>  <!--¸½¼ÓÓò3,¿¨ºÅ(¸¶·ÑºÅÂë)-->
+          <Item name="MacNo"   head_len="2" include_len="No"/>  <!--¸½¼ÓÓò4,Éè±¸ºÅ-->
+          <Item name="CusNm"   head_len="2" include_len="no"/>  <!--¸½¼ÓÓò5,ÓÃ»§Ãû-->
+          <Item name="PayAmt"  head_len="2" include_len="no"/>  <!--¸½¼ÓÓò6,Ó¦ÊÕ½ð¶î-->
+          <Item name="LefAmt"  head_len="2" include_len="no"/>  <!--¸½¼ÓÓò7,Ê£ÓàÔ¤´æ-->
+        </Group>
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   		<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+      </If>
+      <ElseIf condition="INTCMP($BodFlg,3,2)">
+        <Item name="RspMsg" length="40"/>
+      </ElseIf>
+      <Else>
+      </Else>
+    </Response>
+  </Transaction>
+
+<!--ÓÐÏßµçÊÓÔÂ×â·Ñ½»·Ñ-->
+  <Transaction code="482120" desc="ÓÐÏßµçÊÓÔÂ×â·Ñ½»·Ñ"  log_switch="5">
+    <Request necessary="yes">
+      <Quote  name="head_snd"/>                                     <!--Í¨Ñ¶°üÍ·-->
+      <Item name="Mac"  length="8" value="00000000"/>               <!--MACÖµ-->
+      <Item name="BodFlg" value="1"/>                               <!--ÓÐ°üÌå-->
+      <AddItem name="TTCusId" length="11" expression="DELBOTHSPACE($TCusID)"/>
+      <Item name="TTCusId"  head_len="2" include_len="No"/>         <!--½»·ÑºÅÂë-->
+      <Item name="AddFlg" length="2" value=" 1"/>               		<!--¸½¼ÓÓò±êÖ¾-->
+      <Item name="SLogNo"  head_len="2" include_len="No"/>   				<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+    </Request>
+    <Response necessary="no">
+      <Quote  name="head_rcv"/>                                     <!--Í¨Ñ¶°üÍ·-->
+      <Item name="BodFlg"  offset="8" length="1"/>                  <!--°üÌå´æÔÚ±êÖ¾-->
+      <If condition="INTCMP($BodFlg,3,1)">
+        <Item name="TTCusID"  head_len="2" include_len="no"/>       <!--½»·ÑºÅÂë-->
+        <Item name="TCusNm" head_len="2" include_len="no"/>         <!--ÐÕÃû-->
+        <Item name="ItmCnt" length="2"/>                            <!--½É·ÑÏî¸öÊý-->
+        <Group name="Rec"    repeat_name="ItmCnt">
+          <Item name="ItmFee" head_len="2" include_len="no"/>       <!--½É·ÑÏî-->
+        </Group>
+        <Item name="AddCnt" length="2"/>                            <!--Ã÷Ï¸Ïî¸öÊý-->
+        <Group name="Rec"    repeat_name="AddCnt">
+          <Item name="AddFid" head_len="2" include_len="no"/>       <!--Ã÷Ï¸Ïî-->
+        </Group>
+        <Item name="FildCnt" length="2"/>                           <!--Ìí¼ÓÓò¸öÊý-->
+				<Item name="SLogNo"  head_len="2" include_len="No"/>   			<!--ÖÕ¶ËÁ÷Ë®ºÅ-->
+      </If>
+      <ElseIf condition="INTCMP($BodFlg,3,2)">
+        <Item name="RspMsg" length="40"/>
+      </ElseIf>
+      <Else>
+      </Else>
+    </Response>
+  </Transaction>
+
+<!-- add by yangliwen 20090105 end -->
+
+</Application>

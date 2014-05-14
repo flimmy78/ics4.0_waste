@@ -15,7 +15,7 @@
 		</Macro>
 	</Define>
 
-  <Transaction code="482149" service="482149" desc="羊城通帐户查询签约信息" log_switch="1">
+  <Transaction code="482149" service="482149" desc="羊城通帐户查询签约信息" log_switch="5">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="bank_acc" length="30"/>      <!--帐号 -->
@@ -91,7 +91,7 @@
     </Response>
   </Transaction>
 
-  <Transaction code="482138" service="482138" desc="羊城通帐户签约"  log_switch="1">
+  <Transaction code="482138" service="482138" desc="羊城通帐户签约"  log_switch="5">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
     <Item name="sign_flag"		length="1"/>          <!-- 签约类型 0-网银 1-自助通 -->
@@ -129,6 +129,7 @@
 		<Item name="reserve3"		length="30"/>           <!--   预留字段3 -->
 		<Item name="reserve4"		length="60"/>           <!--   预留字段4 -->
 		<Item name="reserve5"		length="60"/>           <!--   预留字段5 -->
+		<Item name="PinBlk"		length="20"/>           <!--  交易密码 -->
 		<AddItem name="Type"			length="4"		value="0100"/>  <!-- 羊城通签约交易[报文类型] -->
 		<AddItem name="Len"				length="4"		value="0337"/>  <!-- 羊城通签约交易[报文长度] -->
 		<AddItem name="Code"			length="6"		value="Z09011"/>  <!-- 羊城通签约交易[过程代码] -->
@@ -166,7 +167,7 @@
     </Response>
   </Transaction>
 
- <Transaction code="482139" service="482139" desc="羊城通帐户解约" log_switch="1">
+ <Transaction code="482139" service="482139" desc="羊城通帐户解约" log_switch="5">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
 		<Item name="sign_flag"		length="1"/>			<!-- 签约类型 0-网银 1-自助通 -->
@@ -213,7 +214,7 @@
     </Response>
   </Transaction>
   
-   <Transaction code="482140" service="482140" desc="查询账户信息" log_switch="1"><!--  查询账户信息 -->
+   <Transaction code="482140" service="482140" desc="查询账户信息" log_switch="5"><!--  查询账户信息 -->
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
          <Item name="ActNo"  length="21"/><!--帐号   -->
@@ -265,7 +266,7 @@
     </Response>
    </Transaction>
    
-  <Transaction code="482136" service="482136" desc="激活羊城通" log_switch="1">
+  <Transaction code="482136" service="482136" desc="激活羊城通" log_switch="5">
     <Request>
 	    <Include file="etc/TRMTIA_IIT.XML"/>
 			<Item name="bank_acc"		length="19"/>           <!-- 银行帐号 -->
@@ -306,7 +307,7 @@
     </Response>
   </Transaction>
   
-  <Transaction code="482159" service="482159" log_switch="1"> <!-- 查询历史交易记录 -->
+  <Transaction code="482159" service="482159" log_switch="5"> <!-- 查询历史交易记录 -->
 	    <Request necessary="yes">
 	        <Include file="etc/TRMTIA_IIT.XML"/>
 	        <Item    name="ActNo"       				length="21"/>              <!--代扣帐号-->

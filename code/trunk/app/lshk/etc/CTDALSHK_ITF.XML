@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LSH" server="OFTALSHK" trace="yes" >
+   <GetTxnCode>
+      <Item type="deli" deli_asc="124" pos="2"/>
+   </GetTxnCode>
+
+  <!-- ÍËÆ±·¢¶ÌÐÅ½»Ò× -->
+  <Transaction code="100001" service="482106" desc="ÍËÆ±¶ÌÐÅ½»Ò×" log_switch="1">
+    <Request>
+      <Item  name="AAA"   deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+      <Item name="TrnCod" deli_asc="124" />   <!--½»Ò×Âë-->
+      <Item name="LogNo"  deli_asc="124" />   <!--½ÓÈëÏµÍ³Á÷Ë®ºÅ-->
+      <Item name="TLogNo" deli_asc="124" />   <!--¹º²ÊÁ÷Ë®ºÅ-->
+      <Item name="RcvDat" deli_asc="124" />   <!--ÍËÆ±ÈÕÆÚ-->
+      <Item name="ActNo"  deli_asc="124" />   <!--ÕËºÅ-->
+      <Item name="TCusNm" deli_asc="124" />   <!--¿Í»§ÐÕÃû-->
+      <Item name="IDNo"   deli_asc="124" />   <!--Ö¤¼þºÅÂë-->
+      <Item name="TxnAmt" deli_asc="124" expression="ADDCHAR(MUL(DELBOTHSPACE($TxnAmt),100),15,0,1)"/>   <!--ÍËÆ±½ð¶î-->
+      <Item name="BuyAmt" deli_asc="124" expression="ADDCHAR(MUL(DELBOTHSPACE($BuyAmt),100),15,0,1)"/>   <!--¹º²Ê½ð¶î-->
+      <Item name="TrmCod" deli_asc="124" />   <!--ÆÚºÅ-->
+      <Item name="LotTyp" deli_asc="124" />   <!--²ÊÆ±ÀàÐÍ-->
+      <Item name="CntTel" deli_asc="124" />   <!--ÁªÏµµç»°-->
+      <Item name="LotNum" deli_asc="124" />   <!--Í¶×¢ºÅÂë-->
+    </Request>
+    <Response necessary="no">
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->   
+      <Item  name="RtnCod"  deli_asc="124" />  <!--·µ»ØÂë-->
+    </Response>
+  </Transaction>
+
+  <!-- Ìå²Ê¶ÔÕË -->
+  <Transaction code="482104" service="482104" desc="Ìå²Ê¶ÔÕË" log_switch="1">
+    <Request>
+      <Item  name="AAA"   deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+      <Item name="TrnCod" deli_asc="124" />   <!--½»Ò×Âë-->
+      <Item name="RtnDat"  deli_asc="124" />   <!--¶ÔÕËÈÕÆÚ-->
+    </Request>
+    <Response necessary="no">
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->   
+    </Response>
+  </Transaction>
+
+  <!-- Ìå²ÊÖÐ½±ÏÂÔØ -->
+  <Transaction code="482105" service="482105" desc="Ìå²Ê¶ÔÕË" log_switch="1">
+    <Request>
+      <Item  name="AAA"   deli_asc="124" necessary="no"/>  <!--ÊúÏß-->
+      <Item name="TrnCod" deli_asc="124" />   <!--½»Ò×Âë-->
+      <Item name="RtnDat"  deli_asc="124" />   <!--¶ÔÕËÈÕÆÚ-->
+    </Request>
+    <Response necessary="no">
+      <Item name="BEG" length="1"  fill_asc="124"  necessary="no"/>   <!--ÆðÊ¼±êÖ¾Î»-->   
+    </Response>
+  </Transaction>
+
+
+
+</Application>
