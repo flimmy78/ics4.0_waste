@@ -152,7 +152,7 @@
 			<Item name="CCD"     length="8"/>   <!--银行处理日期-->
 			<Item name="CCT"     length="6" value=""/>    <!--银行处理时间-->
 			<Item name="LogNo"   length="12" value=""/> <!--银行流水-->
-			<Item name="RBN"     length="12" value="5850"/>   <!--企业代码-->
+			<Item name="RBN"     length="12" value=""/>   <!--企业代码-->
 			<Item name="WDO"     length="8"/>  <!--工作日期-->
 			<Item name="CJG"     length="4" value=""/>  <!--处理结果-->
 			<Item name="CSM"     length="128" value=""/>  <!--处理说明-->
@@ -219,5 +219,40 @@
 			<Item name="FTXNTM"  length="14"/>  <!--处理时间-->
 		</Data>
 	</Process>  	
+  
+  <Process name="EFE_XY" desc="电费协议">   <!--银行电费协议对账-->
+		<Head>
+			<Item name="OCC"     length="2" value="32"/>  <!--交易码-->
+			<Item name="WTC"     length="3" value="301"/>     <!--银行代码 -->
+			<Item name="CTC"     length="8"/>   <!--总客户数量-->
+			<Item name="DTN"     length="12"/>  <!--明细笔数-->
+		</Head>
+		<Data>
+			<Item name="TLogNo"   length="16" value=""/>  <!--流水-->
+			<Item name="JFH"     length="32"/>  <!--户号-->
+			<Item name="JLD"     length="5"/>   <!--计量点号-->
+			<Item name="WDO"     length="8"/>   <!--日期-->
+			<Item name="ActNo"   length="32"/> <!--客户帐号-->
+			<Item name="ActNam"  length="32"/>  <!-- 客户帐号名称 -->
+			<Item name="STATUS"  length="1"/>  <!-- 标志-->
+			<If condition="STRCMP($GPF,P)=0">
+				  <Item name="DCLX"    length="3" value="2"/>  <!--指令代码-->
+			</If>
+			<If condition="STRCMP($GPF,G)=0">
+				  <Item name="DCLX"    length="3" value="1"/>  <!--指令代码-->
+			</If>
+			<Item name="TEL"  length="1"/>  <!-- 联系电话-->
+			<Item name="MOB"  length="1"/>  <!-- 手机号-->
+			<Item name="SDYQ"  length="1" value="0"  />  <!-- 通知单服务要求-->
+			<Item name="TXT"  length="64"/>  <!-- 通知单送达地址-->
+			<Item name="SDYB"  length="10" value="5115000000" />  <!-- 通知单送达邮编-->
+			<Item name="YBZ"  length="1"/>  <!-- 余额不足通知方式-->
+			<Item name="EML"  length="64"/>  <!-- 邮箱-->
+		</Data>
+	</Process>  	
+  
+  
+  
+  
   
 </BATCH>

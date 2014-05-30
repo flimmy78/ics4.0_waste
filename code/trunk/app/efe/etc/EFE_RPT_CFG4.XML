@@ -29,13 +29,13 @@
   </MsgConvert>
   <DataSource object="sql">
     <Iterative>
-      <Sql sql="SELECT a.*,b.dept
-				FROM afetxnjnl a,efebatinf b WHERE a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and a.CAgtNo='%s' and a.HTxnSt='S' and a.TxnCod='460200' and a.dskno=b.dskno and a.actno=b.actno  and a.txnamt=b.txnamt order by b.dept,a.TxnCod">
+      <Sql sql="SELECT a.*,b.logno,b.ecd
+				FROM afetxnjnl a,efechkinf b WHERE a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and a.CAgtNo='%s' and a.HTxnSt!='S' and a.Logno=b.Logno order by b.ecd,a.TxnCod">
 				<FieldList>$TxnDat1|$TxnDat2|$CAgtNo|</FieldList>
 	   </Sql>
     </Iterative>
     <Summed type="sql">
-       <Sql sql="select sum(cast(a.TxnAmt as bigint)) as sumamt,coalesce(COUNT(*),0) TotCnt from afetxnjnl a,efebatinf b where a.TxnCod='460200' and a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and  a.CAgtNo= '%s' and a.HTxnSt='S' and a.dskno=b.dskno and a.txnamt=b.txnamt and a.actno=b.actno">
+       <Sql sql="select sum(cast(a.TxnAmt as bigint)) as sumamt,coalesce(COUNT(*),0) TotCnt from afetxnjnl a,efechkinf b where a.logno=b.logno and a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and  a.CAgtNo= '%s' and a.HTxnSt!='S'">
        <FieldList>$TxnDat1|$TxnDat2|$CAgtNo|</FieldList>
 	   </Sql>
     </Summed>
@@ -53,7 +53,7 @@
        <Para label="09"  alias="$PAGESUM" spread="mid"></Para>
        <Para label="10"  alias="$PAGENUM" spread="mid"></Para>
        <Format>
-                                   #代理业务缴费批扣成功明细表
+                                   #代理业务缴费单笔可疑明细表
 
         业务类型:#             日期:  #年  #月  #日至 #年  #月  #日    共 # 页    第 # 页
 ┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┓
@@ -68,7 +68,7 @@
        <Para label="04" alias="DELBOTHSPACE($LogNo)"  spread="right"></Para>
        <Para label="05" alias="DELBOTHSPACE($TckNo)"  spread="right"></Para>
        <Para label="06" alias="AMTFMT($TxnAmt)" spread="left"></Para>   
-       <Para label="07" alias="$DEPT"   spread="right" ></Para>
+       <Para label="07" alias="$ECD"   spread="right" ></Para>
        <Format>
 ┃#                 ┃#                 ┃#                     ┃#             ┃#             ┃             #┃#             ┃
        </Format>
@@ -78,7 +78,7 @@
        <Para label="02" alias="AMTFMT($sumamt)" spread="left"></Para>
        <Format>
 ┣━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┻━━━━━━━┫
-┃合计                                   交易成功笔数:   #                            交易成功金额：            #               ┃
+┃合计                                   交易可疑笔数:   #                            交易可疑金额：            #               ┃
      </Format>
     </Summed>
     <TableFooter line="1">

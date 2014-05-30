@@ -330,5 +330,29 @@
 			<Item name="CLZ" length="16"/>   <!--流水号-->
 		</Response>
 	</Transaction>
+	
+	<!--银行发起用户协议对帐交易-->
+	<Transaction code="460232" log_switch="1" des="银行发起用户协议对帐交易">
+		<Request>
+			<AddItem name="MesgLen"  length="10" value="161"/>
+      <AddItem name="TTxnCd"   length="3"  value="32 "/>
+      <Quote   name="REQ_HEAD"/>     <!--包头-->
+			<Item name="WTC" length="12" value="301"/>   <!--委托节点代码-->
+			<Item name="WDO" length="8"/>           <!--工作日期-->
+			<Item name="FIF" length="2" value="04"/>     <!--文件类型-->
+			<Item name="TlrId" length="8"/>              <!--银行操作员代码-->
+			<Item name="LogNo" length="16"/>             <!--流水-->
+		</Request>
+		<Response necessary="no">
+			<Quote name="RESQ_HEAD"/>   <!--包头-->
+			<Item name="CLZ" length="16"/>   <!--流水号-->
+		</Response>
+		
+	</Transaction>
+
+
+
+
+
 
 </Application>

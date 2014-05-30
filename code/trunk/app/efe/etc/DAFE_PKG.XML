@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Package>
+  <TableDeclare>
+    <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--ÒµÎñÁ÷Ë®±í-->
+  </TableDeclare>
+
    <Define>
       <Macro name="Def_TxnChk"><!--¹¦ÄÜ¼ì²éÏà¹ØÓï¾ä¶¨Òå-->
          <DynSentence name="Chk_CrpAgr"><!--¼ì²éµ¥Î»Ð­Òé -->
@@ -224,6 +228,7 @@
                <Return/>
             </If>
          </Else>
+        
          <Exec func="PUB:InsertRecordExt" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
          </Exec>
@@ -236,6 +241,7 @@
             <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
             <Arg name="ObjSvr" value="@PARA.CBHost"/>
          </Exec>
+         
          <Switch expression="~RetCod">
             <Case value="-10">
                <Exec func="PUB:UpdateJournal"/>
@@ -464,11 +470,10 @@
          <Exec func="PUB:GetAppInfo"/>
          <Exec func="PUB:GetLogNo"/>
          <Exec func="PUB:GetVirtualTeller">
-            <Arg name="TxnCnl" value="EFE"/>
-            <!--
-            <Arg name="CnlSub" value="$BrNo"/>
-            -->
+            <Arg name="TxnCnl" value="EFA"/>
          </Exec>
+          <Set>TlrId=EEFENR1</Set>
+        
          <Exec func="PUB:InsertRecordExt" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
          </Exec>
@@ -483,6 +488,7 @@
             <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
             <Arg name="ObjSvr" value="@PARA.CBHost"/>
          </Exec>
+          
          <Switch expression="~RetCod">
             <Case value="-10">
                <Exec func="PUB:UpdateJournalHost">
@@ -530,6 +536,7 @@
             </Case>
             <Case value="0">
                <Exec func="PUB:UpdateJournalHost"/>
+               
                <Break/>
             </Case>
             <Default>
@@ -1978,7 +1985,6 @@
          <Set>Mask=STRCAT(9,$BBusTyp)</Set>
          <Exec func="PUB:GetVirtualTeller">
             <Arg name="TxnCnl" value="AFE"/>
-            <Arg name="CnlSub" value="$BrNo"/>
          </Exec>
          <Exec func="PUB:Lock">
             <Arg name="RecKey" value="STRCAT(afetxnjnl:LogNo:,$LogNo)"/>
@@ -2062,6 +2068,7 @@
                <Exec func="PUB:BeginWork"/>    <!--Æô¶¯ÍêÕûÐÔ¿ØÖÆ-->
             </If>
             <Exec func="PUB:GetLogNo"/>
+             
             <Exec func="PUB:InsertJournal"/><!--Ö÷»úµ¥±Ê½É·Ñ-->
             <Exec func="PUB:CallHostAcc" error="IGNORE">
                <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
@@ -2152,6 +2159,7 @@
                      <Case value="-1"><!--µÚÈý·½½»Ò×³¬Ê± -->
                         <Set>TTxnSt=T</Set>
                         <Set>TxnSts=T</Set>
+                        
                         <Exec func="PUB:UpdateRecordExt" error="IGNORE"><!--¸üÐÂµÚÈý·½¼ÇÕËÐÅÏ¢-->
                            <Arg name="TblNam" value="afetxnjnl"/>
                            <Arg name="CndSts" value="UpdThdJnl"/>
@@ -3096,7 +3104,6 @@
             <Set>TTxnCd=$TxnCod</Set>
             <Exec func="PUB:GetVirtualTeller">
                <Arg name="TxnCnl" value="AFE"/>
-               <Arg name="CnlSub" value="$BrNo"/>
             </Exec>
          </If>
 

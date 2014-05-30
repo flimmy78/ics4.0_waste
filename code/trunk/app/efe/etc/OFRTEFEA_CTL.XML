@@ -63,6 +63,9 @@
         </Exec>
       </Else>
     </Macro>
+    <Macro name="GetEfeId">
+        <Set>EfeId=STRCAT(SUBSTR($NodNo,1,3),999)</Set>
+        </Macro>
 
     <Macro name="TxnSrc_TxnCnl">
       <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
@@ -96,7 +99,7 @@
          <Fields>LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
-
+  
       <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
       <Call function="$AcJudFunc">
         <Input name="ActNo|NewFlg|"/>
@@ -134,7 +137,7 @@
           <Set>CcyTyp=1</Set>
           <Set>VchChk=1</Set>
           <Set>CnlTyp=0</Set>
-          <Set>Mask=$BSmr</Set>
+          <Set>Mask=STRCAT(9,$BSmr)</Set>
           <If condition="INTCMP($ActCls,3,3)">
             <Set>ActFlg=4</Set>
           </If>
@@ -156,12 +159,13 @@
       </Switch>
       <!-- 上主机 -->
       <Set>TActNo=$CActNo</Set>
-
+      <Set>CnlTyp=L</Set>
       <!--add by chen-->
       <Set>TxnTyp=N</Set>
       <Set>ItgTyp=0</Set>
       <Set>FRspCd=000000</Set>
       <Set>MstChk=1</Set>
+     <Set>TlrId=EEFENR1</Set>
       <Exec func="PUB:InsertRecordExt" error="IGNORE">
             <Arg name="TblNam" value="afetxnjnl"/>
       </Exec>
@@ -228,20 +232,22 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',DlTxt='%s' WHERE BrNo='%s'
+       UPDATE efeinfctl Set Status='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
-      <Fields>Status|DlTxt|BrNo|</Fields>
+      <Fields>Status|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
+      
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
       <!--取前置流水号-->
@@ -263,9 +269,10 @@
         <Set>RspMsg=银电系统已在开工状态</Set>
         <Return/>
       </If>
+<!---->
 
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -329,18 +336,19 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',DlTxt='%s' WHERE BrNo='%s'
+       UPDATE efeinfctl Set Status='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
-      <Fields>Status|DlTxt|BrNo|</Fields>
+      <Fields>Status|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -365,9 +373,11 @@
         <Return/>
       </If>
 
+     
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
+      
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=没对应分行IP设置</Set>
@@ -419,9 +429,9 @@
     </Attributes>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="QryCusCnt">             <!--查询协议存在 -->
       <Sentence>
@@ -439,15 +449,15 @@
       <Sentence>
         INSERT INTO efecusagt(BrNo,PAgtNo,CAgtNo,SBN,ECD,WDO,EDD,JFH,UsrNam,KKB,ActNo,
            KAT,ActNam,GPF,IdTyp,IdNo,ZPF,FPF,
-           JLD,FPM,FPC,FPA,ZPM,ZPC,ZPA,YBZ,EML,MOB,TEL,TXT,Status)
+           JLD,FPM,FPC,FPA,ZPM,ZPC,ZPA,YBZ,EML,MOB,TEL,TXT,Status,EfeId)
         VALUES('%s','%s','%s','%s','%s','%s','%s',
                '%s','%s','%s','%s','%s','%s',
                '%s','%s','%s','%s','%s','%s',
                '%s','%s','%s','%s','%s','%s',
-               '%s','%s','%s','%s','%s','%s')
+               '%s','%s','%s','%s','%s','%s','%s')
       </Sentence>
       <Fields>
-        BrNo|PAgtNo|CAgtNo|SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|ActNo|KAT|ActNam|GPF|IdTyp|TIdNo|ZPF|FPF|JLD|FPM|FPC|FPA|ZPM|ZPC|ZPA|YBZ|EML|MOB|TEL|TXT|Status|
+        BrNo|PAgtNo|CAgtNo|SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|ActNo|KAT|ActNam|GPF|IdTyp|TIdNo|ZPF|FPF|JLD|FPM|FPC|FPA|ZPM|ZPC|ZPA|YBZ|EML|MOB|TEL|TXT|Status|EfeId|
       </Fields>
     </DynSentence>
      <DynSentence name="UdpCusAgt">             <!--修改签约记录 -->
@@ -456,25 +466,26 @@
            JFH='%s',UsrNam='%s',KKB='%s',ActNo='%s',KAT='%s',ActNam='%s',GPF='%s',IdTyp='%s',
            IdNo='%s',ZPF='%s',FPF='%s',JLD='%s',FPM='%s',FPC='%s',FPA='%s',ZPM='%s',
            ZPC='%s',ZPA='%s',YBZ='%s',EML='%s',MOB='%s',TEL='%s',TXT='%s',Status= '%s'
-          WHERE BrNo='%s' and JFH='%s' and Status='0'
+          WHERE EfeId='%s' and JFH='%s' and Status='0'
       </Sentence>
       <Fields>
-        SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|ActNo|KAT|ActNm|GPF|IdTyp|TIdNo|ZPF|FPF|JLD|FPM|FPC|FPA|ZPM|ZPC|ZPA|YBZ|EML|MOB|TEL|TXT|Status|BrNo|JFH|
+        SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|ActNo|KAT|ActNm|GPF|IdTyp|TIdNo|ZPF|FPF|JLD|FPM|FPC|FPA|ZPM|ZPC|ZPA|YBZ|EML|MOB|TEL|TXT|Status|EfeId|JFH|
       </Fields>
     </DynSentence>
     <DynSentence name="DelCusAgt">             <!--删除签约记录 -->
       <Sentence>
-        DELETE FROM efecusagt where brno='%s' and JFH='%s'
+        DELETE FROM efecusagt where EfeId='%s' and JFH='%s'
       </Sentence>
-      <Fields>BrNo|JFH|</Fields>
+      <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <DynSentence name="CclCusAgt">             <!--注销签约记录 -->
       <Sentence>
-        UPDATE efecusagt SET Status='1' WHERE BrNo='%s' AND JFH='%s' and Status='0'
+        UPDATE efecusagt SET Status='1' WHERE EfeId='%s' AND JFH='%s' and Status='0'
       </Sentence>
-      <Fields>BrNo|JFH|</Fields>
+      <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -499,8 +510,9 @@
         <Return/>
       </If>
 
+     
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -899,11 +911,13 @@
     </Attributes>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	
+    	 <Quote name="GetEfeId"/>
 
 
 
@@ -924,16 +938,19 @@
         <Set>RspMsg=银电系统已在停工状态</Set>
         <Return/>
       </If>
-
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
       <!--取前置流水号-->
       <Exec func="PUB:GetLogNo"/>
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
-
+      
+      
+     
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -993,50 +1010,53 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="Insefechkinf">          <!--银电对账信息表 -->
       <Sentence>
-        INSERT INTO efechkinf(BrNo,CAgtNo,LogNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,WYSB,SFF,TxnCod)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
+        INSERT INTO efechkinf(BrNo,CAgtNo,LogNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,WYSB,SFF,TxnCod,EfeId)
+        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
       </Sentence>
       <Fields>
-         BrNo|CAgtNo|LogNo|ECD|WDO|EDD|JFH|KKB|ActNo|KAT|CUN|TxnAmt|KFG|ActNam|PCF|MNT|WYSB|SFF|TxnCod|
+         BrNo|CAgtNo|LogNo|ECD|WDO|EDD|JFH|KKB|ActNo|KAT|CUN|TxnAmt|KFG|ActNam|PCF|MNT|WYSB|SFF|TxnCod|EfeId|
       </Fields>
     </DynSentence>
     <DynSentence name="Insefechkdtl">             <!--银电对账明细表 -->
       <Sentence>
-        INSERT INTO efechkdtl(BrNo,LogNo,JFXH,JFJE,MON,JLD,YSH,CPS,MNS,PCC)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
+        INSERT INTO efechkdtl(BrNo,LogNo,JFXH,JFJE,MON,JLD,YSH,CPS,MNS,PCC,EfeId)
+        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
       </Sentence>
       <Fields>
-         BrNo|LogNo|JFXH|JFJE|MON|JLD|YSH|CPS|MNS|PCC|
+         BrNo|LogNo|JFXH|JFJE|MON|JLD|YSH|CPS|MNS|PCC|EfeId|
       </Fields>
     </DynSentence>
     <DynSentence name="UdpEfea_0"> <!--更新购彩流水辅表 -->
        <Sentence>
-         update efechkinf set TLogNo='%s',TckNo='%s',Status='%s' where BrNo='%s' and WDO='%s' and ActNo='%s' and LogNo='%s'
+         update efechkinf set TLogNo='%s',TckNo='%s',Status='%s' where EfeId='%s' and WDO='%s' and ActNo='%s' and LogNo='%s'
        </Sentence>
-       <Fields>TLogNo|TckNo|Status|BrNo|WDO|ActNo|LogNo|</Fields>
+       <Fields>TLogNo|TckNo|Status|EfeId|WDO|ActNo|LogNo|</Fields>
     </DynSentence>
 
     <DynSentence name="UdpEfeadtl"> <!--更新购彩流水辅表 -->
        <Sentence>
-         update efechkdtl set TLogNo='%s' where BrNo='%s' and LogNo='%s'
+         update efechkdtl set TLogNo='%s' where EfeId='%s' and LogNo='%s'
        </Sentence>
-       <Fields>TLogNo|BrNo|LogNo|</Fields>
+       <Fields>TLogNo|EfeId|LogNo|</Fields>
     </DynSentence>
 
 
     <DynSentence name="UdpEfeaSts"> <!--更新电力电费流水辅表 -->
        <Sentence>
-         update efechkinf set Status='%s' where BrNo='%s' and LogNo='%s'
+         update efechkinf set Status='%s' where EfeId='%s' and LogNo='%s'
        </Sentence>
-       <Fields>Status|BrNo|LogNo|</Fields>
+       <Fields>Status|EfeId|LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 
+    	 <Quote name="GetEfeId"/>
+    	 
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
 
@@ -1055,7 +1075,9 @@
         <Return/>
       </If>
 
-
+      
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
 
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
@@ -1063,9 +1085,10 @@
       <Exec func="PUB:GetLogNo"/>
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
-
+        <!--<Set>ActDat=20130821</Set>冲销测试用，到时要删除-->
+     
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -1086,9 +1109,9 @@
       <!--根据分行号取地区号-->
       <Exec func="PUB:CodeSwitching">
         <Arg name="DatSrc"  value="OPFCSW"/>
-        <Arg name="SourNam" value="BrNo"/>
+        <Arg name="SourNam" value="EfeId"/>
         <Arg name="DestNam" value="DstCod"/>
-        <Arg name="TblNam"  value="DL_BrNo2DstCod"/>
+        <Arg name="TblNam"  value="DL_EfeId2DstCod"/>
       </Exec>
       <!--设置唯一识别码-->
       <Exec func="PUB:GetPubSeqNoCircle">
@@ -1099,7 +1122,7 @@
 
       <Set>@MSG.OIP=$HstIp</Set>  <!--第三方IP-->
       <Set>@MSG.OPT=$HstPrt</Set> <!--第三方PORT-->
-      <Set>TMN= </Set>            <!--经办网点-->
+      <Set>TMN=$NodNo</Set>            <!--经办网点-->
       <Set>OprCod=$TlrId</Set>    <!--操作员代码-->
 
      <Switch expression="$VchTyp">
@@ -1120,7 +1143,7 @@
         <Set>SFF=01</Set>
         <Break/>
       </Case>
-      <Case value="601"><!--活期存折-->
+      <Case value="704"><!--活期存折-->
         <Set>ActFlg=2</Set>  <!--对私帐号-->
         <Set>ActTyp=2</Set>
         <Set>PayMod=1</Set><!--支取方式 1 凭密支取 0 不验密-->
@@ -1182,7 +1205,7 @@
       </Case>
      </Switch>
 
-     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,601),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
+     <If condition="OR(INTCMP($VchTyp,3,000),INTCMP($VchTyp,3,007),INTCMP($VchTyp,3,704),INTCMP($VchTyp,3,603),INTCMP($VchTyp,3,021))"><!--对私-->
         <Set>HTxnCd=471140</Set>
         <Set>VchChk=0</Set>
         <!--在前边对私凭证内添加<Set>PayMod=0</Set>支取方式 1 凭密支取 0 不验密-->
@@ -1197,9 +1220,9 @@
         <Set>HTxnCd=451240</Set>
         <Set>ActNod=SUBSTR($TActNo,1,6)</Set>
         <Set>ActSqn=SUBSTR($TActNo,14,5)</Set>
-        <Delete>TActNo</Delete>
+        <Delete>TActNo</Delete>            
         <Set>BusTyp=CRP51</Set>
-        <Set>BusSub=01</Set>                   <!--应用子码，对应业务类型CRP51-->
+        <Set>BusSub=01</Set>   <!--应用子码，对应业务类型CRP51-->    
      </ElseIf>
      <Else>
         <Return/>
@@ -1213,7 +1236,7 @@
         <Arg name="Application" value="GD_DLDF"/>
         <Arg name="Transaction" value="460205"/>   <!--CFG_EFE_441999.XML -->
       </Exec>
-
+     <!-- <Set>ActDat=20130821</Set>  冲销测试用，到时要删除-->
       <Set>WTC=301</Set>
       <Set>WDO=$ActDat</Set>
       <Set>KKB=301</Set>
@@ -1452,8 +1475,7 @@
          <Set>TTxnCd=$TxnCod</Set>
          <Set>OTxnSts=$TxnSts</Set>
          <Set>OHTxnSt=$HTxnSt</Set>
-         <Set>HLogNo= </Set>
-         <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
+        <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
       
          <Set>TIATyp=C</Set>
          <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
@@ -1465,6 +1487,7 @@
         <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
           <Set>HTxnSt=C</Set>
           <Set>TxnSts=C</Set>
+        
           <Exec func="PUB:UpdateJournal">
           </Exec>
           <Set>Status=C</Set>
@@ -1483,6 +1506,7 @@
         <Else>    <!--不成功登记自动冲正-->
           <Exec func="PUB:DefaultErrorProc"/>
         </Else>
+      
 
     </FlowCtrl>
   </Transaction>
@@ -1493,16 +1517,16 @@
     </Attributes>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="QryChkInf">             <!--查询银电对账信息表 -->
       <Sentence>
         SELECT LogNo OLogNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,WYSB,SFF,Status FROM efechkinf
-            WHERE BrNo='%s' AND WDO='%s' AND TckNo='%s'
+            WHERE EfeId='%s' AND WDO='%s' AND TckNo='%s'
       </Sentence>
-      <Fields>BrNo|ActDat|TckNo</Fields>
+      <Fields>EfeId|ActDat|TckNo</Fields>
     </DynSentence>
     <DynSentence name="Chk_TLogNo"><!--检查凭单号是否重复 -->
       <Sentence>
@@ -1515,11 +1539,13 @@
     </DynSentence>
     <DynSentence name="UdpEfeaSts"> <!--更新购彩流水辅表 -->
        <Sentence>
-         update efechkinf set Status='%s' where BrNo='%s' and LogNo='%s'
+         update efechkinf set Status='%s' where EfeId='%s' and LogNo='%s'
        </Sentence>
-       <Fields>Status|BrNo|OLogNo|</Fields>
+       <Fields>Status|EfeId|OLogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--取前置流水号-->
@@ -1543,10 +1569,11 @@
       <Exec func="PUB:InitTransaction"/>
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
-
-
+     
+    
+      
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -1560,7 +1587,7 @@
       <Set>WTC=301</Set>          <!--委托节点代码-->
       <Set>TMN= </Set>            <!--经办网点-->
       <Set>OprCod=$TlrId </Set>    <!--操作员代码-->
-
+     
       <Exec func="PUB:ReadRecord">
         <Arg name="SqlCmd" value="QryChkInf"/>
       </Exec>
@@ -1574,11 +1601,12 @@
         <Set>RspMsg=该笔缴费不能进行冲销</Set>
         <Return/>
       </If>
+       <!--<Set>ActDat=20130821</Set> 冲销测试用，到时要删除-->
       
-      <Set>OJN=301</Set>        <!--原缴费业务委托节点代码 -->
-      <Set>OJD=$ActDat</Set>    <!--原缴费业务委托日期     -->
+      <Set>OJN=301</Set>        <!--原缴费业务委托节点代码 -->  
+      <Set>OJD=$ActDat</Set>    <!--原缴费业务委托日期    --> <!--冲销测试用，到时要删除-->
       <Set>OLZ=$OLogNo</Set>    <!--原业务流水             -->
-      <Set>OWK=$ActDat</Set>    <!--原业务工作日期         -->
+      <Set>OWK=$ActDat</Set>    <!--原业务工作日期         -->  <!--冲销测试用，到时要删除-->
       <Set>OED=301</Set>        <!--原费项代码             -->
       <Set>OJF=$JFH</Set>       <!--原业务缴费号           -->
       <Set>OJB=301</Set>        <!--原缴费业务扣款行行号   -->
@@ -1656,6 +1684,7 @@
       <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
         <Set>HTxnSt=C</Set>
         <Set>TxnSts=C</Set>
+      
         <Exec func="PUB:UpdateJournal">
         </Exec>
         <Set>Status=X</Set>
@@ -1692,43 +1721,49 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
     <DynSentence name="Insefechkinf">          <!--银电对账信息表 -->
       <Sentence>
-        INSERT INTO efechkinf(BrNo,CAgtNo,LogNo,TLogNo,TckNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,JBR,GDO,WYSB,SFF,TxnCod,Status)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
+        INSERT INTO efechkinf(BrNo,CAgtNo,LogNo,TLogNo,TckNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,JBR,GDO,WYSB,SFF,TxnCod,Status,EfeId)
+        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
       </Sentence>
       <Fields>
-         BrNo|CAgtNo|LogNo|TLogNo|TckNo|ECD|WDO|EDD|JFH|KKB|ActNo|KAT|CUN|TxnAmt|KFG|ActNam|PCF|MNT|JBR|GDO|WYSB|SFF|TxnCod|Status|
+         BrNo|CAgtNo|LogNo|TLogNo|TckNo|ECD|WDO|EDD|JFH|KKB|ActNo|KAT|CUN|TxnAmt|KFG|ActNam|PCF|MNT|JBR|GDO|WYSB|SFF|TxnCod|Status|EfeId|
       </Fields>
     </DynSentence>
     <DynSentence name="Insefechkdtl">             <!--银电对账明细表 -->
       <Sentence>
-        INSERT INTO efechkdtl(BrNo,LogNo,TLogNo,JFXH,JFJE,MON,JLD,YSH,CPS,MNS,PCC)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
+        INSERT INTO efechkdtl(BrNo,LogNo,TLogNo,JFXH,JFJE,MON,JLD,YSH,CPS,MNS,PCC,EfeId)
+        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
       </Sentence>
       <Fields>
-         BrNo|LogNo|TLogNo|JFXH|JFJE|MON|JLD|YSH|CPS|MNS|PCC|
+         BrNo|LogNo|TLogNo|JFXH|JFJE|MON|JLD|YSH|CPS|MNS|PCC|EfeId|
       </Fields>
     </DynSentence>
 
     <FlowCtrl>
-
       <Set>DLIP=@MSG.SIP</Set>
-      <Exec func="PUB:ReadRecord">    <!--查询对应分行号 -->
+      
+      <!--查询对应分行号 -->
+     
+      <Exec func="PUB:ReadRecord">    
         <Arg name="SqlCmd" value="QryInfCtl"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=没对应分行号</Set>
         <Return/>
-      </If>
-
+      </If>  
+      
+     
+      
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
       <Exec func="PUB:InitTransaction"/>    <!--交易初始化,预留-->
-
+      
       <Exec func="PUB:GetAppInfo"/>
 
 
@@ -1840,7 +1875,7 @@
       <Set>FRspCd= </Set>  <!--20100511-->
       <Set>ItgTyp=0</Set>  <!--20100511-->
       <Set>TXNTYP=N</Set>  <!--20100511-->
-
+     <Set>NodNo=441800</Set>
       <Call package="AFE" function="AFE_SglThdPay"/>
       <If condition="$RspCod=000000">
         <Set>SFF=04</Set> <!--收费方式:04实时代扣-->
@@ -1850,7 +1885,7 @@
           <Arg name="Len"    value="10"/>
         </Exec>
         <Set>WYSB=STRCAT(301,$DstCod,$ActDat,$SelVal)</Set>
-
+   
         <Set>MNT=01</Set> <!--资金种别,默认现金01-->
         <Set>SFF=04</Set> <!--收费方式实时代扣,04-->
         <Set>Status=S</Set>
@@ -1894,7 +1929,7 @@
   <Transaction code="460221" desc="单笔代扣业务冲正">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
@@ -1909,9 +1944,9 @@
     </DynSentence>
     <DynSentence name="UdpEfeaSts"> <!--更新购彩流水辅表 -->
        <Sentence>
-         update efechkinf set Status='%s' where BrNo='%s' and LogNo='%s'
+         update efechkinf set Status='%s' where EfeId='%s' and LogNo='%s'
        </Sentence>
-       <Fields>Status|BrNo|LogNo|</Fields>
+       <Fields>Status|EfeId|LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Set>DLIP=@MSG.SIP</Set>
@@ -1924,7 +1959,9 @@
         <Set>RspMsg=没对应分行号</Set>
         <Return/>
       </If>
-      
+     
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
       <Exec func="PUB:InitTransaction"/>
       <Exec func="PUB:ReadRecord">  <!--检查凭单号是否记帐-->
         <Arg name="SqlCmd" value="Chk_TLogNo"/>
@@ -2025,6 +2062,10 @@
       <Set>TTxnCd=$TxnCod</Set>
 
       <Set>TIATyp=C</Set>
+   <!--  <Set>TxnDat=20131122</Set>
+      <Set>ActDat=20131122</Set> 20131021下午测试13112200000208成功那一次有用这个语句-->
+      <Set>TxnDat=$ActDat</Set>
+      <Set>NodNo=441800</Set>
       <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
       <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机进行冲正交易-->
         <Arg name="HTxnCd" value="959999"/>
@@ -2034,6 +2075,7 @@
       <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
         <Set>HTxnSt=C</Set>
         <Set>TxnSts=C</Set>
+      
         <Exec func="PUB:UpdateJournal">
         </Exec>
         <Set>Status=X</Set>
@@ -2067,7 +2109,7 @@
 
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
@@ -2089,9 +2131,9 @@
     </DynSentence>
     <DynSentence name="GetCAgtNo">
       <Sentence>
-        SELECT DISTINCT CAgtNo FROM efebatinf  WHERE BrNo='%s' AND DskNo='%s'
+        SELECT DISTINCT CAgtNo FROM efebatinf  WHERE EfeId='%s' AND DskNo='%s'
       </Sentence>
-      <Fields>BrNo|DskNo|</Fields>
+      <Fields>EfeId|DskNo|</Fields>
     </DynSentence>
     <DynSentence name="GetCrpInf">
       <Sentence>
@@ -2220,7 +2262,6 @@
       <Fields>ROOT.SUM.PID|ROOT.SUM.CUN|ROOT.SUM.EDD|ROOT.SUM.TLogNo|DskNo|</Fields>
      </DynSentence>
     <FlowCtrl>
-
       <Set>DLIP=@MSG.SIP</Set>
       <Exec func="PUB:ReadRecord">    <!--查询对应分行号 -->
         <Arg name="SqlCmd" value="QryInfCtl"/>
@@ -2230,21 +2271,24 @@
         <Set>RspMsg=没对应分行号</Set>
         <Return/>
       </If>
-
+      
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
       <Exec func="PUB:InitTransaction"/>    <!--交易初始化,预留-->
-
-      <Exec func="PUB:GetAppInfo"/>
-
+      
+     
+      <Exec func="PUB:GetAppInfo"/>   
+        
       <Set>DskNam=$FilNam</Set>
       <Set>TTxnCd=460222</Set>
 
       <!--取电子柜员号-->
-      <Set>TxnCnl=EFE</Set>       <!--取电子柜员号用-->
+      <Set>TxnCnl=EFA</Set>       <!--取电子柜员号用-->
       <Set>TxnObj=OFRTEFEA</Set>
       <Exec func="PUB:GetVirtualTeller">
-        <Arg name="TxnCnl" value="EFE"/>
+        <Arg name="TxnCnl" value="EFA"/>      
       </Exec>
-      <Set>TlrId=$TlrId</Set>
+      <Set>TlrId=EEFENR1</Set>
 
       <!--判断文件是否重复录入-->
       <Exec func="PUB:ReadRecord" error="IGNORE">
@@ -2267,7 +2311,11 @@
       </Exec>
 
       <!--设置个人协议检查标志-->
-      <Switch  expression="$BrNo">
+      <Switch  expression="$EfeId">
+      	<Case value="493999">
+      		<Set>@PARA.ChkPsn=1</Set>
+          <Break/>
+        </Case>
         <Case value="441999">
           <Break/>
         </Case>
@@ -2341,7 +2389,11 @@
           <!--485999揭阳支行-->
           <!--491999惠州分行-->
           <!--761999江门分行-->
-        <Switch  expression="$BrNo">
+        <Switch  expression="$EfeId">
+        	<Case value="493999">
+            <Set>EFERcv=EFE_RCV_493</Set>
+            <Break/>
+          </Case>
           <Case value="441999">
             <Set>EFERcv=EFE_RCV_441</Set>
             <Break/>
@@ -2431,9 +2483,9 @@
       <!--根据分行号取地区号-->
       <Exec func="PUB:CodeSwitching">
         <Arg name="DatSrc"  value="OPFCSW"/>
-        <Arg name="SourNam" value="BrNo"/>
+        <Arg name="SourNam" value="EfeId"/>
         <Arg name="DestNam" value="DstCod"/>
-        <Arg name="TblNam"  value="DL_BrNo2DstCod"/>
+        <Arg name="TblNam"  value="DL_EfeId2DstCod"/>
       </Exec>
       <!--设置唯一识别码-->
       <Exec func="PUB:GetPubSeqNoCircle">
@@ -2560,10 +2612,11 @@
       </If>
     
       
+<Set>AAA=$BrNo</Set>
       <!--入库成功和单位协议检查成功返回22报文-->
       <Set>RspCod=000000</Set>
       <Exec func="PUB:PutResponse"/>
-
+<Set>BBB=$BrNo</Set>
       
        <!--检查个人签约协议-->
       <If condition="@PARA.ChkPsn=1">
@@ -2637,7 +2690,7 @@
 
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DstAddr='%s'
+        SELECT BrNo,EfeId FROM efeinfctl WHERE DstAddr='%s'
       </Sentence>
       <Fields>StartAddr|</Fields>
     </DynSentence>
@@ -2652,7 +2705,9 @@
 
 
     <FlowCtrl>
-
+    	
+      <Set>AplCls=202</Set>
+      <Set>BusTyp=EFEA1</Set>
       <Exec func="PUB:InitTransaction"/>
 
       <Exec func="PUB:ReadRecord">    <!--查询对应分行号 -->
@@ -2709,9 +2764,9 @@
   <Transaction code="460225" desc="文件批量完成通知第三方">
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="GetCrpInf">
       <Sentence>
@@ -2748,7 +2803,7 @@
     </DynSentence>
     <DynSentence name="QryTxnHed">  <!--查询文件头信息-->
       <Sentence>
-        SELECT distinct BrNo,PID,CUN,EDD,WYSB,ActDat  FROM efebatinf  WHERE  DskNo='%s'
+        SELECT distinct BrNo,PID,CUN,EDD,WYSB,ActDat,EfeId  FROM efebatinf  WHERE  DskNo='%s'
       </Sentence>
       <Fields>DskNo|</Fields>
     </DynSentence>
@@ -2785,6 +2840,7 @@
       <Fields>DskNo|</Fields>
      </DynSentence>
     <FlowCtrl>
+    	
 
       <Set>DskNo=$LogNo</Set>
 
@@ -2813,7 +2869,7 @@
       </If>
 
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -2867,7 +2923,11 @@
           <!--485999揭阳支行-->
           <!--491999惠州分行-->
           <!--761999江门分行-->
-        <Switch  expression="$BrNo">
+        <Switch  expression="$EfeId">
+        	<Case value="493999">
+            <Set>EFESnd=EFE_SND_493</Set>
+            <Break/>
+          </Case>
           <Case value="441999">
             <Set>EFESnd=EFE_SND_441</Set>
             <Break/>
@@ -2936,7 +2996,7 @@
     </Attributes>
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        SELECT EfeId FROM efeinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
@@ -2948,18 +3008,19 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE BrNo='%s'
+       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
-      <Fields>Status|WdoDat|OprCod|DlTxt|BrNo|</Fields>
+      <Fields>Status|WdoDat|OprCod|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <Set>DLIP=@MSG.SIP</Set>
       <!--查询对应分行号 -->
       <Exec func="PUB:ReadRecord">
@@ -2981,7 +3042,7 @@
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
+        <Set>RspMsg=无$EfeId分行开工信息记录</Set>
         <Return/>
       </If>
       <If condition="$Status=1">
@@ -3010,7 +3071,7 @@
   <Transaction code="460291" desc="银电业务停工交易">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        SELECT EfeId FROM efeinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
@@ -3025,18 +3086,19 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE BrNo='%s'
+       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
-      <Fields>Status|WdoDat|OprCod|DlTxt|BrNo|</Fields>
+      <Fields>Status|WdoDat|OprCod|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <Set>DLIP=@MSG.SIP</Set>
       <!--查询对应分行号 -->
       <Exec func="PUB:ReadRecord">
@@ -3058,7 +3120,7 @@
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
+        <Set>RspMsg=无$EfeId分行开工信息记录</Set>
         <Return/>
       </If>
       <If condition="$Status=0">
@@ -3110,39 +3172,40 @@
       <Sentence>
         INSERT INTO efecusagt(BrNo,PAgtNo,CAgtNo,SBN,ECD,WDO,EDD,JFH,UsrNam,KKB,ActNo,
            ActNam,GPF,IdTyp,IdNo,
-           JLD,TXT,Status)
+           JLD,TXT,Status,EfeId)
         VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
                '%s','%s','%s','%s',
-               '%s','%s','0')
+               '%s','%s','0','%s')
       </Sentence>
       <Fields>
-        BrNo|PAgtNo|CAgtNo|SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|TActNo|TActNm|GPF|TIdTyp|TIdNo|JLD|TXT|
+        BrNo|PAgtNo|CAgtNo|SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|TActNo|TActNm|GPF|TIdTyp|TIdNo|JLD|TXT|EfeId
       </Fields>
     </DynSentence>
      <DynSentence name="UdpCusAgt">             <!--修改签约记录 -->
       <Sentence>
-        UPDATE efecusagt set BrNo ='%s',SBN='%s',ECD='%s',WDO  ='%s',EDD='%s',
+        UPDATE efecusagt set EfeId ='%s',SBN='%s',ECD='%s',WDO  ='%s',EDD='%s',
            JFH='%s',KKB='%s',ActNo='%s',KAT='%s',ActNam='%s',IdTyp='%s',
           IdNo='%s',JLD='%s',TXT='%s',UsrNam='%s'
           WHERE JFH='%s' and Status='0'
       </Sentence>
       <Fields>
-        BrNo|SBN|ECD|WDO|EDD|JFH|KKB|TActNo|ACT|TActNm|TIdTyp|TIdNo|JLD|TXT|UsrNam|JFH|
+        EfeId|SBN|ECD|WDO|EDD|JFH|KKB|TActNo|ACT|TActNm|TIdTyp|TIdNo|JLD|TXT|UsrNam|JFH|
       </Fields>
     </DynSentence>
     <DynSentence name="DelCusAgr">             <!--删除签约记录 -->
       <Sentence>
-        DELETE FROM efecusagt where brno='%s' and JFH='%s'
+        DELETE FROM efecusagt where EfeId='%s' and JFH='%s'
       </Sentence>
-      <Fields>BrNo|JFH|</Fields>
+      <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <DynSentence name="CclCusAgt">             <!--注销签约记录 -->
       <Sentence>
-        UPDATE efecusagt SET Status='1' WHERE brno='%s' AND JFH='%s' and Status='0'
+        UPDATE efecusagt SET Status='1' WHERE EfeId='%s' AND JFH='%s' and Status='0'
       </Sentence>
-      <Fields>BrNo|JFH|</Fields>
+      <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <Set>DLIP=@MSG.SIP</Set>
       <!--查询对应分行号 -->
       <Exec func="PUB:ReadRecord">
@@ -3163,7 +3226,7 @@
       <Set>TTxnCd=460231</Set>    <!--第三方交易码-->
       <Set>WTC=301</Set>          <!--委托节点代码-->
 
-      <Switch  expression="$BrNo">
+      <Switch  expression="$EfeId">
         <Case value="441999">
           <Set>NodNo=441800</Set>
           <Break/>
@@ -3200,14 +3263,18 @@
           <Set>NodNo=476800</Set>
           <Break/>
         </Case>
+        <Case value="493999">
+          <Set>NodNo=493800</Set>
+          <Break/>
+        </Case>
       </Switch>
       <!--取电子柜员号-->
-      <Set>TxnCnl=EFE</Set>       <!--取电子柜员号用-->
+      <Set>TxnCnl=EFA</Set>       <!--取电子柜员号用-->
       <Set>TxnObj=OFRTEFEA</Set>
       <Exec func="PUB:GetVirtualTeller">
-        <Arg name="TxnCnl" value="EFE"/>
+        <Arg name="TxnCnl" value="EFA"/>
       </Exec>
-      <Set>TlrId=$TlrId</Set>
+      <Set>TlrId=EEFENR1</Set>
 
       <Switch expression="$CHT">
         <!--新增-->
@@ -3355,6 +3422,7 @@
           <Set>MOB    =$MOB   </Set>
           <Set>TEL    =$TEL   </Set>
           <Set>TXT    =$TXT   </Set>
+          <Set>EFEID  =$EfeId   </Set>
           <!--插入库表-->
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="InsCusAgt"/>
@@ -3535,35 +3603,240 @@
   </Transaction>
 
 
-  <Transaction code="460250" desc="银行发起银行代扣代收电费对帐交易">
-    <!--生成文件-->
-    <!--
+ <Transaction code="460232" desc="银行发起用户协议对帐交易">
+    <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
+      <Sentence>
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
+      </Sentence>
+      <Fields>EfeId|</Fields>
+    </DynSentence>
+    <!--生成文件  取出表efecusagt-->
     <DynSentence name="GetTxnJnl">
       <Sentence>
-        SELECT  a.*,b.*
-        FROM afetxnjnl a,efebchkinf444 b
-        WHERE CAgtNo in ('4440000893')
-        AND a.ActDat='%s' AND (HTxnSt='S' OR HTxnSt='C') AND a.TLOGNO = b.TLOGNO
+        SELECT JFH,JLD,WDO,ActNo,ActNam,STATUS,GPF,TEL,MOB,TXT,YBZ,EML FROM efecusagt WHERE WDO='%s' AND EfeId='%s'
       </Sentence>
-      <Fields>TxnDat|</Fields>
+      <Fields>ClrDat|EfeId|</Fields>
     </DynSentence>
-    -->
-    <!--生成文件 总笔数-->
-    <!--DynSentence name="TotalDeal">
+     <DynSentence name="GetTotal">
       <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
-        FROM afetxnjnl
-        WHERE CAgtNo in ('4440000893')
-        AND ActDat='%s' AND (HTxnSt='S' OR HTxnSt='C') AND TTxnCd='20 '
+        SELECT count(*) as TotalDeal FROM efecusagt WHERE WDO='%s' AND EfeId='%s'
       </Sentence>
-      <Fields>TxnDat|</Fields>
-    </DynSentence-->
+      <Fields>ClrDat|EfeId|</Fields>
+    </DynSentence>
+   
+    <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
+    	 
+      <!--根据柜员号取BrNo-->
+      <Exec func="PUB:GetBranchNoByTeller"/>
+      <Exec func="PUB:InitTransaction"/>
+       <!--读取开工信息记录-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryInfCtl"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
+        <Return/>
+      </If>
+      <If condition="$Status=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=银电系统已在关闭状态</Set>
+        <Return/>
+      </If>
+      <Exec func="PUB:GetCommInf" error="IGNORE">
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=没对应分行IP设置</Set>
+        <Return/>
+      </If>
+      
+      <!-- 判断是否自动触发, add 20120502 -->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="ClrDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
+        <Set>ClrDat=GETDATETIME(YYYYMMDD)</Set>
+      </If>
+      
+      <Set>@MSG.OIP=$HstIp</Set>  <!--第三方IP-->
+      <Set>@MSG.OPT=$HstPrt</Set> <!--第三方PORT-->
+      <Set>LclDir=dat/efe</Set>
+      <Switch  expression="$EfeId">
+      	 <Case value="493999">
+          <Set>LclFil=STRCAT(301601004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="441999">
+          <Set>LclFil=STRCAT(301581004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="444999">
+          <Set>LclFil=STRCAT(301585004dz,$ClrDat,.txt)</Set>  <!--设置文件名 301交通银行代号(3位) 5850珠海地区代码（4位）03对帐文件类型(2 位 )-->
+          <Break/>
+        </Case>
+        <Case value="446999">
+          <Set>LclFil=STRCAT(301588004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="445999">
+          <Set>LclFil=STRCAT(301586004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="483999">
+          <Set>LclFil=STRCAT(301602004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="484999">
+          <Set>LclFil=STRCAT(301603004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="485999">
+          <Set>LclFil=STRCAT(301586504dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="491999">
+          <Set>LclFil=STRCAT(301595004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Case value="761999">
+          <Set>LclFil=STRCAT(301589004dz,$ClrDat,.txt)</Set>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>LclFil=STRCAT(301581004dz,$ClrDat,.txt)</Set>
+        </Default>
+      </Switch>
+
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="GetTotal"/>
+      </Exec>
+      <Set>CTC=DELBOTHSPACE($TotalDeal)</Set>
+      <Set>DTN=DELBOTHSPACE($TotalDeal)</Set>
+      
+      
+      
+      
+      <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
+        <Arg name="SqlName" value="GetTxnJnl"/>
+        <Arg name="FormatName" value="EFE_XY"/>
+        <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
+        <Arg name="TableName" value="efecusagt"/>
+      </Exec>
+        <Switch  expression="$EfeId">
+        	<Case value="493999">
+            <Set>EFESnd=EFE_SND_493</Set>
+            <Break/>
+          </Case>
+          <Case value="441999">
+            <Set>EFESnd=EFE_SND_441</Set>
+            <Break/>
+          </Case>
+          <Case value="444999">
+          	<Set>EFESnd=EFE_SND_444</Set>
+            <Break/>
+          </Case>
+          <Case value="446999">
+          	<Set>EFESnd=EFE_SND_446</Set>
+            <Break/>
+          </Case>
+          <Case value="445999">
+          	<Set>EFESnd=EFE_SND_445</Set>
+            <Break/>
+          </Case>
+          <Case value="483999">
+          	<Set>EFESnd=EFE_SND_483</Set>
+            <Break/>
+          </Case>
+          <Case value="484999">
+          	<Set>EFESnd=EFE_SND_484</Set>
+            <Break/>
+          </Case>
+          <Case value="485999">
+          	<Set>EFESnd=EFE_SND_485</Set>
+            <Break/>
+          </Case>
+          <Case value="491999">
+          	<Set>EFESnd=EFE_SND_491</Set>
+            <Break/>
+          </Case>
+          <Case value="761999">
+          	<Set>EFESnd=EFE_SND_761</Set>
+            <Break/>
+          </Case>
+          <Default>
+            <Set>EFESnd=EFE_SND_441</Set>
+          </Default>
+        </Switch>
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="$EFESnd"/>
+      </Exec>
+      <Set>MsgInf1=STRCAT(向供电方发送对账文件成功)</Set>
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			<Set>RspMsg=交易成功!</Set>      
+      
+      
+      <Exec func="PUB:GetLogNo"/>
+      
+      <Exec func="PUB:PutResponse"/> <!--返回前端-->
+      
+      <Set>SndTim=GETDATETIME()</Set>
+     
+      <Set>WDO=$ClrDat</Set>
+      <Set>FileName=$LclFil</Set>
+      <Set>recordNum=$DTN</Set>
+
+      <Exec func="PUB:CallThirdOther">  <!--通知供电方-->
+        <Arg name="HTxnCd" value="460232"/>
+        <Arg name="ObjSvr" value="STHDEFEA"/>
+      </Exec>
+      <If condition="~RetCod=-1">
+        <Set>MsgTyp=E</Set>
+        <Set>TRspCd=99</Set>
+        <Set>RtnMsg=对账交易超时</Set> 
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=$RtnMsg</Set>
+        
+        <If condition="~RetCod=-1">
+          <Exec func="PUB:RollbackWork" error="IGNORE" />
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=数据库处理失败!</Set>
+        </If>
+        <Return/>
+      </If>
+      <If condition="$RspCod=000000">
+        <Set>MsgTyp=N</Set>
+      </If>
+      <Else>
+        <Exec func="PUB:RollbackWork" error="IGNORE" />
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=$RtnMsg</Set>
+      </Else>    
+     
+      <If condition="~RetCod=-1">
+        <Exec func="PUB:RollbackWork" error="IGNORE" />
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=数据库处理失败!</Set>
+      </If>
+
+    </FlowCtrl>
+
+  </Transaction>
+
+  <Transaction code="460250" desc="银行发起银行代扣代收电费对帐交易">
+    
 
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE BrNo='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields>BrNo|</Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
     <!--生成文件  只统计主机成功状态的-->
     <DynSentence name="GetTxnJnl">
@@ -3571,7 +3844,7 @@
         SELECT  a.*,b.*,c.*
         FROM afetxnjnl a,efechkinf b,efechkdtl c
         WHERE a.CAgtNo = '%s'
-        AND a.ActDat='%s' AND HTxnSt='S' AND a.TLOGNO = b.TLOGNO AND a.BrNo=b.Brno AND a.LOGNO=b.LOGNO
+        AND a.ActDat='%s' AND TxnSts='S' AND a.TLOGNO = b.TLOGNO AND a.BrNo=b.Brno AND a.LOGNO=b.LOGNO
         AND b.TLOGNO = c.TLOGNO AND b.BrNo=c.Brno AND b.LOGNO=c.LOGNO
       </Sentence>
       <Fields>CAgtNo|TxnDat|</Fields>
@@ -3582,21 +3855,11 @@
         SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
         FROM afetxnjnl
         WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod in ('460205','460220')
+        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460205','460220')
       </Sentence>
       <Fields>CAgtNo|TxnDat|</Fields>
     </DynSentence>
 
-     <!--生成文件 当日日抹帐-->
-    <!--DynSentence name="PayCancDeal">
-      <Sentence>
-        SELECT Count(*) PayCancDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) PayCancBill
-        FROM afetxnjnl
-        WHERE CAgtNo in ('4440000893')
-        AND ActDat='%s' AND HTxnSt='C' AND TTxnCd='20 '
-      </Sentence>
-      <Fields>TxnDat|</Fields>
-    </DynSentence-->
 
     <!--生成文件 单日单笔代扣成功-->
     <DynSentence name="PaySuccDeal">
@@ -3604,33 +3867,31 @@
         SELECT Count(*) PaySuccDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) PaySuccBill
         FROM afetxnjnl
         WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND HTxnSt='S' AND TxnCod in ('460205','460220')
+        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460205','460220')
       </Sentence>
       <Fields>CAgtNo|TxnDat|</Fields>
     </DynSentence>
     <!--插入对账记录-->
     <DynSentence name="InsChkRec">
       <Sentence>
-         INSERT INTO efechkrec values('%s','%s','%s','%s','%s',' ',' ')
+         INSERT INTO efechkrec values('%s','%s','%s','%s','%s',' ',' ','%s')
       </Sentence>
-      <Fields>BrNo|ActDat|SndTim|LogNo|LclFil|</Fields>
+      <Fields>BrNo|ActDat|SndTim|LogNo|LclFil|EfeId|</Fields>
     </DynSentence>
     <!--修改对账记录-->
     <DynSentence name="UpdChkRec">
       <Sentence>
-         UPDATE efechkrec SET TRspCd='%s',RtnMsg='%s' WHERE BrNo='%s' AND LogNo='%s'
+         UPDATE efechkrec SET TRspCd='%s',RtnMsg='%s' WHERE EfeId='%s' AND LogNo='%s'
       </Sentence>
-      <Fields>TRspCd|RtnMsg|BrNo|LogNo|</Fields>
+      <Fields>TRspCd|RtnMsg|EfeId|LogNo|</Fields>
     </DynSentence>
     
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <Exec func="PUB:InitTransaction"/>
-      <!--Set>TxnDat=CALCDATE($ActDat,-,d,1)</Set-->
-      <!--
-      <Set>TxnDat=CALCDATE($WDO,-,d,1)</Set>
-      -->
+     
 
        <!--读取开工信息记录-->
       <Exec func="PUB:ReadRecord">
@@ -3647,9 +3908,16 @@
         <Return/>
       </If>
 
-
+       <!-- 判断是否自动触发, add 20120502 -->
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="WDO"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
+        <Set>WDO=GETDATETIME(YYYYMMDD)</Set>
+      </If>
+      
       <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$BrNo)"/>
+        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
       </Exec>
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
@@ -3661,52 +3929,7 @@
       <Set>@MSG.OPT=$HstPrt</Set> <!--第三方PORT-->
 
       <Set>TxnDat=$WDO</Set>
-      <!--
-      <Switch  expression="$BrNo">
-        <Case value="441999">
-          <Set>AppNm=GZ_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="444999">
-          <Set>AppNm=ZH_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="446999">
-          <Set>AppNm=FS_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="445999">
-          <Set>AppNm=ST_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="483999">
-          <Set>AppNm=DG_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="484999">
-          <Set>AppNm=ZS_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="485999">
-          <Set>AppNm=JY_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="491999">
-          <Set>AppNm=HZ_EFE1</Set>
-          <Break/>
-        </Case>
-        <Case value="4761999">
-          <Set>AppNm="JM_EFE1</Set>
-          <Break/>
-        </Case>
-      </Switch>
-      <Exec func="PUB:CodeSwitching">
-        <Arg name="DatSrc"  value="OPFCSW"/>
-        <Arg name="SourNam" value="AppNm"/>
-        <Arg name="DestNam" value="CAgtNo"/>
-        <Arg name="TblNam"  value="DL_AppNm"/>
-      </Exec>
-      -->
+      
       <Set>LclDir=dat/efe</Set>
         <!--441999广东省分行-->
         <!--444999珠海分行-->
@@ -3717,7 +3940,11 @@
         <!--485999揭阳支行-->
         <!--491999惠州分行-->
         <!--761999江门分行-->
-      <Switch  expression="$BrNo">
+      <Switch  expression="$EfeId">
+      	 <Case value="493999">
+          <Set>LclFil=STRCAT(301601003dz,$TxnDat,.txt)</Set>
+          <Break/>
+        </Case>
         <Case value="441999">
           <Set>LclFil=STRCAT(301581003dz,$TxnDat,.txt)</Set>
           <Break/>
@@ -3743,7 +3970,7 @@
           <Break/>
         </Case>
         <Case value="485999">
-          <Set>LclFil=STRCAT(301520003dz,$TxnDat,.txt)</Set>
+          <Set>LclFil=STRCAT(301586503dz,$TxnDat,.txt)</Set>
           <Break/>
         </Case>
         <Case value="491999">
@@ -3798,7 +4025,11 @@
           <!--485999揭阳支行-->
           <!--491999惠州分行-->
           <!--761999江门分行-->
-        <Switch  expression="$BrNo">
+        <Switch  expression="$EfeId">
+        	<Case value="493999">
+            <Set>EFESnd=EFE_SND_493</Set>
+            <Break/>
+          </Case>
           <Case value="441999">
             <Set>EFESnd=EFE_SND_441</Set>
             <Break/>
@@ -3915,7 +4146,8 @@
 
   <Transaction code="460251" desc="电力对公缴费记账回执打印">
 
-		<FlowCtrl>      
+		<FlowCtrl>
+			 <Quote name="GetEfeId"/>      
       <!--If condition="INTCMP($EndDat,5,$ActDat)"> 
         <Set>RspCod=481599</Set>
         <Set>RspMsg=结束日期大于或者等于会计日期</Set>
@@ -3993,7 +4225,7 @@
 			  <Set>FilNam=STRCAT(电力对公缴费记账回执,$BgnDat,-,$EndDat,.rpt)</Set>
 			  <Set>FmtFil=etc/EFE02_RPT.XML</Set><!--根据单位编号取得相应的清单格式名称-->
 			  <Exec func="PUB:GenerateReport">
-			  	<Arg name="ObjFil" value="STRCAT(dat/term/send/,$FilNam)"/>
+			  	<Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
 			  	<Arg name="FmtFil" value="$FmtFil"/>
 			  	<Arg name="Para1"  value="$CAgtNo"/>
 			  	<Arg name="Para2"  value="$BgnDat"/>
@@ -4020,7 +4252,7 @@
 			  <Set>FilNam=STRCAT(电力对公缴费记账回执,$BgnDat,-,$EndDat,.rpt)</Set>
 			  <Set>FmtFil=etc/EFE03_RPT.XML</Set><!--根据单位编号取得相应的清单格式名称-->
 			  <Exec func="PUB:GenerateReport">
-			  	<Arg name="ObjFil" value="STRCAT(dat/term/send/,$FilNam)"/>
+			  	<Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
 			  	<Arg name="FmtFil" value="$FmtFil"/>
 			  	<Arg name="Para1"  value="$CAgtNo"/>
 			  	<Arg name="Para2"  value="$BgnDat"/>
@@ -4044,31 +4276,49 @@
 			  	<Arg name="SrcTlr" value="Billlp2"/><!-- 消息来源柜员-->
 			  </Exec>
       </Else>
+      
+      <Set>LclFil=$FilNam</Set>   
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="EFESnd493181dg"/>
+      </Exec>
 
 		</FlowCtrl>
 	</Transaction>
 
-  <Transaction code="4602XX" desc="电力财务接口文件">
+  <Transaction code="460240" desc="银行达账电费明细文件">
     <DynSentence name="QryCrpAgr">    <!--检查单位协议 -->
       <Sentence>
          select BBusTyp,TActNo  from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'
       </Sentence>
       <Fields>BrNo|CAgtNo|</Fields>
     </DynSentence>
-    <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
+   <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT BrNo FROM efeinfctl
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
       </Sentence>
-      <Fields></Fields>
+      <Fields>EfeId|</Fields>
     </DynSentence>
-    <DynSentence name="QryBatInf">             <!--查询批扣表 -->
+    <DynSentence name="QryBatInf">             <!--查询表 -->
       <Sentence>
-        SELECT  FROM efebatinf  WHERE Brno='%s' AND ActDat='%s' AND Status='0'
+       SELECT  a.*,b.*,c.*
+        FROM afetxnjnl a,efechkinf b,efechkdtl c
+        WHERE a.CAgtNo = '%s'
+        AND a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and HTxnSt='S' AND a.LOGNO=b.LOGNO
+         AND b.LOGNO=c.LOGNO
       </Sentence>
-      <Fields>BrNo|QryDat|</Fields>
+      <Fields>CAgtNo|QryDat1|QryDat2|</Fields>
     </DynSentence>
-    <!--打印格式-->
-    <DynSentence name="PrtFmtHed">  <!--头记录-->
+     <DynSentence name="QryBatInf2">             <!--查询表 -->
+      <Sentence>
+       SELECT  a.*,b.*
+        FROM afetxnjnl a,efebatinf b
+        WHERE a.CAgtNo='%s'
+        AND a.ActDat &gt;='%s' and a.ActDat &lt;='%s' and HTxnSt='S' AND a.LOGNO=b.LOGNO
+      </Sentence>
+      <Fields>CAgtNo|QryDat1|QryDat2|</Fields>
+    </DynSentence>
+    <!--
+    <DynSentence name="PrtFmtHed">  
       <Sentence>
          &lt;?xml version=&apos;1.0&apos; encoding=&apos;GBK&apos;?&gt;
          &lt;BANKDATASET&gt;
@@ -4076,23 +4326,49 @@
       <Fields></Fields>
     </DynSentence>
 
-    <DynSentence name="PrtFmtRec">  <!--记录内容-->
+    <DynSentence name="PrtFmtRec">  
       <Sentence>
-        <RECORD id='1'><YHZH>445012012620194002399</YHZH><YHDM>301</YHDM><JZSJ>2010-06-24</JZSJ><JZJE>         117.80</JZJE><WYSB>301050010062400000000000000138</WYSB><HZBZ>0</HZBZ><DFZH>445900146424000021202</DFZH><DFZHM>谢大妹</DFZHM><FZSM>电力批量代缴</FZSM><YDHH>0080012313</YDHH><YDHM></YDHM><SKRDM>012</SKRDM><SKRMC></SKRMC></RECORD>
-        <RECORD id='%s'><YHZH>%s</YHZH><YHDM>301</YHDM><JZSJ>%s</JZSJ><JZJE>%s</JZJE><WYSB>%s</WYSB><HZBZ>0</HZBZ><DFZH>%s</DFZH><DFZHM>%s</DFZHM><FZSM>%s</FZSM><YDHH>%s</YDHH><YDHM>%s</YDHM><SKRDM>%s</SKRDM><SKRMC>%s</SKRMC></RECORD>
+       &lt;RECORD id='%s'&gt;&lt;YHZH&gt;%s&lt;/YHZH&gt;&lt;YHDM&gt;301&lt;/YHDM&gt;&lt;JZSJ&gt;%s&lt;/JZSJ&gt;&lt;JZJE&gt;%s&lt;/JZJE&gt;&lt;WYSB&gt;%s&lt;/WYSB&gt;&lt;HZBZ&gt;0&lt;/HZBZ&gt;&lt;DFZH&gt;%s&lt;/DFZH&gt;&lt;DFZHM&gt;%s&lt;/DFZHM&gt;&lt;FZSM&gt;交通银行&lt;/FZSM&gt;&lt;YDHH&gt;%s&lt;/YDHH&gt;&lt;YDHM&gt;用电户名&lt;/YDHM&gt;&lt;SKRDM&gt;%s&lt;/SKRDM&gt;&lt;SKRMC&gt;收款人名称&lt;/SKRMC&gt;&lt;/RECORD&gt;
       </Sentence>
       <Fields>RecId|TActNo|ActDat|TxnAmt|WYSB|ActNo|ActNam|JFH|SKRDM|</Fields>
     </DynSentence>
 
-    <DynSentence name="PrtFmtEnd">  <!--尾记录-->
+    <DynSentence name="PrtFmtEnd">  
       <Sentence>
           &lt;/BANKDATASET&gt;
       </Sentence>
       <Fields></Fields>
     </DynSentence>
+    -->
+     <DynSentence name="PrtFmtHed">  
+      <Sentence>
+                           %s银行达帐电费明细\n
+     到账日期|银行编码|金额|账号|账号名称|摘要|唯一标识码|交易码|前置流水号\n
+      </Sentence>
+      <Fields>EfeId</Fields>
+    </DynSentence>
+
+    <DynSentence name="PrtFmtRec">  
+      <Sentence>
+        %s|%s|301|%s|%s|%s|%s|%s|%s|%s \n
+      </Sentence>
+      <Fields>RecId|QryDat1|TxnAmt|ActNo|ActNam|ActNam|WYSB|TxnCod|LogNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="PrtFmtEnd">  
+      <Sentence>
+          &lt;结束&gt;
+      </Sentence>
+      <Fields></Fields>
+    </DynSentence>
 
     <FlowCtrl>
+    	
       <Set>RecId=1</Set>
+      
+      
+       <!--根据柜员号取BrNo-->
+      <Exec func="PUB:GetBranchNoByTeller"/>
       <Exec func="PUB:InitTransaction"/>      <!--交易初始化-->
       <Exec func="PUB:OpenCursor">
         <Arg name="SqlCmd"     value="QryInfCtl"/>
@@ -4126,7 +4402,11 @@
          <!--485999揭阳支行-->
          <!--491999惠州分行-->
          <!--761999江门分行-->
-        <Switch  expression="$BrNo">
+         <Switch  expression="$EfeId">
+        	 <Case value="493999">
+            <Set>AppNm=QY_EFE1</Set>
+            <Break/>
+          </Case>
           <Case value="441999">
             <Set>AppNm=GZ_EFE1</Set>
             <Break/>
@@ -4163,7 +4443,8 @@
             <Set>AppNm="JM_EFE1</Set>
             <Break/>
           </Case>
-        </Switch>
+        </Switch> 
+        
         <Exec func="PUB:CodeSwitching">
           <Arg name="DatSrc"  value="OPFCSW"/>
           <Arg name="SourNam" value="AppNm"/>
@@ -4178,7 +4459,6 @@
           <Set>RspMsg=单位协议不存在</Set>
           <Return/>
         </If>
-        <Set>QryDat=CALCDATE($ActDat,-,d,1)</Set>
           <!--441999广东省分行-->
           <!--444999珠海分行-->
           <!--446999佛山分行-->
@@ -4188,63 +4468,66 @@
           <!--485999揭阳支行-->
           <!--491999惠州分行-->
           <!--761999江门分行-->
-        <Switch  expression="$BrNo">
+        <Switch  expression="$EfeId">
+        	<Case value="493999">
+            <Set>FilNam=STRCAT(EFE493999达账电费明细,$QryDat1,$QryDat2,.txt)</Set>
+            <Break/>
+          </Case>
           <Case value="441999">
-            <Set>FilNam=STRCAT(033015810,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE441999达账电费明细,$QryDat1,$QryDat2,.txt)</Set>
             <Break/>
           </Case>
           <Case value="444999">
-            <Set>FilNam=STRCAT(033015850,$QryDat,.xml)</Set>  <!--设置文件名 301交通银行代号(3位) 5850珠海地区代码（4位）03对帐文件类型(2 位 )-->
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE444999达账电费明细,$QryDat,.txt)</Set>  <!--设置文件名 301交通银行代号(3位) 5850珠海地区代码（4位）03对帐文件类型(2 位 )-->
+            
             <Break/>
           </Case>
           <Case value="446999">
-            <Set>FilNam=STRCAT(033015880,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE446999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Case value="445999">
-            <Set>FilNam=STRCAT(033015860,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE445999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Case value="483999">
-            <Set>FilNam=STRCAT(033016020,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE483999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Case value="484999">
-            <Set>FilNam=STRCAT(033016030,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE484999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Case value="485999">
-            <Set>FilNam=STRCAT(03301,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE485999达账电费明细,$QryDat,.txt)</Set>
+           
             <Break/>
           </Case>
           <Case value="491999">
-            <Set>FilNam=STRCAT(033015950,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE491999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Case value="761999">
-            <Set>FilNam=STRCAT(033015890,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE761999达账电费明细,$QryDat,.txt)</Set>
+            
             <Break/>
           </Case>
           <Default>
-            <Set>FilNam=STRCAT(033015810,$QryDat,.xml)</Set>
-            <Set>SKRDM=</Set>
+            <Set>FilNam=STRCAT(EFE441999达账电费明细,$QryDat,.txt)</Set>
+            
           </Default>
         </Switch>
         <Exec func="PUB:WriteFile">  <!--头记录-->
           <Arg name="FileName"   value="STRCAT(dat/efe/,$FilNam)"/>
-          <Arg name="OpenMode"   value="a+"/>
+          <Arg name="OpenMode"   value="w+"/>
           <Arg name="PRNFMT"     value="PrtFmtHed"/>
         </Exec>
-        <!--提取明细记录-->
+        <!--提取460205，460220记录-->
         <Exec func="PUB:OpenCursor">
           <Arg name="SqlCmd"     value="QryBatInf"/>
           <Arg name="CursorName" value="CurBatInf"/>
@@ -4268,7 +4551,7 @@
             <Return/>
           </ElseIf>
           <Switch expression="$TxnCod">
-            <Case value="460222">
+            <Case value="460200">
               <Set>FZSM="电费批量代扣"</Set>
               <Break/>
             </Case>
@@ -4286,144 +4569,86 @@
             <Arg name="OpenMode"   value="a+"/>
             <Arg name="PRNFMT"     value="PrtFmtRec"/>
           </Exec>
-          <Set>RecId=ADD(RecId,1)</Set>
-        </While>
+        <Set>RecId=$RecId+1</Set> 
+         </While>
+       <!--提取批扣记录-->
+        <Exec func="PUB:OpenCursor">
+          <Arg name="SqlCmd"     value="QryBatInf2"/>
+          <Arg name="CursorName" value="CurBatInf2"/>
+        </Exec>
+        <While>
+          <Exec func="PUB:FetchCursor" error="IGNORE">
+            <Arg name="CursorName" value="CurBatInf2"/>
+          </Exec>
+          <If condition="~RetCod=100">
+            <Exec func="PUB:CloseCursor">
+              <Arg name="CursorName" value="CurBatInf2"/>
+            </Exec>
+            <Break/>
+          </If>
+          <ElseIf condition="~RetCod=-1">
+            <Exec func="PUB:CloseCursor">
+              <Arg name="CursorName" value="CurBatInf2"/>
+            </Exec>
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=数据库操作错误</Set>
+            <Return/>
+          </ElseIf>
+          <Switch expression="$TxnCod">
+            <Case value="460200">
+              <Set>FZSM="电费批量代扣"</Set>
+              <Break/>
+            </Case>
+            <Case value="460220">
+              <Set>FZSM="电费单笔代扣"</Set>
+              <Break/>
+            </Case>
+            <Case value="460205">
+              <Set>FZSM="电费单笔代收"</Set>
+              <Break/>
+            </Case>
+          </Switch>
+          <Exec func="PUB:WriteFile">  <!--明细记录-->
+            <Arg name="FileName"   value="STRCAT(dat/efe/,$FilNam)"/>
+            <Arg name="OpenMode"   value="a+"/>
+            <Arg name="PRNFMT"     value="PrtFmtRec"/>
+          </Exec>
+        <Set>RecId=$RecId+1</Set>
+        </While> 
+       
         <Exec func="PUB:WriteFile">  <!--尾记录-->
           <Arg name="FileName"   value="STRCAT(dat/efe/,$FilNam)"/>
           <Arg name="OpenMode"   value="a+"/>
           <Arg name="PRNFMT"     value="PrtFmtEnd"/>
         </Exec>
       </While>
-        <!--441999广东省分行-->
-        <!--444999珠海分行-->
-        <!--446999佛山分行-->
-        <!--445999汕头分行-->
-        <!--483999东莞分行-->
-        <!--484999中山分行-->
-        <!--485999揭阳支行-->
-        <!--491999惠州分行-->
-        <!--761999江门分行-->
-      <Switch  expression="$BrNo">
-        <Case value="441999">
-          <Set>EFESnd=EFE_SND_441</Set>
-          <Break/>
-        </Case>
-        <Case value="444999">
-          <Break/>
-        </Case>
-        <Case value="446999">
-          <Break/>
-        </Case>
-        <Case value="445999">
-          <Break/>
-        </Case>
-        <Case value="483999">
-          <Break/>
-        </Case>
-        <Case value="484999">
-          <Break/>
-        </Case>
-        <Case value="485999">
-          <Break/>
-        </Case>
-        <Case value="491999">
-          <Break/>
-        </Case>
-        <Case value="4761999">
-          <Break/>
-        </Case>
-        <Case value="441999">
-          <Break/>
-        </Case>
-        <Default>
-          <Set>EFESnd=EFE_SND_441</Set>
-        </Default>
-      </Switch>
+        
+      <Set>LclFil=$FilNam</Set>   
       <Exec func="PUB:FtpPut">
-        <Arg name="FtpId" value="$EFESnd"/>
+        <Arg name="FtpId" value="EFESnd493181cw"/>
       </Exec>
+      
 
     </FlowCtrl>
   </Transaction>
 
   <Transaction code="460260" desc="广东电力电费清算报表打印">
-    <DynSentence name="QryJnlInfo">            <!--查询天讯、彩票、保险成功流水信息 -->
+    <DynSentence name="QryJnlInfo">            <!--流水信息 -->
       <Sentence>
-        SELECT LogNo FROM afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and HTxnSt IN ('S','T','U') order by LogNo asc
+        SELECT LogNo FROM afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat &gt;='%s' and ActDat &lt;='%s' order by LogNo asc
       </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
+      <Fields>BrNo|CAgtNo|TxnDat1|TxnDat2|</Fields>
     </DynSentence>
-    <DynSentence name="QryJnlInfo2">           <!--查询天讯、彩票、保险可疑流水信息 -->
-      <Sentence>
-        SELECT LogNo FROM afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and HTxnSt='T' order by LogNo asc
-      </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="QryJnlInfo1">            <!--查询车船税未对帐流水信息 -->
-      <Sentence>
-        SELECT Count(*) cnt FROM afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst  IN ('S','T') and ChkFlg='0'
-      </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="CCSupdatesucess">            <!--更新车船税第三方交易成功状态 -->
-      <Sentence>
-        UPDATE afetxnjnl SET TTxnst='S' WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and ThdChk='1'
-      </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="CCSupdatefail">            <!--更新车船税第三方交易失败状态 -->
-      <Sentence>
-        UPDATE afetxnjnl SET TTxnst='F',ThdChk='1' WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and ThdChk='0'
-      </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="CCSsum">            <!--车船税交易失败记录数 -->
-      <Sentence>
-        select count(*) as sumcnt from afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat='%s' and ThdChk='0'
-      </Sentence>
-      <Fields>BrNo|CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="YCTtk">
-      <Sentence>
-        select logno from afetxnjnl where CAgtNo='%s' AND ActDat='%s' and ChkFlg='0' and TTXNCD='482155'
-      </Sentence>
-      <Fields>CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <DynSentence name="YCTtkquery">
-      <Sentence>
-        select ActNo,TxnAmt,TCusNm,NodTrc,THDKEY,RsFld3,ActDat,TCUSID from afetxnjnl where CAgtNo='%s' AND ActDat='%s' and logno='%s'
-      </Sentence>
-      <Fields>CAgtNo|TxnDat|logno|</Fields>
-    </DynSentence>
+    
     <DynSentence name="Updatquery">
       <Sentence>
         update afetxnjnl set ChkFlg='1' where CAgtNo='%s' AND ActDat='%s' and logno='%s'
       </Sentence>
       <Fields>CAgtNo|TxnDat|logno|</Fields>
     </DynSentence>
-    <DynSentence name="YTKinsert"><!--粤通卡报表-->
-      <Sentence>
-      insert into ytk_yct (select FTxnTm,ActDat,CAgtNo,ActNo,TCUSID,LogNo,TckNo,RsFld1,RSFLD2,TxnAmt,RsFld3,ThdChk,
-      case when ThdChk='S' then 'A' else 'B' end from afetxnjnl where ActDat ='%s' and CAgtNo='%s' and HTxnSt='S' and
-      ThdChk IN ('G','F','D','E','Y','S') and HRspcd='SC0000')
-      </Sentence>
-      <Fields>TxnDat|CAgtNo|</Fields>
-    </DynSentence>
-    <DynSentence name="YCTinsert"><!--羊城通月卡报表-->
-      <Sentence>
-      insert into ytk_yct (select FTxnTm,ActDat,CAgtNo,ActNo,TCUSID,LogNo,TckNo,' ',' ',TxnAmt,' ',ThdChk,
-      case when ThdChk='Y' then 'A' else 'B' end from afetxnjnl where ActDat ='%s' and CAgtNo='%s' and HTxnSt='S' and
-      ThdChk IN ('Y','B') and HRspcd='SC0000')
-      </Sentence>
-      <Fields>TxnDat|CAgtNo|</Fields>
-    </DynSentence>
-    <DynSentence name="YTK_YCTdelete"><!--粤通卡羊城通月卡报表-->
-      <Sentence>
-       delete from ytk_yct where CAgtNo='%s'
-      </Sentence>
-      <Fields>CAgtNo|</Fields>
-    </DynSentence>
+  
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -4432,13 +4657,9 @@
       <Exec func="PUB:GetLogNo"/>
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
-
-
-    <If condition="AND(IS_NOEQUAL_STRING($CAgtNo,4410000577),IS_NOEQUAL_STRING($CAgtNo,4410000960),IS_NOEQUAL_STRING($CAgtNo,4410000971))">            <!--彩票/车船税业务除外-->
       <Exec func="PUB:ReadRecord">  <!--查询 -->
         <Arg name="SqlCmd" value="QryJnlInfo"/>
       </Exec>
-    </If>
      <Switch expression="~RetCod">
          <Case value="-1">
             <Set>MsgTyp=E</Set>
@@ -4456,43 +4677,29 @@
             <Return/>
          </Default>
     </Switch>
-
-      <!--
-      <If condition="IS_NOEQUAL_STRING(SUBSTR($NodNo,4,3),800)">
-           <Set>MsgTyp=E</Set>
-           <Set>RspCod=360001</Set>
-           <Set>RspMsg=本网点无权打印该报表！</Set>
-           <Return/>
-      </If>
-      -->
-    <If condition="$PrtFlg=1">
-
-    <!--Exec func="PUB:ReadRecord" error="IGNORE">
-        <Arg name="SqlCmd" value="QryJnlInfo2"/>
-    </Exec>
-     <Switch expression="~RetCod">
-        <Case value="0">
-            <Set>MsgTyp=E</Set>
-            <Set>RspCod=360002</Set>
-            <Set>RspMsg=有可疑数据,请先打印可疑报表</Set>
-            <Return/>
-          </Case>
-          <Case value="-2">
-            <Break/>
-          </Case>
-       <Default>
-            <Break/>
-         </Default>
-    </Switch-->
-      <!--成功报表-->
-      <Set>FmtFil=etc/EFE_RPT_CFG.XML</Set>
-      <Set>FilNam=STRCAT(EFE,$BrNo,$TxnDat,GETDATETIME(HHMISS))</Set>
+     <If condition="$PrtFlg=1"><!--批扣成功报表 -->
+        <Set>FmtFil=etc/EFE_RPT_CFG.XML</Set>
+        <Set>FilNam=STRCAT(EFE批扣成功报表,$EfeId,$TxnDat1,$TxnDat2,GETDATETIME(HHMISS))</Set>
+    </If>
+    <If condition="$PrtFlg=2"><!--单笔成功报表-->
+        <Set>FmtFil=etc/EFE_RPT_CFG2.XML</Set>
+        <Set>FilNam=STRCAT(EFE单笔成功报表,$EfeId,$TxnDat1,$TxnDat2,GETDATETIME(HHMISS))</Set>
+    </If>
+     <If condition="$PrtFlg=3"><!--批扣可疑报表 -->
+        <Set>FmtFil=etc/EFE_RPT_CFG3.XML</Set>
+        <Set>FilNam=STRCAT(EFE批扣可疑报表,$EfeId,$TxnDat1,$TxnDat2,GETDATETIME(HHMISS))</Set>
+    </If>
+    <If condition="$PrtFlg=4"><!--单笔可疑报表-->
+        <Set>FmtFil=etc/EFE_RPT_CFG4.XML</Set>
+        <Set>FilNam=STRCAT(EFE单笔可疑报表,$EfeId,$TxnDat1,$TxnDat2,GETDATETIME(HHMISS))</Set>
+    </If>
       <Exec func="EXT:GenerateReport">
         <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
         <Arg name="FmtFil" value="$FmtFil"/>
         <Arg name="BrNo"   value="$BrNo"/>
         <Arg name="CAgtNo" value="$CAgtNo"/>
-        <Arg name="TxnDat" value="$TxnDat"/>
+        <Arg name="TxnDat1" value="$TxnDat1"/>
+        <Arg name="TxnDat2" value="$TxnDat2"/>
         <Arg name="PNodNo"  value="$NodNo"/>
         <Arg name="PTlrId"  value="$TlrId"/>
       </Exec>
@@ -4505,108 +4712,15 @@
         <Arg name="Summary" value="$Summary"/>
         <Arg name="ObjTlr"  value="$TlrId"/>
       </Exec>
-    </If>
-    <ElseIf condition="$PrtFlg=2">
-      <!--车船税和银旅通无可疑报表-->
-      <If condition="OR(IS_EQUAL_STRING($CAgtNo,4410000755),IS_EQUAL_STRING($CAgtNo,4410000960))">
-          <Set>MsgTyp=E</Set>
-           <Set>RspCod=EFE999</Set>
-           <Set>RspMsg=无此交易</Set>
-           <Return/>
-      </If>
-      <!--天讯可疑报表-->
-      <Set>FmtFil=etc/LSHA5_RPT_441999.XML</Set>
-      <Set>FilNam=STRCAT(LSHA05,$TxnDat,GETDATETIME(HHMISS))</Set>
-      <Exec func="EXT:GenerateReport">
-        <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
-        <Arg name="FmtFil" value="$FmtFil"/>
-        <Arg name="CAgtNo" value="$CAgtNo"/>
-        <Arg name="TxnDat" value="$TxnDat"/>
-        <Arg name="PNodNo"  value="$NodNo"/>
-        <Arg name="PTlrId"  value="$TlrId"/>
+      <Set>LclFil=$FilNam</Set>   
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="EFESnd493181"/>
       </Exec>
-      <Exec func="PUB:SendFileMessage">
-        <Arg name="MsgTyp"  value="4"/>
-        <Arg name="ObjNod"  value="$NodNo"/>
-        <Arg name="BusTyp"  value="48"/>
-        <Arg name="AplCod"  value="482150"/>
-        <Arg name="FilNam"  value="$FilNam"/>
-        <Arg name="Summary" value="$Summary"/>
-        <Arg name="ObjTlr"  value="$TlrId"/>
-      </Exec>
-    </ElseIf>
-    <!--车船税失败报表-->
-    <ElseIf condition="$PrtFlg=3">
-      <Set>FmtFil=etc/LSHA10_RPT_441999.XML</Set>
-      <Set>FilNam=STRCAT(LSHA10_,$TxnDat,GETDATETIME(HHMISS))</Set>
-      <Exec func="EXT:GenerateReport">
-        <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
-        <Arg name="FmtFil" value="$FmtFil"/>
-        <Arg name="CAgtNo" value="$CAgtNo"/>
-        <Arg name="TxnDat" value="$TxnDat"/>
-        <Arg name="PNodNo"  value="$NodNo"/>
-        <Arg name="PTlrId"  value="$TlrId"/>
-      </Exec>
-      <Exec func="PUB:SendFileMessage">
-        <Arg name="MsgTyp"  value="4"/>
-        <Arg name="ObjNod"  value="$NodNo"/>
-        <Arg name="BusTyp"  value="48"/>
-        <Arg name="AplCod"  value="482150"/>
-        <Arg name="FilNam"  value="$FilNam"/>
-        <Arg name="Summary" value="$Summary"/>
-        <Arg name="ObjTlr"  value="$TlrId"/>
-      </Exec>
-    </ElseIf>
-    <!--退款报表-->
-    <ElseIf condition="$PrtFlg=4">
-      <If condition="IS_EQUAL_STRING($CAgtNo,4410001101)">       <!--粤通卡退款报表-->
-        <Set>FmtFil=etc/LSHJ02_RPT_441999.XML</Set>
-        <Set>FilNam=STRCAT(LSHJ02_,$TxnDat,GETDATETIME(HHMISS))</Set>
-        <Exec func="EXT:GenerateReport">
-          <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
-          <Arg name="FmtFil" value="$FmtFil"/>
-          <Arg name="CAgtNo" value="$CAgtNo"/>
-          <Arg name="TxnDat" value="$TxnDat"/>
-          <Arg name="PNodNo"  value="$NodNo"/>
-          <Arg name="PTlrId"  value="$TlrId"/>
-        </Exec>
-        <Exec func="PUB:SendFileMessage">
-          <Arg name="MsgTyp"  value="4"/>
-          <Arg name="ObjNod"  value="$NodNo"/>
-          <Arg name="BusTyp"  value="48"/>
-          <Arg name="AplCod"  value="482150"/>
-          <Arg name="FilNam"  value="$FilNam"/>
-          <Arg name="Summary" value="$Summary"/>
-          <Arg name="ObjTlr"  value="$TlrId"/>
-        </Exec>
-      </If>
-      <ElseIf condition="IS_EQUAL_STRING($CAgtNo,4410001105)">       <!--月票卡退款报表-->
-        <Set>FmtFil=etc/SPC102_RPT_441999.XML</Set>
-        <Set>FilNam=STRCAT(SPC102_,$TxnDat,GETDATETIME(HHMISS))</Set>
-        <Exec func="EXT:GenerateReport">
-          <Arg name="ObjFil" value="STRCAT(GETENV(WORKDIR),/dat/term/send/,$FilNam)"/>
-          <Arg name="FmtFil" value="$FmtFil"/>
-          <Arg name="CAgtNo" value="$CAgtNo"/>
-          <Arg name="TxnDat" value="$TxnDat"/>
-          <Arg name="PNodNo"  value="$NodNo"/>
-          <Arg name="PTlrId"  value="$TlrId"/>
-        </Exec>
-        <Exec func="PUB:SendFileMessage">
-          <Arg name="MsgTyp"  value="4"/>
-          <Arg name="ObjNod"  value="$NodNo"/>
-          <Arg name="BusTyp"  value="48"/>
-          <Arg name="AplCod"  value="482150"/>
-          <Arg name="FilNam"  value="$FilNam"/>
-          <Arg name="Summary" value="$Summary"/>
-          <Arg name="ObjTlr"  value="$TlrId"/>
-       </Exec>
-      </ElseIf>
-    </ElseIf>
-    <Else>
-    </Else>
+      
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
       <Set>RspMsg=交易成功</Set>
+        
     </FlowCtrl>
   </Transaction>
 
@@ -4620,12 +4734,13 @@
     </DynSentence>
     <DynSentence name="Updafetxnjnl"><!--修改信息-->
       <Sentence>
-        update afetxnjnl set ChkFlg='1' WHERE ActDat ='%s' and CAgtNo='%s' and HTxnSt IN ('S','T','U') and HRspcd='SC0000' and TTxnst IN ('S','U')
+        update afetxnjnl set ChkFlg='1' WHERE ActDat ='%s' and CAgtNo='%s' and TxnSts='S'
       </Sentence>
       <Fields>ClrDat|CAgtNo|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -4662,7 +4777,12 @@
         <!--485999揭阳支行-->
         <!--491999惠州分行-->
         <!--761999江门分行-->
-      <Switch  expression="$BrNo">
+      <Switch  expression="$EfeId">
+      	 <Case value="493999">
+          <Set>ActBk1=493999</Set>
+          <Set>ActBr1=493800</Set>
+          <Break/>
+        </Case>
         <Case value="441999">
           <Set>ActBk1=441999</Set>
           <Set>ActBr1=441800</Set>
@@ -4759,6 +4879,7 @@
       <Fields>CAgtNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -4778,7 +4899,11 @@
       <!--485999揭阳支行-->
       <!--491999惠州分行-->
       <!--761999江门分行-->
-     <Switch  expression="$BrNo">
+     <Switch  expression="$EfeId">
+     	<Case value="493999">
+         <Set>AppNm=QY_EFE1</Set>
+         <Break/>
+       </Case>
        <Case value="441999">
          <Set>AppNm=GZ_EFE1</Set>
          <Break/>
@@ -4857,11 +4982,12 @@
   <Transaction code="460263" desc="广东电力电费对可疑交易进行状态查询">
     <DynSentence name="QryCrpAgr"><!--查询信息-->
       <Sentence>
-        select ActNo,TCUSNM,TCUSID,TxnAmt from afetxnjnl WHERE ActDat ='%s' and CAgtNo='%s'  and TckNo='%s' and HTxnSt IN ('T','U') and ChkFlg='0'
+        select ActNo,TCUSNM,TCUSID,TxnAmt from afetxnjnl WHERE ActDat ='%s' and CAgtNo='%s'  and TckNo='%s' and HTxnSt IN ('F','C') and ChkFlg='0'
       </Sentence>
       <Fields>TxnDat|CAgtNo|TckNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -4881,7 +5007,11 @@
       <!--485999揭阳支行-->
       <!--491999惠州分行-->
       <!--761999江门分行-->
-     <Switch  expression="$BrNo">
+     <!--<Switch  expression="$BrNo">
+     	 <Case value="493999">
+         <Set>AppNm=QY_EFE1</Set>
+         <Break/>
+       </Case>
        <Case value="441999">
          <Set>AppNm=GZ_EFE1</Set>
          <Break/>
@@ -4918,7 +5048,7 @@
          <Set>AppNm="JM_EFE1</Set>
          <Break/>
        </Case>
-     </Switch>
+     </Switch> -->   <!--cjx修改于20131008-->
      <Exec func="PUB:CodeSwitching">
        <Arg name="DatSrc"  value="OPFCSW"/>
        <Arg name="SourNam" value="AppNm"/>
@@ -4956,6 +5086,7 @@
       <Fields>TxnDat|CAgtNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
@@ -4990,11 +5121,12 @@
   <Transaction code="460265" desc="对账信息查询">
     <DynSentence name="QryChkRec">
       <Sentence>
-        select SndTim,LogNo,ChkFil,TRspCd,RtnMsg from efechkrec where BrNo='%s' and ActDat &gt;='%s' and ActDat &lt;='%s'
+        select SndTim,LogNo,ChkFil,TRspCd,RtnMsg from efechkrec where EfeId='%s' and ActDat &gt;='%s' and ActDat &lt;='%s'
       </Sentence>
-      <Fields>BrNo|BgnDat|EndDat|</Fields>
+      <Fields>EfeId|BgnDat|EndDat|</Fields>
     </DynSentence>
     <FlowCtrl>
+    	 <Quote name="GetEfeId"/>
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
       <!--交易初始化,预留-->
