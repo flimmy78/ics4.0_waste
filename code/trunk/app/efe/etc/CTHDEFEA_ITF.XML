@@ -54,6 +54,23 @@
 			<Item name="zipFlag"     length="1"/>		<!--压缩标志-->
 		</Macro>
 
+		<Macro name="err_head"> <!--交易应答报文头-->
+			<Item name="TTxnCd1"     length="3"/>		<!--业务交易码-->
+			<SwitchCode name="RspCod" new_name="TRspCd" tab_name="RspCod2TRspCd_DL" col_name="RspCod"/>
+			<Item name="TRspCd"      length="2"/>		<!--交易返回码-->
+			<SwitchCode name="RspCod" new_name="RspMsg" tab_name="RspCod2TRspMsg_DL" col_name="RspCod"/>
+			<Item name="RspMsg"      length="60"/>		<!--交易返回错误信息-->
+			<Item name="SAddr"       length="12" value="301"/>  	<!--源地址-->
+			<Item name="DAddr"       length="12" expression="DELBOTHSPACE($StartAddr)"/>	    <!--目的地址-->
+			<Item name="AAC"         length="20"/>			<!--报文标识号-->
+			<Item name="WorkDate"    length="8"  expression="GETDATE()"/>		<!--提交日期-->
+			<Item name="TxnTim"      length="14" expression="GETDATETIME()"/>	<!--发送时间-->
+			<Item name="mesgPRI"     length="1"/>		<!--信息优先级-->
+			<Item name="recordNum"   length="10"/>		<!--信息明细项数-->
+			<Item name="FilNam"      length="32" expression="DELBOTHSPACE($FilNam)"/>	<!--文件名-->
+			<Item name="zipFlag"     length="1"/>		<!--压缩标志-->
+		</Macro>
+
 	</Define>
 
 	<!--单笔代扣业务-->

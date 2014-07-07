@@ -1705,7 +1705,7 @@
   </Transaction>
 
 
-  <Transaction code="460220" desc="单笔代扣业务">
+  <Transaction code="460222" desc="供电方发起单笔代扣交易">
 
 
     <Attributes>
@@ -1926,6 +1926,18 @@
 
 
   <Transaction code="460221" desc="单笔代扣业务冲正">
+    <FlowCtrl>
+      <Exec func="PUB:CallThirdOther" error="IGNORE">
+        <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+      </Exec>
+
+
+    </FlowCtrl>
+  </Transaction>
+
+
+  <Transaction code="460221" desc="单笔代扣业务冲正">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
         SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
@@ -2099,7 +2111,7 @@
 
 
 
-  <Transaction code="460222" desc="供电发起批量代扣交易">
+  <Transaction code="460220" desc="供电发起批量代扣交易">
 
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
@@ -2668,6 +2680,11 @@
         <Return/>
       </If>
 
+      <!--银行方发起批量代扣记账交易请求-->
+      <Exec func="PUB:CallLocal">
+         <Arg name="TxnCod"  value="460221"/>
+         <Arg name="ObjSvr"  value="OFRTPUBA"/>
+      </Exec>
 
 
       <Set>RspCod=000000</Set>

@@ -1,0 +1,297 @@
+DAFE_PKG.XML:         <If condition="OR(ISNULL(@PARA.ChkCrp),ISNULL(@PARA.CnlLst),ISNULL(@PARA.ChkPsn),ISNULL(@PARA.IsSignIn))">
+DAFE_PKG.XML:         <If condition="INTCMP(GETSTRPOS(@PARA.CnlLst,$inTxnCnl),1,0)">
+DAFE_PKG.XML:         <If condition="@PARA.ChkCrp=1">
+DAFE_PKG.XML:         <If condition="@PARA.ChkPsn=1">
+DAFE_PKG.XML:            <If condition="INTCMP(GETSTRPOS(@PARA.CnlLst,$inTxnCnl),1,0)">
+DAFE_PKG.XML:         <If condition="@PARA.IsSignIn=1">
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <If condition="AND(IS_NOEQUAL_STRING(@PARA.TxnMod,0),IS_NOEQUAL_STRING(@PARA.TxnMod,1),IS_NOEQUAL_STRING(@PARA.TxnMod,2))">
+DAFE_PKG.XML:         <If condition="AND(IS_EQUAL_STRING(@PARA.RollBack,1),INTCMP(GETSTRPOS(@PARA.RollBackCnls,$inTxnCnl),5,0))">
+DAFE_PKG.XML:         <If condition="@PARA.TxnMod=0">
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.NeedLogNo,4,0)">
+DAFE_PKG.XML:            <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
+DAFE_PKG.XML:            <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:         <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:         <Fields>@PARA.ThdKey|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.RepeatChk">   <!--交易重复性检查-->
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_RepeatChk"/>
+DAFE_PKG.XML:         <If condition="AND(IS_EQUAL_STRING(@PARA.RollBack,1),INTCMP(GETSTRPOS(@PARA.RollBackCnls,$TxnCnl),5,0))">
+DAFE_PKG.XML:            <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
+DAFE_PKG.XML:            <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:         <If condition="OR(IS_EQUAL_STRING(@PARA.TxnMod,0),IS_EQUAL_STRING(@PARA.TxnMod,2))">
+DAFE_PKG.XML:               <Switch expression="@PARA.TTxnMod">
+DAFE_PKG.XML:                        <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                           <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                     <Call function="@PARA.IddCancelFunc"/>
+DAFE_PKG.XML:         <If condition="OR(IS_EQUAL_STRING(@PARA.TxnMod,0),IS_EQUAL_STRING(@PARA.TxnMod,1))">
+DAFE_PKG.XML:               <Set>HTxnCd=@PARA.HTxnCd_DSCal</Set>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd_Cancel"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.HstNoJnl,$inHRspCd),5,0)">
+DAFE_PKG.XML:         <If condition="OR(IS_EQUAL_STRING(@PARA.TxnMod,0),IS_EQUAL_STRING(@PARA.TxnMod,2))">
+DAFE_PKG.XML:               <Switch expression="@PARA.TTxnMod">
+DAFE_PKG.XML:                        <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                           <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                     <Call function="@PARA.IddCancelFunc"/>
+DAFE_PKG.XML:         <If condition="OR(IS_EQUAL_STRING(@PARA.TxnMod,0),IS_EQUAL_STRING(@PARA.TxnMod,1))">
+DAFE_PKG.XML:               <Set>HTxnCd=@PARA.HTxnCd_DSCal</Set>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd_Cancel"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.HstNoJnl,$inHRspCd),5,0)">
+DAFE_PKG.XML:         <Fields>@PARA.ThdKey|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.SeekMod">
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_Seek"/>
+DAFE_PKG.XML:         <Set>HTxnCd=@PARA.HTxnCd_DSCal</Set>
+DAFE_PKG.XML:            <Arg name="HTxnCd" value="@PARA.HTxnCd_Cancel"/>
+DAFE_PKG.XML:            <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <If condition="INTCMP(GETSTRPOS(@PARA.HstNoJnl,$inHRspCd),5,0)">
+DAFE_PKG.XML:         <Fields>@PARA.ThdKey|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.SeekMod">
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_Seek"/>
+DAFE_PKG.XML:         <Set>HTxnCd=@PARA.HTxnCd_DSCal</Set>
+DAFE_PKG.XML:            <Arg name="HTxnCd" value="@PARA.HTxnCd_Cancel"/>
+DAFE_PKG.XML:            <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <If condition="INTCMP(GETSTRPOS(@PARA.HstNoJnl,$inHRspCd),5,0)">
+DAFE_PKG.XML:         <Switch expression="@PARA.QryMod">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:               <If condition="INTCMP(@PARA.QryMod,3,1)">
+DAFE_PKG.XML:                     <Arg name="FtpCfg" value="@PARA.FtpId_Qry"/>
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_QryInv"/>
+DAFE_PKG.XML:         <Switch expression="@PARA.PrtMod">
+DAFE_PKG.XML:                  <Arg name="FtpId" value="@PARA.FtpId_Snd"/>
+DAFE_PKG.XML:                  <Arg name="FtpId" value="@PARA.FtpId_Snd"/>
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.ChkMod">
+DAFE_PKG.XML:         <If condition="OR(INTCMP(@PARA.ChkMod,3,1),INTCMP(@PARA.ChkMod,3,2))"> <!--银行发总数给第三方,第三方对-->
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:            <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:            <If condition="@PARA.ChkMod=1">
+DAFE_PKG.XML:         <If condition="@PARA.ChkCnt=1"> <!--对总笔数-->
+DAFE_PKG.XML:         <If condition="@PARA.ChkAmt=1"> <!--对总金额-->
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.GathFmt,3,1)"><!--需要按FMT生成文件-->
+DAFE_PKG.XML:            <Set>QryCnd=@PARA.QryCnd</Set>
+DAFE_PKG.XML:            <Set>FmtCnt=STRGETCOUNT(@PARA.FmtLst,|)</Set>
+DAFE_PKG.XML:               <Set>FmtNam=GETWORDDELIMITER(@PARA.FmtLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>LclFil=GETWORDDELIMITER(@PARA.FmtSFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>ObjFil=GETWORDDELIMITER(@PARA.FmtOFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>FilNam=STRCAT(@PARA.FilDir,$LclFil)</Set>
+DAFE_PKG.XML:               <If condition="@PARA.ExtFlg=1"><!--带扩展表-->
+DAFE_PKG.XML:               <Switch expression="@PARA.SndMod">
+DAFE_PKG.XML:                     <Set>FtpId=@PARA.FtpId</Set>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.GathRpt,3,1)"><!--需要按RPT生成文件-->
+DAFE_PKG.XML:            <Set>FMTCnt=STRGETCOUNT(@PARA.RptLst,|)</Set>
+DAFE_PKG.XML:               <Set>FmtNam=GETWORDDELIMITER(@PARA.RptLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>LclFil=GETWORDDELIMITER(@PARA.RptSFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>ObjFil=GETWORDDELIMITER(@PARA.RptOFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>FilNam=STRCAT(@PARA.RptDir,$LclFil)</Set>
+DAFE_PKG.XML:               <Set>RptDat=@PARA.RptDat</Set>
+DAFE_PKG.XML:               <Switch expression="@PARA.RptSndMod">
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.RptFtpId"/>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.RptFtpId"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.NeedNotice,3,1)"><!--需要通知第三方-->
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.NoticeCod"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.NoticeSvr"/>
+DAFE_PKG.XML:            <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:            <Switch expression="@PARA.ChkMod">
+DAFE_PKG.XML:                     <Arg name="TTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                     <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                  <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                  <Call function="@PARA.IddFunc"/>
+DAFE_PKG.XML:         <Set>FilCnt=STRGETCOUNT(@PARA.FmtOFilLst,|)</Set>
+DAFE_PKG.XML:         <Switch expression="@PARA.RcvMod">
+DAFE_PKG.XML:                  <Set>LclFil=GETWORDDELIMITER(@PARA.FmtRFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>ObjFil=GETWORDDELIMITER(@PARA.FmtOFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>FilNam=STRCAT(@PARA.FilDir,$LclFil)</Set>
+DAFE_PKG.XML:                     <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:                  <Set>LclFil=GETWORDDELIMITER(@PARA.FmtRFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>ObjFil=GETWORDDELIMITER(@PARA.FmtOFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>FilNam=STRCAT(@PARA.FilDir,$LclFil)</Set>
+DAFE_PKG.XML:                     <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:         <Set>FilCnt=STRGETCOUNT(@PARA.FmtOFilLst,|)</Set>
+DAFE_PKG.XML:         <Switch expression="@PARA.ProMod">
+DAFE_PKG.XML:                  <Set>LclFil=GETWORDDELIMITER(@PARA.FmtRFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>ObjFil=GETWORDDELIMITER(@PARA.FmtOFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                  <Set>FmtNam=GETWORDDELIMITER(@PARA.FmtLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:                  <Set>FilNam=STRCAT(@PARA.LclDir,$LclFil)</Set>
+DAFE_PKG.XML:                     <Arg name="Tablename"  value="@PARA.ChkDtlTbl"/>
+DAFE_PKG.XML:               <Switch expression="@PARA.SndMod">
+DAFE_PKG.XML:                        <Set>LclFil=GETWORDDELIMITER(@PARA.RslSFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                        <Set>ObjFil=GETWORDDELIMITER(@PARA.RslOFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                        <Set>FilNam=STRCAT(@PARA.LclDir,$LclFil)</Set>
+DAFE_PKG.XML:                           <Arg name="FtpId" value="@PARA.SndFtpId"/>
+DAFE_PKG.XML:                        <Set>LclFil=GETWORDDELIMITER(@PARA.RslSFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                        <Set>ObjFil=GETWORDDELIMITER(@PARA.RslOFilLst,|,$FilCnt)</Set>
+DAFE_PKG.XML:                        <Set>FilNam=STRCAT(@PARA.LclDir,$LclFil)</Set>
+DAFE_PKG.XML:                           <Arg name="FtpId" value="@PARA.SndFtpId"/>
+DAFE_PKG.XML:         <Switch expression="@PARA.RcvMod">
+DAFE_PKG.XML:                  <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:                  <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:            <Arg name="FormatName" value="@PARA.FmtNam"/>
+DAFE_PKG.XML:         <If condition="@PARA.SignMod=1">  <!--要去第三方签到-->
+DAFE_PKG.XML:               <Arg name="TTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:            <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd_SeekJnl"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.HTxnCd_SeekJnl"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:         <Fields>@PARA.QryDtlCnd|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                  <Arg name="TblNam" value="@PARA.DtlAmtTbl"/>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <Fields>@PARA.QryCnd|</Fields>
+DAFE_PKG.XML:         <Switch expression="@PARA.QryMod">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.TTxnCd_Qry"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.ThdSvr_Qry"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_Qry"/>
+DAFE_PKG.XML:                  <Set>RspMsg=STRCAT(查询待缴费用,@PARA.IddFunc_Qry)</Set>
+DAFE_PKG.XML:            <If condition="AND(IS_EQUAL_STRING(@PARA.RollBack,1),INTCMP(GETSTRPOS(@PARA.RollBackCnls,$inTxnCnl),5,0))">
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.HTxnCd_P2C"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:            <Switch expression="@PARA.TTxnMod">
+DAFE_PKG.XML:                     <Arg name="HTxnCd" value="@PARA.TTxnCd_Pay"/>
+DAFE_PKG.XML:                     <Arg name="ObjSvr" value="@PARA.ThdSvr_Pay"/>
+DAFE_PKG.XML:                        <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                  <Call function="@PARA.IddFunc_Pay"/>
+DAFE_PKG.XML:            <Set>SepCnt=STRGETCOUNT(@PARA.FldLst,|)</Set>
+DAFE_PKG.XML:               <Set>FldNam=GETWORDDELIMITER(@PARA.FldLst,|,$seq)</Set>
+DAFE_PKG.XML:               <Arg name="TxnCod" value="@PARA.SglSgn"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.LclSvr"/>
+DAFE_PKG.XML:         <Set>HTxnCd=@PARA.HTxnCd</Set>
+DAFE_PKG.XML:         <Set>TxnObj=@PARA.TxnSvr</Set>
+DAFE_PKG.XML:         <Set>ObjSvr=@PARA.ObjSvr</Set>
+DAFE_PKG.XML:         <Set>FTxnCd=@PARA.FTxnCd</Set>   <!--后续交易(用于后续操作并通知前端批次完成的)-->
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.HTxnCd_Cfm"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:         <Switch expression="@PARA.CChkMod">
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HCTxnCd"/> <!--主机查询证件户名-->
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HCTxnCd"/> <!-- 主机查询密码-->
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                        <Arg name="TTxnCd" value="@PARA.CThdCod"/>
+DAFE_PKG.XML:                        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                     <Call function="@PARA.IddQryFunc"/>
+DAFE_PKG.XML:               <If condition="INTCMP(GETSTRPOS(@PARA.AuthCnl,$TxnCnl),1,0)">
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.HstSvr"/>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <If condition="AND(INTCMP(~RetCod,4,0),INTCMP(GETSTRPOS(@PARA.HNoAgr,$inHRspCd),1,0))">
+DAFE_PKG.XML:               <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                        <Arg name="TTxnCd" value="@PARA.DThdCod"/>
+DAFE_PKG.XML:                        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                     <Call function="@PARA.IddQryFunc"/>
+DAFE_PKG.XML:               <If condition="INTCMP(GETSTRPOS(@PARA.AuthCnl,$TxnCnl),1,0)">
+DAFE_PKG.XML:                     <Arg name="ObjSvr" value="@PARA.HstSvr"/>
+DAFE_PKG.XML:                  <Arg name="HTxnCd" value="@PARA.HTxnCd"/>
+DAFE_PKG.XML:                  <Arg name="ObjSvr" value="@PARA.CBHost"/>
+DAFE_PKG.XML:               <Switch expression="@PARA.TxnMod">
+DAFE_PKG.XML:                        <Arg name="TTxnCd" value="@PARA.UThdCod"/>
+DAFE_PKG.XML:                        <Arg name="ObjSvr" value="@PARA.ThdSvr"/>
+DAFE_PKG.XML:                     <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+DAFE_PKG.XML:                     <Call function="@PARA.IddQryFunc"/>
+DAFE_PKG.XML:         <If condition="@PARA.ChkCrp=1">
+DAFE_PKG.XML:         <Switch expression="@PARA.RcvMod">
+DAFE_PKG.XML:                  <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:                  <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:                  <Arg name="FileName"  value="STRCAT(@PARA.RcvDir,$SndFil)"/>
+DAFE_PKG.XML:         <Switch expression="@PARA.NeedPrep_Rcv">
+DAFE_PKG.XML:               <Call function="@PARA.IddFunc_Rcv"/>
+DAFE_PKG.XML:            <Arg name="FileName" value="STRCAT(@PARA.RcvDir,$SndFil)"/>
+DAFE_PKG.XML:            <Arg name="FormatName" value="@PARA.FmtNam_Rcv"/>
+DAFE_PKG.XML:            <Arg name="FileName"   value="STRCAT(@PARA.RcvDir,$SndFil)"/>
+DAFE_PKG.XML:         <If condition="@PARA.ChkPsn=1">
+DAFE_PKG.XML:            <Arg name="FormatName" value="@PARA.FmtBtp_Snd"/>
+DAFE_PKG.XML:            <Arg name="FormatName" value="@PARA.FmtNam"/>
+DAFE_PKG.XML:         <If condition="@PARA.IsRetFil=1"><!--是否需要回送文件 -->
+DAFE_PKG.XML:            <If condition="@PARA.ExtFlg=1"><!--带扩展表-->
+DAFE_PKG.XML:                  <Arg name="FormatName" value="@PARA.RetFmt"/>
+DAFE_PKG.XML:                  <Arg name="FileName" value="STRCAT(@PARA.RetDir,$RslFil)"/>
+DAFE_PKG.XML:                  <Arg name="FormatName" value="@PARA.RetFmt"/>
+DAFE_PKG.XML:                  <Arg name="FileName" value="STRCAT(@PARA.RetDir,$RslFil)"/>
+DAFE_PKG.XML:            <Switch expression="@PARA.RetMod">
+DAFE_PKG.XML:                     <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:                     <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:         <Exec func="PUB:ReadRecord"><!--参数：@PARA.QryCnd-->
+DAFE_PKG.XML:         <If condition="@PARA.CollectMod=1">
+DAFE_PKG.XML:            <If condition="@PARA.CelCor=1">
+DAFE_PKG.XML:            <Arg name="SleepTime" value="@PARA.SlpTim"/> <!--参数：@PARA.SlpTim-->
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.HTxnCd_Cfm"/><!--参数：@PARA.HTxnCd_Cfm-->
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.CBHost"/>    <!--参数：@PARA.CBHost-->
+DAFE_PKG.XML:         <Switch expression="@PARA.RcvMod">
+DAFE_PKG.XML:                  <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:                  <Arg name="FtpId"     value="@PARA.FtpId"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.NeedPrep_Fil,3,1)">
+DAFE_PKG.XML:            <Call function="@PARA.IddFunc_PreFil"/>
+DAFE_PKG.XML:            <Arg name="FormatName" value="@PARA.FmtNam"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.NeedPrep_DB,3,1)">
+DAFE_PKG.XML:            <Call function="@PARA.IddFunc_PreDB"/>
+DAFE_PKG.XML:         <If condition="INTCMP(STRLEN(@PARA.QryCnd),1,3)">
+DAFE_PKG.XML:         <Set>WhereCnd=@PARA.QryCnd</Set>
+DAFE_PKG.XML:         <If condition="@PARA.IddChkMod=1">
+DAFE_PKG.XML:            <Call function="@PARA.IddFunc_Chk"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.GathFmt,3,1)"><!--需要按FMT生成文件-->
+DAFE_PKG.XML:            <Set>QryCnd=@PARA.QryCnd</Set>
+DAFE_PKG.XML:            <Set>FmtCnt=STRGETCOUNT(@PARA.FmtLst,|)</Set>
+DAFE_PKG.XML:               <Set>FmtNam=GETWORDDELIMITER(@PARA.FmtLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>LclFil=GETWORDDELIMITER(@PARA.FmtSFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>ObjFil=GETWORDDELIMITER(@PARA.FmtOFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>FilNam=STRCAT(@PARA.FilDir,$LclFil)</Set>
+DAFE_PKG.XML:               <If condition="@PARA.ExtFlg=1"><!--带扩展表-->
+DAFE_PKG.XML:               <Switch expression="@PARA.SndMod">
+DAFE_PKG.XML:                     <Set>FtpId=@PARA.FtpId</Set>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.FtpId"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.GathRpt,3,1)"><!--需要按RPT生成文件-->
+DAFE_PKG.XML:            <Set>FMTCnt=STRGETCOUNT(@PARA.RptLst,|)</Set>
+DAFE_PKG.XML:               <Set>FmtNam=GETWORDDELIMITER(@PARA.RptLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>LclFil=GETWORDDELIMITER(@PARA.RptSFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>ObjFil=GETWORDDELIMITER(@PARA.RptOFilLst,|,$FmtCnt)</Set>
+DAFE_PKG.XML:               <Set>FilNam=STRCAT(@PARA.RptDir,$LclFil)</Set>
+DAFE_PKG.XML:               <Set>RptDat=@PARA.RptDat</Set>
+DAFE_PKG.XML:               <Switch expression="@PARA.RptSndMod">
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.RptFtpId"/>
+DAFE_PKG.XML:                        <Arg name="FtpId" value="@PARA.RptFtpId"/>
+DAFE_PKG.XML:         <If condition="INTCMP(@PARA.NeedNotice,3,1)"><!--需要通知第三方-->
+DAFE_PKG.XML:               <Arg name="HTxnCd" value="@PARA.NoticeCod"/>
+DAFE_PKG.XML:               <Arg name="ObjSvr" value="@PARA.NoticeSvr"/>
+DAFE_PKG.XML:            <If condition="INTCMP(GETSTRPOS(@PARA.TRsp_Suc,$inTRspCd),1,0)">
+OFRTEFEA_CTL.XML:      		<Set>@PARA.ChkPsn=1</Set>
+OFRTEFEA_CTL.XML:          <Set>@PARA.ChkPsn=1</Set> 
+OFRTEFEA_CTL.XML:          <Set>@PARA.ChkPsn=1</Set> 
+OFRTEFEA_CTL.XML:      <Set>ObjSvr=@PARA.ObjSvr</Set>
+OFRTEFEA_CTL.XML:      <Set>FTxnCd=@PARA.FTxnCd</Set>  <!--后续交易(用于后续操作并通知前端批次完成的)-->
+OFRTEFEA_CTL.XML:      <Set>TrdTbl=@PARA.TrdTbl</Set>
+OFRTEFEA_CTL.XML:      <Set>HTxnCd=@PARA.HTxnCd</Set>
+OFRTEFEA_CTL.XML:      <If condition="@PARA.RcvMod=1">
+OFRTEFEA_CTL.XML:        <Arg name="FormatName"     value="@PARA.RcvFmt"/>   <!--文件格式-->
+OFRTEFEA_CTL.XML:      <If condition="@PARA.ChkCrp=1">
+OFRTEFEA_CTL.XML:      <If condition="@PARA.IsSignIn=1">
+OFRTEFEA_CTL.XML:        <Arg name="FormatName"     value="@PARA.RcvFmt"/>   <!--文件格式-->
+OFRTEFEA_CTL.XML:      <If condition="@PARA.ChkPsn=1">
+OFRTEFEA_CTL.XML:        <Arg name="FormatName" value="@PARA.SndFmt"/>
