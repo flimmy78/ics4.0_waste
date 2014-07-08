@@ -904,7 +904,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460204" desc="银行柜台电费代收查询交易">
+  <Transaction code="460210" desc="银行柜台电费代收查询交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -997,7 +997,7 @@
   </Transaction>
 
 
-  <Transaction code="460205" desc="银行柜台电费代收缴费交易">
+  <Transaction code="460211" desc="银行柜台电费代收缴费交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -1510,7 +1510,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460206" desc="银行柜台当日代收冲销交易">
+  <Transaction code="460212" desc="银行柜台当日代收冲销交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -1925,7 +1925,7 @@
   </Transaction>
 
 
-  <Transaction code="460221" desc="单笔代扣业务冲正">
+  <Transaction code="460221" desc="批量代扣返回">
     <FlowCtrl>
       <Exec func="PUB:CallThirdOther" error="IGNORE">
         <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
@@ -1937,7 +1937,7 @@
   </Transaction>
 
 
-  <Transaction code="460221" desc="单笔代扣业务冲正">
+  <Transaction code="460223" desc="供电单笔当日代扣抹帐交易">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
         SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
@@ -2442,8 +2442,17 @@
           <Arg name="FtpId" value="$EFERcv"/>
         </Exec>
       </If>
-      <Else>
-      </Else>
+
+      <!--TODO,检验批扣文件合法性-->
+      <!--Exec func="XXX:CheckFile">
+        <Arg name="***" value="******"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(文件,$FilNam,不存在)</Set>
+        <Return/>
+      </If>
+      <Exec func="PUB:PutResponse"/--><!--银行方返回批量代扣交易请求应-->
 
       <Exec func="PUB:CollateRepeatRecord"> <!--判断是否是重复接收的报文-->
         <Arg name="CheckFileName" value="$DskNam"/>
