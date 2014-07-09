@@ -14,14 +14,14 @@
   <Transaction service="460241" code="460241" log_switch="5" desc="银行发起批量查询欠费客户请求">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="DWBM"     length="8" desc="单位编码
-        <Item name="WJMC"     length="36" desc="文件名称
-        <Item name="WJLX"     length="2" desc="文件类型
-        <Item name="WJMD5"     length="32" desc="文件MD5
+        <Item name="WDMC"     length="64" desc="网点名称" />
+        <Item name="JYLSH"     length="24" desc="交易流水号" />
+        <Item name="JYRQ"     length="8" desc="交易日期" />
+        <Item name="JYSJ"     length="6" desc="交易时间" />
+        <Item name="DWBM"     length="8" desc="单位编码" />
+        <Item name="WJMC"     length="36" desc="文件名称" />
+        <Item name="WJLX"     length="2" desc="文件类型" />
+        <Item name="WJMD5"     length="32" desc="文件MD5" />
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -30,17 +30,17 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="WDMC"     length="64" desc="网点名称
-            <Item name="JYLSH"     length="24" desc="交易流水号
-            <Item name="JYRQ"     length="8" desc="交易日期
-            <Item name="JYSJ"     length="6" desc="交易时间
-            <Item name="YJYLSH"     length="24" desc="原交易流水号
-            <Item name="YJYRQ"     length="8" desc="原交易日期
-            <Item name="YJYSJ"     length="6" desc="原交易时间
-            <Item name="DWBM"     length="8" desc="单位编码
-            <Item name="WJMC"     length="36" desc="文件名称
-            <Item name="WJLX"     length="2" desc="文件类型
-            <Item name="WJMD5"     length="32" desc="文件MD5
+            <Item name="WDMC"     length="64" desc="网点名称" />
+            <Item name="JYLSH"     length="24" desc="交易流水号" />
+            <Item name="JYRQ"     length="8" desc="交易日期" />
+            <Item name="JYSJ"     length="6" desc="交易时间" />
+            <Item name="YJYLSH"     length="24" desc="原交易流水号" />
+            <Item name="YJYRQ"     length="8" desc="原交易日期" />
+            <Item name="YJYSJ"     length="6" desc="原交易时间" />
+            <Item name="DWBM"     length="8" desc="单位编码" />
+            <Item name="WJMC"     length="36" desc="文件名称" />
+            <Item name="WJLX"     length="2" desc="文件类型" />
+            <Item name="WJMD5"     length="32" desc="文件MD5" />
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -67,14 +67,14 @@
   <Transaction service="460210" code="460210" log_switch="5" desc="银行发起批量查询欠费客户请求">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
+        <Item name="WDMC"     length="64" desc="网点名称" />
+        <Item name="JYLSH"     length="24" desc="交易流水号" />
+        <Item name="JYRQ"     length="8" desc="交易日期" />
+        <Item name="JYSJ"     length="6" desc="交易时间" />
+        <Item name="SFFS"     length="3" desc="收费方式" />
+        <Item name="JFH"     length="20" desc="缴费号" />
+        <Item name="DFNY"     length="6" desc="电费年月" />
+        <Item name="CXFS"     length="1" desc="查询方式" />
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -83,27 +83,27 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
+              <Item name="WDMC"     length="64" desc="网点名称" />
+              <Item name="JYLSH"     length="24" desc="交易流水号" />
+              <Item name="JYRQ"     length="8" desc="交易日期" />
+              <Item name="JYSJ"     length="6" desc="交易时间" />
+              <Item name="YJYLSH"     length="24" desc="原交易流水号" />
+              <Item name="YJYRQ"     length="8" desc="原交易日期" />
+              <Item name="YJYSJ"     length="6" desc="原交易时间" />
+              <Item name="SFFS"     length="3" desc="收费方式" />
+              <Item name="FYLX"     length="3" desc="费用类型" />
+              <Item name="DWBM"     length="8" desc="单位编码" />
+              <Item name="JFH"     length="20" desc="缴费号" />
+              <Item name="JSHMC"     length="64" desc="结算户名称" />
+              <Item name="YDDZ"     length="128" desc="用电地址" />
+              <Item name="KKZH"     length="32" desc="扣款账户" />
+              <Item name="KKZHMC"     length="128" desc="扣款账户名称" />
+              <Item name="BFJFBZ"     length="1" desc="部分缴费标志" />
+              <Item name="ZWLSH"     length="16" desc="账务流水号" />
+              <Item name="DFNY"     length="6" desc="电费年月" />
+              <Item name="QFJE"     length="16" desc="欠费金额" />
+              <Item name="BJ"     length="16" desc="本金" />
+              <Item name="WYJ"     length="16" desc="违约金" />
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -130,30 +130,30 @@
   <Transaction service="460211" code="460211" log_switch="5" desc="银行代收客户欠费交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="WDMC"     length="64" desc="网点名称
-      <Item name="JYLSH"     length="24" desc="交易流水号
-      <Item name="JYRQ"     length="8" desc="交易日期
-      <Item name="JYSJ"     length="6" desc="交易时间
-      <Item name="SFFS"     length="3" desc="收费方式
-      <Item name="FYLX"     length="3" desc="费用类型
-      <Item name="DWBM"     length="8" desc="单位编码
-      <Item name="JFH"     length="20" desc="缴费号
-      <Item name="JSHMC"     length="64" desc="结算户名称
-      <Item name="YDDZ"     length="128" desc="用电地址
-      <Item name="KKZH"     length="32" desc="扣款账户
-      <Item name="KKZHMC"     length="128" desc="扣款账户名称
-      <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-      <Item name="ZWLSH"     length="16" desc="账务流水号
-      <Item name="DFNY"     length="6" desc="电费年月
-      <Item name="QFJE"     length="16" desc="欠费金额
-      <Item name="BJ"     length="16" desc="本金
-      <Item name="WYJ"     length="16" desc="违约金
-      <Item name="RZYHDM"     length="4" desc="入账银行代码
-      <Item name="JYFS"     length="1" desc="交易方式
-      <Item name="PJDYBS"     length="1" desc="票据打印标识
-      <Item name="FKFS"     length="1" desc="付款方式
-      <Item name="HBFH"     length="5" desc="货币符号
-      <Item name="SKJE"     length="16" desc="实扣金额
+      <Item name="WDMC"     length="64" desc="网点名称" />
+      <Item name="JYLSH"     length="24" desc="交易流水号" />
+      <Item name="JYRQ"     length="8" desc="交易日期" />
+      <Item name="JYSJ"     length="6" desc="交易时间" />
+      <Item name="SFFS"     length="3" desc="收费方式" />
+      <Item name="FYLX"     length="3" desc="费用类型" />
+      <Item name="DWBM"     length="8" desc="单位编码" />
+      <Item name="JFH"     length="20" desc="缴费号" />
+      <Item name="JSHMC"     length="64" desc="结算户名称" />
+      <Item name="YDDZ"     length="128" desc="用电地址" />
+      <Item name="KKZH"     length="32" desc="扣款账户" />
+      <Item name="KKZHMC"     length="128" desc="扣款账户名称" />
+      <Item name="BFJFBZ"     length="1" desc="部分缴费标志" />
+      <Item name="ZWLSH"     length="16" desc="账务流水号" />
+      <Item name="DFNY"     length="6" desc="电费年月" />
+      <Item name="QFJE"     length="16" desc="欠费金额" />
+      <Item name="BJ"     length="16" desc="本金" />
+      <Item name="WYJ"     length="16" desc="违约金" />
+      <Item name="RZYHDM"     length="4" desc="入账银行代码" />
+      <Item name="JYFS"     length="1" desc="交易方式" />
+      <Item name="PJDYBS"     length="1" desc="票据打印标识" />
+      <Item name="FKFS"     length="1" desc="付款方式" />
+      <Item name="HBFH"     length="5" desc="货币符号" />
+      <Item name="SKJE"     length="16" desc="实扣金额" />
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -162,18 +162,18 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="WDMC"     length="64" desc="网点名称
-            <Item name="JYLSH"     length="24" desc="交易流水号
-            <Item name="JYRQ"     length="8" desc="交易日期
-            <Item name="JYSJ"     length="6" desc="交易时间
-            <Item name="YJYLSH"     length="24" desc="原交易流水号
-            <Item name="YJYRQ"     length="8" desc="原交易日期
-            <Item name="YJYSJ"     length="6" desc="原交易时间
-            <Item name="DWBM"     length="8" desc="单位编码
-            <Item name="JFH"     length="20" desc="缴费号
-            <Item name="DFNY"     length="6" desc="电费年月
-            <Item name="SKJE"     length="16" desc="实扣金额
-            <Item name="JFJGSM"     length="128" desc="缴费结果说明
+            <Item name="WDMC"     length="64" desc="网点名称" />
+            <Item name="JYLSH"     length="24" desc="交易流水号" />
+            <Item name="JYRQ"     length="8" desc="交易日期" />
+            <Item name="JYSJ"     length="6" desc="交易时间" />
+            <Item name="YJYLSH"     length="24" desc="原交易流水号" />
+            <Item name="YJYRQ"     length="8" desc="原交易日期" />
+            <Item name="YJYSJ"     length="6" desc="原交易时间" />
+            <Item name="DWBM"     length="8" desc="单位编码" />
+            <Item name="JFH"     length="20" desc="缴费号" />
+            <Item name="DFNY"     length="6" desc="电费年月" />
+            <Item name="SKJE"     length="16" desc="实扣金额" />
+            <Item name="JFJGSM"     length="128" desc="缴费结果说明" />
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -200,30 +200,30 @@
   <Transaction service="460212" code="460212" log_switch="5" desc="银行日结点抹账交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="WDMC"     length="64" desc="网点名称
-      <Item name="JYLSH"     length="24" desc="交易流水号
-      <Item name="JYRQ"     length="8" desc="交易日期
-      <Item name="JYSJ"     length="6" desc="交易时间
-      <Item name="YJYLSH"     length="24" desc="原交易流水号
-      <Item name="YJYRQ"     length="8" desc="原交易日期
-      <Item name="YJYSJ"     length="6" desc="原交易时间
-      <Item name="SFFS"     length="3" desc="收费方式
-      <Item name="FYLX"     length="3" desc="费用类型
-      <Item name="RZYHDM"     length="4" desc="入账银行代码
-      <Item name="DWBM"     length="8" desc="单位编码
-      <Item name="JFH"     length="20" desc="缴费号
-      <Item name="JSHMC"     length="64" desc="结算户名称
-      <Item name="YDDZ"     length="128" desc="用电地址
-      <Item name="KKZH"     length="32" desc="扣款账户
-      <Item name="KKZHMC"     length="128" desc="扣款账户名称
-      <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-      <Item name="ZWLSH"     length="16" desc="账务流水号
-      <Item name="DFNY"     length="6" desc="电费年月
-      <Item name="HBFH"     length="5" desc="货币符号
-      <Item name="YSKJE"     length="16" desc="原实扣金额
-      <Item name="CXJE"     length="16" desc="冲销金额
-      <Item name="CXYY"     length="128" desc="冲销原因
-      <Item name="RZYHDM"     length="4" desc="入账银行代码
+      <Item name="WDMC"     length="64" desc="网点名称" />
+      <Item name="JYLSH"     length="24" desc="交易流水号" />
+      <Item name="JYRQ"     length="8" desc="交易日期" />
+      <Item name="JYSJ"     length="6" desc="交易时间" />
+      <Item name="YJYLSH"     length="24" desc="原交易流水号" />
+      <Item name="YJYRQ"     length="8" desc="原交易日期" />
+      <Item name="YJYSJ"     length="6" desc="原交易时间" />
+      <Item name="SFFS"     length="3" desc="收费方式" />
+      <Item name="FYLX"     length="3" desc="费用类型" />
+      <Item name="RZYHDM"     length="4" desc="入账银行代码" />
+      <Item name="DWBM"     length="8" desc="单位编码" />
+      <Item name="JFH"     length="20" desc="缴费号" />
+      <Item name="JSHMC"     length="64" desc="结算户名称" />
+      <Item name="YDDZ"     length="128" desc="用电地址" />
+      <Item name="KKZH"     length="32" desc="扣款账户" />
+      <Item name="KKZHMC"     length="128" desc="扣款账户名称" />
+      <Item name="BFJFBZ"     length="1" desc="部分缴费标志" />
+      <Item name="ZWLSH"     length="16" desc="账务流水号" />
+      <Item name="DFNY"     length="6" desc="电费年月" />
+      <Item name="HBFH"     length="5" desc="货币符号" />
+      <Item name="YSKJE"     length="16" desc="原实扣金额" />
+      <Item name="CXJE"     length="16" desc="冲销金额" />
+      <Item name="CXYY"     length="128" desc="冲销原因" />
+      <Item name="RZYHDM"     length="4" desc="入账银行代码" />
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -232,27 +232,27 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
+              <Item name="WDMC"     length="64" desc="网点名称" />
+              <Item name="JYLSH"     length="24" desc="交易流水号" />
+              <Item name="JYRQ"     length="8" desc="交易日期" />
+              <Item name="JYSJ"     length="6" desc="交易时间" />
+              <Item name="YJYLSH"     length="24" desc="原交易流水号" />
+              <Item name="YJYRQ"     length="8" desc="原交易日期" />
+              <Item name="YJYSJ"     length="6" desc="原交易时间" />
+              <Item name="SFFS"     length="3" desc="收费方式" />
+              <Item name="FYLX"     length="3" desc="费用类型" />
+              <Item name="DWBM"     length="8" desc="单位编码" />
+              <Item name="JFH"     length="20" desc="缴费号" />
+              <Item name="JSHMC"     length="64" desc="结算户名称" />
+              <Item name="YDDZ"     length="128" desc="用电地址" />
+              <Item name="KKZH"     length="32" desc="扣款账户" />
+              <Item name="KKZHMC"     length="128" desc="扣款账户名称" />
+              <Item name="BFJFBZ"     length="1" desc="部分缴费标志" />
+              <Item name="ZWLSH"     length="16" desc="账务流水号" />
+              <Item name="DFNY"     length="6" desc="电费年月" />
+              <Item name="QFJE"     length="16" desc="欠费金额" />
+              <Item name="BJ"     length="16" desc="本金" />
+              <Item name="WYJ"     length="16" desc="违约金" />
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -276,17 +276,15 @@
     </Response> 
     </Transaction>
 
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
+  <Transaction service="460244" code="460244" log_switch="5" desc="银行查询客户信息交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
+        <Item name="WDMC"     length="64" desc="网点名称" />
+        <Item name="JYLSH"     length="24" desc="交易流水号" />
+        <Item name="JYRQ"     length="8" desc="交易日期" />
+        <Item name="JYSJ"     length="6" desc="交易时间" />
+        <Item name="QDBZ"     length="1" desc="签订方式" />
+        <Item name="JFH"     length="20" desc="供电方结算号" />
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -295,27 +293,18 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
+            <Item name="WDMC"     length="64" desc="网点名称"/>
+            <Item name="JYLSH"     length="24" desc="交易流水号"/>
+            <Item name="JYRQ"     length="8" desc="交易日期"/>
+            <Item name="JYSJ"     length="6" desc="交易时间"/>
+            <Item name="YJYLSH"     length="24" desc="原交易流水号"/>
+            <Item name="YJYRQ"     length="8" desc="原交易日期"/>
+            <Item name="YJYSJ"     length="6" desc="原交易时间"/>
+            <Item name="QDBZ"     length="1" desc="签订标志"/>
+            <Item name="JFH"     length="20" desc="缴费号"/>
+            <Item name="JSHMC"     length="64" desc="结算户名称"/>
+            <Item name="YDDZ"     length="128" desc="用电地址"/>
+            <Item name="BZ"     length="128" desc="备注"/>
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -339,57 +328,50 @@
     </Response> 
     </Transaction>
 
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
+
+  <!-- 银电代扣协议变更 -->
+  <Transaction service="460230"  code="460230" timeout="60" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
+      <Item name="WDMC"     length="64" desc="网点名称"/>
+      <Item name="JYLSH"     length="24" desc="交易流水号"/>
+      <Item name="JYRQ"     length="8" desc="交易日期"/>
+      <Item name="JYSJ"     length="6" desc="交易时间"/>
+      <Item name="QDBZ"     length="1" desc="签订标志"/>
+      <Item name="JFH"     length="20" desc="缴费号"/>
+      <Item name="JSHMC"     length="64" desc="结算户名称"/>
+      <Item name="YQYYHDM"     length="4" desc="原签约银行代码"/>
+      <Item name="YQYZH"     length="32" desc="原签约账户"/>
+      <Item name="YQYZHMC"     length="128" desc="原签约账号名称"/>
+      <Item name="XQYYHDM"     length="4" desc="新签约银行代码"/>
+      <Item name="XQYZH"     length="32" desc="新签约账户"/>
+      <Item name="XQYZHMC"     length="128" desc="新签约账户名称"/>
+      <Item name="ZHLX"     length="2" desc="账户类型"/>
+      <Item name="ZJLX"     length="2" desc="证件类型"/>
+      <Item name="ZJHM"     length="32" desc="证件号码"/>
+      <Item name="LXDH"     length="20" desc="联系电话"/>
+      <Item name="SJHM"     length="20" desc="手机号码"/>
+      <Item name="EMAIL"     length="64" desc="E-MAIL"/>
+      <Item name="BZ"     length="128" desc="备注"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <PackItem name="HODat">
+          <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
           </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
         </Case>
         <Case value="E">
           <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="56"/>
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -398,61 +380,39 @@
           <Item name="BillText" deli_asc="-1"/>
           <Break/>
         </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
+      </Switch>
+    </Response>
+  </Transaction>
 
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
+
+  <Transaction service="460231"  code="460231" timeout="60" log_switch="5" desc="银行到供电核对代扣协议交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
+      <Item name="JYLSH"     length="24" desc="交易流水号"/>
+      <Item name="JYRQ"     length="8" desc="交易日期"/>
+      <Item name="JYSJ"     length="6" desc="交易时间"/>
+      <Item name="WJMC"     length="36" desc="文件名称"/>
+      <Item name="WJLX"     length="2" desc="文件类型"/>
+      <Item name="WJMD5"     length="32" desc="文件MD5"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <PackItem name="HODat">
+          <PackItem name="TmpDat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
           </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
         </Case>
         <Case value="E">
           <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="56"/>
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -461,451 +421,9 @@
           <Item name="BillText" deli_asc="-1"/>
           <Break/>
         </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
-  <Transaction service="******" code="******" log_switch="5" desc="银行发起批量查询欠费客户请求">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称
-        <Item name="JYLSH"     length="24" desc="交易流水号
-        <Item name="JYRQ"     length="8" desc="交易日期
-        <Item name="JYSJ"     length="6" desc="交易时间
-        <Item name="SFFS"     length="3" desc="收费方式
-        <Item name="JFH"     length="20" desc="缴费号
-        <Item name="DFNY"     length="6" desc="电费年月
-        <Item name="CXFS"     length="1" desc="查询方式
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="HODat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-              <Item name="WDMC"     length="64" desc="网点名称
-              <Item name="JYLSH"     length="24" desc="交易流水号
-              <Item name="JYRQ"     length="8" desc="交易日期
-              <Item name="JYSJ"     length="6" desc="交易时间
-              <Item name="YJYLSH"     length="24" desc="原交易流水号
-              <Item name="YJYRQ"     length="8" desc="原交易日期
-              <Item name="YJYSJ"     length="6" desc="原交易时间
-              <Item name="SFFS"     length="3" desc="收费方式
-              <Item name="FYLX"     length="3" desc="费用类型
-              <Item name="DWBM"     length="8" desc="单位编码
-              <Item name="JFH"     length="20" desc="缴费号
-              <Item name="JSHMC"     length="64" desc="结算户名称
-              <Item name="YDDZ"     length="128" desc="用电地址
-              <Item name="KKZH"     length="32" desc="扣款账户
-              <Item name="KKZHMC"     length="128" desc="扣款账户名称
-              <Item name="BFJFBZ"     length="1" desc="部分缴费标志
-              <Item name="ZWLSH"     length="16" desc="账务流水号
-              <Item name="DFNY"     length="6" desc="电费年月
-              <Item name="QFJE"     length="16" desc="欠费金额
-              <Item name="BJ"     length="16" desc="本金
-              <Item name="WYJ"     length="16" desc="违约金
-          </PackItem>
-          <Item name="HODat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"  />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6" />
-            <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="54" />
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch> 
-    </Response> 
-    </Transaction>
-
+      </Switch>
+    </Response>
+  </Transaction>
 
 
 
@@ -967,95 +485,6 @@
    </Response>
   </Transaction>
 
-  <!-- 银电代扣协议变更 -->
-  <Transaction service="460203"  code="460203" timeout="60" log_switch="5">
-    <Request delimiter_type="fixed">
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="CHT"     length="1 " />              <!--变更方式 0-新增,3-修改,5-查询,9-注销  -->
-      <Item name="ECD"     length="12" />              <!--收付费企业代码  -->
-      <Item name="EDD"     length="3 " />              <!--费项代码        -->
-      <Item name="JFH"     length="32" expression="DELBOTHSPACE($JFH)"/>  <!--缴费号          -->
-      <Item name="UsrNam"  length="64" expression="DELBOTHSPACE($UsrNam)"/><!--用户名称        -->
-      <Item name="OKH"     length="12" />              <!--原开户行行号    -->
-      <Item name="OAC"     length="12" />              <!--原账户/卡号     --> 
-      <Item name="KKB"     length="12" />              <!--新开户行行号    -->
-      <Item name="ActNo"   length="32" expression="DELBOTHSPACE($ActNo)"/>  <!--新账户/卡号     -->
-      <Item name="ActNm"   length="64" expression="DELBOTHSPACE($ActNm)"/>  <!--新客户名称      -->
-      <Item name="ACT"     length="1" />              <!--帐号类型        -->
-      <Item name="GPF"     length="1" />              <!--个人/集团标志  G:集团,P:个人 -->
-      <Item name="IdTyp"   length="2" />              <!--证件类型        -->
-      <Item name="TIdNo"   length="32" expression="DELBOTHSPACE($TIdNo)"/>   <!--证件号码        -->
-      <Item name="ZPF"     length="1" />              <!--账单邮寄类型    -->
-      <Item name="FPF"     length="1" />              <!--发票邮寄类型    -->
-      <Item name="JLD"     length="5" />              <!--计量点号        -->
-      <Item name="FPM"     length="40"/>              <!--发票邮寄人      -->
-      <Item name="FPC"     length="6" />              <!--发票邮寄邮编    -->
-      <Item name="FPA"     length="60"/>              <!--发票邮寄地址    -->
-      <Item name="ZPM"     length="40"/>              <!--帐单邮寄人      -->
-      <Item name="ZPC"     length="6" />              <!--帐单邮寄邮编    -->
-      <Item name="ZPA"     length="60"/>              <!--帐单邮寄地址    -->
-      <Item name="YBZ"     length="1" />              <!--余额不足通知方式-->
-      <Item name="EML"     length="64"/>              <!--E-MAIL          -->
-      <Item name="MOB"     length="30"/>              <!--联系手机号      -->
-      <Item name="TEL"     length="60"/>              <!--联系电话        -->
-      <Item name="TXT"     length="64"/>              <!--备注            -->
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="PAgtNo" length="13" />  <!--客户协议编号  -->
-            <Item name="CAgtNo" length="10"/>   <!--单位编号      -->
-            <Item name="CLM"    length="40" />  <!--客户名称      -->  
-            <Item name="ECD"    length="12" />  <!--收付费企业代码-->
-            <Item name="EDD"    length="3 "/>   <!--费项代码      -->  
-            <Item name="JFH"    length="32"/>   <!--缴费号        -->
-            <Item name="ACN"    length="32" />  <!--帐号/卡号     -->
-            <Item name="ActNm"  length="64" />  <!--新客户名称      -->
-            <Item name="KKH"    length="12"/>   <!--开户行行号    -->
-            <Item name="ACT"     length="1" />  <!--帐号类型        -->
-            <Item name="GPF"     length="1" />  <!--个人/集团标志  G:集团,P:个人 -->
-            <Item name="IdTyp"   length="2" />  <!--证件类型        -->
-            <Item name="TIdNo"   length="32"/>  <!--证件号码        -->
-            <Item name="ZPF"     length="1" />  <!--账单邮寄类型    -->
-            <Item name="FPF"     length="1" />  <!--发票邮寄类型    -->
-            <Item name="JLD"     length="5" />  <!--计量点号        -->
-            <Item name="FPM"     length="40"/>  <!--发票邮寄人      -->
-            <Item name="FPC"     length="6" />  <!--发票邮寄邮编    -->
-            <Item name="FPA"     length="60"/>  <!--发票邮寄地址    -->
-            <Item name="ZPM"     length="40"/>  <!--帐单邮寄人      -->
-            <Item name="ZPC"     length="6" />  <!--帐单邮寄邮编    -->
-            <Item name="ZPA"     length="60"/>  <!--帐单邮寄地址    -->
-            <Item name="YBZ"     length="1" />  <!--余额不足通知方式-->
-            <Item name="EML"     length="64"/>  <!--E-MAIL          -->
-            <Item name="MOB"     length="30"/>  <!--联系手机号      -->
-            <Item name="TEL"     length="60"/>  <!--联系电话        -->
-            <Item name="TXT"     length="64"/>  <!--备注            -->
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"/>
-            <Item name="OFmtCd" length="3" value="D04"/>
-            <Item name="RspCod" length="6"/>
-            <Item name="InPos"  length="4" value="0001"/>
-            <Item name="RspMsg" length="56"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch>
-    </Response>
-  </Transaction>
 
   <!-- 银行柜台电费代收查询交易 -->
   <Transaction service="460204"  code="460204" log_switch="5">
