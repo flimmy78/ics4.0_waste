@@ -3613,7 +3613,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460231" desc="供电发起代扣协议变更交易">
+  <Transaction code="460232" desc="供电发起代扣协议变更交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -4070,7 +4070,7 @@
   </Transaction>
 
 
- <Transaction code="460232" desc="银行发起用户协议对帐交易">
+ <Transaction code="460231" desc="银行到供电核对代扣协议交易">
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
         SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
@@ -4256,7 +4256,8 @@
       <Set>FileName=$LclFil</Set>
       <Set>recordNum=$DTN</Set>
 
-      <Exec func="PUB:CallThirdOther">  <!--通知供电方-->
+      <!--通知供电方-->
+      <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460232"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
@@ -4752,7 +4753,7 @@
 		</FlowCtrl>
 	</Transaction>
 
-  <Transaction code="460240" desc="银行达账电费明细文件">
+  <Transaction code="******" desc="银行达账电费明细文件">
     <DynSentence name="QryCrpAgr">    <!--检查单位协议 -->
       <Sentence>
          select BBusTyp,TActNo  from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'

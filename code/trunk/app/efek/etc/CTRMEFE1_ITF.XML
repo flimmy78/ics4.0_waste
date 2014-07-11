@@ -426,6 +426,45 @@
   </Transaction>
 
 
+  <Transaction service="460240"  code="460240" timeout="60" log_switch="5" desc="银行查询客户缴费记录交易">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="WDMC"     length="64" desc="网点名称"/>
+      <Item name="JYLSH"     length="24" desc="交易流水号"/>
+      <Item name="JYRQ"     length="8" desc="交易日期"/>
+      <Item name="JYSJ"     length="6" desc="交易时间"/>
+      <Item name="JFH"     length="20" desc="缴费号"/>
+      <Item name="DFKSNY"     length="6" desc="电费开始年月"/>
+      <Item name="DFZZNY"     length="6" desc="电费终止年月"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
 
 
 
