@@ -272,12 +272,24 @@
   <Transaction service="460244" code="460244" log_switch="5" desc="银行查询客户信息交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-        <Item name="WDMC"     length="64" desc="网点名称" />
-        <Item name="JYLSH"     length="24" desc="交易流水号" />
-        <Item name="JYRQ"     length="8" desc="交易日期" />
-        <Item name="JYSJ"     length="6" desc="交易时间" />
-        <Item name="QDBZ"     length="1" desc="签订方式" />
-        <Item name="JFH"     length="20" desc="供电方结算号" />
+        <Item name="QDBZ"     length="1" desc="签订标志" />
+        <Item name="JFH"     length="20" desc="缴费号" />
+        <If condition="INTCMP($QDBZ,4,3)">
+          <Item name="JSHMC"     length="64" desc="结算户名称"/>
+          <Item name="YQYYHDM"     length="4" desc="原签约银行代码"/>
+          <Item name="YQYZH"     length="32" desc="原签约账户"/>
+          <Item name="YQYZHMC"     length="128" desc="原签约账号名称"/>
+          <Item name="XQYYHDM"     length="4" desc="新签约银行代码"/>
+          <Item name="XQYZH"     length="32" desc="新签约账户"/>
+          <Item name="XQYZHMC"     length="128" desc="新签约账户名称"/>
+          <Item name="ZHLX"     length="2" desc="账户类型"/>
+          <Item name="ZJLX"     length="2" desc="证件类型"/>
+          <Item name="ZJHM"     length="32" desc="证件号码"/>
+          <Item name="LXDH"     length="20" desc="联系电话"/>
+          <Item name="SJHM"     length="20" desc="手机号码"/>
+          <Item name="EMAIL"     length="64" desc="E-MAIL"/>
+          <Item name="BZ"     length="128" desc="备注"/>
+        </If>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -286,18 +298,20 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="WDMC"     length="64" desc="网点名称"/>
-            <Item name="JYLSH"     length="24" desc="交易流水号"/>
-            <Item name="JYRQ"     length="8" desc="交易日期"/>
-            <Item name="JYSJ"     length="6" desc="交易时间"/>
-            <Item name="YJYLSH"     length="24" desc="原交易流水号"/>
-            <Item name="YJYRQ"     length="8" desc="原交易日期"/>
-            <Item name="YJYSJ"     length="6" desc="原交易时间"/>
-            <Item name="QDBZ"     length="1" desc="签订标志"/>
-            <Item name="JFH"     length="20" desc="缴费号"/>
-            <Item name="JSHMC"     length="64" desc="结算户名称"/>
-            <Item name="YDDZ"     length="128" desc="用电地址"/>
-            <Item name="BZ"     length="128" desc="备注"/>
+            <If condition="INTCMP($QDBZ,3,3)">
+              <Item name="WDMC"     length="64" desc="网点名称"/>
+              <Item name="JYLSH"     length="24" desc="交易流水号"/>
+              <Item name="JYRQ"     length="8" desc="交易日期"/>
+              <Item name="JYSJ"     length="6" desc="交易时间"/>
+              <Item name="YJYLSH"     length="24" desc="原交易流水号"/>
+              <Item name="YJYRQ"     length="8" desc="原交易日期"/>
+              <Item name="YJYSJ"     length="6" desc="原交易时间"/>
+              <Item name="QDBZ"     length="1" desc="签订标志"/>
+              <Item name="JFH"     length="20" desc="缴费号"/>
+              <Item name="JSHMC"     length="64" desc="结算户名称"/>
+              <Item name="YDDZ"     length="128" desc="用电地址"/>
+              <Item name="BZ"     length="128" desc="备注"/>
+            </If>
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
           <Break/>
@@ -323,13 +337,9 @@
 
 
   <!-- 银电代扣协议变更 -->
-  <Transaction service="460230"  code="460230" timeout="60" log_switch="5">
+  <!--Transaction service="460230"  code="460230" timeout="60" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="WDMC"     length="64" desc="网点名称"/>
-      <Item name="JYLSH"     length="24" desc="交易流水号"/>
-      <Item name="JYRQ"     length="8" desc="交易日期"/>
-      <Item name="JYSJ"     length="6" desc="交易时间"/>
       <Item name="QDBZ"     length="1" desc="签订标志"/>
       <Item name="JFH"     length="20" desc="缴费号"/>
       <Item name="JSHMC"     length="64" desc="结算户名称"/>
@@ -375,7 +385,7 @@
         </Default>
       </Switch>
     </Response>
-  </Transaction>
+  </Transaction-->
 
 
   <Transaction service="460231"  code="460231" timeout="60" log_switch="5" desc="银行到供电核对代扣协议交易">
