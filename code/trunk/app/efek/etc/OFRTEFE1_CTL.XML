@@ -7,6 +7,7 @@
     <Config name="OPFCSW"      value="etc/EFE_CSW_441999.XML"/>
   </ConfigDeclare>
   <PackageDeclare>
+    <Package name="EFE"        value="etc/EFEK_JOB_PKG.XML"/>
     <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
   </PackageDeclare>
   <TableDeclare>
@@ -63,7 +64,7 @@
     </Macro>
     <Macro name="GetEfeId">
         <Set>EfeId=STRCAT(SUBSTR($NodNo,1,3),999)</Set>
-        </Macro>
+    </Macro>
 
     <Macro name="TxnSrc_TxnCnl">
       <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
@@ -73,6 +74,17 @@
         <Arg name="DestNam" value="TxnCnl"/>
         <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
       </Exec>
+    </Macro>
+
+    <Macro name="GetJYLSH" desc="获取外发交易流水号">
+      <Set>TmpDate=GETDATETIME(YYYYMMDD)</Set>
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="LogNo"/>
+      </Exec>
+      <If condition="~RetCod=1">
+        <Exec func="PUB:GetLogNo"/>
+      </If>
+      <Set>JYLSH=STRCAT(TmpDate,LogNo)</Set>
     </Macro>
 
   </Define>
@@ -1351,88 +1363,31 @@
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
-    <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
-      <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
-      </Sentence>
-      <Fields>EfeId|</Fields>
-    </DynSentence>
     <FlowCtrl>
-    	
-    	 <Quote name="GetEfeId"/>
 
+      <Quote name="GetEfeId"/>
 
+      <!--读取开工信息记录-->
+      <Call package="AFE" function="CheckOpenByEfeId"/>
 
-      <!--根据柜员号取BrNo-->
-      <Exec func="PUB:GetBranchNoByTeller"/>
+      <!--得到网点名称-->
+      <Call package="AFE" function="GetWDMC"/>
 
-       <!--读取开工信息记录-->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
-        <Return/>
-      </If>
-      <If condition="$Status=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在停工状态</Set>
-        <Return/>
-      </If>
-      <Set>AplCls=202</Set>
-      <Set>BusTyp=EFEA1</Set>
-      <!--交易初始化,预留-->
-      <Exec func="PUB:InitTransaction"/>
-      <!--取前置流水号-->
-      <Exec func="PUB:GetLogNo"/>
-      <!--默认交易返回成功-->
-      <Set>RspCod=000000</Set>
-      
-      
-     
-      <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行IP设置</Set>
-        <Return/>
-      </If>
-
-      <Set>@MSG.OIP=$HstIp</Set>  <!--第三方IP-->
-      <Set>@MSG.OPT=$HstPrt</Set> <!--第三方PORT-->
-      <Set>WTC=301</Set>          <!--委托节点代码-->
-      <Set>TMN= </Set>            <!--经办网点-->
-      <Set>ECD= </Set>            <!--收付费企业代码  -->
-      <Set>EDD= </Set>            <!--费项代码        -->
-      <Set>OprCod=$TlrId </Set>   <!--操作员代码-->
+      <!--得到外发交易流水号-->
+      <Quote name="GetJYLSH"/>
+      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
 
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460204"/>
-        <Arg name="ObjSvr" value="STHDEFEA"/>
+        <Arg name="HTxnCd" value="460210"/>
+        <Arg name="ObjSvr" value="STHDEFE1"/>
       </Exec>
-      <If condition="$RspCod=000000">
-        <Set>MsgTyp=N</Set>
-      </If>
-      <Else>
-        <Exec func="PUB:RollbackWork" error="IGNORE" />        
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="TRspCd"/>
-          <Arg name="DestNam" value="RspMsg"/>
-          <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
-        </Exec>
-        <If condition="IS_EQUAL_STRING($TRspCd,06)">
-        	<Set>RspCod=000000</Set>
-        	<Set>MsgTyp=N</Set>
-        </If>
-        <Else>
-          <Set>RspCod=EFE999</Set>
-          <Set>MsgTyp=E</Set>
-        </Else>
+      <If condition="$JYFHDM!=00">
+        <Set>RspCod=EFE999</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=$CWTSXX</Set>
         <Return/>
-      </Else>
+      </If>
 			<Set>MsgTyp=N</Set>
 			<Set>RspCod=000000</Set>
 			<Set>RspMsg=交易成功!</Set>
@@ -1480,15 +1435,12 @@
        </Sentence>
        <Fields>TLogNo|TckNo|Status|EfeId|WDO|ActNo|LogNo|</Fields>
     </DynSentence>
-
     <DynSentence name="UdpEfeadtl"> <!--更新购彩流水辅表 -->
        <Sentence>
          update efechkdtl set TLogNo='%s' where EfeId='%s' and LogNo='%s'
        </Sentence>
        <Fields>TLogNo|EfeId|LogNo|</Fields>
     </DynSentence>
-
-
     <DynSentence name="UdpEfeaSts"> <!--更新电力电费流水辅表 -->
        <Sentence>
          update efechkinf set Status='%s' where EfeId='%s' and LogNo='%s'
@@ -1498,26 +1450,20 @@
     <FlowCtrl>
     	 
     	 <Quote name="GetEfeId"/>
+      <!--读取开工信息记录-->
+      <Call package="AFE" function="CheckOpenByEfeId"/>
+
+      <!--得到网点名称-->
+      <Call package="AFE" function="GetWDMC"/>
+
+      <!--得到外发交易流水号-->
+      <Quote name="GetJYLSH"/>
+      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
     	 
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
 
-       <!--读取开工信息记录-->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
-        <Return/>
-      </If>
-      <If condition="$Status=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在停工状态</Set>
-        <Return/>
-      </If>
-
-      
       <Set>AplCls=202</Set>
       <Set>BusTyp=EFEA1</Set>
 
@@ -1526,17 +1472,8 @@
       <!--取前置流水号-->
       <Exec func="PUB:GetLogNo"/>
       <!--默认交易返回成功-->
-      <Set>RspCod=000000</Set>
-        <!--<Set>ActDat=20130821</Set>冲销测试用，到时要删除-->
-     
-      <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行IP设置</Set>
-        <Return/>
-      </If>
+      <Set>RspCod=EFE999</Set>
+
 
       <!--读取协议数据-->
       <Exec func="PUB:ReadRecord">
@@ -1701,73 +1638,6 @@
         <Return/>
       </If>
       
-      <!--插入银电对账明细表-->
-      <Set>Cnt=1</Set>
-      <While condition="INTCMP($Cnt,2,$JFNUM)">
-      	<Delete>ROOT.JFXH</Delete>
-      	<Delete>ROOT.JFJE</Delete>
-      	<Delete>ROOT.MON</Delete>
-      	<Delete>ROOT.JLD</Delete>
-      	<Delete>ROOT.YSH</Delete>
-      	<Delete>ROOT.CPS</Delete>
-      	<Delete>ROOT.MNS</Delete>
-      	<Delete>ROOT.PCC</Delete>
-      	<Set>JFXH_Nam=STRCAT(ROOT.Rec_,$Cnt,.JFXH)</Set>
-      	<Set>JFJE_Nam=STRCAT(ROOT.Rec_,$Cnt,.JFJE)</Set>
-      	<Set>MON_Nam=STRCAT(ROOT.Rec_,$Cnt,.MON)</Set>
-      	<Set>JLD_Nam=STRCAT(ROOT.Rec_,$Cnt,.JLD)</Set>
-      	<Set>YSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.YSH)</Set>
-      	<Set>CPS_Nam=STRCAT(ROOT.Rec_,$Cnt,.CPS)</Set>
-      	<Set>MNS_Nam=STRCAT(ROOT.Rec_,$Cnt,.MNS)</Set>
-      	<Set>PCC_Nam=STRCAT(ROOT.Rec_,$Cnt,.PCC)</Set>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JFXH_Nam"/>
-          <Arg name="DestName" value="ROOT.JFXH"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JFJE_Nam"/>
-          <Arg name="DestName" value="ROOT.JFJE"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$MON_Nam"/>
-          <Arg name="DestName" value="ROOT.MON"/>
-        </Exec>
-         <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JLD_Nam"/>
-          <Arg name="DestName" value="ROOT.JLD"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$YSH_Nam"/>
-          <Arg name="DestName" value="ROOT.YSH"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$CPS_Nam"/>
-          <Arg name="DestName" value="ROOT.CPS"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JFXH_Nam"/>
-          <Arg name="DestName" value="ROOT.JFXH"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$MNS_Nam"/>
-          <Arg name="DestName" value="ROOT.MNS"/>
-        </Exec>
-        <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$PCC_Nam"/>
-          <Arg name="DestName" value="ROOT.PCC"/>
-        </Exec>              	
-        <Exec func="PUB:ExecSql" error="IGNORE">
-           <Arg name="SqlCmd"   value="Insefechkdtl"/>
-        </Exec>
-        <If condition="~RetCod=-1">
-          <Exec func="PUB:RollbackWork" error="IGNORE" />
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=数据库处理失败!</Set>
-          <Return/>
-        </If>
-        <Set>Cnt=ADD($Cnt,1)</Set>
-      </While>
       
       <!--发送主机记账和第三方-->
       <Call package="AFE" function="AFE_SglBkPay"/>

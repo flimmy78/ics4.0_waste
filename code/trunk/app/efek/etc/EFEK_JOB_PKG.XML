@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Package>
+  <TableDeclare>
+    <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--ÒµÎñÁ÷Ë®±í-->
+  </TableDeclare>
+
+  <Function name="CheckOpenByEfeId" desc="Ê¹ÓÃEfeId²éÑ¯¹©µç¾Ö¿ª¹¤Çé¿ö">
+    <DynSentence name="QryInfCtl">             <!--²éÑ¯¿ª¹¤ÐÅÏ¢±í -->
+      <Sentence>
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
+      </Sentence>
+      <Fields>EfeId|</Fields>
+    </DynSentence>
+    <Process>
+      <!--¶ÁÈ¡¿ª¹¤ÐÅÏ¢¼ÇÂ¼-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryInfCtl"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=ÎÞ$BrNo·ÖÐÐ¿ª¹¤ÐÅÏ¢¼ÇÂ¼</Set>
+        <Return/>
+      </If>
+      <If condition="$Status=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=ÒøµçÏµÍ³ÒÑÔÚÍ£¹¤×´Ì¬</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
+  <Function name="GetWDMC" desc="»ñÈ¡ÍøµãÃû³Æ">
+    <DynSentence name="QryPubInf">
+      <Sentence>
+        select nodnam WDMC from pubnodinf where nodno='%s'
+      </Sentence>
+      <Fields>NodNo|</Fields>
+    </DynSentence>
+    <Process>
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryPubInf"/>
+      </Exec>
+    </Process>
+  </Function>
+
+
+
+
+</Package>
