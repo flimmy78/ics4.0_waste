@@ -438,18 +438,6 @@
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
-    <DynSentence name="QryCusCnt">             <!--查询协议存在 -->
-      <Sentence>
-        SELECT count(*) cnt1 from efecusagt WHERE JFH='%s' AND Status='0'
-      </Sentence>
-      <Fields>JFH|</Fields>
-    </DynSentence>
-    <DynSentence name="QryCusAgt">             <!--查询协议信息 -->
-      <Sentence>
-        SELECT * from efecusagt WHERE JFH='%s' AND Status='0'
-      </Sentence>
-      <Fields>JFH|</Fields>
-    </DynSentence>
     <DynSentence name="InsCusAgt">             <!--新增签约记录 -->
       <Sentence>
         INSERT INTO efekcusagt(BrNo,NodNo,CAgtNo,WDMC,QDBZ,JFH,JSHMC,XQYYHDM,
@@ -499,20 +487,7 @@
       <Switch expression="$QDBZ">
         <!--新增-->
         <Case value="0">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,1)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号已经签约</Set>
-            <Return/>
-          </If>
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -545,58 +520,14 @@
                   <Set>ZHLX=1</Set>
               </Else>
               <Set>CcyCod=CNY</Set>
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="476520"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
-              <If condition="IS_NOEQUAL_STRING($ActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$IDNo)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>ActTyp=1</Set>
               <Set>ZHLX=0</Set>
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="109000"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>ActQ04=DELBOTHSPACE($ActQ04)</Set>
-              <If condition="IS_NOEQUAL_STRING($ActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$ActQ04)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -661,20 +592,7 @@
         </Case>
         <!--修改-->
         <Case value="1">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,0)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号没签约</Set>
-            <Return/>
-          </If>
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -705,57 +623,13 @@
                  <Set>ActTyp=2</Set>
               </Else>
               <Set>CcyCod=CNY</Set>
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="476520"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
-              <If condition="IS_NOEQUAL_STRING($ActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$IDNo)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>ActTyp=1</Set>
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="109000"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>ActQ04=DELBOTHSPACE($ActQ04)</Set>
-              <If condition="IS_NOEQUAL_STRING($ActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$ActQ04)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -797,20 +671,7 @@
         </Case>
         <!--注销-->
         <Case value="2">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,0)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号没签约</Set>
-            <Return/>
-          </If>
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="CclCusAgt"/>
           </Exec>
@@ -3003,75 +2864,49 @@
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
-    <DynSentence name="QryCusCnt">             <!--查询协议存在 -->
-      <Sentence>
-        SELECT count(*) cnt1 from efecusagt WHERE JFH='%s' AND Status='0'
-      </Sentence>
-      <Fields>JFH|</Fields>
-    </DynSentence>
-    <DynSentence name="QryCusAgt">             <!--查询协议信息 -->
-      <Sentence>
-        SELECT * from efecusagt WHERE JFH='%s' AND Status='0'
-      </Sentence>
-      <Fields>JFH|</Fields>
-    </DynSentence>
     <DynSentence name="InsCusAgt">             <!--新增签约记录 -->
       <Sentence>
-        INSERT INTO efecusagt(BrNo,PAgtNo,CAgtNo,SBN,ECD,WDO,EDD,JFH,UsrNam,KKB,ActNo,
-           ActNam,GPF,IdTyp,IdNo,
-           JLD,TXT,Status,EfeId)
+        INSERT INTO efekcusagt(BrNo,NodNo,CAgtNo,WDMC,QDBZ,JFH,JSHMC,XQYYHDM,
+            XQYZH,XQYZHMC,ZHLX,ZJLX,ZJHM,LXDH,SJHM,EMAIL,BZ)
         VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
                '%s','%s','%s','%s',
-               '%s','%s','0','%s')
+               '%s','%s')
       </Sentence>
       <Fields>
-        BrNo|PAgtNo|CAgtNo|SBN|ECD|WDO|EDD|JFH|UsrNam|KKB|TActNo|TActNm|GPF|TIdTyp|TIdNo|JLD|TXT|EfeId
+        BrNo|NodNo|CAgtNo|WDMC|QDBZ|JFH|JSHMC|XQYYHDM|XQYZH|XQYZHMC|ZHLX|ZJLX|ZJHM|LXDH|SJHM|EMAIL|BZ
       </Fields>
     </DynSentence>
      <DynSentence name="UdpCusAgt">             <!--修改签约记录 -->
       <Sentence>
-        UPDATE efecusagt set EfeId ='%s',SBN='%s',ECD='%s',WDO  ='%s',EDD='%s',
-           JFH='%s',KKB='%s',ActNo='%s',KAT='%s',ActNam='%s',IdTyp='%s',
-          IdNo='%s',JLD='%s',TXT='%s',UsrNam='%s'
-          WHERE JFH='%s' and Status='0'
+        UPDATE efecusagt set BrNo='%s',NodNo='%s',CAgtNo='%s',WDMC='%s',
+          QDBZ='%s',JSHMC='%s',XQYYHDM='%s',XQYZH='%s',XQYZHMC='%s',
+          ZHLX='%s',ZJLX='%s',ZJHM='%s',LXDH='%s',SJHM='%s',EMAIL='%s',BZ='%s'
+          WHERE JFH='%s'
       </Sentence>
       <Fields>
         EfeId|SBN|ECD|WDO|EDD|JFH|KKB|TActNo|ACT|TActNm|TIdTyp|TIdNo|JLD|TXT|UsrNam|JFH|
       </Fields>
     </DynSentence>
-    <DynSentence name="DelCusAgr">             <!--删除签约记录 -->
-      <Sentence>
-        DELETE FROM efecusagt where EfeId='%s' and JFH='%s'
-      </Sentence>
-      <Fields>EfeId|JFH|</Fields>
-    </DynSentence>
     <DynSentence name="CclCusAgt">             <!--注销签约记录 -->
       <Sentence>
-        UPDATE efecusagt SET Status='1' WHERE EfeId='%s' AND JFH='%s' and Status='0'
+        UPDATE efecusagt SET QDBZ='%s' WHERE JFH='%s'
       </Sentence>
       <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <FlowCtrl>
-    	 <Quote name="GetEfeId"/>
-      <Set>DLIP=@MSG.SIP</Set>
-      <!--查询对应分行号 -->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
-      </If>
-      <!--交易初始化,预留-->
-      <Exec func="PUB:InitTransaction"/>
-      <!--取前置流水号-->
-      <Exec func="PUB:GetLogNo"/>
-      <!--默认交易返回成功-->
-      <Set>RspCod=000000</Set>
+      <Quote name="GetEfeId"/>
 
-      <Set>TTxnCd=460431</Set>    <!--第三方交易码-->
-      <Set>WTC=301</Set>          <!--委托节点代码-->
+      <!--读取开工信息记录-->
+      <Call package="AFE" function="CheckOpenByEfeId"/>
+
+      <!--得到网点名称-->
+      <Call package="AFE" function="GetWDMC"/>
+
+      <!--得到外发交易流水号-->
+      <Quote name="GetJYLSH"/>
+      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+
 
       <Switch  expression="$EfeId">
         <Case value="441999">
@@ -3121,25 +2956,12 @@
       <Exec func="PUB:GetVirtualTeller">
         <Arg name="TxnCnl" value="EFA"/>
       </Exec>
-      <Set>TlrId=$TlrId</Set>
 
-      <Switch expression="$CHT">
+
+      <Switch expression="$QDBZ">
         <!--新增-->
         <Case value="0">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,1)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号已经签约</Set>
-            <Return/>
-          </If>
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -3173,53 +2995,14 @@
               <Set>GPF=P</Set>
               <Set>CcyCod=CNY</Set>
 
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="476520"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
-              <If condition="OR(IS_NOEQUAL_STRING($TActNm,$ActNam),IS_NOEQUAL_STRING($TIdNo,$IDNo))">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称或者证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>GPF=G</Set>
               <Set>ActTyp=1</Set>
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="109000"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>ActQ04=DELBOTHSPACE($ActQ04)</Set>
-              <If condition="IS_NOEQUAL_STRING($TActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$ActQ04)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -3239,37 +3022,6 @@
             <Arg name="Len" value="10"></Arg>
           </Exec>
           <Set>PAgtNo=STRCAT($SeqCnd,$SelVal)</Set>
-          <Set>BrNo   =$BrNo</Set>
-          <Set>PAgtNo =$PAgtNo</Set>
-          <Set>CAgtNo =$CAgtNo</Set>
-          <Set>SBN    =$SBN</Set>
-          <Set>ECD    =$ECD</Set>
-          <Set>WDO    =$WDO</Set>
-          <Set>EDD    =$EDD</Set>
-          <Set>JFH    =$JFH</Set>
-          <Set>UsrNam =$UsrNam</Set>
-          <Set>KKB    =$KKB</Set>
-          <Set>TActNo =$TActNo</Set>
-          <Set>KAT    =$KAT</Set>
-          <Set>TActNm =$TActNm</Set>
-          <Set>GPF    =$GPF   </Set>
-          <Set>TIdTyp =$TIdTyp</Set>
-          <Set>TIdNo  =$TIdNo </Set>
-          <Set>ZPF    =$ZPF   </Set>
-          <Set>FPF    =$FPF   </Set>
-          <Set>JLD    =$JLD   </Set>
-          <Set>FPM    =$FPM   </Set>
-          <Set>FPC    =$FPC   </Set>
-          <Set>FPA    =$FPA   </Set>
-          <Set>ZPM    =$ZPM   </Set>
-          <Set>ZPC    =$ZPC   </Set>
-          <Set>ZPA    =$ZPA   </Set>
-          <Set>YBZ    =$YBZ   </Set>
-          <Set>EML    =$EML   </Set>
-          <Set>MOB    =$MOB   </Set>
-          <Set>TEL    =$TEL   </Set>
-          <Set>TXT    =$TXT   </Set>
-          <Set>EFEID  =$EfeId   </Set>
           <!--插入库表-->
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="InsCusAgt"/>
@@ -3284,21 +3036,8 @@
           <Break/>
         </Case>
         <!--修改-->
-        <Case value="3">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,0)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号没签约</Set>
-            <Return/>
-          </If>
+        <Case value="1">
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -3332,24 +3071,7 @@
               <Set>GPF=P</Set>
               <Set>CcyCod=CNY</Set>
 
-              <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="476520"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
-              <If condition="OR(IS_NOEQUAL_STRING($TActNm,$ActNam),IS_NOEQUAL_STRING($TIdNo,$IDNo))">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称或者证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
@@ -3357,28 +3079,7 @@
               <Set>GPF=G</Set>
               <Set>ActTyp=1</Set>
               <!--上主机查询客户资料-->
-              <Exec func="PUB:CallHostOther" error="IGNORE">
-                <Arg name="HTxnCd" value="109000"/>
-                <Arg name="ObjSvr" value="SHSTPUB1"/>
-              </Exec>
-              <If condition="$MsgTyp!=N">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户不存在</Set>
-                <Return/>
-              </If>
-              <!--校验账户名称、开户证件类型和开户证件号码-->
-              <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
-              <Set>ActQ04=DELBOTHSPACE($ActQ04)</Set>
-              <If condition="IS_NOEQUAL_STRING($TActNm,$ActNam)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=账户名称不符</Set>
-                <Return/>
-              </If>
-              <If condition="IS_NOEQUAL_STRING($TIdNo,$ActQ04)">
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=证件号码不符</Set>
-                <Return/>
-              </If>
+              <Call package="AFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -3400,34 +3101,13 @@
           <Break/>
         </Case>
         <!--查询-->
-        <Case value="5">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusAgt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
+        <Case value="3">
+            <Call package="AFE" function="QryCusAgt"/>
           <Break/>
         </Case>
         <!--注销-->
-        <Case value="9">
-          <!--根据缴费号检查是否签约-->
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="QryCusCnt"/>
-          </Exec>
-          <If condition="~RetCod!=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=缴费号查询失败</Set>
-            <Return/>
-          </If>
-          <If condition="STRCMP($cnt1,0)=0">
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=该缴费号没签约</Set>
-            <Return/>
-          </If>
+        <Case value="2">
+          <Call package="AFE" function="ChkIsExistAgt"/>
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="CclCusAgt"/>
           </Exec>

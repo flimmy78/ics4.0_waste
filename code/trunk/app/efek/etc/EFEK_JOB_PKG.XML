@@ -45,6 +45,106 @@
   </Function>
 
 
+  <Function name="ChkIsExistAgt" desc="查询是否存在代扣协议">
+    <DynSentence name="QryCusCnt">             <!--查询协议存在 -->
+      <Sentence>
+        SELECT count(*) cnt1 from efekcusagt WHERE JFH='%s' AND Status='0'
+      </Sentence>
+      <Fields>JFH|</Fields>
+    </DynSentence>
+    <Process>
+      <!--根据缴费号检查是否签约-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryCusCnt"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=缴费号查询失败</Set>
+        <Return/>
+      </If>
+      <If condition="STRCMP($cnt1,0)=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=该缴费号没签约</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
+  <Function name="QryCusAgt" desc="查询代扣协议明细">
+    <DynSentence name="QryCusAgt">             <!--查询协议信息 -->
+      <Sentence>
+        SELECT * from efekcusagt WHERE JFH='%s' AND Status='0'
+      </Sentence>
+      <Fields>JFH|</Fields>
+    </DynSentence>
+    <Process>
+      <!--根据缴费号检查是否签约-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryCusAgt"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=缴费号查询失败</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
+  <Function name="Chk476520" desc="检查对私资料">
+    <Process>
+      <!--上主机查询客户资料-->
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="HTxnCd" value="476520"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="$MsgTyp!=N">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=帐户不存在</Set>
+        <Return/>
+      </If>
+      <!--校验账户名称、开户证件类型和开户证件号码-->
+      <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
+      <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
+      <If condition="OR(IS_NOEQUAL_STRING($TActNm,$ActNam),IS_NOEQUAL_STRING($TIdNo,$IDNo))">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=账户名称或者证件号码不符</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
+  <Function name="Chk109000" desc="检查对公资料">
+    <Process>
+      <!--上主机查询客户资料-->
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="HTxnCd" value="109000"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="$MsgTyp!=N">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=帐户不存在</Set>
+        <Return/>
+      </If>
+      <!--校验账户名称、开户证件类型和开户证件号码-->
+      <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
+      <Set>ActQ04=DELBOTHSPACE($ActQ04)</Set>
+      <If condition="IS_NOEQUAL_STRING($TActNm,$ActNam)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=账户名称不符</Set>
+        <Return/>
+      </If>
+      <If condition="IS_NOEQUAL_STRING($TIdNo,$ActQ04)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=证件号码不符</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
 
 
 </Package>
