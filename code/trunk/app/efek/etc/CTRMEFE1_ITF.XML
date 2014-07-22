@@ -11,7 +11,7 @@
 		</Table>
   </CodeSwitching-->
 
-  <Transaction service="460241" code="460241" log_switch="5" desc="银行发起批量查询欠费客户请求">
+  <Transaction service="460441" code="460441" log_switch="5" desc="银行发起批量查询欠费客户请求">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
         <Item name="WDMC"     length="64" desc="网点名称" />
@@ -64,7 +64,7 @@
     </Response> 
     </Transaction>
 
-  <Transaction service="460210" code="460210" log_switch="5" desc="银行发起批量查询欠费客户请求">
+  <Transaction service="460410" code="460410" log_switch="5" desc="银行发起批量查询欠费客户请求">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
         <Item name="JFH"     length="20" desc="缴费号" />
@@ -123,7 +123,7 @@
     </Response> 
   </Transaction>
 
-  <Transaction service="460211" code="460211" log_switch="5" desc="银行代收客户欠费交易">
+  <Transaction service="460411" code="460411" log_switch="5" desc="银行代收客户欠费交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="SFFS"     length="3" desc="收费方式" />
@@ -190,7 +190,7 @@
     </Response> 
     </Transaction>
 
-  <Transaction service="460212" code="460212" log_switch="5" desc="银行日结点抹账交易">
+  <Transaction service="460412" code="460412" log_switch="5" desc="银行日结点抹账交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="WDMC"     length="64" desc="网点名称" />
@@ -269,7 +269,7 @@
     </Response> 
     </Transaction>
 
-  <Transaction service="460244" code="460244" log_switch="5" desc="银行查询客户信息交易">
+  <Transaction service="460444" code="460444" log_switch="5" desc="银行查询/增加/修改/删除客户信息交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
         <Item name="QDBZ"     length="1" desc="签订标志" />
@@ -311,6 +311,9 @@
               <Item name="JSHMC"     length="64" desc="结算户名称"/>
               <Item name="YDDZ"     length="128" desc="用电地址"/>
               <Item name="BZ"     length="128" desc="备注"/>
+              <Item name="YQYYHDM"     length="4" desc="原签约银行代码"/>
+              <Item name="YQYZH"     length="32" desc="原签约账户"/>
+              <Item name="YQYZHMC"     length="128" desc="原签约账号名称"/>
             </If>
           </PackItem>
           <Item name="HODat" head_len="4" include_len="yes"/>
@@ -337,7 +340,7 @@
 
 
   <!-- 银电代扣协议变更 -->
-  <!--Transaction service="460230"  code="460230" timeout="60" log_switch="5">
+  <!--Transaction service="460430"  code="460430" timeout="60" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="QDBZ"     length="1" desc="签订标志"/>
@@ -388,7 +391,7 @@
   </Transaction-->
 
 
-  <Transaction service="460231"  code="460231" timeout="60" log_switch="5" desc="银行到供电核对代扣协议交易">
+  <Transaction service="460431"  code="460431" timeout="60" log_switch="5" desc="银行到供电核对代扣协议交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="JYLSH"     length="24" desc="交易流水号"/>
@@ -429,7 +432,7 @@
   </Transaction>
 
 
-  <Transaction service="460240"  code="460240" timeout="60" log_switch="5" desc="银行查询客户缴费记录交易">
+  <Transaction service="460440"  code="460440" timeout="60" log_switch="5" desc="银行查询客户缴费记录交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="WDMC"     length="64" desc="网点名称"/>
@@ -490,7 +493,7 @@
 
 
 <!-- 银电业务停工交易 -->
-  <Transaction service="460202"  code="460202" log_switch="5">
+  <Transaction service="460402"  code="460402" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="OprCod"  length="8"  expression="DELBOTHSPACE($CreTlr)"/>  <!--操作员代码-->
@@ -529,7 +532,7 @@
 
 
   <!-- 银行柜台电费代收查询交易 -->
-  <Transaction service="460204"  code="460204" log_switch="5">
+  <Transaction service="460404"  code="460404" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="EDD"   length="3 " />             <!--费项代码-->
@@ -602,7 +605,7 @@
   </Transaction>
 
   <!-- 银行柜台电费代收缴费交易 -->
-  <Transaction service="460205"  code="460205" log_switch="5">
+  <Transaction service="460405"  code="460405" log_switch="5">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="OCN"     length="12"/>             <!-- 原委托节点代码           -->

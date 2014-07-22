@@ -89,7 +89,7 @@
 
   </Define>
 
-<Transaction code="460200" desc="大小通道交易处理"> <!--RecSts 0:初始化 1:成功 2:失败-->
+<Transaction code="460400" desc="大小通道交易处理"> <!--RecSts 0:初始化 1:成功 2:失败-->
     <DynSentence name="UpdRecSts">
       <Sentence>
         UPDATE afebatrec SET RecSts='%s',HTxnSt='%s',HRspCd='%s' WHERE DskNo='%s' AND SeqNo='%s'
@@ -226,7 +226,7 @@
 </Transaction>
 
 
-  <Transaction code="460201" desc="银电业务开工交易">
+  <Transaction code="460401" desc="银电业务开工交易">
   <!--自动冲正
     <Attributes>
       <Attribute name="integrity" value="2" code="482107" interval="5" timeout="30" maxtimes="15"/>
@@ -297,7 +297,7 @@
 
        <!--发送第三方-->
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460201"/>
+        <Arg name="HTxnCd" value="460401"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
       <If condition="$RspCod=000000">
@@ -330,7 +330,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460202" desc="银电业务停工交易">
+  <Transaction code="460402" desc="银电业务停工交易">
   <!--自动冲正
     <Attributes>
       <Attribute name="integrity" value="2" code="482107" interval="5" timeout="30" maxtimes="15"/>
@@ -401,7 +401,7 @@
 
        <!--发送第三方-->
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460202"/>
+        <Arg name="HTxnCd" value="460402"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
       <If condition="$RspCod=000000">
@@ -434,7 +434,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460244" desc="银行查询/增加/修改/删除客户信息交易">
+  <Transaction code="460444" desc="银行查询/增加/修改/删除客户信息交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -629,7 +629,7 @@
           </If>
           <!--发送第三方签约-->
           <Exec func="PUB:CallThirdOther">
-            <Arg name="HTxnCd" value="460230"/>
+            <Arg name="HTxnCd" value="460430"/>
             <Arg name="ObjSvr" value="STHDEFEA"/>
           </Exec>
           <If condition="$RspCod=000000">
@@ -775,7 +775,7 @@
             <Return/>
           </If>
           <Exec func="PUB:CallThirdOther">
-            <Arg name="HTxnCd" value="460230"/>
+            <Arg name="HTxnCd" value="460430"/>
             <Arg name="ObjSvr" value="STHDEFEA"/>
           </Exec>
           <If condition="$RspCod=000000">
@@ -822,7 +822,7 @@
             <Return/>
           </If>
           <Exec func="PUB:CallThirdOther">
-            <Arg name="HTxnCd" value="460230"/>
+            <Arg name="HTxnCd" value="460430"/>
             <Arg name="ObjSvr" value="STHDEFEA"/>
           </Exec>
           <If condition="$RspCod=000000">
@@ -845,7 +845,7 @@
         <!--查询-->
         <Case value="3">
           <Exec func="PUB:CallThirdOther">
-            <Arg name="HTxnCd" value="460244"/>
+            <Arg name="HTxnCd" value="460444"/>
             <Arg name="ObjSvr" value="STHDEFE1"/>
           </Exec>
           <If condition="$JYFHDM!=00">
@@ -869,7 +869,7 @@
   </Transaction>
 
 
-  <Transaction code="460210" desc="银行柜台电费代收查询交易">
+  <Transaction code="460410" desc="银行柜台电费代收查询交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -889,7 +889,7 @@
       <Set>JYSJ=GETDATETIME(HHMISS)</Set>
 
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460210"/>
+        <Arg name="HTxnCd" value="460410"/>
         <Arg name="ObjSvr" value="STHDEFE1"/>
       </Exec>
       <If condition="$JYFHDM!=00">
@@ -905,7 +905,7 @@
   </Transaction>
 
 
-  <Transaction code="460211" desc="银行柜台电费代收缴费交易">
+  <Transaction code="460411" desc="银行柜台电费代收缴费交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -1123,7 +1123,7 @@
 
       <Exec func="PUB:ReadModuleCfg">
         <Arg name="Application" value="GD_DLDF"/>
-        <Arg name="Transaction" value="460205"/>   <!--CFG_EFE_441999.XML -->
+        <Arg name="Transaction" value="460405"/>   <!--CFG_EFE_441999.XML -->
       </Exec>
      <!-- <Set>ActDat=20130821</Set>  冲销测试用，到时要删除-->
       <Set>WTC=301</Set>
@@ -1292,7 +1292,7 @@
 
          <Set>OHLogNo=$HLogNo</Set>
          <Set>OTckNo=$TckNo</Set>
-         <Set>OTTxnCd=460205</Set>
+         <Set>OTTxnCd=460405</Set>
          
          <Set>TTxnCd=$TxnCod</Set>
          <Set>OTxnSts=$TxnSts</Set>
@@ -1333,7 +1333,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460212" desc="银行柜台当日代收冲销交易">
+  <Transaction code="460412" desc="银行柜台当日代收冲销交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -1441,7 +1441,7 @@
 
 
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460206"/>
+        <Arg name="HTxnCd" value="460406"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
 
@@ -1491,7 +1491,7 @@
       </If>
 
       <Set>LogNo=$OLogNo</Set>
-      <Set>OTTxnCd=460205</Set>
+      <Set>OTTxnCd=460405</Set>
       <Set>TTxnCd=$TxnCod</Set>
       <Set>HLogNo= </Set>
       <Set>HLogNo=DELSPACE($HLogNo,all)</Set>
@@ -1528,7 +1528,7 @@
   </Transaction>
 
 
-  <Transaction code="460222" desc="供电方发起单笔代扣交易">
+  <Transaction code="460422" desc="供电方发起单笔代扣交易">
 
 
     <Attributes>
@@ -1602,7 +1602,7 @@
       <Exec func="PUB:GetLogNo"/>
 
       
-      <Set>TTxnCd=460220</Set>
+      <Set>TTxnCd=460420</Set>
       <Set>MsgTyp_tmp=$MsgTyp</Set>
       <Set>HRspCd_tmp=$HRspCd</Set>
 
@@ -1748,7 +1748,7 @@
   </Transaction>
 
 
-  <Transaction code="460221" desc="批量代扣返回">
+  <Transaction code="460421" desc="批量代扣返回">
     <FlowCtrl>
       <Exec func="PUB:CallThirdOther" error="IGNORE">
         <Arg name="HTxnCd" value="@PARA.TTxnCd"/>
@@ -1760,7 +1760,7 @@
   </Transaction>
 
 
-  <Transaction code="460223" desc="供电单笔当日代扣抹帐交易">
+  <Transaction code="460423" desc="供电单笔当日代扣抹帐交易">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
         SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
@@ -1827,7 +1827,7 @@
 
       <Exec func="PUB:ReadModuleCfg">
         <Arg name="Application" value="GD_DLDF"/>
-        <Arg name="Transaction" value="460221"/>
+        <Arg name="Transaction" value="460421"/>
       </Exec>
 
       <Set>ActNo=$KAC</Set>
@@ -1892,7 +1892,7 @@
       <Else>                                   <!--第三方-->
         <Return/>
       </Else>
-      <Set>OTTxnCd=460220</Set>
+      <Set>OTTxnCd=460420</Set>
       <Set>TTxnCd=$TxnCod</Set>
 
       <Set>TIATyp=C</Set>
@@ -1934,7 +1934,7 @@
 
 
 
-  <Transaction code="460220" desc="供电发起批量代扣交易">
+  <Transaction code="460420" desc="供电发起批量代扣交易">
 
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
@@ -2113,7 +2113,7 @@
       <Exec func="PUB:GetAppInfo"/>   
         
       <Set>DskNam=$FilNam</Set>
-      <Set>TTxnCd=460222</Set>
+      <Set>TTxnCd=460422</Set>
 
       <!--取电子柜员号-->
       <Set>TxnCnl=EFA</Set>       <!--取电子柜员号用-->
@@ -2514,7 +2514,7 @@
 
       <!--银行方发起批量代扣记账交易请求-->
       <Exec func="PUB:CallLocal">
-         <Arg name="TxnCod"  value="460221"/>
+         <Arg name="TxnCod"  value="460421"/>
          <Arg name="ObjSvr"  value="OFRTPUBA"/>
       </Exec>
 
@@ -2526,7 +2526,7 @@
 
   </Transaction>
 
-  <Transaction code="460224" desc="供电发起批量代扣取消">
+  <Transaction code="460424" desc="供电发起批量代扣取消">
 
     <DynSentence name="ChkDskSts">
       <Sentence>
@@ -2608,7 +2608,7 @@
 
 
 
-  <Transaction code="460225" desc="文件批量完成通知第三方">
+  <Transaction code="460425" desc="文件批量完成通知第三方">
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
         SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
@@ -2750,7 +2750,7 @@
 
       <Exec func="PUB:ReadModuleCfg">
         <Arg name="Application" value="GD_DLDFPL"/>
-        <Arg name="Transaction" value="460222"/>
+        <Arg name="Transaction" value="460422"/>
       </Exec>
 
       <!--产生已扣文件给电力-->
@@ -2827,7 +2827,7 @@
 
 
       <Exec func="PUB:CallThirdOther">   <!--第三方发送报文-->
-        <Arg name="HTxnCd" value="460223"/>
+        <Arg name="HTxnCd" value="460423"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
 
@@ -2837,7 +2837,7 @@
 
   </Transaction>
 
-  <Transaction code="460290" desc="银电业务开工交易">
+  <Transaction code="460490" desc="银电业务开工交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -2915,7 +2915,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460291" desc="银电业务停工交易">
+  <Transaction code="460491" desc="银电业务停工交易">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
         SELECT EfeId FROM efeinfctl WHERE DLIP='%s'
@@ -2993,7 +2993,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460232" desc="供电发起代扣协议变更交易">
+  <Transaction code="460432" desc="供电发起代扣协议变更交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -3070,7 +3070,7 @@
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
 
-      <Set>TTxnCd=460231</Set>    <!--第三方交易码-->
+      <Set>TTxnCd=460431</Set>    <!--第三方交易码-->
       <Set>WTC=301</Set>          <!--委托节点代码-->
 
       <Switch  expression="$EfeId">
@@ -3450,7 +3450,7 @@
   </Transaction>
 
 
- <Transaction code="460231" desc="银行到供电核对代扣协议交易">
+ <Transaction code="460431" desc="银行到供电核对代扣协议交易">
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
         SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
@@ -3638,7 +3638,7 @@
 
       <!--通知供电方-->
       <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460232"/>
+        <Arg name="HTxnCd" value="460432"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
       <If condition="~RetCod=-1">
@@ -3677,7 +3677,7 @@
 
   </Transaction>
 
-  <Transaction code="460250" desc="银行发起银行代扣代收电费对帐交易">
+  <Transaction code="460450" desc="银行发起银行代扣代收电费对帐交易">
     
 
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
@@ -3703,7 +3703,7 @@
         SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
         FROM afetxnjnl
         WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460205','460220')
+        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460405','460420')
       </Sentence>
       <Fields>CAgtNo|TxnDat|</Fields>
     </DynSentence>
@@ -3715,7 +3715,7 @@
         SELECT Count(*) PaySuccDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) PaySuccBill
         FROM afetxnjnl
         WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460205','460220')
+        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460405','460420')
       </Sentence>
       <Fields>CAgtNo|TxnDat|</Fields>
     </DynSentence>
@@ -3948,7 +3948,7 @@
       <Set>recordNum=$DTN</Set>
 
       <Exec func="PUB:CallThirdOther">  <!--通知供电方-->
-        <Arg name="HTxnCd" value="460250"/>
+        <Arg name="HTxnCd" value="460450"/>
         <Arg name="ObjSvr" value="STHDEFEA"/>
       </Exec>
       <If condition="~RetCod=-1">
@@ -3992,7 +3992,7 @@
 
   </Transaction>
 
-  <Transaction code="460251" desc="电力对公缴费记账回执打印">
+  <Transaction code="460451" desc="电力对公缴费记账回执打印">
 
 		<FlowCtrl>
 			 <Quote name="GetEfeId"/>      
@@ -4375,7 +4375,7 @@
           <Arg name="OpenMode"   value="w+"/>
           <Arg name="PRNFMT"     value="PrtFmtHed"/>
         </Exec>
-        <!--提取460205，460220记录-->
+        <!--提取460405，460420记录-->
         <Exec func="PUB:OpenCursor">
           <Arg name="SqlCmd"     value="QryBatInf"/>
           <Arg name="CursorName" value="CurBatInf"/>
@@ -4399,15 +4399,15 @@
             <Return/>
           </ElseIf>
           <Switch expression="$TxnCod">
-            <Case value="460200">
+            <Case value="460400">
               <Set>FZSM="电费批量代扣"</Set>
               <Break/>
             </Case>
-            <Case value="460220">
+            <Case value="460420">
               <Set>FZSM="电费单笔代扣"</Set>
               <Break/>
             </Case>
-            <Case value="460205">
+            <Case value="460405">
               <Set>FZSM="电费单笔代收"</Set>
               <Break/>
             </Case>
@@ -4443,15 +4443,15 @@
             <Return/>
           </ElseIf>
           <Switch expression="$TxnCod">
-            <Case value="460200">
+            <Case value="460400">
               <Set>FZSM="电费批量代扣"</Set>
               <Break/>
             </Case>
-            <Case value="460220">
+            <Case value="460420">
               <Set>FZSM="电费单笔代扣"</Set>
               <Break/>
             </Case>
-            <Case value="460205">
+            <Case value="460405">
               <Set>FZSM="电费单笔代收"</Set>
               <Break/>
             </Case>
@@ -4480,7 +4480,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460260" desc="广东电力电费清算报表打印">
+  <Transaction code="460460" desc="广东电力电费清算报表打印">
     <DynSentence name="QryJnlInfo">            <!--流水信息 -->
       <Sentence>
         SELECT LogNo FROM afetxnjnl WHERE BrNo='%s' AND CAgtNo='%s' AND ActDat &gt;='%s' and ActDat &lt;='%s' order by LogNo asc
@@ -4572,7 +4572,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460261" desc="广东电力电费清算">
+  <Transaction code="460461" desc="广东电力电费清算">
     <DynSentence name="QryCrpAgr"><!--查询单位信息 -->
       <Sentence>
         SELECT a.TActNo,b.CrpNam,b.STLACT FROM savcrpagr a,savcrpinf b WHERE a.CAgtNo='%s'
@@ -4712,7 +4712,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460262" desc="广东电力电费对可疑交易进行状态修改">
+  <Transaction code="460462" desc="广东电力电费对可疑交易进行状态修改">
     <DynSentence name="Updafetxnjnl"><!--修改信息-->
       <Sentence>
         update afetxnjnl set HTxnSt='%s' WHERE ActDat ='%s' and CAgtNo='%s' and HTxnSt IN ('T','U') and TckNo='%s'
@@ -4827,7 +4827,7 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460263" desc="广东电力电费对可疑交易进行状态查询">
+  <Transaction code="460463" desc="广东电力电费对可疑交易进行状态查询">
     <DynSentence name="QryCrpAgr"><!--查询信息-->
       <Sentence>
         select ActNo,TCUSNM,TCUSID,TxnAmt from afetxnjnl WHERE ActDat ='%s' and CAgtNo='%s'  and TckNo='%s' and HTxnSt IN ('F','C') and ChkFlg='0'
@@ -4919,7 +4919,7 @@
     </FlowCtrl>
   </Transaction>
 
-   <Transaction code="460264" desc="广东省电力电费查询清算金额">
+   <Transaction code="460464" desc="广东省电力电费查询清算金额">
     <DynSentence name="QryCrpAgr"><!--查询单位信息 -->
       <Sentence>
         SELECT a.TActNo,b.CrpNam,b.STLACT FROM savcrpagr a,savcrpinf b WHERE a.CAgtNo='%s'
@@ -4966,7 +4966,7 @@
   </Transaction>
 
 
-  <Transaction code="460265" desc="对账信息查询">
+  <Transaction code="460465" desc="对账信息查询">
     <DynSentence name="QryChkRec">
       <Sentence>
         select SndTim,LogNo,ChkFil,TRspCd,RtnMsg from efechkrec where EfeId='%s' and ActDat &gt;='%s' and ActDat &lt;='%s'
