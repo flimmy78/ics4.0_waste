@@ -1390,12 +1390,9 @@
 
 
   <Transaction code="460422" desc="供电方发起单笔代扣交易">
-
-
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
-
     <DynSentence name="QryCrpAgr">    <!--检查单位协议 -->
       <Sentence>
          select BBusTyp,TActNo  from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'
@@ -1428,10 +1425,7 @@
     </DynSentence>
 
     <FlowCtrl>
-      <Set>DLIP=@MSG.SIP</Set>
-      
       <!--查询对应分行号 -->
-     
       <Exec func="PUB:ReadRecord">    
         <Arg name="SqlCmd" value="QryInfCtl"/>
       </Exec>
@@ -1644,15 +1638,15 @@
        <Fields>Status|EfeId|LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
-      <Set>DLIP=@MSG.SIP</Set>
-      <!--查询对应分行号 -->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
+      <Exec func="PUB:CodeSwitching" error="IGNORE">
+        <Arg name="DatSrc" value="OPFCSW"></Arg>
+        <Arg name="SourNam" value="DWBM"></Arg>
+        <Arg name="DestNam" value="BrNo"></Arg>
+        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
       </Exec>
-      <If condition="~RetCod!=0">
+      <If condition="~RetCod=-1"><!--失败 -->
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
+        <Return></Return>
       </If>
      
       <Set>AplCls=202</Set>
@@ -1956,14 +1950,15 @@
       <Fields>ROOT.SUM.PID|ROOT.SUM.CUN|ROOT.SUM.EDD|ROOT.SUM.TLogNo|DskNo|</Fields>
      </DynSentence>
     <FlowCtrl>
-      <Set>DLIP=@MSG.SIP</Set>
-      <Exec func="PUB:ReadRecord">    <!--查询对应分行号 -->
-        <Arg name="SqlCmd" value="QryInfCtl"/>
+      <Exec func="PUB:CodeSwitching" error="IGNORE">
+        <Arg name="DatSrc" value="OPFCSW"></Arg>
+        <Arg name="SourNam" value="DWBM"></Arg>
+        <Arg name="DestNam" value="BrNo"></Arg>
+        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
       </Exec>
-      <If condition="~RetCod!=0">
+      <If condition="~RetCod=-1"><!--失败 -->
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
+        <Return></Return>
       </If>
       
       <Set>AplCls=202</Set>
@@ -2698,7 +2693,7 @@
 
   </Transaction>
 
-  <Transaction code="460490" desc="银电业务开工交易">
+  <Transaction code="460491" desc="银电业务开工交易">
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -2716,28 +2711,27 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efekinfctl WHERE EfeId='%s'
       </Sentence>
       <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
+       UPDATE efekinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
       <Fields>Status|WdoDat|OprCod|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
-    	 <Quote name="GetEfeId"/>
-      <Set>DLIP=@MSG.SIP</Set>
-      <!--查询对应分行号 -->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
+      <Exec func="PUB:CodeSwitching" error="IGNORE">
+        <Arg name="DatSrc" value="OPFCSW"></Arg>
+        <Arg name="SourNam" value="DWBM"></Arg>
+        <Arg name="DestNam" value="BrNo"></Arg>
+        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
       </Exec>
-      <If condition="~RetCod!=0">
+      <If condition="~RetCod=-1"><!--失败 -->
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
+        <Return></Return>
       </If>
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
@@ -2776,10 +2770,10 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460491" desc="银电业务停工交易">
+  <Transaction code="460492" desc="银电业务停工交易">
     <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
       <Sentence>
-        SELECT EfeId FROM efeinfctl WHERE DLIP='%s'
+        SELECT EfeId FROM efekinfctl WHERE DLIP='%s'
       </Sentence>
       <Fields>DLIP|</Fields>
     </DynSentence>
@@ -2794,28 +2788,27 @@
     </DynSentence>
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
+        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efekinfctl WHERE EfeId='%s'
       </Sentence>
       <Fields>EfeId|</Fields>
     </DynSentence>
     <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
       <Sentence>
-       UPDATE efeinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
+       UPDATE efekinfctl Set Status='%s',WdoDat='%s',OprCod='%s',DlTxt='%s' WHERE EfeId='%s'
       </Sentence>
       <Fields>Status|WdoDat|OprCod|DlTxt|EfeId|</Fields>
     </DynSentence>
 
     <FlowCtrl>
-    	 <Quote name="GetEfeId"/>
-      <Set>DLIP=@MSG.SIP</Set>
-      <!--查询对应分行号 -->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
+      <Exec func="PUB:CodeSwitching" error="IGNORE">
+        <Arg name="DatSrc" value="OPFCSW"></Arg>
+        <Arg name="SourNam" value="DWBM"></Arg>
+        <Arg name="DestNam" value="BrNo"></Arg>
+        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
       </Exec>
-      <If condition="~RetCod!=0">
+      <If condition="~RetCod=-1"><!--失败 -->
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
+        <Return></Return>
       </If>
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
