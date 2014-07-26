@@ -4,12 +4,12 @@
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
   </TableDeclare>
 
-  <Function name="CheckOpenByEfeId" desc="使用EfeId查询供电局开工情况">
+  <Function name="CheckZtByDWBM" desc="使用DWBM查询供电局开工情况">
     <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
+        SELECT ZT FROM efekinfctl WHERE DWBM='%s'
       </Sentence>
-      <Fields>EfeId|</Fields>
+      <Fields>DWBM|</Fields>
     </DynSentence>
     <Process>
       <!--读取开工信息记录-->
@@ -21,10 +21,27 @@
         <Set>RspMsg=无$BrNo分行开工信息记录</Set>
         <Return/>
       </If>
-      <If condition="$Status=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在停工状态</Set>
-        <Return/>
+    </Process>
+  </Function>
+
+
+  <Function name="UpdInfByDWBM" desc="修改开工信息表">
+    <DynSentence name="UdpInfCtl">             <!--修改开工信息表 -->
+      <Sentence>
+       UPDATE efekinfctl Set JYLSH='%s',JYRQ='%s',JYSJ='%s',GDDW='%s',YWBSH='%s',CZRY='%s',ZT='%s',BZ='%s' WHERE DWBM='%s'
+      </Sentence>
+      <Fields>JYLSH|JYRQ|JYSJ|GDDW|YWBSH|CZRY|ZT|BZ|DWBM|</Fields>
+    </DynSentence>
+    <Process>
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd"   value="UdpInfCtl"/>
+      </Exec>
+      <If condition="~RetCod=-1">
+      <Exec func="PUB:RollbackWork" error="IGNORE" />
+      <Set>MsgTyp=E</Set>
+      <Set>RspCod=EFE999</Set>
+      <Set>RspMsg=数据库处理失败!</Set>
+      <Return/>
       </If>
     </Process>
   </Function>
@@ -60,7 +77,8 @@
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=缴费号查询失败</Set>
-        <Return/>
+        <Return/>      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+
       </If>
       <If condition="STRCMP($cnt1,0)=0">
         <Set>RspCod=EFE999</Set>
