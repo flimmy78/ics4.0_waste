@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <BATCH debug_file="agtfmta.log" err_file="agtfmta.err">
 
-	<CodeSwitching>
+	<!--CodeSwitching>
 		<Table name="H2T_EFE_441"  file="etc/EFE_CSW_441999.XML">
 			<Column name="HRspCd" sort="no"/>
 			<Column name="TRspCd" sort="no"/>
@@ -10,7 +10,7 @@
 			<Column name="OAN" sort="no"/>
 			<Column name="CAgtNo" sort="no"/>
 		</Table>
-	</CodeSwitching>
+	</CodeSwitching-->
 
   
 	<Process name="DL_PROTOCOL"><!--Öéº£µçÁ¦ºË¶Ô´ú¿ÛÐ­Òé¸ñÊ½-->
@@ -220,34 +220,28 @@
 		</Data>
 	</Process>  	
   
-  <Process name="EFE_XY" desc="µç·ÑÐ­Òé">   <!--ÒøÐÐµç·ÑÐ­Òé¶ÔÕË-->
+  <Process name="EFEK_XY" desc="06ÒøÐÐ¿Í»§Ð­Òé¶ÔÕËÎÄ¼þ">
 		<Head>
-			<Item name="OCC"     length="2" value="32"/>  <!--½»Ò×Âë-->
-			<Item name="WTC"     length="3" value="301"/>     <!--ÒøÐÐ´úÂë -->
-			<Item name="CTC"     length="8"/>   <!--×Ü¿Í»§ÊýÁ¿-->
-			<Item name="DTN"     length="12"/>  <!--Ã÷Ï¸±ÊÊý-->
+			<Item name="JYM"     length="2" value="32"/>  <!--½»Ò×Âë-->
+			<Item name="YHDM"     length="4" value="301"/>     <!--ÒøÐÐ´úÂë -->
+			<Item name="ZKHS"     length="11"/>   <!--×Ü¿Í»§ÊýÁ¿-->
+			<Item name="MXBS"     length="11"/>  <!--Ã÷Ï¸±ÊÊý-->
 		</Head>
 		<Data>
-			<Item name="TLogNo"   length="16" value=""/>  <!--Á÷Ë®-->
-			<Item name="JFH"     length="32"/>  <!--»§ºÅ-->
-			<Item name="JLD"     length="5"/>   <!--¼ÆÁ¿µãºÅ-->
-			<Item name="WDO"     length="8"/>   <!--ÈÕÆÚ-->
-			<Item name="ActNo"   length="32"/> <!--¿Í»§ÕÊºÅ-->
-			<Item name="ActNam"  length="32"/>  <!-- ¿Í»§ÕÊºÅÃû³Æ -->
-			<Item name="STATUS"  length="1"/>  <!-- ±êÖ¾-->
-			<If condition="STRCMP($GPF,P)=0">
-				  <Item name="DCLX"    length="3" value="2"/>  <!--Ö¸Áî´úÂë-->
-			</If>
-			<If condition="STRCMP($GPF,G)=0">
-				  <Item name="DCLX"    length="3" value="1"/>  <!--Ö¸Áî´úÂë-->
-			</If>
-			<Item name="TEL"  length="1"/>  <!-- ÁªÏµµç»°-->
-			<Item name="MOB"  length="1"/>  <!-- ÊÖ»úºÅ-->
-			<Item name="SDYQ"  length="1" value="0"  />  <!-- Í¨Öªµ¥·þÎñÒªÇó-->
-			<Item name="TXT"  length="64"/>  <!-- Í¨Öªµ¥ËÍ´ïµØÖ·-->
-			<Item name="SDYB"  length="10" value="5115000000" />  <!-- Í¨Öªµ¥ËÍ´ïÓÊ±à-->
-			<Item name="YBZ"  length="1"/>  <!-- Óà¶î²»×ãÍ¨Öª·½Ê½-->
-			<Item name="EML"  length="64"/>  <!-- ÓÊÏä-->
+			<Item name="JYLSH"     length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+			<Item name="JYRQ"     length="8" desc="½»Ò×ÈÕÆÚ"/>
+			<Item name="JYSJ"     length="6" desc="½»Ò×Ê±¼ä"/>
+			<Item name="QYBZ"     length="1" desc="Ç©Ô¼±êÖ¾"/>
+			<Item name="JFH"     length="20" desc="½É·ÑºÅ"/>
+			<Item name="QYYHDM"     length="4" desc="Ç©Ô¼ÒøÐÐ´úÂë"/>
+			<Item name="QYYHZH"     length="32" desc="Ç©Ô¼ÒøÐÐÕË»§"/>
+			<Item name="QYYHZHMC"     length="128" desc="Ç©Ô¼ÒøÐÐÕË»§Ãû³Æ"/>
+			<Item name="ZHLX"     length="2" desc="ÕË»§ÀàÐÍ"/>
+			<Item name="ZJLX"     length="2" desc="Ö¤¼þÀàÐÍ"/>
+			<Item name="ZJHM"     length="32" desc="Ö¤¼þºÅÂë"/>
+			<Item name="LXDH"     length="20" desc="ÁªÏµµç»°"/>
+			<Item name="SJHM"     length="20" desc="ÊÖ»úºÅÂë"/>
+			<Item name="EMAIL"     length="64" desc="E-MAIL"/>
 		</Data>
 	</Process>  	
   

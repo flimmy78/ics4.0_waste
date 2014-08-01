@@ -163,6 +163,68 @@
   </Function>
 
 
+  <Function name="QryDZZ" desc="查询代扣协议明细">
+    <DynSentence name="QryDZZ">             <!--查询协议信息 -->
+      <Sentence>
+        SELECT CAgtNo, RSFLD1 as SFFS, RSFLD2 as FYLX, count(*) as ZBS, sum(TxnAmt) as ZJE 
+        from afetxnjnl WHERE JFH='%s' AND Status='0'
+        group by CAgtNo, RSFLD1, RSFLD2
+      </Sentence>
+      <Fields></Fields>
+    </DynSentence>
+    <Process>
+      <!--根据缴费号检查是否签约-->
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="QryDZZ"/>
+      </Exec>
+      <If condition="~RetCod!=0">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=查询失败</Set>
+        <Return/>
+      </If>
+    </Process>
+  </Function>
+
+
+  <Function name="SndDzFile" desc="查询代扣协议明细">
+    <DynSentence name="QryDZMX">             <!--查询协议信息 -->
+      <Sentence>
+        SELECT CAgtNo, RSFLD1 as SFFS, RSFLD2 as FYLX, count(*) as ZBS, sum(TxnAmt) as ZJE 
+        from afetxnjnl WHERE JFH='%s' AND Status='0'
+        group by CAgtNo, RSFLD1, RSFLD2
+      </Sentence>
+      <Fields></Fields>
+    </DynSentence>
+    <Process>
+      <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
+        <Arg name="SqlName" value="QryDZMX"/>
+        <Arg name="FormatName" value="$FmFile"/>
+        <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
+        <Arg name="TableName" value="afetxnjnl"/>
+      </Exec>
+      <Exec func="PUB:FtpPut">
+        <Arg name="FtpId" value="$FtpId"/>
+      </Exec>
+    </Process>
+  </Function>
+
+
+  <Function name="InsErr" desc="登记错误报错信息">
+    <DynSentence name="QryDZMX">             <!--查询协议信息 -->
+      <Sentence>
+        insert into efekerrlog(JYLSH,JYRQ,JYSJ,JFH,SFFS,FYLX,ZWRQ,ZWSJ,DFJE,CWFHM,YHCWM,BZ,CZYH,YWRQ,YWSJ) 
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+      </Sentence>
+      <Fields>JYLSH|JYRQ|JYSJ|JFH|SFFS|FYLX|ZWRQ|ZWSJ|DFJE|CWFHM|YHCWM|BZ|CZYH|YWRQ|YWSJ|</Fields>
+    </DynSentence>
+    <Process>
+      <Exec func="PUB:ExecSql" error="IGNORE">
+        <Arg name="SqlCmd"   value="InsCusAgt"/>
+      </Exec>
+    </Process>
+  </Function>
+
+
 
 
 </Package>

@@ -351,12 +351,7 @@
   <Transaction service="460431"  code="460431" timeout="60" log_switch="5" desc="银行到供电核对代扣协议交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="JYLSH"     length="24" desc="交易流水号"/>
-      <Item name="JYRQ"     length="8" desc="交易日期"/>
-      <Item name="JYSJ"     length="6" desc="交易时间"/>
-      <Item name="WJMC"     length="36" desc="文件名称"/>
-      <Item name="WJLX"     length="2" desc="文件类型"/>
-      <Item name="WJMD5"     length="32" desc="文件MD5"/>
+      <Item name="ActDat"     length="8" desc="会计日期"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -432,6 +427,64 @@
               <Item name="JLDBH"     length="20" desc="计量点编号"/>
             </Group>
           </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460450"  code="460450" timeout="60" log_switch="5" desc="银行对总账交易">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ActDat"     length="6" desc="会计日期"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460451"  code="460451" timeout="60" log_switch="5" desc="银行对明细账交易">
+    <Request delimiter_type="fixed">
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="ActDat"     length="6" desc="会计日期"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
         </Case>

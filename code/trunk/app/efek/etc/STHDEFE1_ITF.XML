@@ -394,19 +394,22 @@
   <Transaction code="460450" desc="银行对总账交易">
 		<Request>
       <Quote   name="req_head"/>          <!--包头-->
-      <Item name="JYLSH"     length="24" desc="交易流水号"/>
-      <Item name="JYRQ"     length="8" desc="交易日期"/>
-      <Item name="JYSJ"     length="6" desc="交易时间"/>
-      <Item name="DZPCLSH"     length="27" desc="对账批次流水号"/>
-      <Item name="RZYHDM"     length="4" desc="入账银行代码"/>
-      <Item name="DWBM"     length="8" desc="单位编码"/>
-      <Item name="SFFS"     length="3" desc="收费方式"/>
-      <Item name="FYLX"     length="3" desc="费用类型"/>
-      <Item name="ZBS"     length="11" desc="总笔数"/>
-      <Item name="ZJE"     length="16" desc="总金额"/>
-      <Item name="DAZRQ"     length="8" desc="达账日期"/>
-      <Item name="DAZSJ"     length="6" desc="达账时间"/>
-      <Item name="DZWYBSM"     length="32" desc="对账唯一标识码"/>
+      <Group name="Rec"    repeat_name="PkgCnt">
+        <Item name="JYLSH"     length="24" desc="交易流水号"/>
+        <Item name="JYRQ"     length="8" desc="交易日期"/>
+        <Item name="JYSJ"     length="6" desc="交易时间"/>
+        <Item name="DZPCLSH"     length="27" desc="对账批次流水号"/>
+        <Item name="RZYHDM"     length="4" desc="入账银行代码"/>
+        <AddItem name="DWBM"   value="301"/>
+        <Item name="DWBM"     length="8" desc="单位编码"/>
+        <Item name="SFFS"     length="3" desc="收费方式"/>
+        <Item name="FYLX"     length="3" desc="费用类型"/>
+        <Item name="ZBS"     length="11" desc="总笔数"/>
+        <Item name="ZJE"     length="16" desc="总金额"/>
+        <Item name="DAZRQ"     length="8" desc="达账日期"/>
+        <Item name="DAZSJ"     length="6" desc="达账时间"/>
+        <Item name="DZWYBSM"     length="32" desc="对账唯一标识码"/>
+      </Group>
 		</Request>
 		<Response necessary="no">
 			<Quote   name="resp_head"/>
@@ -464,9 +467,24 @@
   </Transaction>
 
 
-  <Transaction code="" desc="">
+  <Transaction code="460490" desc="银行代收日志服务记录交易">
 		<Request>
       <Quote   name="req_head"/>          <!--包头-->
+      <Item name="JYLSH"     length="24" desc="交易流水号"/>
+      <Item name="JYRQ"     length="8" desc="交易日期"/>
+      <Item name="JYSJ"     length="6" desc="交易时间"/>
+      <Item name="JFH"     length="20" desc="缴费号"/>
+      <Item name="SFFS"     length="3" desc="收费方式"/>
+      <Item name="FYLX"     length="3" desc="费用类型"/>
+      <Item name="ZWRQ"     length="8" desc="账务日期"/>
+      <Item name="ZWSJ"     length="6" desc="账务时间"/>
+      <Item name="DFJE"     length="16" desc="电费金额"/>
+      <Item name="CWFHM"     length="5" desc="错误返回码"/>
+      <Item name="YHCWM"     length="8" desc="银行内部错误代码"/>
+      <Item name="BZ"     length="128" desc="备注"/>
+      <Item name="CZYH"     length="20" desc="操作员号"/>
+      <Item name="YWRQ"     length="8" desc="业务日期"/>
+      <Item name="YWSJ"     length="6" desc="业务时间"/>
 		</Request>
 		<Response necessary="no">
 			<Quote   name="resp_head"/>
