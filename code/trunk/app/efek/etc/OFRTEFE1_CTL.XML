@@ -3403,7 +3403,7 @@
 
   </Transaction>
 
-  <Transaction code="460451" desc="电力对公缴费记账回执打印">
+  <Transaction code="******" desc="电力对公缴费记账回执打印">
 
 		<FlowCtrl>
 			 <Quote name="GetEfeId"/>      
@@ -4533,6 +4533,12 @@
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
+    <DynSentence name="QryBasInf">
+       <Sentence>
+          select * from efeksffs, efekfylx, efekdwbm
+       </Sentence>
+       <Fields></Fields>
+    </DynSentence>
     <FlowCtrl>
       <Quote name="GetEfeId"/>
 
@@ -4547,27 +4553,57 @@
       <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
       <Set>JYSJ=GETDATETIME(HHMISS)</Set>
 
-      <Call package="EFE" function="SndDzFile"/>
-
-
-       <!--发送第三方-->
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460451"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+      <Exec func="PUB:OpenCursor" error="IGNORE">  <!--打开游标-->
+        <Arg name="SqlCmd" value="QryBasInf"/>
       </Exec>
-      <If condition="$RspCod=000000">
-        <Set>MsgTyp=N</Set>
-      </If>
-      <Else>
-        <Set>MsgTyp=E</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="TRspCd"/>
-          <Arg name="DestNam" value="RspMsg"/>
-          <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
-        </Exec>
+      <If condition="~RetCod=-1">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=数据库操作错误</Set>
         <Return/>
-     </Else>
+      </If>
+      <ElseIf condition="~RetCod=-2">
+        <Set>RspCod=000000</Set>
+        <Set>RspMsg=无记录</Set>
+        <Return/>
+      </ElseIf>
+
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE"/><!--取下一笔记录关闭游标-->
+        <If condition="~RetCod=100">
+           <Break/>
+        </If>
+        <ElseIf condition="~RetCod=-1">
+           <Set>RspCod=478699</Set>
+           <Set>RspMsg=取明细记录时数据库操作错误</Set>
+           <Exec func="PUB:CloseCursor"/>
+           <Return/>
+        </ElseIf>
+
+        <Set>LclDir=dat/efek</Set>
+        <Set>LclFil=STRCAT(DZ05,$SFFS,$FYLX,_,301,$DWBM,GETDATETIME(YYYYMMDD)</Set>
+        <Set>FmFile=EFE_DZMX</Set>
+        <Call package="EFE" function="CrtDzFil"/>
+        <!--发送第三方-->
+        <Exec func="PUB:CallThirdOther">
+          <Arg name="HTxnCd" value="460451"/>
+          <Arg name="ObjSvr" value="STHDEFE1"/>
+        </Exec>
+        <If condition="$RspCod=000000">
+          <Set>MsgTyp=N</Set>
+        </If>
+        <Else>
+          <Set>MsgTyp=E</Set>
+          <Exec func="PUB:CodeSwitching">
+            <Arg name="DatSrc"  value="OPFCSW"/>
+            <Arg name="SourNam" value="TRspCd"/>
+            <Arg name="DestNam" value="RspMsg"/>
+            <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
+          </Exec>
+          <Return/>
+       </Else>
+
+      </While>
+      <Exec func="PUB:CloseCursor"/>
     </FlowCtrl>
   </Transaction>
 
@@ -4604,35 +4640,35 @@
         <Return/>
       </ElseIf>
 
-         <While>
-            <Exec func="PUB:FetchCursor" error="IGNORE"/><!--取下一笔记录关闭游标-->
-            <If condition="~RetCod=100">
-               <Break/>
-            </If>
-            <ElseIf condition="~RetCod=-1">
-               <Set>RspCod=478699</Set>
-               <Set>RspMsg=取明细记录时数据库操作错误</Set>
-               <Exec func="PUB:CloseCursor"/>
-               <Return/>
-            </ElseIf>
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE"/><!--取下一笔记录关闭游标-->
+        <If condition="~RetCod=100">
+           <Break/>
+        </If>
+        <ElseIf condition="~RetCod=-1">
+           <Set>RspCod=478699</Set>
+           <Set>RspMsg=取明细记录时数据库操作错误</Set>
+           <Exec func="PUB:CloseCursor"/>
+           <Return/>
+        </ElseIf>
 
-            <!--发送第三方-->
-            <Exec func="PUB:CallThirdOther" error="IGNORE">   <!--第三方查询-->
-              <Arg name="HTxnCd" value="460490"/>
-              <Arg name="ObjSvr" value="STHDEFE1"/>
-            </Exec>
-            <If condition="INTCMP(~RetCod,1,0)">
-              <Set>MsgTyp=E</Set>
-              <Set>RspCod=EFE999</Set>
-              <Set>RspMsg=调用第三方时:系统错误或超时或未发送,请检查后重做 </Set>
-              <Return/>
-            </If>
-            <Exec func="PUB:ExecSql" error="IGNORE">
-              <Arg name="sql" value="DelLog" />
-            </Exec>
+        <!--发送第三方-->
+        <Exec func="PUB:CallThirdOther" error="IGNORE">   <!--第三方查询-->
+          <Arg name="HTxnCd" value="460490"/>
+          <Arg name="ObjSvr" value="STHDEFE1"/>
+        </Exec>
+        <If condition="INTCMP(~RetCod,1,0)">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=调用第三方时:系统错误或超时或未发送,请检查后重做 </Set>
+          <Return/>
+        </If>
+        <Exec func="PUB:ExecSql" error="IGNORE">
+          <Arg name="sql" value="DelLog" />
+        </Exec>
 
-         </While>
-         <Exec func="PUB:CloseCursor"/>
+      </While>
+      <Exec func="PUB:CloseCursor"/>
 
 
     </FlowCtrl>

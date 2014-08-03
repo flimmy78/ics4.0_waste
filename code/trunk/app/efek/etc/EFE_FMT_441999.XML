@@ -135,92 +135,35 @@
 		</Data>
 	</Process>  	
   
-	<Process name="EFE_DZ" desc="电费对帐">   <!--电力发起单笔-->
+	<Process name="EFE_DZMX" desc="电费对帐">   <!--电力发起单笔-->
 		<Head>
-			<Item name="OCC"     length="2" value="50"/>  <!--交易码-->
-			<Item name="YHC"     length="3" value="301"/>     <!--银行代码 -->
-			<Item name="FSC"     length="8"/>   <!--实时户数-->
-			<Item name="FSM"     length="12"/>  <!--实时金额-->
-			<Item name="FMC"     length="8"/>   <!--当日抹帐户数-->
-			<Item name="FMM"     length="12"/>   <!--当日抹帐金额-->
-			<Item name="FGC"     length="8" value="0"/>  <!--隔日抹帐户数-->
-			<Item name="FGM"     length="12" value="0"/>  <!--隔日抹帐金额-->
-			<Item name="FDC"     length="8"/>  <!--单笔扣款户数-->
-			<Item name="FDM"     length="12"/>  <!--单笔扣款金额-->
-			<Item name="FEC"     length="8" value="0"/>  <!--批量代扣户数-->
-			<Item name="FEM"     length="14" value="0"/>  <!--批量代扣金额-->
-			<Item name="CCD"     length="8"/>   <!--银行处理日期-->
-			<Item name="CCT"     length="6" value=""/>    <!--银行处理时间-->
-			<Item name="LogNo"   length="12" value=""/> <!--银行流水-->
-			<Item name="RBN"     length="12" value=""/>   <!--企业代码-->
-			<Item name="WDO"     length="8"/>  <!--工作日期-->
-			<Item name="CJG"     length="4" value=""/>  <!--处理结果-->
-			<Item name="CSM"     length="128" value=""/>  <!--处理说明-->
-			<Item name="DTN"     length="12"/>  <!--明细笔数-->
+			<Item name="PLDSXXBS"     length="27" desc="对账批次流水号"/>
+			<Item name="YHDM"         length="4"  desc="入账银行代码"/>
+			<Item name="DWBM"         length="8"  desc="单位编码"/>
+			<Item name="SFFS"         length="3"  desc="收费方式"/>
+			<Item name="FYLX"         length="3"  desc="费用类型"/>
+			<Item name="ZBS"          length="11" desc="总笔数"/>
+			<Item name="ZJE"          length="16" desc="总金额"/>
+			<Item name="DAZRQ"        length="8"  desc="达账日期"/>
+			<Item name="DAZSJ"        length="6"  desc="达账时间"/>
+			<Item name="DZWYBSM"      length="32" desc="对账唯一标识码"/>
 		</Head>
 		<Data>
-			<Item name="ActDat"  length="8" /> <!-- 收费日期 -->
-			<Item name="MON"     length="6"/>   <!--电费月份-->
-			<Item name="MNS"     length="2"/>   <!--电费次数-->
-			<Item name="JLD"     length="5"/>   <!--计量点号-->
-			<Item name="YSH"     length="16"/>  <!--应收凭证号-->
-			<Item name="GDBM"    length="12" value=""/> <!--供电公司编号-->
-			<Item name="ActNo"   length="32"/> <!--客户帐号-->
-			<Item name="ActNam"  length="32"/>  <!-- 客户帐号名称 -->
-			<Item name="KAT"     length="1"/>  <!-- 属何类型 -->
-			<Item name="OAN"     length="32" value=""/>  <!--供电开户银行帐号-->
-			<Item name="NUM"     length="8" value=""/> <!--明细序号-->
-			<If condition="STRCMP($HTxnSt,C)=0"> <!--冲销交易-->
-				<If condition="STRCMP($TxnCod,460221)=0">
-				  <Item name="ZLDM"    length="3" value="21"/>  <!--指令代码-->
-				</If>
-				<Else>
-					<Item name="ZLDM"    length="3" value="12"/>  <!--指令代码-->
-				</Else>
-			</If>
-			<Else>
-				<If condition="STRCMP($TxnCod,460220)=0">
-				  <Item name="ZLDM"    length="3" value="20"/>  <!--指令代码-->
-				</If>
-				<Else>
-				   <Item name="ZLDM"    length="3" value="11"/>  <!--指令代码-->
-				</Else>
-			</Else>
-			<Item name="WTC"     length="12" value="301"/>  <!--委托节点代码-->
-			<If condition="STRCMP($HTxnSt,C)=0"> <!--冲销交易-->
-				<Item name="Rsfld1"  length="16"/>   <!--流水-->
-			</If>
-			<Else>
-				<Item name="TLogNo"  length="16"/>   <!--流水-->
-			</Else>
-			<Item name="LogNo"   length="16"/>        <!--入账流水号-->
-			<Item name="WDO"     length="8"/>   <!--委托日期-->
-			
-			<If condition="STRCMP($HTxnSt,C)=0"> <!--冲销交易-->
-				<Item name="OZLM"     length="3"  value="20"/>   <!--原指令码-->
-				<Item name="OWTC"     length="12" value=""/>   <!--原委托节点代码-->
-				<Item name="OWD"      length="8"  value=""/>  <!--原委托日期-->
-				<Item name="TLogNo"   length="16"/>  <!--原流水-->
-			</If>
-			<Else>
-				<Item name="OZLM"     length="3"   value=""/>   <!--原指令码-->
-				<Item name="OWTC"     length="12"  value=""/>   <!--原委托节点代码-->
-				<Item name="OWD"      length="8"   value=""/>  <!--原委托日期-->
-				<Item name="OLogNo"   length="16"  value=""/>  <!--原流水-->
-			</Else>
-			<Item name="ECD"     length="12"/>  <!---收费企业代码-->   
-			<Item name="WTC"     length="3" value="301"/>  <!--银行编码-->
-			<Item name="JFH"     length="32"/>  <!--缴费号-->
-			<Item name="KKB"     length="12" value="301"/>  <!--扣款行行号-->
-			<Item name="ActNo"   length="32"/>  <!--扣款账号-->
-			<Item name="HBC"     length="3" value="RMB"/>  <!--货币符号-->
-			<Item name="TxnAmt"  length="12"/>  <!--扣款金额-->
-			<Item name="MXT"     length="2" value=""/>  <!--交易明细状态-->
-			<Item name="FTXNTM"  length="14"/>  <!--处理时间-->
+			<Item name="JYLSH"     length="24" desc="交易流水号"/>
+			<Item name="DWBM"     length="8" desc="单位编码"/>
+			<Item name="DFNY"     length="8" desc="电费年月"/>
+			<Item name="JFH"     length="20" desc="缴费号"/>
+			<Item name="JSHMC"     length="64" desc="结算户名称"/>
+			<Item name="DFZH"     length="32" desc="对方账户"/>
+			<Item name="DFZHMC"     length="128" desc="对方账户名称"/>
+			<Item name="RQ"     length="19" desc="日期"/>
+			<Item name="JE"     length="16" desc="金额"/>
+			<Item name="ZY"     length="128" desc="摘要"/>
+			<Item name="SKRDM"     length="20" desc="收款人代码"/>
 		</Data>
-	</Process>  	
+	</Process>
   
-  <Process name="EFEK_XY" desc="06银行客户协议对账文件">
+	<Process name="EFEK_XY" desc="06银行客户协议对账文件">
 		<Head>
 			<Item name="JYM"     length="2" value="32"/>  <!--交易码-->
 			<Item name="YHDM"     length="4" value="301"/>     <!--银行代码 -->
@@ -243,7 +186,7 @@
 			<Item name="SJHM"     length="20" desc="手机号码"/>
 			<Item name="EMAIL"     length="64" desc="E-MAIL"/>
 		</Data>
-	</Process>  	
+	</Process>
   
   
   

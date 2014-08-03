@@ -186,16 +186,34 @@
   </Function>
 
 
-  <Function name="SndDzFile" desc="查询代扣协议明细">
-    <DynSentence name="QryDZMX">             <!--查询协议信息 -->
+  <Function name="CrtDzFil" desc="生成帐务明细文件">
+    <DynSentence name="TotalDeal">
       <Sentence>
-        SELECT CAgtNo, RSFLD1 as SFFS, RSFLD2 as FYLX, count(*) as ZBS, sum(TxnAmt) as ZJE 
-        from afetxnjnl WHERE JFH='%s' AND Status='0'
-        group by CAgtNo, RSFLD1, RSFLD2
+        SELECT RSFLD1, RSFLD2, RSFLD3,
+         Count(*) ZBS, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) ZJE
+        FROM afetxnjnl
+        WHERE CAgtNo  = '%s'
+        AND ActDat='%s' AND RSFLD1='%s'
+        AND RSFLD2='%s' AND RSFLD3='%s'
+        AND HTxnSt='S' -- AND TxnCod in ('460205','460220')
+        group by RSFLD1, RSFLD2, RSFLD3
       </Sentence>
-      <Fields></Fields>
+      <Fields>CAgtNo|TxnDat|SFFS|FYLX|DWBM|</Fields>
+    </DynSentence>
+    <DynSentence name="QryDZMX">
+        SELECT RSFLD1 SFFS, RSFLD2 FYLX, RSFLD3 DWBM,
+        FROM afetxnjnl
+        WHERE CAgtNo  = '%s'
+        AND ActDat='%s' AND RSFLD1='%s'
+        AND RSFLD2='%s' AND RSFLD3='%s'
+        AND HTxnSt='S' -- AND TxnCod in ('460205','460220')
+      </Sentence>
+      <Fields>CAgtNo|TxnDat|SFFS|FYLX|DWBM|</Fields>
     </DynSentence>
     <Process>
+      <Exec func="PUB:ReadRecord">
+        <Arg name="SqlCmd" value="TotalDeal"/>
+      </Exec>
       <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
         <Arg name="SqlName" value="QryDZMX"/>
         <Arg name="FormatName" value="$FmFile"/>
