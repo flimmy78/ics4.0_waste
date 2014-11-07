@@ -255,6 +255,7 @@
           <PackItem name="HODat">
             <Item name="ApCode" length="2" value="SC" />
             <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="QDBZ"     length="1" desc="签订标志"/>
             <If condition="INTCMP($QDBZ,3,3)">
               <Item name="WDMC"     length="64" desc="网点名称"/>
               <Item name="JYLSH"     length="24" desc="交易流水号"/>
@@ -387,28 +388,27 @@
   <Transaction service="460440"  code="460440" timeout="60" log_switch="5" desc="银行查询客户缴费记录交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="JFH"     length="20" desc="缴费号"/>
-      <Item name="DFKSNY"     length="6" desc="电费开始年月"/>
-      <Item name="DFZZNY"     length="6" desc="电费终止年月"/>
+      <If condition="IS_EQUAL_STRING($TIATyp,P)">
+        <Item name="PagIdx"   length="6"/>
+      </If>
+      <Else>
+        <Item name="JFH"     length="20" desc="缴费号"/>
+        <Item name="DFKSNY"     length="6" desc="电费开始年月"/>
+        <Item name="DFZZNY"     length="6" desc="电费终止年月"/>
+      </Else>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
       <Switch expression="$MsgTyp">
         <Case value="N">
           <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="SFFS"     length="3" desc="收费方式"/>
-            <Item name="FYLX"     length="3" desc="费用类型"/>
-            <Item name="RZYHDM"     length="4" desc="入账银行代码"/>
-            <Item name="DWBM"     length="8" desc="单位编码"/>
-            <Item name="JFH"     length="20" desc="缴费号"/>
-            <Item name="JSHMC"     length="64" desc="结算户名称"/>
-            <Item name="YDDZ"     length="128" desc="用电地址"/>
-            <Item name="DFNY"     length="6" desc="电费年月"/>
-            <Item name="SFJE"     length="16" desc="实扣金额"/>
-            <Item name="ZFFS"     length="2" desc="支付方式"/>
-            <Item name="PkgCnt" length="6" desc="子包个数" />
+            <Item name="ApCod"    length="2"    value="35"/>
+            <Item name="OFmtCd"   length="3"    value="Z01"/>
+            <Item name="PageNo"   length="4"    value="0001"/>
+            <Item name="VarSize"  length="1"    value="3"/>
+            <Item name="Ttl"      head_len="3"  value="本网点需下载的文件名"/>
+            <Item name="SubTtl"   head_len="3"  value=" 日期       网点     文件
+名                           下载文件名                   备注"/>
             <Group name="Rec"    repeat_name="PkgCnt">
               <Item name="MXXH"     length="7" desc="明细序号"/>
               <Item name="CBRQ"     length="8" desc="抄表日期"/>
@@ -479,7 +479,7 @@
   <Transaction service="460451"  code="460451" timeout="60" log_switch="5" desc="银行对明细账交易">
     <Request delimiter_type="fixed">
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="ActDat"     length="6" desc="会计日期"/>
+      <Item name="ActDat"     length="8" desc="会计日期"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>

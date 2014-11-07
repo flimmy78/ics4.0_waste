@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <Region>
-  <Server name="CTHDEFE1" type="CCA" trace="5" ip="_LOCAL_IP">
+  <Server name="CTHDEFEK" type="CCA" trace="no" ip="_LOCAL_IP">
     <ThreadPool>
       <MinWorkerThreads>20</MinWorkerThreads>
       <MaxWorkerThreads>20</MaxWorkerThreads>
@@ -17,13 +17,13 @@
     </ProcessMemoryManager>
     <DllPriDataCtrl name="ECN" dllfile="dll/ecnclisync.so" initfunc="initChannel" donefunc="closeChannel">
       <Para name="ConnTyp">0</Para>
-      <Para name="IpLstFil">etc/CTHDEFE1_IPD.XML</Para>
+      <Para name="IpLstFil">etc/CTHDEFEK_IPD.XML</Para>
       <Para name="MaxConn">1000</Para>
       <Para name="PreLen">0</Para>
       <Para name="TimOut">100</Para>
     </DllPriDataCtrl>
     <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
-      <Para name="parserFil1">etc/CTHDEFE1_ITF.XML</Para>
+      <Para name="parserFil1">etc/CTHDEFEK_ITF.XML</Para>
     </DllPriDataCtrl>
     <Connection type="LEFT">
       <Entrance name="TRMTransaction" type="TCP">
