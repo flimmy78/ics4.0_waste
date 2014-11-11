@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <!--¹ã¶«µçÍø½Ó¿Ú  -->
-<Application name="EFE" server="OFRTEFE1">
+<Application name="EFE" server="OFRTEFEK">
 
+  <CodeSwitching>
+    <Table name="DWBM_CAgtNo" file="etc/EFE_CSW_441999.XML">
+      <Column name="DWBM" sort="no"/>
+      <Column name="CAgtNo" sort="no"/>
+    </Table>
+  </CodeSwitching>
 	<GetTxnCode>
 		<Item type="fixed" offset="96" length="2"/>
 	</GetTxnCode>
@@ -45,7 +51,7 @@
 		</Macro>
 
 		<Macro name="resp_head"> <!--½»Ò×Ó¦´ð±¨ÎÄÍ·-->
-      <Item name="SJBCD"     length="10" desc="Êý¾Ý°ü³¤¶È"/>
+      <!--Item name="SJBCD"     length="10" desc="Êý¾Ý°ü³¤¶È"/-->
       <Item name="MYSY"     length="3" desc="ÃÜÔ¿Ë÷Òý"/>
       <Item name="MYCSXL"     length="32" desc="ÃÜÔ¿³õÊ¼ÏòÁ¿"/>
       <Item name="XYBBH"     length="5" desc="Ð­Òé°æ±¾ºÅ"/>
@@ -391,9 +397,8 @@
         <Item name="JYLSH"     length="24" desc="½»Ò×Á÷Ë®ºÅ" />
         <Item name="JYRQ"     length="8" desc="½»Ò×ÈÕÆÚ" />
         <Item name="JYSJ"     length="6" desc="½»Ò×Ê±¼ä" />
-        <Item name="GDDW"     length="8" desc="¹©µçµ¥Î»" />
+        <Item name="DWBM"     length="8" expression="TRIM($DWBM,both)" desc="µ¥Î»±àÂë" />
         <Item name="YWBSH"     length="6" desc="ÒµÎñ±êÊ¶ºÅ" />
-        <Item name="DWBM"     length="8" desc="µ¥Î»±àÂë" />
         <Item name="CZRY"     length="20" desc="²Ù×÷ÈËÔ±" />
         <Item name="ZT"     length="1" desc="×´Ì¬" />
         <Item name="BZ"     length="128" desc="±¸×¢" />
@@ -404,11 +409,22 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--°üÍ·-->
+          <PackItem name="TmpDat">
+            <Quote name="resp_head"/>      <!--°üÍ·-->
+            <AddItem name="NUM_LEN" value="000000"/>
+            <Item name="NUM_LEN"     length="6" desc="×Ó°ü¸öÊý" />
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--°üÍ·-->
+          <PackItem name="TmpDat">
+            <Quote name="resp_head"/>      <!--°üÍ·-->
+            <AddItem name="NUM_LEN" value="000001"/>
+            <Item name="NUM_LEN"     length="6" desc="×Ó°ü¸öÊý" />
+            <Quote name="err_head"/>      <!--°üÍ·-->
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Default>
@@ -440,7 +456,12 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--°üÍ·-->
+          <PackItem name="TmpDat">
+            <Quote name="resp_head"/>      <!--°üÍ·-->
+            <AddItem name="NUM_LEN" value="000000"/>
+            <Item name="NUM_LEN"     length="6" desc="×Ó°ü¸öÊý" />
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">

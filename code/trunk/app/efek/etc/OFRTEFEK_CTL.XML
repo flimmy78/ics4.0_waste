@@ -474,10 +474,10 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -488,7 +488,7 @@
       <Switch expression="$QDBZ">
         <!--新增-->
         <Case value="0">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -521,14 +521,14 @@
                   <Set>ZHLX=1</Set>
               </Else>
               <Set>CcyCod=CNY</Set>
-              <Call package="AFE" function="Chk476520"/>
+              <Call package="EFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>ActTyp=1</Set>
               <Set>ZHLX=0</Set>
-              <Call package="AFE" function="Chk109000"/>
+              <Call package="EFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -593,7 +593,7 @@
         </Case>
         <!--修改-->
         <Case value="1">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -624,13 +624,13 @@
                  <Set>ActTyp=2</Set>
               </Else>
               <Set>CcyCod=CNY</Set>
-              <Call package="AFE" function="Chk476520"/>
+              <Call package="EFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>ActTyp=1</Set>
-              <Call package="AFE" function="Chk109000"/>
+              <Call package="EFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -672,7 +672,7 @@
         </Case>
         <!--注销-->
         <Case value="2">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="CclCusAgt"/>
           </Exec>
@@ -740,10 +740,10 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -823,10 +823,10 @@
     	 
     	<Quote name="GetEfeId"/>
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -1012,7 +1012,7 @@
       
       
       <!--发送主机记账和第三方-->
-      <Call package="AFE" function="AFE_SglBkPay"/>
+      <Call package="EFE" function="AFE_SglBkPay"/>
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
         <Set>Status=S</Set>
@@ -1230,9 +1230,9 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -2658,6 +2658,24 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+<!--测试返回开始-->
+      <Item name="CWTSXX"     length="256" desc="错误提示信息"/>
+      <Item name="CWFSRQ"     length="8" desc="错误发生日期"/>
+      <Item name="CWFSSJ"     length="6" desc="错误发生时间"/>
+      <Item name="CWFSJYM"     length="2" desc="错误发生交易码"/>
+      <Item name="SQLCODE"     length="7" desc="SQL返回码"/>
+
+        <Set>CWTSXX=888888</Set>
+        <Set>CWFSRQ=20141111</Set>
+        <Set>CWFSSJ=115000</Set>
+        <Set>CWFSJYM=888888</Set>
+        <Set>SQLCODE=123</Set>
+        <Set>RspCod=888888</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+<!--测试返回结束-->
+
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -2673,7 +2691,7 @@
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
 
-      <Call package="AFE" function="CheckZtByDWBM"/>
+      <Call package="EFE" function="CheckZtByDWBM"/>
       <If condition="IS_EQUAL_STRING($ZT,K)">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=银电系统已在开工状态</Set>
@@ -2683,7 +2701,7 @@
 
      <!--修改为开工状态-->
      <Set>ZT=K</Set>
-      <Call package="AFE" function="UpdInfByDWBM"/>
+      <Call package="EFE" function="UpdInfByDWBM"/>
 
     </FlowCtrl>
   </Transaction>
@@ -2709,7 +2727,7 @@
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
 
-      <Call package="AFE" function="CheckZtByDWBM"/>
+      <Call package="EFE" function="CheckZtByDWBM"/>
       <If condition="IS_EQUAL_STRING($ZT,Q)">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=银电系统已在开工状态</Set>
@@ -2719,7 +2737,7 @@
 
       <!--修改为停工状态-->
       <Set>ZT=Q</Set>
-      <Call package="AFE" function="UpdInfByDWBM"/>
+      <Call package="EFE" function="UpdInfByDWBM"/>
 
     </FlowCtrl>
   </Transaction>
@@ -2767,7 +2785,7 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckZtByDWBM"/>
+      <Call package="EFE" function="CheckZtByDWBM"/>
       <If condition="$Status=0">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=银电系统已在停工状态</Set>
@@ -2775,7 +2793,7 @@
       </If>
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -2836,7 +2854,7 @@
       <Switch expression="$QDBZ">
         <!--新增-->
         <Case value="0">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -2870,14 +2888,14 @@
               <Set>GPF=P</Set>
               <Set>CcyCod=CNY</Set>
 
-              <Call package="AFE" function="Chk476520"/>
+              <Call package="EFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
             <Case value="4" >
               <Set>GPF=G</Set>
               <Set>ActTyp=1</Set>
-              <Call package="AFE" function="Chk109000"/>
+              <Call package="EFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -2912,7 +2930,7 @@
         </Case>
         <!--修改-->
         <Case value="1">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <!--校验各分行账号-->
           <!--441999广东省分行-->
           <!--444999珠海分行-->
@@ -2946,7 +2964,7 @@
               <Set>GPF=P</Set>
               <Set>CcyCod=CNY</Set>
 
-              <Call package="AFE" function="Chk476520"/>
+              <Call package="EFE" function="Chk476520"/>
               <Break/>
             </Case>
             <Case value="0" /> <!-- 对公 -->
@@ -2954,7 +2972,7 @@
               <Set>GPF=G</Set>
               <Set>ActTyp=1</Set>
               <!--上主机查询客户资料-->
-              <Call package="AFE" function="Chk109000"/>
+              <Call package="EFE" function="Chk109000"/>
               <Break/>
             </Case>
             <Default>
@@ -2977,12 +2995,12 @@
         </Case>
         <!--查询-->
         <Case value="3">
-            <Call package="AFE" function="QryCusAgt"/>
+            <Call package="EFE" function="QryCusAgt"/>
           <Break/>
         </Case>
         <!--注销-->
         <Case value="2">
-          <Call package="AFE" function="ChkIsExistAgt"/>
+          <Call package="EFE" function="ChkIsExistAgt"/>
           <Exec func="PUB:ExecSql" error="IGNORE">
             <Arg name="SqlCmd"   value="CclCusAgt"/>
           </Exec>
@@ -3026,10 +3044,10 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/>
+      <Call package="EFE" function="CheckOpenByEfeId"/>
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -4416,6 +4434,9 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+
+
+
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -4431,7 +4452,7 @@
       <!--默认交易返回成功-->
       <Set>RspCod=000000</Set>
 
-      <Call package="AFE" function="CheckZtByDWBM"/>
+      <Call package="EFE" function="CheckZtByDWBM"/>
       <If condition="IS_EQUAL_STRING($ZT,K)">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=银电系统已在开工状态</Set>
@@ -4441,7 +4462,7 @@
 
      <!--修改为开工状态-->
      <Set>ZT=K</Set>
-      <Call package="AFE" function="UpdInfByDWBM"/>
+      <Call package="EFE" function="UpdInfByDWBM"/>
 
     </FlowCtrl>
   </Transaction>
@@ -4454,10 +4475,10 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/>
+      <Call package="EFE" function="CheckOpenByEfeId"/>
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
@@ -4494,17 +4515,17 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/>
+      <Call package="EFE" function="CheckOpenByEfeId"/>
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>
       <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
       <Set>JYSJ=GETDATETIME(HHMISS)</Set>
 
-      <Call package="AFE" function="QryDZZ"/>
+      <Call package="EFE" function="QryDZZ"/>
 
 
        <!--发送第三方-->
@@ -4543,10 +4564,10 @@
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="AFE" function="CheckOpenByEfeId"/>
+      <Call package="EFE" function="CheckOpenByEfeId"/>
 
       <!--得到网点名称-->
-      <Call package="AFE" function="GetWDMC"/>
+      <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
       <Quote name="GetJYLSH"/>

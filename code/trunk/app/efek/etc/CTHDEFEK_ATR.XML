@@ -5,29 +5,16 @@
       <MinWorkerThreads>20</MinWorkerThreads>
       <MaxWorkerThreads>20</MaxWorkerThreads>
     </ThreadPool>
-    <ProcessMemoryManager>
-      <BlockSize>102400</BlockSize><!--内存块大小(字节)-->
-      <PoolInitSize>16</PoolInitSize><!--内存池初始大小(块)-->
-      <PoolMaxSize>1024</PoolMaxSize><!--内存池最大大小(块)-->
-      <TimeOut>1</TimeOut>
-      <ThreadMemoryManager>
-        <PageSize>64</PageSize><!--页大小(字节)-->
-        <MaxBlocks>10</MaxBlocks ><!--允许申请的最大块数-->
-      </ThreadMemoryManager>
-    </ProcessMemoryManager>
-    <DllPriDataCtrl name="ECN" dllfile="dll/ecnclisync.so" initfunc="initChannel" donefunc="closeChannel">
-      <Para name="ConnTyp">0</Para>
-      <Para name="IpLstFil">etc/CTHDEFEK_IPD.XML</Para>
-      <Para name="MaxConn">1000</Para>
-      <Para name="PreLen">0</Para>
-      <Para name="TimOut">100</Para>
+    <DllPriDataCtrl name="ECN" dllfile="dll/ecnclisync_cfg_able.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="para1">etc/CTHDEFEK_cfg_able.XML</Para>
+      <!--Para name="PreLen">10</Para-->
     </DllPriDataCtrl>
     <DllPriDataCtrl name="AFP" dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
       <Para name="parserFil1">etc/CTHDEFEK_ITF.XML</Para>
     </DllPriDataCtrl>
     <Connection type="LEFT">
       <Entrance name="TRMTransaction" type="TCP">
-        <ListenerModule name="serverSyncIn" dllfile="dll/ecnclisync.so"> 
+        <ListenerModule name="serverSyncIn" dllfile="dll/ecnclisync_cfg_able.so"> 
           <Para name="MsgTyp">PLTIN0</Para>     
           <Para name="Port">_PORT</Para>
         </ListenerModule> 
@@ -44,7 +31,7 @@
           <ProcessModule>dataParser</ProcessModule>
         </Entry>  
       </RequestProcessor> 
-      <ResponseProcessor dllfile="dll/ecnclisync.so" dbapplication="NO">  
+      <ResponseProcessor dllfile="dll/ecnclisync_cfg_able.so" dbapplication="NO">  
         <Entry>
           <MessageType>PLTIN0</MessageType>
           <ProcessModule>serverSyncOut</ProcessModule>
