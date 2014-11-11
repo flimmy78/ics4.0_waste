@@ -79,6 +79,16 @@
       <Item name="SQLCODE"     length="7" desc="SQL返回码"/>
 		</Macro>
 
+		<Macro name="err_case"> <!--交易应答报文头-->
+      <PackItem name="TmpDat">
+        <Quote name="resp_head"/>      <!--包头-->
+        <AddItem name="NUM_LEN" value="000001"/>
+        <Item name="NUM_LEN"     length="6" desc="子包个数" />
+        <Quote name="err_head"/>      <!--包头-->
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+		</Macro>
+
 	</Define>
 
 	<Transaction code="20" service="460420" log_switch="5" des="供电方发起批量代扣交易请求">
@@ -108,7 +118,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -183,7 +193,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -231,7 +241,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -279,7 +289,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -331,7 +341,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -374,11 +384,16 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
+          <PackItem name="TmpDat">
+            <Quote name="resp_head"/>      <!--包头-->
+            <AddItem name="NUM_LEN" value="000000"/>
+            <Item name="NUM_LEN"     length="6" desc="子包个数" />
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -418,13 +433,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <PackItem name="TmpDat">
-            <Quote name="resp_head"/>      <!--包头-->
-            <AddItem name="NUM_LEN" value="000001"/>
-            <Item name="NUM_LEN"     length="6" desc="子包个数" />
-            <Quote name="err_head"/>      <!--包头-->
-          </PackItem>
-          <Item name="TmpDat" head_len="10" include_len="no"/>
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
@@ -465,7 +474,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_head"/>      <!--包头-->
+          <Quote name="err_case"/>
           <Break/>
         </Case>
         <Default>
