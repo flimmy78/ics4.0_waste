@@ -140,11 +140,9 @@
         <Item name="JYSJ"     length="6" desc="交易时间"/>
         <Item name="SFFS"     length="3" desc="收费方式"/>
         <Item name="FYLX"     length="3" desc="费用类型"/>
-        <Item name="RZYHDM"     length="4" desc="入账银行代码"/>
         <Item name="DWBM"     length="8" desc="单位编码"/>
         <Item name="JFH"     length="20" desc="缴费号"/>
-        <Item name="JSHMC"     length="64" desc="结算户名称"/>
-        <Item name="YDDZ"     length="128" desc="用电地址"/>
+        <Item name="KKYHDM"     length="4" desc="扣款银行代码"/>
         <Item name="KKZH"     length="32" desc="扣款账户"/>
         <Item name="KKZHMC"     length="128" desc="扣款账户名称"/>
         <Item name="BFJFBZ"     length="1" desc="部分缴费标志"/>
@@ -156,6 +154,7 @@
         <Item name="WYJ"     length="16" desc="违约金"/>
         <Item name="YFFBZ"     length="1" desc="预付费标志"/>
         <Item name="YFFJE"     length="16" desc="预付费金额"/>
+        <Item name="XJYDGJXX"     length="128" desc="需校验的关键信息"/>
 	    </Group>
 			<SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
 			<AddItem name="TxnCnl"  value="THD"/>
@@ -163,8 +162,10 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
-            <Item name="WDMC"     length="64" desc="网点名称" />
+          <PackItem name="TmpDat">
+            <Quote name="resp_head"/>      <!--包头-->
+            <AddItem name="NUM_LEN" value="000001"/>
+            <Item name="NUM_LEN"     length="6" desc="子包个数" />
             <Item name="JYLSH"     length="24" desc="交易流水号" />
             <Item name="JYRQ"     length="8" desc="交易日期" />
             <Item name="JYSJ"     length="6" desc="交易时间" />
@@ -173,11 +174,9 @@
             <Item name="YJYSJ"     length="6" desc="原交易时间" />
             <Item name="SFFS"     length="3" desc="收费方式" />
             <Item name="FYLX"     length="3" desc="费用类型" />
-            <Item name="RZYHDM"     length="4" desc="入账银行代码" />
-            <Item name="DWBM"     length="8" desc="单位编码" />
+            <Item name="DWBM"     length="8" desc="缴费号" />
             <Item name="JFH"     length="20" desc="缴费号" />
-            <Item name="JSHMC"     length="64" desc="结算户名称" />
-            <Item name="YDDZ"     length="128" desc="用电地址" />
+            <Item name="KKYHDM"     length="4" desc="扣款银行代码" />
             <Item name="KKZH"     length="32" desc="扣款账户" />
             <Item name="KKZHMC"     length="128" desc="扣款账户名称" />
             <Item name="BFJFBZ"     length="1" desc="部分缴费标志" />
@@ -190,6 +189,9 @@
             <Item name="YFFBZ"     length="1" desc="预付费标志" />
             <Item name="YFFJE"     length="16" desc="预付费金额" />
             <Item name="SKJE"     length="16" desc="实扣金额" />
+            <Item name="XJYDGJXX"     length="128" desc="需校验的关键信息"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">
@@ -455,7 +457,6 @@
         <Item name="GDDW"     length="8" desc="供电单位" />
         <Item name="YWBSH"     length="6" desc="业务标识号" />
         <Item name="CZRY"     length="20" desc="操作人员" />
-        <Item name="DWBM"     length="8" desc="单位编码" />
         <Item name="ZT"     length="1" desc="状态" />
         <Item name="BZ"     length="128" desc="备注" />
 	    </Group>
