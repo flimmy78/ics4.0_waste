@@ -133,29 +133,28 @@
 		<Request>
 			<Quote name="req_head"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
-	    <Group name="Rec"    repeat_name="PkgCnt">
-        <Item name="WDMC"     length="64" desc="网点名称"/>
-        <Item name="JYLSH"     length="24" desc="交易流水号"/>
-        <Item name="JYRQ"     length="8" desc="交易日期"/>
-        <Item name="JYSJ"     length="6" desc="交易时间"/>
-        <Item name="SFFS"     length="3" desc="收费方式"/>
-        <Item name="FYLX"     length="3" desc="费用类型"/>
-        <Item name="DWBM"     length="8" desc="单位编码"/>
-        <Item name="JFH"     length="20" desc="缴费号"/>
-        <Item name="KKYHDM"     length="4" desc="扣款银行代码"/>
-        <Item name="KKZH"     length="32" desc="扣款账户"/>
-        <Item name="KKZHMC"     length="128" desc="扣款账户名称"/>
-        <Item name="BFJFBZ"     length="1" desc="部分缴费标志"/>
-        <Item name="ZWLSH"     length="16" desc="账务流水号"/>
-        <Item name="DFNY"     length="6" desc="电费年月"/>
-        <Item name="HBFH"     length="5" desc="货币符号"/>
-        <Item name="KFJE"     length="16" desc="扣费金额"/>
-        <Item name="BJ"     length="16" desc="本金"/>
-        <Item name="WYJ"     length="16" desc="违约金"/>
-        <Item name="YFFBZ"     length="1" desc="预付费标志"/>
-        <Item name="YFFJE"     length="16" desc="预付费金额"/>
-        <Item name="XJYDGJXX"     length="128" desc="需校验的关键信息"/>
-	    </Group>
+
+      <Item name="WDMC"     length="64" desc="网点名称"/>
+      <Item name="JYLSH"     length="24" desc="交易流水号"/>
+      <Item name="JYRQ"     length="8" desc="交易日期"/>
+      <Item name="JYSJ"     length="6" desc="交易时间"/>
+      <Item name="SFFS"     length="3" desc="收费方式"/>
+      <Item name="FYLX"     length="3" desc="费用类型"/>
+      <Item name="DWBM"     length="8" desc="单位编码"/>
+      <Item name="JFH"     length="20" desc="缴费号"/>
+      <Item name="KKYHDM"     length="4" desc="扣款银行代码"/>
+      <Item name="KKZH"     length="32" desc="扣款账户"/>
+      <Item name="KKZHMC"     length="128" desc="扣款账户名称"/>
+      <Item name="BFJFBZ"     length="1" desc="部分缴费标志"/>
+      <Item name="ZWLSH"     length="16" desc="账务流水号"/>
+      <Item name="DFNY"     length="6" desc="电费年月"/>
+      <Item name="HBFH"     length="5" desc="货币符号"/>
+      <Item name="KFJE"     length="16" desc="扣费金额"/>
+      <Item name="BJ"     length="16" desc="本金"/>
+      <Item name="WYJ"     length="16" desc="违约金"/>
+      <Item name="YFFBZ"     length="1" desc="预付费标志"/>
+      <Item name="YFFJE"     length="16" desc="预付费金额"/>
+      <Item name="XJYDGJXX"     length="128" desc="需校验的关键信息"/>
 			<SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
 			<AddItem name="TxnCnl"  value="THD"/>
 		</Request>
@@ -166,6 +165,7 @@
             <Quote name="resp_head"/>      <!--包头-->
             <AddItem name="NUM_LEN" value="000001"/>
             <Item name="NUM_LEN"     length="6" desc="子包个数" />
+
             <Item name="JYLSH"     length="24" desc="交易流水号" />
             <Item name="JYRQ"     length="8" desc="交易日期" />
             <Item name="JYSJ"     length="6" desc="交易时间" />
