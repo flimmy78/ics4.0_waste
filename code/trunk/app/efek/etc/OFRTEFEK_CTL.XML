@@ -708,7 +708,7 @@
         <Case value="3">
           <Exec func="PUB:CallThirdOther">
             <Arg name="HTxnCd" value="460444"/>
-            <Arg name="ObjSvr" value="STHDEFE1"/>
+            <Arg name="ObjSvr" value="STHDEFEK"/>
           </Exec>
           <If condition="$JYFHDM!=00">
             <Set>RspCod=EFE999</Set>
@@ -736,6 +736,45 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+<!--测试返回开始-->
+<Set>MYSY=   </Set>
+<Set>MYCSXL=                                </Set>
+<Set>XYBBH=1.0.0</Set>
+<Set>YWBSH=YDLW03</Set>
+<Set>JYBSH=20141111000000035669</Set>
+<Set>JYRBS=1030600000000490    </Set>
+<Set>JYM=22</Set>
+<Set>SJBLX=0</Set>
+<Set>JYFQF=030600  </Set>
+<Set>JYJSF=301     </Set>
+<Set>JYYDZ=                        </Set>
+<Set>JYMBDZ=                        </Set>
+<Set>JYFSRQ=20141111</Set>
+<Set>JYFSSJ=153229</Set>
+<Set>JYYXJ=2</Set>
+<Set>JYFHDM=00   </Set>
+<Set>YSBZ=0</Set>
+<Set>WDMC= </Set>
+<Set>JYLSH= </Set>
+<Set>JYRQ= </Set>
+<Set>JYSJ= </Set>
+<Set>SFFS= </Set>
+<Set>JFH=064679000922911</Set>
+<Set>DFNY=201211</Set>
+<Set>CXFS=1</Set>
+<Set>PkgCnt=000001</Set>
+
+
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="460410"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
+      </Exec>
+
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+<!--测试返回结束-->
 
       <Quote name="GetEfeId"/>
 
@@ -752,7 +791,7 @@
 
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460410"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
       <If condition="$JYFHDM!=00">
         <Set>RspCod=EFE999</Set>
@@ -1266,7 +1305,7 @@
 
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460412"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
 
       <If condition="$RspCod=000000">
@@ -1385,6 +1424,21 @@
     </DynSentence>
 
     <FlowCtrl>
+
+<!--测试返回开始
+        <Set>CWTSXX=888888</Set>
+        <Set>CWFSRQ=20141111</Set>
+        <Set>CWFSSJ=115000</Set>
+        <Set>CWFSJYM=888888</Set>
+        <Set>SQLCODE=123</Set>
+
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+测试返回结束-->
+
+
       <!--查询对应分行号 -->
       <Exec func="PUB:ReadRecord">    
         <Arg name="SqlCmd" value="QryInfCtl"/>
@@ -2658,24 +2712,26 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+<!--TODO,要增加将MYSY保存到数据库的逻辑-->
 <!--测试返回开始-->
-      <Item name="CWTSXX"     length="256" desc="错误提示信息"/>
-      <Item name="CWFSRQ"     length="8" desc="错误发生日期"/>
-      <Item name="CWFSSJ"     length="6" desc="错误发生时间"/>
-      <Item name="CWFSJYM"     length="2" desc="错误发生交易码"/>
-      <Item name="SQLCODE"     length="7" desc="SQL返回码"/>
+      <!--<Item name="CWTSXX"     length="256" desc="错误提示信息"/>-->
+      <!--<Item name="CWFSRQ"     length="8" desc="错误发生日期"/>-->
+      <!--<Item name="CWFSSJ"     length="6" desc="错误发生时间"/>-->
+      <!--<Item name="CWFSJYM"     length="2" desc="错误发生交易码"/>-->
+      <!--<Item name="SQLCODE"     length="7" desc="SQL返回码"/>-->
 
-        <Set>CWTSXX=888888</Set>
-        <Set>CWFSRQ=20141111</Set>
-        <Set>CWFSSJ=115000</Set>
-        <Set>CWFSJYM=888888</Set>
-        <Set>SQLCODE=123</Set>
-        <Set>RspCod=888888</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=N</Set>
-        <Return></Return>
+        <!-- <Set>CWTSXX=888888</Set>-->
+        <!--<Set>CWFSRQ=20141111</Set>-->
+        <!--<Set>CWFSSJ=115000</Set>-->
+        <!-- <Set>CWFSJYM=888888</Set>-->
+        <!--<Set>SQLCODE=123</Set>-->
+        <!--<Set>RspCod=888888</Set>-->
+        <!--<Set>MsgTyp=E</Set>-->
+        <!--<Set>RspMsg=N</Set>-->
+        <!--<Return></Return>-->
 <!--测试返回结束-->
 
+      <Set>SJBLX=1</Set>
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -2711,6 +2767,21 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+
+<!--测试返回开始
+        <Set>CWTSXX=888888</Set>
+        <Set>CWFSRQ=20141111</Set>
+        <Set>CWFSSJ=115000</Set>
+        <Set>CWFSJYM=888888</Set>
+        <Set>SQLCODE=123</Set>
+
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+    测试返回结束-->
+    
+      <Set>SJBLX=1</Set>
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -3094,7 +3165,7 @@
       <!--通知供电方-->
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460431"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
       <If condition="~RetCod=-1">
         <Set>MsgTyp=E</Set>
@@ -4429,43 +4500,6 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460491" desc="银电业务开工交易">
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
-    <FlowCtrl>
-
-
-
-      <Exec func="PUB:CodeSwitching" error="IGNORE">
-        <Arg name="DatSrc" value="OPFCSW"></Arg>
-        <Arg name="SourNam" value="DWBM"></Arg>
-        <Arg name="DestNam" value="BrNo"></Arg>
-        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
-      </Exec>
-      <If condition="~RetCod=-1"><!--失败 -->
-        <Set>RspCod=EFE999</Set>
-        <Return></Return>
-      </If>
-      <!--交易初始化,预留-->
-      <Exec func="PUB:InitTransaction"/>
-      <!--默认交易返回成功-->
-      <Set>RspCod=000000</Set>
-
-      <Call package="EFE" function="CheckZtByDWBM"/>
-      <If condition="IS_EQUAL_STRING($ZT,K)">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在开工状态</Set>
-        <Return/>
-      </If>
-
-
-     <!--修改为开工状态-->
-     <Set>ZT=K</Set>
-      <Call package="EFE" function="UpdInfByDWBM"/>
-
-    </FlowCtrl>
-  </Transaction>
 
   <Transaction code="460440" desc="银行查询客户缴费记录交易">
     <Attributes>
@@ -4488,7 +4522,7 @@
        <!--发送第三方-->
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460440"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
@@ -4531,7 +4565,7 @@
        <!--发送第三方-->
       <Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460450"/>
-        <Arg name="ObjSvr" value="STHDEFE1"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
@@ -4607,7 +4641,7 @@
         <!--发送第三方-->
         <Exec func="PUB:CallThirdOther">
           <Arg name="HTxnCd" value="460451"/>
-          <Arg name="ObjSvr" value="STHDEFE1"/>
+          <Arg name="ObjSvr" value="STHDEFEK"/>
         </Exec>
         <If condition="$RspCod=000000">
           <Set>MsgTyp=N</Set>
@@ -4676,7 +4710,7 @@
         <!--发送第三方-->
         <Exec func="PUB:CallThirdOther" error="IGNORE">   <!--第三方查询-->
           <Arg name="HTxnCd" value="460490"/>
-          <Arg name="ObjSvr" value="STHDEFE1"/>
+          <Arg name="ObjSvr" value="STHDEFEK"/>
         </Exec>
         <If condition="INTCMP(~RetCod,1,0)">
           <Set>MsgTyp=E</Set>
