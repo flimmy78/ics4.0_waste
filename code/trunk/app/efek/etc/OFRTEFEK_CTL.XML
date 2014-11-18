@@ -740,25 +740,26 @@
 <Set>MYSY=   </Set>
 <Set>MYCSXL=                                </Set>
 <Set>XYBBH=1.0.0</Set>
-<Set>YWBSH=YDLW03</Set>
-<Set>JYBSH=20141111000000035669</Set>
-<Set>JYRBS=1030600000000490    </Set>
-<Set>JYM=22</Set>
+<Set>YWBSH=YDLW04</Set>
+<Set>JYBSH=20141117000000035669</Set>
+<!-- Set>JYRBS=1030600000000490    </Set-->
+<Set>JYRBS=301_030600          </Set>
+<Set>JYM=10</Set>
 <Set>SJBLX=0</Set>
-<Set>JYFQF=030600  </Set>
-<Set>JYJSF=301     </Set>
+<Set>JYFQF=301     </Set><!-- 发起方是我行 -->
+<Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
 <Set>JYYDZ=                        </Set>
 <Set>JYMBDZ=                        </Set>
-<Set>JYFSRQ=20141111</Set>
-<Set>JYFSSJ=153229</Set>
+<Set>JYFSRQ=20141117</Set>
+<Set>JYFSSJ=103229</Set>
 <Set>JYYXJ=2</Set>
 <Set>JYFHDM=00   </Set>
 <Set>YSBZ=0</Set>
-<Set>WDMC= </Set>
-<Set>JYLSH= </Set>
-<Set>JYRQ= </Set>
-<Set>JYSJ= </Set>
-<Set>SFFS= </Set>
+<Set>WDMC=                                                                </Set>
+<Set>JYLSH=201411120301000000000001</Set>
+<Set>JYRQ=20141112</Set>
+<Set>JYSJ=150800</Set>
+<Set>SFFS=110</Set>
 <Set>JFH=064679000922911</Set>
 <Set>DFNY=201211</Set>
 <Set>CXFS=1</Set>
@@ -859,10 +860,41 @@
        <Fields>Status|EfeId|LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
-    	 
+    	
+<!--测试返回开始-->
+<Set>MYSY=   </Set>
+<Set>MYCSXL=                                </Set>
+<Set>XYBBH=1.0.0</Set>
+<Set>YWBSH=YDLW04</Set>
+<Set>JYBSH=20141117000000035669</Set>
+<Set>JYRBS=301_030600          </Set>
+<Set>JYM=11</Set>
+<Set>SJBLX=0</Set>
+<Set>JYFQF=301     </Set><!-- 发起方是我行 -->
+<Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
+<Set>JYYDZ=                        </Set>
+<Set>JYMBDZ=                        </Set>
+<Set>JYFSRQ=20141117</Set>
+<Set>JYFSSJ=103229</Set>
+<Set>JYYXJ=2</Set>
+<Set>JYFHDM=00   </Set>
+<Set>YSBZ=0</Set>
+<Set>WDMC=                                                                </Set>
+<Set>JYLSH=201411120301000000000001</Set>
+<Set>JYRQ=20141112</Set>
+<Set>JYSJ=150800</Set>
+<Set>SFFS=110</Set>
+<Set>PkgCnt=000001</Set>
+<Set>ECD=520102</Set><!-- 不知道从哪取，先补上 -->
+<Set>EDD=301</Set><!-- 不知道从哪取，先补上 -->
+<Set>PCF=2</Set><!-- 不知道从哪取，先补上 -->
+<Set>CAgtNo=4840001065</Set>
+<!-- db2 "SELECT TActNo, BBusTyp FROM savcrpagr WHERE BrNo='484999' and CAgtNo='4840001065' AND SvrSts='1'"|more -->
+
+<!-- 初始化脚本:db2 "insert into pubaplmng values('484999','202','EFEK1', '1','9999999999')" -->
     	<Quote name="GetEfeId"/>
-      <!--读取开工信息记录-->
-      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
+      <!-- 读取开工信息记录  cwz:没有这个Func只好先去掉以方便测试 -->
+      <!-- Call package="EFE" function="CheckOpenByEfeId"/ --><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
 
       <!--得到网点名称-->
       <Call package="EFE" function="GetWDMC"/>
@@ -876,7 +908,7 @@
       <Exec func="PUB:GetBranchNoByTeller"/>
 
       <Set>AplCls=202</Set>
-      <Set>BusTyp=EFEA1</Set>
+      <Set>BusTyp=EFEK1</Set>
 
       <!--交易初始化,预留-->
       <Exec func="PUB:InitTransaction"/>
@@ -1002,6 +1034,7 @@
         <Set>ActFlg=$ActTyp</Set>
         <Set>VchCod=00000000</Set>
         <Set>VchChk=1</Set><!--监督标志由业务上确定-->
+        <Set>BusSub=1</Set><!-- cwz:BUSTYP=EFEK1 所以这里就等于1 -->
         <!--
         <Set>BusTyp=EFEA1</Set>
         -->
@@ -1049,9 +1082,20 @@
         <Return/>
       </If>
       
-      
+      <Set>TxnTyp=N</Set>
+      <Set>CCYCOD=CNY</Set>
+      <Set>TXNAMT=$QFJE</Set>
+      <Set>ITGTYP=0</Set>
+      <Set>FRSPCD= </Set>
+      <Set>MSTCHK=1</Set>
+      <Set>CCLNO= </Set>
+      <Set>DSKNO= </Set>
+      <Set>ACTSQN= </Set>
+      <Set>HTXNSB= </Set>
+      <Set>TXNSRC= </Set>
+      <Set>CTBLNM=efektxnjnl441</Set>
       <!--发送主机记账和第三方-->
-      <Call package="EFE" function="AFE_SglBkPay"/>
+      <Call package="AFE" function="AFE_SglBkPay"/>
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
         <Set>Status=S</Set>
@@ -1438,7 +1482,7 @@
         <Return></Return>
 测试返回结束-->
 
-
+      <Set>SJBLX=1</Set>   <!--返回数据包类型为：1-响应-->
       <!--查询对应分行号 -->
       <Exec func="PUB:ReadRecord">    
         <Arg name="SqlCmd" value="QryInfCtl"/>
@@ -2731,7 +2775,7 @@
         <!--<Return></Return>-->
 <!--测试返回结束-->
 
-      <Set>SJBLX=1</Set>
+      <Set>SJBLX=1</Set>   <!--返回数据包类型为：1-响应-->
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -2781,7 +2825,7 @@
         <Return></Return>
     测试返回结束-->
     
-      <Set>SJBLX=1</Set>
+      <Set>SJBLX=1</Set>   <!--返回数据包类型为：1-响应-->
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
