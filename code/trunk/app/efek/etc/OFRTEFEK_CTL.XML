@@ -888,7 +888,21 @@
 <Set>ECD=520102</Set><!-- 不知道从哪取，先补上 -->
 <Set>EDD=301</Set><!-- 不知道从哪取，先补上 -->
 <Set>PCF=2</Set><!-- 不知道从哪取，先补上 -->
-<Set>CAgtNo=4840001065</Set>
+<Set>CAgtNo=4410001344</Set>
+<Set>KKYHDM=301</Set>
+<Set>KKZH=62226007100147****6</Set>
+<Set>KKZHMC=张*</Set>
+<Set>BFJFBZ=1</Set>
+<Set>ZWLSH= </Set>
+<Set>DFNY=201211</Set>
+<Set>QFJE=189335</Set>
+<Set>BJ=99900</Set>
+<Set>WYJ=89435</Set>
+<Set>FKFS=1</Set>
+<Set>HBFH=RMB</Set>
+<Set>SKJE=189335</Set>
+<Set>KKRQ=20141119</Set>
+<Set>KKSJ=172100</Set>
 <!-- db2 "SELECT TActNo, BBusTyp FROM savcrpagr WHERE BrNo='484999' and CAgtNo='4840001065' AND SvrSts='1'"|more -->
 
 <!-- 初始化脚本:db2 "insert into pubaplmng values('484999','202','EFEK1', '1','9999999999')" -->
@@ -1095,7 +1109,13 @@
       <Set>TXNSRC= </Set>
       <Set>CTBLNM=efektxnjnl441</Set>
       <!--发送主机记账和第三方-->
-      <Call package="AFE" function="AFE_SglBkPay"/>
+      <!--Call package="AFE" function="AFE_SglThdPay"/--><!--测试通讯先注释,测试逻辑时需要放开-->
+<!--qm测试添加,20141119-->
+<Exec func="PUB:CallThirdOther">   <!--第三方查询-->
+        <Arg name="HTxnCd" value="$TTxnCd"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
+</Exec>
+<!--qm测试添加,20141119 end-->
       <If condition="$RspCod=000000">
         <Set>MsgTyp=N</Set>
         <Set>Status=S</Set>
