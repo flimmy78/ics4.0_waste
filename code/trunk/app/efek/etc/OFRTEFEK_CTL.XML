@@ -760,8 +760,6 @@
 <Set>JYRQ=20141112</Set>
 <Set>JYSJ=150800</Set>
 <Set>SFFS=110</Set>
-<Set>JFH=064679000922911</Set>
-<Set>DFNY=201211</Set>
 <Set>CXFS=1</Set>
 <Set>PkgCnt=000001</Set>
 
@@ -873,15 +871,15 @@
 <Set>JYFQF=301     </Set><!-- 发起方是我行 -->
 <Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
 <Set>JYYDZ=                        </Set>
-<Set>JYMBDZ=                        </Set>
-<Set>JYFSRQ=20141117</Set>
-<Set>JYFSSJ=103229</Set>
+<Set>JYMBDZ=00:00:00:00:C0:B2</Set>
+<Set>JYFSRQ=20141120</Set>
+<Set>JYFSSJ=102409</Set>
 <Set>JYYXJ=2</Set>
 <Set>JYFHDM=00   </Set>
 <Set>YSBZ=0</Set>
 <Set>WDMC=                                                                </Set>
-<Set>JYLSH=201411120301000000000001</Set>
-<Set>JYRQ=20141112</Set>
+<Set>JYLSH=201411200301000000000001</Set>
+<Set>JYRQ=20141120</Set>
 <Set>JYSJ=150800</Set>
 <Set>SFFS=110</Set>
 <Set>PkgCnt=000001</Set>
@@ -894,7 +892,6 @@
 <Set>KKZHMC=张*</Set>
 <Set>BFJFBZ=1</Set>
 <Set>ZWLSH= </Set>
-<Set>DFNY=201211</Set>
 <Set>QFJE=189335</Set>
 <Set>BJ=99900</Set>
 <Set>WYJ=89435</Set>
@@ -1868,8 +1865,7 @@
 
 
   <Transaction code="460420" desc="供电发起批量代扣交易">
-
-    <Attributes>
+   <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
 
@@ -4570,10 +4566,37 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+<!--测试-->
+<Set>MYSY=   </Set>
+<Set>MYCSXL=                                </Set>
+<Set>XYBBH=1.0.0</Set>
+<Set>YWBSH=YDLW04</Set>
+<Set>JYBSH=20141117000000035669</Set>
+<!-- Set>JYRBS=1030600000000490    </Set-->
+<Set>JYRBS=301_030600          </Set>
+<Set>JYM=10</Set>
+<Set>SJBLX=0</Set>
+<Set>JYFQF=301     </Set><!-- 发起方是我行 -->
+<Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
+<Set>JYYDZ=                        </Set>
+<Set>JYMBDZ=                        </Set>
+<Set>JYFSRQ=20141117</Set>
+<Set>JYFSSJ=103229</Set>
+<Set>JYYXJ=2</Set>
+<Set>JYFHDM=00   </Set>
+<Set>YSBZ=0</Set>
+<Set>WDMC=                                                                </Set>
+<Set>JYLSH=201411120301000000000001</Set>
+<Set>JYRQ=20141112</Set>
+<Set>JYSJ=150800</Set>
+<Set>SFFS=110</Set>
+<Set>CXFS=1</Set>
+<Set>PkgCnt=000001</Set>
+<!--测试-->
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
-      <Call package="EFE" function="CheckOpenByEfeId"/>
+      <!--Call package="EFE" function="CheckOpenByEfeId"/-->
 
       <!--得到网点名称-->
       <Call package="EFE" function="GetWDMC"/>

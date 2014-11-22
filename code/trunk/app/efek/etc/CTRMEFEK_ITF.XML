@@ -138,7 +138,7 @@
       <Item name="ZWLSH"     length="16" desc="账务流水号" />
       <Item name="DFNY"     length="6" desc="电费年月" />
       <Item name="QFJE"     length="16" desc="欠费金额" />
-      <AddItem name="TxnAmt" expression="$TxnAmt"/>
+      <AddItem name="TxnAmt" expression="$QFJE"/>
       <Item name="BJ"     length="16" desc="本金" />
       <Item name="WYJ"     length="16" desc="违约金" />
       <Item name="VchTyp"  length="3" />             <!-- 结算凭证                 -->
@@ -393,8 +393,8 @@
       </If>
       <Else>
         <Item name="JFH"     length="20" desc="缴费号"/>
-        <Item name="DFKSNY"     length="6" desc="电费开始年月"/>
-        <Item name="DFZZNY"     length="6" desc="电费终止年月"/>
+        <Item name="JFKSSJ"     length="6" desc="电费开始年月"/>
+        <Item name="JFZZSJ"     length="6" desc="电费终止年月"/>
       </Else>
     </Request>
     <Response necessary="no">
