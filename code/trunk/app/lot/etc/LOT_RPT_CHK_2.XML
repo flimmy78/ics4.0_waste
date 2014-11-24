@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ¶ÔÕËÒøÐÐÊ§°ÜÇåµ¥ -->
+<Application  dbconnect="YES" trclog="LOT_RPT_CHK_2.log">
+	<VarDef>
+		<String alias="RptTyp"   pos="1" />
+		<String alias="GameId"   pos="2" />
+		<String alias="GameNm"   pos="3" />
+		<String alias="DrawId"   pos="4" />
+		<String alias="DrawNm"   pos="5" />
+		<String alias="TlrId"    pos="6" />
+	</VarDef>
+	
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select GameId, DrawId, KenoId, TxnLog, HLogNo, LotNam, CrdNo, PlayId, TxnAmt, TxnTim, TckNo 
+					from LotTxnJnl 
+					where GameId='%s' and DrawId='%s' and TxnSts in ('S','T') and ChkFlg='2'
+					order by KenoId, TxnTim asc">
+        		<FieldList>$GameId|$DrawId|</FieldList>
+			</Sql>
+		</Iterative>
+		<Summed type="field">
+			<Field count="TotCnt"/>
+		</Summed>
+
+	</DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="DELBOTHSPACE($GameId)"   spread="right"/>
+			<Para label="02" alias="DELBOTHSPACE($GameNm)"   spread="right"/>
+			<Para label="03" alias="DELBOTHSPACE($DrawId)"   spread="right"/>
+			<Para label="04" alias="DELBOTHSPACE($DrawNm)"   spread="right"/>
+			<Para label="05" alias="GETDATETIME(YYYY)"       spread="right"/> 
+			<Para label="06" alias="GETDATETIME(MM)"         spread="right"/> 
+			<Para label="07" alias="GETDATETIME(DD)"         spread="right"/>
+			<Format>
+                                                           ¸£²Ê¶ÔÕËÒøÐÐ·½Ê§°ÜÇåµ¥
+                                                 ========================================
+      ÓÎÏ·ÀàÐÍ:# - #                           ÆÚºÅ:#        ÆÚÃû:#                                    ´òÓ¡ÈÕÆÚ£º   # Äê  # ÔÂ  #ÈÕ 
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      KENOÆÚºÅ  Í¶×¢Á÷Ë®ºÅ    »á¼ÆÁ÷Ë®ºÅ      ²ÊÃñ±êÊ¶      Í¶×¢¿¨ºÅ               Íæ·¨±àºÅ  Í¶×¢½ð¶î         Í¶×¢Ê±¼ä
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="ADDCHAR(DELBOTHSPACE($KenoId),5, ,0)"       spread="right"/>
+			<Para label="02" alias="ADDCHAR(DELBOTHSPACE($TxnLog),12, ,0)"      spread="right"/>
+			<Para label="03" alias="ADDCHAR(DELBOTHSPACE($TckNo),15, ,0)"       spread="right"/>
+			<Para label="04" alias="ADDCHAR(DELBOTHSPACE($LotNam),13, ,0)"      spread="right"/>
+			<Para label="05" alias="ADDCHAR(DELBOTHSPACE($CrdNo),21, ,0)"       spread="right"/>
+			<Para label="06" alias="ADDCHAR(DELBOTHSPACE($PlayId),2, ,0)"       spread="right"/>
+			<Para label="07" alias="ADDCHAR(AMTSIMPLEFMT(DELBOTHSPACE($TxnAmt)),15, ,1)"      spread="left"/>
+			<Para label="08" alias="ADDCHAR(DELBOTHSPACE($TxnTim),14, ,0)"       spread="right"/>
+			<Format>
+      #         #             #               #             #                      #                        # #
+      --------------------------------------------------------------------------------------------------------------------------------
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="AMTDELZERO($TotCnt)" spread="right" />       
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ×Ü¼ÆÐÐÊý: #
+			</Format>
+		</Summed>
+    
+		<TableFooter>
+			<Para label="01" alias="$TlrId"   spread="right"/>
+			<Para label="02" alias="$PAGESUM" spread="mid"/>
+			<Para label="03" alias="$PAGENUM" spread="mid"/>
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ÖÆ±íÈË£º#                                                                                             ¹²  #  Ò³   µÚ  #  Ò³
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

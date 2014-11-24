@@ -1,0 +1,706 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LOTA" code="454">
+   <!--¹ã¶«Ê¡¸£²ÊÒµÎñ±¾µØÖ÷¿Ø-->
+   <ConfigDeclare>
+      <Config name="OPFCSW"      value="etc/LOT_CSW_441999.XML"/>
+   </ConfigDeclare>
+	<PackageDeclare>
+		<Package name="LOT_PKG" value="etc/LOT_PKG.XML"/>
+	</PackageDeclare>
+   <BusDefDeclare>
+      <Busdef name="AplCls"    value="454"/> <!--add by xuan_20101108-->
+      <Busdef name="RcvPth"    value="dat/ssa" /> <!--½ÓÊÕÄ¿Â¼-->
+      <Busdef name="TrmRcv"    value="dat/term/recv" /> <!--ÖÕ¶Ë½ÓÊÕÄ¿Â¼-->
+      <Busdef name="TrmSnd"    value="dat/term/send" /> <!--ÖÕ¶Ë·¢ËÍÄ¿Â¼-->
+	  <Busdef name="DealId"    value="141" /> <!--ÔËÓªÉÌ±àºÅ-->
+   </BusDefDeclare>
+   <TableDeclare>
+      <Table name="afetxnjnl"     value="afetxnjnl"/>     <!--ÒµÎñÁ÷Ë®±í-->
+      <Table name="lotsyscfg"     value="lotsyscfg"/>    <!--Æ½Ì¨²ÎÊý±í-->
+      <Table name="lotcusinf"     value="lotcusinf"/>    <!--¸£²ÊÓÃ»§±í-->
+      <Table name="lotautpln"     value="lotautpln"/>    <!--¶¨Í¶¼Æ»®±í-->
+      <Table name="lottxnjnl"     value="lottxnjnl"/>    <!--Í¶×¢Á÷Ë®±í-->
+      <Table name="lotchkctl"     value="lotchkctl"/>    <!--¶ÔÕË¿ØÖÆ±í-->
+      <Table name="lotchkdtl"     value="lotchkdtl"/>    <!--¶ÔÕËÃ÷Ï¸±í-->
+      <Table name="lotdrwtbl"     value="lotdrwtbl"/>    <!--½±ÆÚÐÅÏ¢±í-->
+      <Table name="lotprzinf"     value="lotprzinf"/>    <!--¿ª½±¹«¸æ±í-->
+      <Table name="lotdrwtbl"     value="lotdrwtbl"/>    <!--½±ÆÚÐÅÏ¢±í-->
+      <Table name="lotprzinf"     value="lotprzinf"/>    <!--¿ª½±¹«¸æ±í-->
+      <Table name="lotprzctl"     value="lotprzctl"/>    <!--ÖÐ½±¼ÇÂ¼¿ØÖÆ±í-->
+      <Table name="lotprzdtl"     value="lotprzdtl"/>    <!--ÖÐ½±¼ÇÂ¼Ã÷Ï¸±í-->
+      <Table name="lotawddtl"     value="lotawddtl"/>    <!--·µ½±½±¼ÇÂ¼Ã÷Ï¸±í-->
+   </TableDeclare>
+   <GlobalFunction>
+      <Include file="etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
+      <Function name="_after">
+         <Process>
+            <If condition="ISNULL($MsgTyp)">
+               <If condition="ISNULL(DELBOTHSPACE($RspCod))"> <!--ÈôRspCodÎª¿Õ£¬ÔòÈÏÎª³É¹¦-->
+                  <Set>MsgTyp=N</Set>
+                  <Set>RspCod=000000</Set>
+               </If>
+               <Else>
+                  <If condition="IS_NOEQUAL_STRING($RspCod,000000)"> <!--·µ»ØÂë²»Îª000000-->
+                     <Set>MsgTyp=E</Set>
+                  </If>
+                  <Else>
+                     <Set>MsgTyp=N</Set>
+                  </Else>
+               </Else>
+            </If>
+         </Process>
+      </Function>
+   </GlobalFunction>
+
+	<Define>
+      <Macro name="Init_Trans"><!--³õÊ¼»¯½Å±¾-->
+         <Exec func="PUB:GetBranchNoByNodeNo"></Exec>   <!--¸ù¾ÝÍøµãºÅÈ¡·ÖÐÐ´úÂë-->
+         <Exec func="PUB:InitTransaction"></Exec>  <!--½»Ò×³õÊ¼»¯,Ô¤Áô-->
+         <Set>FTxnTm=GETDATETIME()</Set><!--Ç°ÖÃÆ½Ì¨ÏµÍ³Ê±¼ä-->
+         <Set>@MSG.XVE=STRCAT(&lt;,\?,xml ,version='1.0' encoding='UTF-8',\?,&gt;)</Set>
+      </Macro>
+      <Macro name="CommonSql"><!--¹«¹²SQLºê-->
+      </Macro>
+	</Define>
+
+	<Transaction code="485412" desc="ÊµÊ±Í¶×¢">
+		<Quote name="CommonSql"/>
+		<DynSentence name="ChkLotCusInf" desc="¼ì²éÓÃ»§ÐÅÏ¢">
+			<Sentence>
+				select BrNo,CusNam,ActNo,ActNod,IdTyp,IdNo,MobTel,FixTel,LotNam,LotPsw,RegTim,Email,CityId
+				from LotCusInf
+				where CrdNo='%s' and Status='1'
+			</Sentence>
+			<Fields>CrdNo|</Fields>
+		</DynSentence>
+		<DynSentence name="QryLotDrwTbl" desc="²éÑ¯½±ÆÚÐÅÏ¢(Ã»ÓÐkenoÆÚ)">
+			<Sentence>
+				select DrawId, DrawNm, KenoId, KenoNm
+				from LotDrwTbl
+				where FlwCtl='0' and GameId='%s' and KenoId != 'AAAAA'
+					and SalStr &lt; '%s' and SalEnd &gt; '%s'
+				order by SalStr asc
+				fetch first 1 rows only
+			</Sentence>
+			<Fields>GameId|FcTim|FcTim|</Fields>
+		</DynSentence>
+		<DynSentence name="QryLotDrwTblKeno" desc="²éÑ¯½±ÆÚÐÅÏ¢(ÓÐkenoÆÚ)">
+			<Sentence>
+				select DrawId, DrawNm, KenoId, KenoNm
+				from LotDrwTbl
+				where FlwCtl='0' and GameId='%s' and KenoId != 'AAAAA'
+					and KSalSt &lt; '%s' and KSalEd &gt; '%s'
+				order by SalStr,KSalSt asc
+				fetch first 1 rows only
+			</Sentence>
+			<Fields>GameId|FcTim|FcTim|</Fields>
+		</DynSentence>
+		<DynSentence name="InsLotTxnJnl" desc="Ôö¼ÓÍ¶²ÊÁ÷Ë®±í">
+			<Sentence>
+				insert into LotTxnJnl(BrNo,LogNo,TTxnCd,TxnCod,SchTyp,
+									SchTit,SecLev,CityId,DrawId,KenoId,
+									GameId,GamNam,PlayId,BetMet,BetMod,
+									BetMul,TxnAmt,BetLin,LotNam,BetDat,
+									TxnTim,TxnLog,SchId,TLogNo,Cipher,
+									Verify,CusNam,CrdNo,HTxnCd,HTxnSb,
+									HLogNo,HRspCd,HTxnSt,TRspCd,TTxnSt,
+									ThdChk,TChkNo,ChkTim,ChkFlg,AwdFlg,
+									AwdRtn,CAgtNo,TckNo,TxnCnl,BetTyp,
+									LChkTm,TxnSts)
+				values ('%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s')
+			</Sentence>
+			<Fields>BrNo|LogNo|TTxnCd|TxnCod|SchTyp|SchTit|SecLev|CityId|DrawId|KenoId|GameId|GamNam|PlayId|BetMet|BetMod|BetMul|TxnAmt|BetLin|LotNam|BetDat|TxnTim|TxnLog|SchId|TLogNo|Cipher|Verify|CusNam|CrdNo|HTxnCd|HTxnSb|HLogNo|HRspCd|HTxnSt|TRspCd|TTxnSt|ThdChk|TChkNo|ChkTim|ChkFlg|AwdFlg|AwdRtn|CAgtNo|TckNo|TxnCnl|BetTyp|LChkTm|TxnSts|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdLotTxnJnl4Acc" desc="¼ÇÕËºó¸üÐÂ¹º²ÊÁ÷Ë®">
+			<Sentence>
+				update LotTxnJnl 
+				set HLogNo='%s', HRspCd='%s', HTxnSt='%s', TckNo='%s', TxnSts='%s'
+				where TxnLog='%s'
+			</Sentence>
+			<Fields>HLogNo|HRspCd|HTxnSt|TckNo|TxnSts|TxnLog|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdLotTxnJnl4Snd" desc="·¢ËÍ¹º²Êºó¸üÐÂ¹º²ÊÁ÷Ë®">
+			<Sentence>
+				update LotTxnJnl
+				set TRspCd='%s', TTxnSt='%s', TLogNo='%s', Cipher='%s', Verify='%s', TxnSts='%s', HTxnSt='%s'
+				where TxnLog='%s'
+			</Sentence>
+			<Fields>RRspCd|TTxnSt|TLogNo|Cipher|Verify|TxnSts|HTxnSt|TxnLog|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<Quote name="Init_Trans"></Quote><!--½»Ò×³õÊ¼»¯-->
+			
+			<!-- ¼ì²é¿Í»§×¢²áÐÅÏ¢ -->
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+				<Arg name="SqlCmd" value="ChkLotCusInf"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<!-- ¿Í»§Î´×¢²á»ò×´Ì¬Òì³££¬·µ»Ø´íÎó -->
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=¿Í»§Î´×¢²á»ò×´Ì¬Òì³£</Set>
+				<Return/>
+			</If>
+			
+			<!-- ¼ì²éµ±Ç°ÊÇ·ñÓÐ¿ÉÓÃ½±ÆÚ£¬Èç¹ûÃ»ÓÐÔòÏÂÔØÒ»´Î£¬ÏÂÔØºóÔÙ¼ì²éÒ»´Î£¬Èç¹ûÃ»ÓÐÔò·µ»Ø´íÎó -->
+			<Call package="LOT_PKG" function="GetFcTim" desc="»ñÈ¡¸£²ÊÊ±¼ä"/>
+			<Exec func="PUB:CodeSwitching">
+				<Arg name="DatSrc" value="OPFCSW"/>
+				<Arg name="SourNam" value="GameId"/>
+				<Arg name="DestNam" value="IsKeno"/>
+				<Arg name="TblNam" value="IsKenoChg"/>
+			</Exec>
+			<If condition="IS_EQUAL_STRING($IsKeno,Y)">
+				<Set>sql=QryLotDrwTblKeno</Set>
+			</If>
+			<Else>
+				<Set>sql=QryLotDrwTbl</Set>
+			</Else>
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+				<Arg name="SqlCmd" value="$sql"/>
+			</Exec>
+			<If condition="IS_EQUAL_STRING(~RetCod,-2)">
+				<!-- Ã»ÓÐ½±ÆÚÐÅÏ¢£¬Ö´ÐÐ½±ÆÚÏÂÔØ -->
+				<Exec func="PUB:CallLocal" error="IGNORE">
+					<Arg name="TxnCod" value="485441" />
+					<Arg name="ObjSvr" value="OFRTLOTB"/>
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<!-- ÏÂÔØ½±ÆÚÐÅÏ¢Òì³££¬·µ»Ø´íÎó -->
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=LOT999</Set>
+					<Set>RspMsg=ÏÂÔØ½±ÆÚÐÅÏ¢Òì³£</Set>
+					<Return/>
+				</If>
+				<!-- ÏÂÔØ½±ÆÚÐÅÏ¢³É¹¦ºó£¬ÔÙ´Î¼ì²éÊÇ·ñÓÐ·ûºÏµÄ½±ÆÚ -->
+				<Exec func="PUB:ReadRecord" error="IGNORE">
+					<Arg name="SqlCmd" value="$sql"/>
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<!-- ÏÂÔØ½±ÆÚÐÅÏ¢Òì³££¬·µ»Ø´íÎó -->
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=LOT999</Set>
+					<Set>RspMsg=²»ÔÚ¹ºÂòÊ±¼ä£¨ÎÞ¿ÉÓÃ½±ÆÚ£©</Set>
+					<Return/>
+				</If>
+				</If>
+				<ElseIf condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<!-- ²éÑ¯½±ÆÚÐÅÏ¢Òì³£ -->
+					<Set>MsgTyp=E</Set>
+					<Set>RspCod=LOT999</Set>
+					<Set>RspMsg=²éÑ¯½±ÆÚÐÅÏ¢Òì³£</Set>
+					<Return/>
+				</ElseIf>
+			
+			<!-- µÇ¼Ç¹º²Ê¼ÇÂ¼(commit) -->
+			<Exec func="PUB:CodeSwitching">
+				<Arg name="DatSrc" value="OPFCSW"/>
+				<Arg name="SourNam" value="SchTyp"/>
+				<Arg name="DestNam" value="SchTypDesc"/>
+				<Arg name="TblNam" value="SchTypDescChg"/>
+			</Exec>
+			<Exec func="PUB:CodeSwitching">
+				<Arg name="DatSrc" value="OPFCSW"/>
+				<Arg name="SourNam" value="GameId"/>
+				<Arg name="DestNam" value="GameIdDesc"/>
+				<Arg name="TblNam" value="GameIdDescChg"/>
+			</Exec>
+			<Exec func="PUB:nGetPubSeqNo" desc="»ñµÃ$SelVal">
+				<Arg name="SeqNam" value="LOT:LOGNO01"/>
+				<Arg name="Len" value="10"/>
+				<Arg name="CycCnd" value="D"/>
+			</Exec>
+			<Set>TxnAmt=$BetAmt</Set>
+			<Set>LogNo=$LogNo</Set><!-- Ç°ÖÃÁ÷Ë®ºÅ -->
+			<Set>TTxnCd=231</Set><!-- µÚÈý·½½»Ò×Âë -->
+			<Set>TxnCod=485413</Set><!-- Ç°ÖÃÁ÷Ë®ºÅ -->
+			<Set>SchTit=$SchTypDesc</Set><!-- ·½°¸±êÌâ -->
+			<Set>GamNam=$GameIdDesc</Set><!-- ÓÎÏ·Ãû³Æ -->
+			<Set>BetDat=GETDATETIME(YYYYMMDD)</Set><!-- Í¶×¢ÈÕÆÚ -->
+			<Set>TxnTim=GETDATETIME(YYYYMMDDHHMISS)</Set><!-- Í¶×¢Ê±¼ä -->
+			<Set>TxnLog=STRCAT($DealId,@,01@,GETDATETIME(YYYYMMDDHHMISS),@,$SelVal)</Set><!-- Í¶×¢½»Ò×Á÷Ë®ºÅ -->
+			<Set>SchId= </Set><!-- ÏµÍ³Éú³ÉµÄ·½°¸±àºÅ -->
+			<Set>TLogNo= </Set><!-- ²ÊÆ±Á÷Ë®ºÅ -->
+			<Set>Cipher= </Set><!-- ²ÊÆ±ÃÜÂë -->
+			<Set>Verify= </Set><!-- ²ÊÆ±Ð£ÑéÂë -->
+			<Set>HTxnCd=471140</Set><!-- Ö÷»ú½»Ò×Âë -->
+			<Set>HTxnSb=022</Set><!-- ½»Ò××ÓÂë -->
+			<Set>HLogNo= </Set><!-- Ö÷»úÁ÷Ë®ºÅ -->
+			<Set>HRspCd= </Set><!-- Ö÷»úÏìÓ¦Âë -->
+			<Set>HTxnSt=U</Set><!-- Ö÷»ú½»Ò××´Ì¬ -->
+			<Set>TRspCd= </Set><!-- µÚÈý·½ÏìÓ¦Âë -->
+			<Set>TTxnSt=U</Set><!-- µÚÈý·½½»Ò××´Ì¬ -->
+			<Set>ThdChk=0</Set><!-- ÓëµÚÈý·½¶ÔÕÊ±êÖ¾,0Î´¶ÔÕË 1ÒÑ¶ÔÕË -->
+			<Set>TChkNo=00000000000</Set><!-- ÓëµÚÈý·½¶ÔÕÊÅú´Î -->
+			<Set>ChkTim= </Set><!-- ¶ÔÕÊÊ±¼ä -->
+			<Set>ChkFlg=0</Set><!-- ¶ÔÕË±êÖ¾ -->
+			<Set>AwdFlg=0</Set><!-- ÖÐ½±±êÖ¾ -->
+			<Set>AwdRtn=0</Set><!-- ·µ½±±êÖ¾ -->
+			<Set>CAgtNo= </Set><!-- ÉÌ»§Ð­Òé±àºÅ -->
+			<Set>TckNo= </Set><!-- »á¼ÆÁ÷Ë®ºÅ -->
+			<Set>TxnCnl=$TxnCnl</Set><!-- ½»Ò×ÇþµÀ -->
+			<Set>LChkTm= </Set><!-- 1970Äê¾à½ñµÄÃëÊý -->
+			<Set>TxnSts=U</Set><!-- ½»Ò××´Ì¬ -->
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="InsLotTxnJnl"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<!-- ÐÂÔö¹º²ÊÁ÷Ë®Òì³£ -->
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=ÐÂÔö¹º²ÊÁ÷Ë®Òì³£</Set>
+				<Return/>
+			</If>
+			<!-- ·ÀÖ¹ºóÐøÕËÎñ´¦ÀíÒì³£µ¼ÖÂ»Ø¹ö£¬´Ë´¦ÏÈÌá½»Êý¾Ý¿âÊÂÎñ -->
+			<Exec  func="PUB:CommitWork"  />
+			
+			<!-- ·¢ÆðÕËÎñ¿ÛÕË£¬½è¿Í»§ÕÊ ´û26201 -->
+			<Set>BusTyp=HFM22</Set>
+			<Set>CnlTyp=L</Set>
+			<Set>ActFlg=4</Set><!-- Ä¬ÈÏÎªÌ«Æ½Ñó¿¨ -->
+			<Set>Mask=9145</Set>
+			<Set>ActNo=$ActNo</Set>
+			<Set>VchTyp=000</Set>
+			<Set>VchCod=00000000</Set>
+			<Set>PayMod=0</Set>
+			<Set>CcyCod=CNY</Set>
+			<Set>CcyTyp=1</Set>
+			<Set>VchChk=0</Set>
+			<Set>TActNo=441800012620100006599</Set><!-- ÔÝÊ±µÄ²âÊÔÕËºÅ -->
+			<Set>ActSeq=00006</Set>
+			<Set>TxnAmt=$BetAmt</Set>
+			<Set>Smr=²ÊÆ±Í¶×¢</Set>
+			<Exec  func="PUB:GetLogNo" error="IGNORE"/> <!--È¡Ç°ÖÃÁ÷Ë®ºÅ-->
+			<If condition="~RetCod != 0">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=ËÍÖ÷»ú¼ÇÕËÊ§°Ü£¨ÎÞ·¨»ñÈ¡Ç°ÖÃÁ÷Ë®ºÅ£©</Set>
+				<Return/>
+			</If>
+			<Set>AccStatus=N</Set><!-- µ±Ç°¼ÇÕË×´Ì¬ -->
+			<Exec func="PUB:CallHostOther" error="IGNORE">
+				<Arg name="HTxnCd" value="471140" desc="Ö÷»ú½»Ò×Âë"/>
+				<Arg name="ObjSvr" value="SHSTPUB1" desc="·þÎñ"/>
+			</Exec>
+			<Set>TxnSts=$TxnSts</Set><!-- ½»Ò××´Ì¬ -->
+			<Switch expression="~RetCod">
+				<Case value="-10" desc="·¢ËÍ²»³É¹¦"/>
+				<Case value="-2" desc="ÏµÍ³´íÎó£¬ ¿ÉÒÔ¹éÎª·¢ËÍ²»³É¹¦">
+					<Set>AccStatus=F</Set>
+					<Set>AccMsg=ËÍÖ÷»ú¼ÇÕËÊ§°Ü£¨ÏµÍ³´íÎó)</Set>
+					<Set>TxnSts=F</Set>
+					<Break/>
+				</Case>
+				<Case value="3" desc="½»Ò×Ê§°Ü">
+					<Set>AccStatus=F</Set>
+					<Set>AccMsg=ËÍÖ÷»ú¼ÇÕËÊ§°Ü£¨½»Ò×Ê§°Ü)</Set>
+					<Set>TxnSts=F</Set>
+					<Break/>
+				</Case>
+				<Case value="-1" desc="³¬Ê±">
+					<Set>AccStatus=T</Set>
+					<Set>AccMsg=ËÍÖ÷»ú¼ÇÕË³¬Ê±</Set>
+					<Set>TxnSts=T</Set>
+					<Break/>
+				</Case>
+				<Case value="0">
+					<Set>AccStatus=S</Set>
+					<Set>AccMsg=ËÍÖ÷»ú¼ÇÕË³É¹¦</Set>
+					<Set>TxnSts=A</Set>
+					<Break/>
+				</Case>
+				<Default>
+					<Set>AccStatus=F</Set>
+					<Set>AccMsg=ËÍÖ÷»ú¼ÇÕËÊ§°Ü£¨Î´Öª´íÎó£©</Set>
+					<Set>TxnSts=F</Set>
+					<Break/>
+				</Default>
+			</Switch>
+
+			<!-- ¸üÐÂ¿ÛÕË½á¹û(commit) -->
+			<Set>HLogNo=$HLogNo</Set>
+			<Set>HRspCd=$HRspCd</Set>
+			<Set>HTxnSt=$AccStatus</Set>
+			<Set>TckNo=$TckNo</Set>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="UpdLotTxnJnl4Acc"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=¸üÐÂ¹º²ÊÁ÷Ë®Òì³££¨ÕËÎñ½á¹û£©</Set>
+			</If>
+			<!-- ËÍµÚÈý·½±¨ÎÄÖ®Ç°ÏÈÌá½»Êý¾Ý¿âÊÂÎñ -->
+			<Exec  func="PUB:CommitWork"  />
+			
+			<!-- Ïò¸£²ÊÖÐÐÄ·¢ËÍ¹º²Ê±¨ÎÄ -->
+			<Set>TxnSts=$TxnSts</Set>
+			<If condition="IS_NOEQUAL_STRING($AccStatus,S)">
+				<!-- Èç¹ûÕËÎñ´¦ÀíÎ´³É¹¦£¬Ôò·µ»Ø -->
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=$AccMsg</Set>
+				<Return/>
+			</If>
+			<Set>LotTxnTim=GETDATETIME(YYYYMMDDHHMISS)</Set>
+			<Set>GrpNum=1</Set>
+			<Set>BetNum=1</Set>
+			<Exec func="PUB:SetValue">
+				<Arg name="FieldName" value="ROOT.Rec_1.BetLin"/>
+				<Arg name="FieldValue" value="$ROOT.BetLin"/>
+			</Exec>
+			<Set>TTXNCD=231</Set>
+			<Exec func="PUB:CallThirdOther" error="IGNORE">
+			   <Arg name="HTxnCd" value="$TTXNCD" />
+			   <Arg name="ObjSvr" value="STHDLOTA" />
+			</Exec>
+			<Set>SndStatus=F</Set>
+			<Switch expression="~RetCod">
+				<Case value="0">
+					<Set>SndStatus=S</Set>
+					<Set>SndMsg=·¢ËÍ¹º²Ê³É¹¦</Set>
+					<Set>TxnSts=S</Set>
+					<Set>TTxnSt=S</Set><!-- µÚÈý·½½»Ò××´Ì¬ -->
+					<Break/>
+				</Case>
+				<Case value="-1">
+					<Set>SndStatus=T</Set>
+					<Set>SndMsg=·¢ËÍ¹º²Ê³¬Ê±</Set>
+					<Set>TxnSts=T</Set>
+					<Set>TTxnSt=T</Set><!-- µÚÈý·½½»Ò××´Ì¬ -->
+					<Break/>
+				</Case>
+				<Default>
+					<Set>SndStatus=F</Set>
+					<Set>SndMsg=·¢ËÍ¹º²ÊÊ§°Ü</Set>
+					<Set>TxnSts=F</Set>
+					<Set>TTxnSt=F</Set><!-- µÚÈý·½½»Ò××´Ì¬ -->
+					<Break/>
+				</Default>
+			</Switch>
+			
+			<!-- ·¢ËÍ²»³É¹¦/¸£²ÊÖÐÐÄ·µ»Ø¹º²ÊÊ§°Ü£¬Ôò·¢Æð³åÕý -->
+			<If condition="OR(AND(IS_EQUAL_STRING($SndStatus,F),IS_EQUAL_STRING($TckNo,)),IS_NOEQUAL_STRING($RRspCod,0))">
+				<Set>OHLogNo=$HLogNo</Set>
+				<Set>OTckNo=$TckNo</Set>
+				<Set>OTTxnCd=$TTxnCd</Set>
+				<Exec func="PUB:CallHostOther"><!--ÉÏÖ÷»úÏµÍ³Ä¨ÕË -->
+					<Arg name="HTxnCd" value="959999" /><!--Ö÷»ú½»Ò×Âë -->
+					<Arg name="ObjSvr" value="SHSTPUB1" />
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<Set>AccStatus=$AccStatus</Set><!-- Èç¹û³åÕýÊ§°Ü£¬ÔòÖ÷»ú×´Ì¬²»±ä£¨S£© -->
+				</If>
+				<Else>
+					<Set>AccStatus=F</Set><!-- Èç¹û³åÕý³É¹¦£¬Ö÷»ú×´Ì¬ÎªÊ§°Ü£¨F£© -->
+				</Else>
+			</If>
+			
+			<!-- ¸üÐÂ¹º²Ê½á¹û -->
+			<Set>HTxnSt=$AccStatus</Set>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="UpdLotTxnJnl4Snd"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=STRCAT(¸üÐÂ¹º²ÊÁ÷Ë®×´Ì¬Îª,$TxnSts,Ê±Ê§°Ü)</Set>
+				<Return/>
+			</If>
+			
+			<!-- ×îºóÒ»²½£¨·¢ËÍÊµÊ±¹º²Ê£©´¦ÀíÍê³Éºó·µ»Ø¹º²Ê½á¹û -->
+			<If condition="IS_EQUAL_STRING($TxnSts,S)">
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Set>RspMsg=½»Ò×³É¹¦</Set>
+			</If>
+			<Else>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=STRCAT(¹º²ÊÊ§°Ü£¨,$SndMsg,£©)</Set>
+			</Else>
+			
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="485413" desc="Í¶×¢²éÑ¯">
+		<Quote name="CommonSql"/>
+		<DynSentence name="QryLotTxnJnl" desc="²éÑ¯¹º²Ê¼ÇÂ¼">
+			<Sentence>
+				select * from
+					(select GameId, PlayId, TLogNo, DrawId, KenoId, BetMul, BetAmt, BetLin
+					from LotTxnJnl 
+					where CrdNo='%s' %s and BetDat between '%s' and '%s' and TxnSts='S'
+					order by TxnTim desc
+					fetch first 10 rows only) as tmptbl
+				order by TxnTim asc
+			</Sentence>
+			<Fields>CrdNo|SubSql|BegDat|EndDat|TxnSts|TxnLog|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<!-- ¸ù¾Ý²éÑ¯Ìõ¼þ¿¨ºÅ¡¢Í¶×¢·½Ê½£¨ÊµÊ±¡¢¶¨Í¶¡¢È«²¿£©
+				²éÑ¯Í¶×¢³É¹¦µÄ½üÈý¸öÔÂµÄ10±ÊÍ¶×¢ÐÅÏ¢£¬·µ»ØÍ¶×¢ÆÚÃû¡¢
+				Í¶×¢ºÅÂë¡¢Í¶×¢½ð¶î -->
+			<If condition="IS_EQUAL_STRING($BetTyp,)">
+				<Set>SubSql= </Set>
+			</If>
+			<Else>
+				<Set>SubSql=STRCAT(and BetTyp=',$BetTyp,')</Set>
+			</Else>
+				
+			<!-- ÅÐ¶ÏÊÇ·ñ¶àÒ³²éÑ¯ -->
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Exec func="PUB:MultiQuery" />
+				<Return/>
+			</If>
+
+			<!-- ÏÞ¶¨²éÑ¯Ìõ¼þ -->
+			<If condition="IS_EQUAL_STRING($EndDat,)">
+				<Set>EndDat=GETDATETIME(YYYYMMDD)</Set>
+			</If>
+			<If condition="IS_EQUAL_STRING($BegDat,)">
+				<Set>BegDat=CALCDATE($EndDat,-,m,3)</Set>
+			</If>
+			
+			<!-- ¿ªÊ¼²éÑ¯²¢×éÖ¯Êý¾Ý -->
+			<Exec func="PUB:MultiQuery" error="IGNORE">
+				<Arg name="SqlCmd" value="QryLotTxnJnl"/>
+			</Exec>
+			
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="485414" desc="ÖÐ½±²éÑ¯">
+		<Quote name="CommonSql"/>
+		<DynSentence name="QryLotTxnJnl" desc="²éÑ¯¹º²Ê¼ÇÂ¼">
+			<Sentence>
+				select * from
+					(select b.TLogNo, b.DrawId, b.KenoId, b.BetMul, b.BetLin, b.BetMod, a.PrzAmt
+					from LotPrzDtl a, LotTxnJnl b
+					where a.GameId=b.GameId and a.DrawId=b.DrawId and a.KenoId=b.KenoId
+						and a.TxnLog=b.TxnLog and a.TLogNo=b.TLogNo
+						and CrdNo='%s' %s and BetDat between '%s' and '%s' and TxnSts='S'
+					order by TxnTim desc
+					fetch first 10 rows only) as tmptbl
+				order by TxnTim asc
+			</Sentence>
+			<Fields>CrdNo|SubSql|BegDat|EndDat|TxnSts|TxnLog|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<!-- ¸ù¾Ý²éÑ¯Ìõ¼þ¿¨ºÅ¡¢Í¶×¢·½Ê½£¨ÊµÊ±¡¢¶¨Í¶¡¢È«²¿£©£¬
+				²éÑ¯ÖÐ½±¼ÇÂ¼±íµÄÖÐ½±ÆÚºÅ¡¢ÖÐ½±ºÅÂë¡¢ÖÐ½±½ð¶î -->
+			<If condition="IS_EQUAL_STRING($BetTyp,)">
+				<Set>SubSql= </Set>
+			</If>
+			<Else>
+				<Set>SubSql=STRCAT(and BetTyp=',$BetTyp,')</Set>
+			</Else>
+
+			<!-- ÅÐ¶ÏÊÇ·ñ¶àÒ³²éÑ¯ -->
+			<If condition="IS_EQUAL_STRING($TIATyp,P)">
+				<Exec func="PUB:MultiQuery" />
+				<Return/>
+			</If>
+      
+			<!-- ÏÞ¶¨²éÑ¯Ìõ¼þ -->
+			<If condition="IS_EQUAL_STRING($EndDat,)">
+				<Set>EndDat=GETDATETIME(YYYYMMDD)</Set>
+			</If>
+			<If condition="IS_EQUAL_STRING($BegDat,)">
+				<Set>BegDat=CALCDATE($EndDat,-,m,3)</Set>
+			</If>
+			
+			<!-- ¿ªÊ¼²éÑ¯²¢×éÖ¯Êý¾Ý -->
+			<Exec func="PUB:MultiQuery" error="IGNORE">
+				<Arg name="SqlCmd" value="QryLotTxnJnl"/>
+			</Exec>
+			
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			
+		</FlowCtrl>
+	</Transaction>
+
+	<Transaction code="485420" desc="¶ÔÕËÎÄ¼þÏÂÔØ">
+		<Quote name="CommonSql"/>
+		<FlowCtrl>
+			<Quote name="Init_Trans"></Quote><!--½»Ò×³õÊ¼»¯-->
+			
+			<Set>FilTyp=3</Set>
+			<Call package="LOT_PKG" function="DownloadFile" desc="ÏÂÔØÎÄ¼þ"/>
+			
+			<If condition="IS_EQUAL_STRING($DownloadStatus,0)">
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Set>RspMsg=½»Ò×³É¹¦</Set>
+			</If>
+			<Else>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=$DownloadMsg</Set>
+			</Else>
+
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="485440" desc="ÓÎÏ·¹æÔòÎÄ¼þÏÂÔØ">
+		<Quote name="CommonSql"/>
+		<FlowCtrl>
+			<Quote name="Init_Trans"></Quote><!--½»Ò×³õÊ¼»¯-->
+			
+			<Set>FilTyp=1</Set>
+			<Call package="LOT_PKG" function="DownloadFile" desc="ÏÂÔØÎÄ¼þ"/>
+			
+			<If condition="IS_EQUAL_STRING($DownloadStatus,0)">
+				<Set>MsgTyp=N</Set>
+				<Set>RspCod=000000</Set>
+				<Set>RspMsg=½»Ò×³É¹¦</Set>
+			</If>
+			<Else>
+				<Set>MsgTyp=E</Set>
+				<Set>RspCod=LOT999</Set>
+				<Set>RspMsg=$DownloadMsg</Set>
+			</Else>
+
+		</FlowCtrl>
+	</Transaction>
+	
+	<Transaction code="485441" desc="½±ÆÚÐÅÏ¢ÏÂÔØ">
+		<Quote name="CommonSql"/>
+		<DynSentence name="ChkLotDrwTbl" desc="¼ì²é½±ÆÚÐÅÏ¢ÊÇ·ñÒÑ¾­´æÔÚ">
+			<Sentence>
+				SELECT  'Y' YN FROM table(values(1)) as annoy WHERE EXISTS(
+				SELECT  'Y'
+				FROM    LotDrwTbl
+				WHERE   GameId='%s' and DrawId='%s')
+			</Sentence>
+			<Fields>GameId|DrawId|</Fields>
+		</DynSentence>
+		<DynSentence name="InsLotDrwTbl" desc="¼ì²é½±ÆÚÐÅÏ¢ÊÇ·ñÒÑ¾­´æÔÚ">
+			<Sentence>
+				insert into LotDrwTbl(GameId,DrawId,DrawNm,SalStr,SalEnd,
+									CshStr,CshEnd,KenoId,KenoNm,KSalSt,
+									KSalEd,ChkFlg,ChkTim,DowPrz,PrzAmt,
+									TotAmt,DifFlg,DifAmt,PayFlg,PayAmt,
+									FlwCtl)
+				values('%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s','%s','%s','%s','%s',
+						'%s')
+			</Sentence>
+			<Fields>GameId|DrawId|DrawNm|SalStr|SalEnd|CshStr|CshEnd|KenoId|KenoNm|KSalSt|KSalEd|ChkFlg|ChkTim|DowPrz|PrzAmt|TotAmt|DifFlg|DifAmt|PayFlg|PayAmt|FlwCtl|</Fields>
+		</DynSentence>
+		<FlowCtrl>
+			<Quote name="Init_Trans"></Quote><!--½»Ò×³õÊ¼»¯-->
+
+			<!--·¢ËÍµÚÈý·½»ñÈ¡½±ÆÚÐÅÏ¢-->
+			<Set>TTXNCD=235</Set>
+			<Exec func="PUB:CallThirdOther" error="IGNORE">
+				<Arg name="HTxnCd" value="$TTXNCD" />
+				<Arg name="ObjSvr" value="STHDLOTA" />
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<!-- ²éÑ¯Ê§°Ü£¬ÍË³ö -->
+				<Return/>
+			</If>
+			<If condition="IS_NOEQUAL_STRING($RRspCod,0)">
+				<!-- ²éÑ¯Ê§°Ü£¬ÍË³ö -->
+				<Return/>
+			</If>
+			
+			<!-- ÅÐ¶Ï±¾µØµÄ½±ÆÚ±íÖÐÊÇ·ñÒÑÓÐÐÅÏ¢£¬Èç¹ûÓÐÔòÐÂÔö£¬·ñÔòºöÂÔ -->
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+			   <Arg name="SqlCmd" value="ChkLotDrwTbl"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,-2)">
+				<!-- ´æÔÚ¼ÇÂ¼»ò²éÑ¯Òì³££¬ÍË³ö´¦Àí -->
+				<Return/>
+			</If>
+
+			<!-- Èç¹ûÊÇË«É«Çò£¬ÔòÐÂÔöÒ»Ìõ½±ÆÚ¼ÇÂ¼£¬Èç¹ûÊÇ¿ìÀÖÊ®·Ö£¬ÔòÐèÒªÔö¼Ó×Ü½±ÆÚºÍÐ¡½±ÆÚÐÅÏ¢ -->
+			<Set>ChkFlg=0</Set><!-- ¶ÔÕËÇåËã±êÖ¾ -->
+			<Set>DowPrz=0</Set><!-- ÊÇ·ñÒÑÏÂÔØÖÐ½±ÎÄ¼þ  0Î´ÏÂÔØ,1ÒÑÏÂÔØ -->
+			<Set>DifFlg= </Set><!-- Ôú²î±êÖ¾£º1½è·½£¨¹º²Ê×Ü½ð¶î´óÓÚ·µ½±×Ü½ð¶î£©,0´û·½£¨¹º²Ê×Ü½ð¶îÐ¡ÓÚ½±×Ü½ð¶î£© -->
+			<Set>PayFlg= </Set><!-- ·µ½±µæ¸¶±êÖ¾: 0Ã»µæ¸¶,1»ªÏéµæ¸¶,2ÒÑ·µµæ¸¶ -->
+			<Set>FlwCtl=0</Set><!-- ·µ½±Á÷³Ì¿ØÖÆ±êÖ¾ -->
+			<Set>KenoId= </Set><!-- kenoÆÚºÅ -->
+			<Set>KenoNm= </Set><!-- kenoÆÚÃû -->
+			<Set>KSalSt= </Set><!-- KenoÏúÊÛ¿ªÊ¼Ê±¼ä -->
+			<Set>KSalEd= </Set><!-- KenoÏúÊÛ½áÊøÊ±¼ä -->
+			<Set>ChkTim= </Set><!-- ¶ÔÕÊÇåËãÊ±¼ä -->
+			<Set>PrzAmt= </Set><!-- ·µ½±×Ü½ð¶î -->
+			<Set>TotAmt= </Set><!-- ¹º²Ê×Ü½ð¶î -->
+			<Set>PayAmt= </Set><!-- ·µ½±µæ¸¶½ð¶î -->
+			<Set>DifAmt= </Set><!-- ¹º²Ê×Ü½ð¶îÓë·µ½±×Ü½ð¶îÔú²î½ð¶î -->
+			<If condition="IS_EQUAL_STRING($isKeno,1)">
+				<Set>KenoId=AAAAA</Set><!-- Èç¹ûÓÐkenoÆÚ(¿ìÀÖÊ®·Ö)Ê±ÐèÒªÔö¼ÓÒ»Ìõ¼ÇÂ¼ÆÚºÅÎªAAAAA£¬ÎªÁËÍ³¼Æ¿ì¿ªÓÎÏ·µÄ×Ü½ð¶î -->
+			</If>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="InsLotDrwTbl"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<!-- ÐÂÔö¼ÇÂ¼Òì³££¬ÍË³ö´¦Àí -->
+				<Return/>
+			</If>
+
+			<If condition="IS_EQUAL_STRING($isKeno,1)">
+				<!-- Èç¹ûÓÐkenoÆÚ£¬ÔòÐèÒª·Ö±ðÐÂÔö -->
+				<Set>Cnt=1</Set>
+				<While condition="INTCMP($Cnt,2,$KenoNum)">
+					<!-- É¾³ý¾ÉÊý¾Ý -->
+					<Delete>ROOT.KenoId</Delete>
+					<Delete>ROOT.KenoNm</Delete>
+					<Delete>ROOT.KSalSt</Delete>
+					<Delete>ROOT.KSalEd</Delete>
+					<!-- »ñÈ¡ÐÂÊý¾Ý -->
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.,KenoId)"/>
+						<Arg name="DestName" value="KenoId"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.,KenoNm)"/>
+						<Arg name="DestName" value="KenoNm"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.,KSalSt)"/>
+						<Arg name="DestName" value="KSalSt"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.,KSalEd)"/>
+						<Arg name="DestName" value="KSalEd"/>
+					</Exec>
+					<!-- ÐÂÔöÃ÷Ï¸¼ÇÂ¼ -->
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Arg name="SqlCmd"    value="InsLotDrwTbl"/>
+					</Exec>
+					<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+						<!-- ÐÂÔö¼ÇÂ¼Òì³££¬ÍË³ö´¦Àí -->
+						<Return/>
+					</If>
+					
+					<!-- µÝÔö -->
+					<Set>Cnt=ADD($Cnt,1)</Set>
+				</While>
+			</If>
+			
+			<Set>MsgTyp=N</Set>
+			<Set>RspCod=000000</Set>
+			<Set>RspMsg=½»Ò×³É¹¦</Set>
+
+		</FlowCtrl>
+	</Transaction>
+
+</Application>

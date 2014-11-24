@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- »¹µæ¸¶Çåµ¥ -->
+<Application  dbconnect="YES" trclog="LOT_RPT_CLR_2.log">
+	<VarDef>
+		<String alias="GameId"   pos="1" />
+		<String alias="GameNm"   pos="2" />
+		<String alias="ClrDat"   pos="3" />
+		<String alias="TlrId"    pos="4" />
+	</VarDef>
+	
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="select GameId, DrawId, DrawNm, SalStr, SalEnd, PayAmt
+					from LotDrwTbl 
+					where GameId='%s' and substr(RtnTim,1,8)='%s' and PayFlg='2' and KenoId in ('','AAAAA')
+					order by DrawId asc">
+        		<FieldList>$GameId|$ClrDat|</FieldList>
+			</Sql>
+		</Iterative>
+		<Summed type="field">
+			<Field count="TotCnt"/>
+			<Field sum="PAYAMT" sum_alias="TotAmt"/>
+		</Summed>
+
+	</DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="DELBOTHSPACE($GameId)"   spread="right"/>
+			<Para label="02" alias="DELBOTHSPACE($GameNm)"   spread="right"/>
+			<Para label="03" alias="DELBOTHSPACE($ClrDat)"   spread="right"/>
+			<Para label="04" alias="GETDATETIME(YYYY)"       spread="right"/> 
+			<Para label="05" alias="GETDATETIME(MM)"         spread="right"/> 
+			<Para label="06" alias="GETDATETIME(DD)"         spread="right"/>
+			<Format>
+                                  »¹µæ¸¶³É¹¦Çåµ¥
+                     ========================================
+      ÓÎÏ·ÀàÐÍ:# - #            ÇåËãÈÕÆÚ:#                      ´òÓ¡ÈÕÆÚ£º #   Äê# ÔÂ# ÈÕ
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ÆÚºÅ     ÆÚÃû            ÏúÊÛ¿ªÊ¼Ê±¼ä          ÏúÊÛ½áÊøÊ±¼ä          µæ¸¶½ð¶î
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="ADDCHAR(DELBOTHSPACE($DrawId),9, ,0)"      spread="right"/>
+			<Para label="02" alias="ADDCHAR(DELBOTHSPACE($DrawNm),15, ,0)"     spread="right"/>
+			<Para label="03" alias="ADDCHAR(DELBOTHSPACE($SalStr),14, ,0)"     spread="right"/>
+			<Para label="04" alias="ADDCHAR(DELBOTHSPACE($SalEnd),14, ,0)"     spread="right"/>
+			<Para label="05" alias="AMTSIMPLEFMT(DELBOTHSPACE($DifAmt))"       spread="left"/>
+			<Format>
+      #        #               #                     #                                   #
+      -------------------------------------------------------------------------------------
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="AMTDELZERO($TotCnt)" spread="right" />  
+			<Para label="02" alias="AMTSIMPLEFMT($TOTAMT)" spread="right" />       
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ×Ü¼ÆÐÐÊý: #                                                µæ¸¶ºÏ¼Æ:#
+			</Format>
+		</Summed>
+    
+		<TableFooter>
+			<Para label="01" alias="$TlrId"   spread="right"/>
+			<Para label="02" alias="$PAGESUM" spread="mid"/>
+			<Para label="03" alias="$PAGENUM" spread="mid"/>
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ÖÆ±íÈË£º#                                                     ¹²  #  Ò³   µÚ  #  Ò³
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>

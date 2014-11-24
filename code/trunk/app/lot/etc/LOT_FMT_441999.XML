@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Define>
+	<Format code="LOTFIL_2" desc="ÖÐ½±ÎÄ¼þ½ÓÊÕ">
+		<ReadElement name="draw">
+			<ReadAttr name="game_id"      ETF_name="GameId" desc="ÓÎÏ·±àºÅ"/>
+			<ReadAttr name="draw_id"      ETF_name="DrawId" desc="´óÆÚºÅ"/>
+			<ReadAttr name="keno_draw_id" ETF_name="KenoId" desc="Ð¡ÆÚºÅ" necessary="no"/>
+			<ReadElement name="point">
+				<ReadAttr name="db"   ETF_name="LotDb"   desc="Í¬²½¶Ïµã"/>
+				<ReadAttr name="cash" ETF_name="LotCash" desc="¶Ò½±¶Ïµã"/>
+				<ReadAttr name="dump" ETF_name="LogDump" desc="Èë¿â¶Ïµã"/>
+			</ReadElement>
+			<ReadGroupElement name="bonusItem"      ETF_name="bonusItem" >
+				<ReadAttr name="sn"          ETF_name="LotSn"       desc=""/>
+				<ReadAttr name="dumpID"      ETF_name="LogDumpId"   desc=""/>
+				<ReadAttr name="cipher"      ETF_name="Cipher"      desc="²ÊÆ±ÃÜÂë"/>
+				<ReadAttr name="isBombBonus" ETF_name="isBombBonus" desc="´ó½±±ê¼Ç"/>
+				<ReadAttr name="prizeMoney"  ETF_name="PrizeAmt"    desc="ÖÐ½±×Ü½ð¶î"/>
+				<ReadAttr name="serinalNo"   ETF_name="SerinalNo"   desc="²ÊÆ±Á÷Ë®ºÅ"/>
+				<ReadAttr name="terminalId" ETF_name="TerminalId"   desc="ÏµÍ³Í¶×¢ÖÕ¶ËºÅ"/>
+				<ReadGroupElement name="bonusNode"      ETF_name="bonusNode">
+					<ReadAttr name="betMode"    ETF_name="betMode"    desc="Í¶×¢·½Ê½"/>
+					<ReadAttr name="multiple"   ETF_name="multiple"   desc="±¶Êý"/>
+					<ReadAttr name="class"      ETF_name="class"      desc="½±µÈ±àºÅ"/>
+					<ReadAttr name="prizeMoney" ETF_name="prizeMoney" desc="µ¥×¢ÖÐ½±½ð¶î"/>
+					<ReadAttr name="betLine"    ETF_name="betLine"    desc="Í¶×¢ºÅÂë"/>
+				</ReadGroupElement>
+			</ReadGroupElement>
+		</ReadElement>
+	</Format>
+	
+	<Format code="LOTFIL_3" desc="¶ÔÕËÎÄ¼þ½ÓÊÕ">
+		<ReadElement name="draw">
+			<ReadAttr name="game_id"      ETF_name="GameId" desc="ÓÎÏ·±àºÅ"/>
+			<ReadAttr name="draw_id"      ETF_name="DrawId" desc="´óÆÚºÅ"/>
+			<ReadAttr name="keno_draw_id" ETF_name="KenoId" desc="Ð¡ÆÚºÅ" necessary="no"/>
+			<ReadElement name="drawSum">
+				<ReadAttr name="sucessNum"   ETF_name="sucessNum"   desc=""/>
+				<ReadAttr name="totalMoney"  ETF_name="totalMoney"  desc=""/>
+			</ReadElement>
+			<ReadGroupElement name="scheme"      ETF_name="scheme" >
+				<ReadAttr name="id"           ETF_name="id"          desc=""/>
+				<ReadAttr name="schemeId"     ETF_name="schemeId"    desc=""/>
+				<ReadAttr name="gamblerName"  ETF_name="gamblerName"      desc=""/>
+				<ReadAttr name="dealSerial"   ETF_name="dealSerial"  desc=""/>
+				<ReadAttr name="playId"       ETF_name="playId"      desc="Íæ·¨±àºÅ"/>
+				<ReadAttr name="buyTime"      ETF_name="buyTime"     desc="¹ºÂòÊ±¼ä"/>
+				<ReadAttr name="betMoney"     ETF_name="TxnAmt"      desc="Í¶×¢½ð¶î"/>
+			</ReadGroupElement>
+		</ReadElement>
+	</Format>
+
+</Define>

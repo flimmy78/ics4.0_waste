@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LOT"  pre_dll="dll/pre_term.so" pre_func="pre_term" spe_dll="dll/pre_term.so" spe_func="spe_term" server="OFRTLOTA">
+  
+  <!-- ¹ã¶«Ê¡¸£²Ê½»Ò× -->
+  <!-- ¹ã¶«Ê¡¸£²Ê½»Ò× -->
+  <Transaction code="485404" service="485404" server="OFRTLOTA" log_switch="6"><!--ÓÃ»§×¢²á-->
+     <Request necessary="no">
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="CusNam"  length="60"  expression="TRIM($CusNam,both)"/><!--¿Í»§ÐÕÃû-->
+        <Item name="CrdNo"   length="30"  expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+        <Item name="ActNo"   length="21"  expression="TRIM($ActNo,both)"/><!--¿Í»§ÒøÐÐÕÊºÅ-->
+        <Item name="NodNo"   length="6"   expression="TRIM($NodNo,both)"/><!--¿ª»§Íøµã-->
+        <Item name="IdTyp"   length="2"   expression="TRIM($IdTyp,both)"/><!--Ö¤¼þÀàÐÍ-->
+        <Item name="IdNo"    length="30"  expression="TRIM($IdNo,both)"/><!--Ö¤¼þºÅÂë-->
+        <Item name="MobTel"  length="15"  expression="TRIM($MobTel,both)"/><!--ÒÆ¶¯ÁªÏµµç»°-->
+        <Item name="FixTel"  length="20"  expression="TRIM($FixTel,both)"/><!--¹Ì¶¨ÁªÏµµç»°-->
+        <Item name="Email"   length="30"  expression="TRIM($Email,both)"/><!--µç×ÓÓÊÏä-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">
+                 <Item name="ApFmt"  length="5" value="48000"/> <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+                 <Item name="LotNam" length="30" />   <!--²ÊÃñ±êÊ¶-->
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Case value="A">
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Case>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485405" service="485405" server="OFRTLOTA" log_switch="6"><!--¸ü¸ÄÓÃ»§×¢²á-->
+     <Request necessary="no">
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="CusNam"  length="60"  expression="TRIM($CusNam,both)"/><!--¿Í»§ÐÕÃû-->
+        <Item name="CrdNo"   length="30"  expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+        <Item name="IdTyp"   length="2"   expression="TRIM($IdTyp,both)"/><!--Ö¤¼þÀàÐÍ-->
+        <Item name="IdNo"    length="30"  expression="TRIM($IdNo,both)"/><!--Ö¤¼þºÅÂë-->
+        <Item name="MobTel"  length="15"  expression="TRIM($MobTel,both)"/><!--ÒÆ¶¯ÁªÏµµç»°-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">
+                 <Item name="ApFmt" length="5" value="48000"/> <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+                 <Item name="MobTel"  length="15"  expression="TRIM($MobTel,both)"/><!--ÒÆ¶¯ÁªÏµµç»°-->
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Case value="A">
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Case>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485406" service="485406" server="OFRTLOTA" log_switch="6"><!--ÓÃ»§×¢²áÐÅÏ¢²éÑ¯-->
+     <Request necessary="no">
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="CrdNo"   length="30"  expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">
+                 <Item name="ApFmt" length="5" value="48000"/> <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+                 <Item name="CusNam"  length="60" /><!--¿Í»§ÐÕÃû-->
+                 <Item name="CrdNo"   length="30" /><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+                 <Item name="IdTyp"   length="2"  /><!--Ö¤¼þÀàÐÍ-->
+                 <Item name="IdNo"    length="30" /><!--Ö¤¼þºÅÂë-->
+                 <Item name="MobTel"  length="15" /><!--ÒÆ¶¯ÁªÏµµç»°-->
+                 <Item name="LotNam"  length="30" /><!--²ÊÃñ±êÊ¶-->
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Case value="A">
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Case>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485407" service="485407" server="OFRTLOTA" log_switch="6"><!--¶¨Í¶¼Æ»®Â¼Èë-->
+     <Request necessary="no">
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="PlanNm"  length="30" expression="TRIM($PlanNm,both)"/><!--¶¨Í¶¼Æ»®Ãû³Æ-->
+        <Item name="GameId"  length="02" expression="TRIM($GameId,both)"/><!--ÓÎÏ·±àºÅ 5:Ë«É«Çò-->
+        <Item name="GamNam"  length="20" expression="TRIM($GamNam,both)"/><!--ÓÎÏ·Ãû³Æ 5:Ë«É«Çò-->
+        <Item name="PlayId"  length="05" expression="TRIM($PlayId,both)"/><!--Íæ·¨±àºÅ-->
+        <Item name="BetPer"  length="05" expression="TRIM($BetPer,both)"/><!--Í¶×¢ÆÚÊý £¨153:Ò»Äê153ÆÚ¡¢75:°ëÄê75ÆÚ£©-->
+        <Item name="BetMet"  length="05" expression="TRIM($BetMet,both)"/><!--Í¶×¢·½·¨  0»úÑ¡£¬1×ÔÑ¡-->
+        <Item name="BetMod"  length="05" expression="TRIM($BetMod,both)"/><!--Í¶×¢·½Ê½  1µ¥Ê½£¬12¸´Ê½£¬13µ¨ÍÐ-->
+        <Item name="BetMul"  length="03" expression="TRIM($BetMul,both)"/><!--Í¶×¢±¶Êý-->
+        <Item name="BetAmt"  length="15" expression="TRIM($BetAmt,both)"/><!--Í¶×¢½ð¶î-->
+        <Item name="BetLin"  length="128" expression="TRIM($BetLin,both)"/><!--Í¶×¢ºÅÂë-->
+        <Item name="CrdNo"   length="30" expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+        <Item name="TxnCnl"  length="03" expression="TRIM($TxnCnl,both)"/><!--¶¨Í¶½»Ò×ÇþµÀ-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">
+                 <Item name="ApFmt" length="5" value="48000"/> <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+                 <Item name="CrdNo"   length="30" /><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+                 <Item name="BetPer"  length="05" /><!--Í¶×¢ÆÚÊý £¨Ò»Äê153ÆÚ¡¢°ëÄê75ÆÚ£©-->
+                 <Item name="BetLin"  length="128" /><!--Í¶×¢ºÅÂë-->
+                 <Item name="BetAmt"  length="15" /><!--Í¶×¢½ð¶î-->
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Case value="A">
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Case>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485408" service="485408" server="OFRTLOTA" log_switch="6"><!--¶¨Í¶¼Æ»®×ÜÌåÇé¿ö²éÑ¯(ÔÝÊ±Ã»ÐèÒª£©-->
+     <Request>
+        <Include file="etc/TRMTIA_IIT.XML"/>
+
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">            
+                <Item name="ApCod"    length="2"    value="35"/>
+                <Item name="OFmtCd"   length="3"    value="Z01"/>
+                <Item name="PageNo"   length="4"    value="0001"/>
+                <Item name="VarSize"  length="1"    value="3"/>
+                <Item name="Ttl"      head_len="3"  value="Éç±£´ý´¦ÀíÎÄ¼þ²éÑ¯"/>
+                <Item name="SubTtl"   head_len="3"  value=" ÈÕÆÚ    ÍøµãºÅ  ÎÄ¼þÀàÐÍ       ÎÄ¼þÃû     ÏÂÔØ±êÖ¾"/>
+                <PackItem name="TmpTot">
+                   <Item name="TotCnt"    length="4"/>  <!--×Ü±ÊÊý-->
+                </PackItem>
+                <Item name="TmpTot"   head_len="3"/>
+                <Group name="Rec" repeat_name="RecNum">
+                  <PackItem name="TmpNam">
+                    <Item name="ActDat"   length="08" />   <!--»á¼ÆÈÕÆÚ-->
+                    <Item name="NodNo"    length="06" />   <!--ËùÊôÍøµã-->
+                    <Item name="FilTyp"   length="01" />   <!--ÎÄ¼þÀàÐÍ-->
+                    <Item name="BatFil"   length="60" />   <!--ÎÄ¼þÃû-->
+                    <Item name="DskNo"    length="12" />   <!--Åú´ÎºÅ-->
+                    <Item name="DwnFlg"   length="01" />   <!--ÏÂÔØ±êÖ¾-->
+                  </PackItem>
+                  <Item name="TmpNam"   head_len="3"/>
+                </Group> 
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Default>
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Default>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485409" service="485409" server="OFRTLOTA" log_switch="6"><!--¶¨Í¶¼Æ»®Ã÷Ï¸²éÑ¯-->
+     <Request necessary="no">
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="CrdNo"   length="30" expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+             <PackItem name="TmpDat">
+                <Item name="ApCode"  length="2"  value="46"/>
+                <Item name="OFmtCd"  length="3"  value="Z01"/>
+                <Item name="PageNo"  length="4"  value="0001"/>
+                <Item name="VarSiz"  length="1"  value="3"/>
+                <PackItem name="TmpTot">
+                   <Item name="TotCnt"    length="8"/>  <!--×Ü±ÊÊý-->
+                </PackItem>
+                <Item name="TmpTot"   head_len="3"/>
+                <Group name="Rec" repeat_name="RecNum">
+                   <PackItem name="TmpNam">
+                   <Item name="PlanNo"  length="20"/><!--¶¨Í¶¼Æ»®±àºÅ-->
+                   <Item name="PlanNm"  length="30"/><!--¶¨Í¶¼Æ»®Ãû³Æ-->
+                   <Item name="MobTel"  length="15"/><!--ÒÆ¶¯ÁªÏµµç»°-->
+                   <Item name="BetPer"  length="05"/><!--Í¶×¢ÆÚÊý £¨Ò»Äê153ÆÚ¡¢°ëÄê75ÆÚ£©Ö»ÌîÊý×Ö-->
+                   <Item name="BetLin"  length="128"/><!--Í¶×¢ºÅÂë-->
+                   <Item name="BetAmt"  length="15"/><!--Í¶×¢½ð¶î-->
+                   <Item name="DoPer"   length="5" /><!--ÒÑÖ´ÐÐµÄÆÚÊý-->
+                   <Item name="LevPer"  length="5" /><!--ÒÑÊ£ÏÂµÄÆÚÊý-->
+                   <Item name="Status"  length="1" /><!--×´Ì¬ 0¼Æ»®Õý³£;1¿Í»§³·Ïû;2ÏµÍ³³·Ïû;3¼Æ»®Íê³É-->
+                   </PackItem>
+                   <Item name="TmpNam" head_len="3"/>
+                </Group>
+             </PackItem>
+             <Item name="TmpDat" head_len="4" include_len="yes"/>
+             <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Case value="A">
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Case>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  <Transaction code="485410" service="485410" server="OFRTLOTA" log_switch="6"><!--¶¨Í¶¼Æ»®È¡Ïû-->
+     <Request>
+        <Include file="etc/TRMTIA_IIT.XML"/>
+        <Item name="PlanNo"  length="20"/><!--¶¨Í¶¼Æ»®±àºÅ-->
+        <Item name="CrdNo"   length="30" expression="TRIM($CrdNo,both)"/><!--¿Í»§ÒøÐÐ¿¨ºÅ-->
+     </Request>
+     <Response necessary="no">
+        <Include file="etc/TRMTOA_IIT.XML"/>
+        <Switch expression="$MsgTyp">
+           <Case value="N">
+              <PackItem name="TmpDat">
+                 <Item name="ApFmt"   length="5"  value="48000"/> <!--Ç°¶Ë¿Õ¸ñÊ½Âë-->
+
+              </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+           </Case>
+           <Case value="E">
+              <Include file="etc/ERRFMT_IIT.XML"/>
+              <Break/>
+           </Case>
+           <Default>
+              <Item name="BillText" deli_asc="-1"/>
+              <Break/>
+           </Default>
+        </Switch>
+     </Response>
+  </Transaction>
+  
+  
+</Application>

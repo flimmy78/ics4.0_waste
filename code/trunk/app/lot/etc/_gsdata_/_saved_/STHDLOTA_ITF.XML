@@ -1,0 +1,540 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="LOT" timeout="120" trace="yes">
+
+	<MemPool init_size="5" max_size="10"/>
+	<CodeSwitching>
+		<Table name="IdTyp2LotIdTyp" file="etc/LOT_CSW_441999.XML">
+			<Column name="IdTyp"    sort="no"/>
+			<Column name="LotIdTyp" sort="no"/>
+		</Table>
+		<Table name="BetMet2LotBetMet" file="etc/LOT_CSW_441999.XML">
+			<Column name="BetMet"    sort="no"/>
+			<Column name="LotBetMet" sort="no"/>
+		</Table>
+	</CodeSwitching>
+
+	<Define>
+		<Macro name="PkgHeadReq">
+			<WriteElement name="pkgH">
+				<WriteElement name="type"        value="3"/><!--·¢ËÍ·½ÀàÐÍ:3Í¶×¢ÔËÓªÉÌ--> 
+				<WriteElement name="action"      ETF_name="TTXNCD"/><!--Ð­Òé±àºÅ--> 
+				<WriteElement name="version"     value="0"/><!--°æ±¾ºÅ(Ìî0)--> 
+				<WriteElement name="dealer_id"   ETF_name="DealId"/><!--ÔËÓªÉÌID--> 
+				<WriteElement name="terminal_id" value="0"/><!--ÖÕ¶Ë»úºÅ(Ìî0)--> 
+				<WriteElement name="mobile"      value="0"/><!--ÊÖ»úºÅ(Ìî0)--> 
+				<WriteElement name="phone"       value="0"/><!--µç»°ºÅÂë(Ìî0)--> 
+				<WriteElement name="sent_time"   ETF_name="FTxnTm" expression="STRCAT(SUBSTR($FTxnTm,1,4),-,SUBSTR($FTxnTm,5,2),-,SUBSTR($FTxnTm,7,2), ,SUBSTR($FTxnTm,9,2),:,SUBSTR($FTxnTm,11,2),:,SUBSTR($FTxnTm,13,2))"/><!--·¢ËÍÊ±¼ä--> 
+			</WriteElement>
+		</Macro>
+		<Macro name="PkgHeadRsp">
+			<ReadElement name="pkgH">
+				<ReadElement name="type"        ETF_name="type"/><!--·¢ËÍ·½ÀàÐÍ:3Í¶×¢ÔËÓªÉÌ--> 
+				<ReadElement name="action"      ETF_name="action"/><!--Ð­Òé±àºÅ--> 
+				<ReadElement name="version"     ETF_name="version" necessary="no"/><!--°æ±¾ºÅ(Ìî0)--> 
+				<ReadElement name="dealer_id"   ETF_name="dealer_id"/><!--ÔËÓªÉÌID--> 
+				<ReadElement name="terminal_id" ETF_name="terminal_id"/><!--ÖÕ¶Ë»úºÅ(Ìî0)--> 
+				<ReadElement name="mobile"      ETF_name="mobile"/><!--ÊÖ»úºÅ(Ìî0)--> 
+				<ReadElement name="phone"       ETF_name="phone"/><!--µç»°ºÅÂë(Ìî0)--> 
+				<ReadElement name="sent_time"   ETF_name="sent_time"/><!--·¢ËÍÊ±¼ä--> 
+			</ReadElement>
+		</Macro>
+	</Define>
+
+	<Transaction code="212" desc="ÏµÍ³½ÇÉ«µÇÂ¼" log_switch="6" >
+		<Request>
+			<AddItem name="TTXNCD" value="212"/>
+			<WriteElement name="pkg">
+				<Quote name="PkgHeadReq"/>
+				<WriteElement name="pkgC"><!--ÓÃ»§Ãû-->	
+				<WriteElement name="pwd"  value=""/><!--ÃÜÂë-->	
+				</WriteElement>
+			</WriteElement>
+		</Request>
+		<Response>
+			<ReadElement name="pkg">
+				<Quote name="PkgHeadRsp"/>
+				<ReadElement name="return">
+				<ReadAttr name="resultCode" ETF_name="RRspCod"/>
+				<ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+				</ReadElement>
+				<AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+			</ReadElement>
+		</Response>
+	</Transaction>
+
+	<Transaction code="201" desc="²ÊÃñ×¢²á" log_switch="6" >
+		<Request>
+			<AddItem name="TTXNCD" value="201"/>
+			<WriteElement name="pkg">
+				<Quote name="PkgHeadReq"/>
+				<WriteElement name="pkgC">
+					<WriteElement name="gamblerBasicInfo">
+						<WriteElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->	
+						<WriteElement name="gambler_pwd"  ETF_name="LotPsw"/><!--ÃÜÂë-->	
+						<WriteElement name="regist_time"  ETF_name="RegTim"  expression="STRCAT(SUBSTR($RegTim,1,4),-,SUBSTR($RegTim,5,2),-,SUBSTR($RegTim,7,2), ,SUBSTR($RegTim,9,2),:,SUBSTR($RegTim,11,2),:,SUBSTR($RegTim,13,2))"/><!--×¢²áÊ±¼ä-->	
+						<WriteElement name="email"        ETF_name="Email"/><!--µç×ÓÓÊÏä(¿ÉÒÔ²»Ìî)-->	
+					</WriteElement>
+					<WriteElement name="gamblerAdditionalInfo">
+						<WriteElement name="city_id"     ETF_name="CityId"/><!--µØÊÐ±àÂë-->	
+						<SwitchCode name="IdTyp" new_name="LotIdTyp"  tab_name="IdTyp2LotIdTyp"  col_name="IdTyp"/>
+						<WriteElement name="ID_type"     ETF_name="LotIdTyp"/><!--Éí·ÝÖ¤¼þÀàÐÍ-->	
+						<WriteElement name="ID_no"       ETF_name="IdNo"/><!--Éí·ÝÖ¤¼þºÅÂë-->	
+						<WriteElement name="account_type" value="14"/><!--ÕË»§ÀàÐÍ:14½»ÐÐÍ¶×¢-->	
+						<WriteElement name="charge_type"  value="5"/><!--¿Û¿îÀàÐÍ:5ºóÆÚ½áËã--> 
+						<WriteElement name="prize_type"   value="3"/><!--½±½ð·µ½±ÀàÐÍ:3½±½ðÀÛ¼Æ-->	
+						<WriteElement name="bindCard">
+							<WriteAttr name="isBind" value="1"/>	<!--ÊÇ·ñ°ó¶¨¿¨-->	
+							<WriteElement name="card_type" value="2"/><!--¿¨ÀàÐÍ:2½è¼Ç¿¨-->	
+							<WriteElement name="bank_id"   value="COMM"/><!--ÒøÐÐ±àÂë:COMM½»Í¨ÒøÐÐ--> 
+							<WriteElement name="bank_card" ETF_name="CrdNo"/><!--°ó¶¨¿¨ºÅ-->	
+						</WriteElement>
+						<WriteElement name="real_name" ETF_name="CusNam"/><!--ÕæÊµÐÕÃû(¿ÉÒÔ²»Ìî)-->	
+						<WriteElement name="sex"       value=""/><!--ÐÔ±ð(¿ÉÒÔ²»Ìî)-->	
+						<WriteElement name="birthday"  value=""/><!--ÉúÈÕ(¿ÉÒÔ²»Ìî)-->	
+						<WriteElement name="mobile"    ETF_name="MobTel"/><!--ÊÖ»úºÅÂë-->	
+						<WriteElement name="phone"     value=""/><!--×ù»úºÅÂë(¿ÉÒÔ²»Ìî)-->	
+						<WriteElement name="bindDealer">
+							<WriteAttr name="isBind" value="1"/><!--ÊÇ·ñ°ó¶¨ÔËÓªÉÌ-->	
+							<WriteElement name="dealer_id" ETF_name="DealId"/><!--°ó¶¨ÔËÓªÉÌ±àºÅ-->	
+						</WriteElement>
+					</WriteElement>
+				</WriteElement>
+			</WriteElement>
+		</Request>
+		<Response>
+			<ReadElement name="pkg">
+				<Quote name="PkgHeadRsp"/>
+				<ReadElement name="return">
+					<ReadAttr name="resultCode" ETF_name="RRspCod"/>
+					<ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+				</ReadElement>
+				<ReadElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->	
+				<ReadElement name="gambler_status" ETF_name="Status"/><!--²ÊÃñ×´Ì¬--> 
+				<ReadElement name="account_type" ETF_name="LotAccTyp"/><!--ÕË»§ÀàÐÍ-->	
+				<ReadElement name="charge_type" ETF_name="LotChgTyp"/><!--¿Û¿îÀàÐÍ-->	
+				<ReadElement name="prize_type" ETF_name="LotPrzTyp"/><!--½±½ð·µ½±ÀàÐÍ-->	
+				<ReadElement name="bindDealer ">
+					<ReadAttr name="isBind" ETF_name="LotIsBnd"/><!--½±½ð·µ½±ÀàÐÍ-->	
+					<ReadElement name="dealer_id" ETF_name="LotDealId"/><!--°ó¶¨ÔËÓªÉÌ±àºÅ-->	
+				</ReadElement>
+				<AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+			</ReadElement>
+		</Response>
+	</Transaction>
+
+  <Transaction code="209" desc="²ÊÃñÐÅÏ¢²éÑ¯" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="209"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+	        <WriteElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	        <WriteElement name="gambler_pwd"  ETF_name="LotPsw"/><!--ÃÜÂë-->  
+	        <WriteElement name="modify_time"  ETF_name="FTXNTm"/><!--²éÑ¯Ê±¼ä-->       
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	        <ReadElement name="gamblerBasicInfo">
+	          <ReadElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	          <ReadElement name="regist_time"  ETF_name="RegTim"/><!--×¢²áÊ±¼ä-->
+	          <ReadElement name="email"        ETF_name="Email"/><!--µç×ÓÓÊÏä(¿ÉÒÔ²»Ìî)-->
+	        </ReadElement>
+	        <ReadElement name="gamblerAdditionalInfo">
+	          <ReadElement name="city_id"      ETF_name="CityId"/><!--µØÊÐ±àÂë-->
+	          <ReadElement name="ID_type"      ETF_name="LotIdTyp"/><!--Éí·ÝÖ¤¼þÀàÐÍ-->
+	          <ReadElement name="ID_no"        ETF_name="IdNo"/><!--Éí·ÝÖ¤¼þºÅÂë-->
+	          <ReadElement name="account_type" ETF_name="LotAccTyp"/><!--ÕË»§ÀàÐÍ:14½»ÐÐÍ¶×¢-->
+	          <ReadElement name="charge_type"  ETF_name="LotChgTyp"/><!--¿Û¿îÀàÐÍ:5ºóÆÚ½áËã-->      
+	          <ReadElement name="prize_type"   ETF_name="LotPrzTyp"/><!--½±½ð·µ½±ÀàÐÍ:3½±½ðÀÛ¼Æ-->
+	          <ReadElement name="bindDealer">
+	            <ReadAttr name="isBind" value="1"/> <!--ÊÇ·ñ°ó¶¨ÔËÓªÉÌ-->
+	            <ReadElement name="dealer_id" ETF_name="DealId"/><!--°ó¶¨ÔËÓªÉÌ±àºÅ-->
+	          </ReadElement>
+	          <ReadElement name="bindCard">
+	            <ReadAttr name="isBind"       ETF_name="LotisBind"/> <!--ÊÇ·ñ°ó¶¨¿¨-->
+	            <ReadElement name="card_type"  ETF_name="LotCrdTyp"/><!--¿¨ÀàÐÍ:2½è¼Ç¿¨-->
+	            <ReadElement name="bank_id"    ETF_name="LotBankId"/><!--ÒøÐÐ±àÂë:COMM½»Í¨ÒøÐÐ-->       
+	            <ReadElement name="bank_card" ETF_name="CrdNo"/><!--°ó¶¨¿¨ºÅ-->
+	          </ReadElement>
+	          <ReadElement name="real_name" ETF_name="CusNam"/><!--ÕæÊµÐÕÃû(¿ÉÒÔ²»Ìî)-->
+	          <ReadElement name="sex"       ETF_name="Sex"/><!--ÐÔ±ð(¿ÉÒÔ²»Ìî)-->
+	          <ReadElement name="birthday"  ETF_name="BthDay"/><!--ÉúÈÕ(¿ÉÒÔ²»Ìî)-->
+	          <ReadElement name="mobile"    ETF_name="MobTel"/><!--ÊÖ»úºÅÂë-->
+	          <ReadElement name="phone"     ETF_name="FixTel"/><!--×ù»úºÅÂë(¿ÉÒÔ²»Ìî)-->
+	          <ReadElement name="gambler_status" ETF_name="Status"/><!--²ÊÃñ×´Ì¬-->
+	          <ReadElement name="gambler_points" ETF_name="LotPot"/><!--²ÊÃñ»ý·Ö-->
+	          <ReadElement name="gambler_exp" ETF_name="LotExp"/><!--²ÊÃñ¾­ÑéÖµ-->
+	          <ReadElement name="gambler_exp_levelup" ETF_name="LotExpLvl"/><!--Éý¼¶ËùÐè¾­ÑéÖµ--> 
+	        </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>  
+  
+  
+  <Transaction code="219" desc="²ÊÃñ×¢Ïú" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="219"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+	        <WriteElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	        <WriteElement name="modify_time"  ETF_name="FTXNTm"/><!--×¢ÏúÇëÇóÊ±¼ä-->
+	        <WriteElement name="gambler_pwd"  ETF_name="LotPsw"/><!--ÃÜÂë-->       
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>  
+
+
+  <Transaction code="231" desc="Í¶×¢" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="231"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+	        <WriteElement name="schemeInfo">
+	          <WriteElement name="dealer_serial" ETF_name="TxnLog"/><!--½»Ò×Á÷Ë®ºÅ-->
+	          <WriteElement name="scheme_type"   ETF_name="SchTyp"/><!--·½°¸ÀàÐÍ:1Ö±½ÓÍ¶×¢-->
+	          <WriteElement name="scheme_title"  ETF_name="SchTit"/><!--·½°¸±êÌâ-->
+	          <WriteElement name="secrecy_level" ETF_name="SecLev"/><!--·½°¸µÈ¼¶:1±£ÃÜÍ¶×¢-->
+	          <WriteElement name="create_time"   ETF_name="LotTxnTim"/><!--Éú³ÉÊ±¼ä-->
+	          <WriteElement name="city_id"       ETF_name="CityId"/><!--µØÊÐ±àºÅ-->
+	          <WriteElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	          <WriteElement name="draw_id"       ETF_name="DrawId"/><!--µ±Ç°ÆÚ-->
+	          <WriteElement name="keno_draw_id"  ETF_name="KenoId"/><!--¿ì¿ªÓÎÏ·Ð¡ÆÚ-->
+	          <WriteElement name="play_id"       ETF_name="PlayId"/><!--Íæ·¨±àºÅ-->
+	          <SwitchCode name="BetMet" new_name="LotBetMet"  tab_name="BetMet2LotBetMet"  col_name="BetMet"/>
+	          <WriteElement name="bet_method"    ETF_name="LotBetMet"/><!--Í¶×¢·½·¨-->
+	          <WriteElement name="bet_mode"      ETF_name="BetMod"/><!--Í¶×¢·½Ê½-->
+	          <WriteElement name="bet_multiple"  ETF_name="BetMul"/><!--Í¶×¢±¶Êý-->
+	          <WriteElement name="bet_money"     ETF_name="TxnAmt"/><!--Í¶×¢½ð¶î-->          
+	          <WriteGroupElement name="betInfo" ETF_name="Rec" repeat_name="GrpNum">
+	            <WriteAttr name="group" ETF_name="GrpNum"/><!--ºÅÂë×é¸öÊý-->
+	            <WriteAttr name="num"   ETF_name="BetNum"/><!--×ÜºÅÂë¸öÊý-->
+	            <WriteElement name="bet_line"   ETF_name="BetLin"/><!--ºÅÂë×Ö·û´®-->
+	          </WriteGroupElement>
+	        </WriteElement>
+	        <WriteElement name="gamblerInfo">
+	          <WriteElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	          <WriteElement name="chargeInfo">
+	            <WriteAttr name="isSettled"         value="1"/><!--ÊÇ·ñºóÆÚ½áËã(1:ÊÇ)-->
+	            <WriteElement name="account_type"   value="14"/><!--ÕË»§ÀàÐÍ:14½»ÐÐÍ¶×¢-->
+	            <WriteElement name="charge_id"      value=""/><!--ÒµÎñ±àºÅ(ÖÐÐÄÏµÍ³·ÖÅä¹Ì¶¨±àºÅ)-->
+	          </WriteElement>
+	        </WriteElement>
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	      <ReadElement name="schemeInfo">
+	        <ReadElement name="dealer_serial" ETF_name="TxnLog"/><!--½»Ò×Á÷Ë®ºÅ-->
+	        <ReadElement name="scheme_id" ETF_name="SchId"/><!--ÏµÍ³Éú³ÉµÄ·½°¸±àºÅ-->
+	        <ReadElement name="serial_no" ETF_name="TLogNo"/><!--²ÊÆ±Á÷Ë®ºÅ-->
+	        <ReadElement name="cipher"    ETF_name="Cipher"/><!--²ÊÆ±ÃÜÂë-->
+	        <ReadElement name="checksum"  ETF_name="Verify"/><!--²ÊÆ±Ð£ÑéÂë-->
+	      </ReadElement>
+	      <ReadElement name="gamblerInfo">
+	        <ReadElement name="gambler_name"    ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	        <ReadElement name="gambler_balance" ETF_name="LotBal"/><!--²ÊÃñÓà¶î-->
+	      </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="232" desc="Í¶×¢²éÑ¯" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="232"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+	        <WriteElement name="dealer_serial" ETF_name="TxnLog"/><!--½»Ò×Á÷Ë®ºÅ-->
+	        <WriteElement name="gambler_name" ETF_name="LotNam"/><!--²ÊÃñ±êÊ¶-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	      <ReadElement name="schemeInfo">
+	        <ReadElement name="dealer_serial" ETF_name="TxnLog"/><!--½»Ò×Á÷Ë®ºÅ-->
+			<ReadElement name="scheme_id" ETF_name="SchId"/><!--ÏµÍ³Éú³ÉµÄ·½°¸±àºÅ-->
+	        <ReadElement name="serial_no" ETF_name="TLogNo"/><!--²ÊÆ±Á÷Ë®ºÅ-->
+	        <ReadElement name="cipher"    ETF_name="Cipher"/><!--²ÊÆ±ÃÜÂë-->
+	        <ReadElement name="checksum"  ETF_name="Verify"/><!--²ÊÆ±Ð£ÑéÂë-->	
+	        <ReadElement name="scheme_type"   ETF_name="SchTyp"/><!--·½°¸ÀàÐÍ:1Ö±½ÓÍ¶×¢-->
+	        <ReadElement name="scheme_title"  ETF_name="SchTit"/><!--·½°¸±êÌâ-->
+	        <ReadElement name="secrecy_level" ETF_name="SecLev"/><!--·½°¸µÈ¼¶:1±£ÃÜÍ¶×¢-->
+	        <ReadElement name="create_time"   ETF_name="LotTxnTim"/><!--Éú³ÉÊ±¼ä-->
+	        <ReadElement name="city_id"       ETF_name="CityId"/><!--µØÊÐ±àºÅ-->
+	        <ReadElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	        <ReadElement name="draw_id"       ETF_name="DrawId"/><!--µ±Ç°ÆÚ-->
+	        <ReadElement name="keno_draw_id"  ETF_name="KenoId"/><!--¿ì¿ªÓÎÏ·Ð¡ÆÚ-->
+	        <ReadElement name="play_id"       ETF_name="PlayId"/><!--Íæ·¨±àºÅ-->
+	        <ReadElement name="bet_method"    ETF_name="LotBetMet"/><!--Í¶×¢·½·¨-->
+	        <ReadElement name="bet_mode"      ETF_name="BetMod"/><!--Í¶×¢·½Ê½-->
+	        <ReadElement name="bet_multiple"  ETF_name="BetMul"/><!--Í¶×¢±¶Êý-->
+	        <ReadElement name="bet_money"     ETF_name="TxnAmt"/><!--Í¶×¢½ð¶î-->  
+	        <ReadGroupElement name="betInfo" ETF_name="Rec" repeat_name="GrpNum">
+	          <ReadAttr name="group" ETF_name="GrpNum"/><!--ºÅÂë×é¸öÊý-->
+	          <ReadAttr name="num"   ETF_name="BetNum"/><!--×ÜºÅÂë¸öÊý-->
+	          <ReadElement name="bet_line"   ETF_name="BetLin"/><!--ºÅÂë×Ö·û´®-->
+	        </ReadGroupElement>
+			<ReadElement name="prize_money"     ETF_name="BonAmt"/><!--ÖÐ½±½ð¶î--> 
+	      </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="234" desc="ÓÎÏ·¹æÔòÎÄ¼þÏÂÔØ" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="234"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="235" desc="½±ÆÚÐÅÏ¢ÏÂÔØ" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="235"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="game_id"   ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+          <ReadElement name="pkgC">
+	        <ReadElement name="return">
+	          <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	          <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	        </ReadElement>
+		    <ReadElement name="draw" necessary="no">
+	          <ReadAttr name="id"   ETF_name="DrawId"/><!--ÆÚºÅ-->
+	          <ReadAttr name="name" ETF_name="DrawNm"/><!--ÆÚÃû-->
+	 	      <ReadElement name="sale" necessary="no">
+	             <ReadAttr name="startTime"   ETF_name="SalStr" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($SalStr,-,),:,),all),1,14)"/><!--ÏúÊÛ¿ªÊ¼Ê±¼ä-->
+	             <ReadAttr name="endTime"     ETF_name="SalEnd" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($SalEnd,-,),:,),all),1,14)"/><!--ÏúÊÛ½áÊøÊ±¼ä-->	    
+	 	      </ReadElement>
+	 	      <ReadElement name="cash" necessary="no">
+	             <ReadAttr name="startTime"   ETF_name="CshStr" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($CshStr,-,),:,),all),1,14)"/><!--¶Ò½±¿ªÊ¼Ê±¼ä-->
+	             <ReadAttr name="endTime"     ETF_name="CshEnd" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($CshEnd,-,),:,),all),1,14)"/><!--¶Ò½±½áÊøÊ±¼ä-->	    
+	 	      </ReadElement>
+	 	      <ReadElement name="kdraw" necessary="no">
+	             <ReadAttr name="isKeno"   ETF_name="isKeno"/><!--ÊÇ·ñÓÐkenoÆÚ(0ÎÞ/1ÓÐ)-->
+	             <ReadAttr name="num"      ETF_name="KenoNum"/><!--kenoÆÚ¸öÊý-->
+	             <If condition="STRCMP($isKeno,1)=0">
+	               <ReadGroupElement name="keno" ETF_name="Rec" repeat_name="KenoNum">
+	                 <ReadAttr name="id"          ETF_name="KenoId"/><!--kenoÆÚºÅ-->
+	                 <ReadAttr name="name"        ETF_name="KenoNm"/><!--kenoÆÚÃû-->
+	                 <ReadAttr name="startTime"   ETF_name="KSalSt" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($KSalSt,-,),:,),all),1,14)"/><!--kenoÏúÊÛ¿ªÊ¼Ê±¼ä-->
+	                 <ReadAttr name="endTime"     ETF_name="KSalEd" expression="SUBSTR(DELSPACE(REPALLSTR(REPALLSTR($KSalEd,-,),:,),all),1,14)"/><!--kenoÏúÊÛ½áÊøÊ±¼ä-->
+	               </ReadGroupElement>		
+	             </If>	    
+	 	      </ReadElement>
+		    </ReadElement>
+		  </ReadElement>
+		  <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="236" desc="¿ª½±¹«¸æ²éÑ¯" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="236"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	        <WriteElement name="draw_id"       ETF_name="DrawId"/><!--µ±Ç°ÆÚ-->
+	        <WriteElement name="keno_draw_id"  ETF_name="KenoId"/><!--¿ì¿ªÓÎÏ·Ð¡ÆÚ-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+		  <ReadElement name="openPrize">
+	        <ReadAttr name="gameName"   ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	        <ReadAttr name="drawName"   ETF_name="DrawNm"/><!--ÆÚÃû-->
+	        <ReadAttr name="kdrawName"  ETF_name="KenoNm"/><!--kenoÆÚÃû-->
+	        <ReadAttr name="startTime"  ETF_name="StrTim"/><!--ÆÚ¿ªÊ¼Ê±¼ä-->
+	        <ReadAttr name="stopTime"   ETF_name="StpTim"/><!--ÆÚ½áÊøÊ±¼ä-->
+	        <ReadAttr name="totalMoney" ETF_name="TotPrz"/><!--×ÜÖÐ½±½ð¶î-->
+	        <ReadAttr name="jackpot"    ETF_name="JacPot"/><!--½±³Ø-->	    
+		  </ReadElement>
+		  <ReadElement name="prize">
+	        <ReadAttr name="totalTimes"   ETF_name="OpnTot"/><!--¿ª½±×Ü´ÎÊý-->
+	        <ReadGroupElement name="prizeItem" ETF_name="Rec" repeat_name="OpnTot">
+	          <ReadAttr name="times"          ETF_name="OpnNum"/><!--¿ª½±´ÎÊý-->
+	          <ReadAttr name="bonusCode"      ETF_name="BonCod"/><!--¿ª½±ºÅÂë-->
+	          <ReadAttr name="classNum"       ETF_name="ClsNum"/><!--½±¼¶¸öÊý-->
+	          <ReadGroupElement name="class" ETF_name="Rec1" repeat_name="ClsNum">	  
+	            <ReadAttr name="className"      ETF_name="ClsNam"/><!--½±¼¶    -->
+	            <ReadAttr name="bonusMoney"     ETF_name="BonAmt"/><!--ÖÐ½±½ð¶î-->
+	            <ReadAttr name="bonusNum"       ETF_name="BonNum"/><!--ÖÐ½±×¢Êý-->
+	          </ReadGroupElement>
+	        </ReadGroupElement>		
+		  </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="237" desc="ÎÄ¼þÏÂÔØµØÖ·²éÑ¯" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="237"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	        <WriteElement name="draw_id"       ETF_name="DrawId"/><!--µ±Ç°ÆÚ-->
+	        <WriteElement name="file_type"     ETF_name="FilTyp"/><!--ÎÄ¼þÀàÐÍ-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="pkgC">
+	        <ReadElement name="return">
+	          <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	          <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	        </ReadElement>
+		    <ReadElement name="game_id"       ETF_name="GameId" necessary="no"/><!--ÓÎÏ·±àºÅ-->
+	        <ReadElement name="draw_id"       ETF_name="DrawId" necessary="no"/><!--µ±Ç°ÆÚ-->
+	        <ReadElement name="file_type"     ETF_name="FilTyp" necessary="no"/><!--ÎÄ¼þÀàÐÍ-->
+	        <ReadElement name="file"          ETF_name="Fil" necessary="no"/><!--ÎÄ¼þÏÂÔØµØÖ·-->
+	        <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+	      </ReadElement>
+      </ReadElement>
+    </Response>
+  </Transaction>
+  
+  <Transaction code="238" desc="ÎÄ¼þÏÂÔØ" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="238"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="file_type"      ETF_name="FilTyp"/><!--ÎÄ¼þ·ÖÀà-->
+	        <WriteElement name="file_name"       ETF_name="FilNam"/><!--ÎÄ¼þÃû-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="pkgC">
+		      <ReadElement name="return">
+		        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+		        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+		      </ReadElement>
+	      </ReadElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+
+  <Transaction code="240" desc="¿ì¿ªÓÎÏ·ÏÂÔØÖÐ½±¼ÇÂ¼" log_switch="6" >
+    <Request>
+      <AddItem name="TTXNCD" value="240"/>
+      <WriteElement name="pkg">
+	      <Quote name="PkgHeadReq"/>
+	      <WriteElement name="pkgC">
+		    <WriteElement name="game_id"      ETF_name="GameId"/><!--ÓÎÏ·±àºÅ-->
+	        <WriteElement name="draw_id"       ETF_name="DrawId"/><!--µ±Ç°ÆÚ-->
+	        <WriteElement name="keno_draw_id"  ETF_name="KenoId"/><!--¿ì¿ªÓÎÏ·Ð¡ÆÚ-->
+	      </WriteElement> 
+      </WriteElement>
+    </Request>
+    <Response>
+      <ReadElement name="pkg">
+	      <Quote name="PkgHeadRsp"/>
+	      <ReadElement name="return">
+	        <ReadAttr name="resultCode" ETF_name="RRspCod"/>
+	        <ReadAttr name="resultDes"  ETF_name="RRspMsg"/>
+	      </ReadElement>
+	      <ReadElement name="keno">
+	        <ReadAttr name="game_id"       ETF_name="GameId"/><!--ÓÎÏ·id-->
+	        <ReadAttr name="draw_id"       ETF_name="DrawId"/><!--ÆÚºÅ-->
+			<ReadAttr name="keno_draw_id"  ETF_name="KenoId"/><!--kenoÆÚºÅ-->
+	      </ReadElement>
+	      <ReadElement name="point">
+	        <ReadAttr name="dump"       ETF_name="tmp1"/><!--Í¬²½¶Ïµã-->
+	        <ReadAttr name="cash"       ETF_name="tmp2"/><!--¶Ò½±¶Ïµã-->
+			<ReadAttr name="db"         ETF_name="tmp3"/><!--Èë¿â¶Ïµã-->
+	      </ReadElement>	  
+	            <AddItem name="ROOT.bonusItemNum" value="0"/>
+              <ReadGroupElement name="bonusItem" ETF_name="Rec" repeat_num="-1">
+        	     <AddItem name="ROOT.RecNum" expression="ADD($ROOT.bonusItemNum,1)"/>
+                 <ReadAttr name="dealerSerialNo" ETF_name="TxnLog"/><!--ÏµÍ³Í¶×¢Á÷Ë®ºÅ-->
+                 <ReadAttr name="cipher"         ETF_name="Cipher"/><!--²ÊÆ±ÃÜÂë-->
+                 <ReadAttr name="isBombBonus"    ETF_name="BigBon"/><!--´ó½±±ê¼Ç-->
+                 <ReadAttr name="prizeMoney"     ETF_name="TotPrz"/><!--ÖÐ½±×Ü½ð¶î-->
+                 <ReadAttr name="serinalNo"      ETF_name="TLogNo"/><!--²ÊÆ±Á÷Ë®ºÅ-->
+                 <ReadAttr name="terminalID"     ETF_name="TermID"/><!--ÏµÍ³Í¶×¢ÖÕ¶ËºÅ-->
+                 <ReadGroupElement name="bonusNode" ETF_name="Rec1" repeat_num="-1">
+                    <ReadAttr name="betMode"     ETF_name="BetMod"/><!--Í¶×¢·½Ê½-->
+                    <ReadAttr name="multiple"    ETF_name="BetMul"/><!--±¶Êý-->
+                    <ReadAttr name="class"       ETF_name="class"/><!--½±µÈ±àºÅ-->
+                    <ReadAttr name="prizeMoney"  ETF_name="PrzAmt"/><!--µ¥×¢ÖÐ½±½ð¶î-->
+                    <ReadAttr name="betLine"     ETF_name="BetLin"/><!--Í¶×¢ºÅÂë-->    
+                 </ReadGroupElement>
+               </ReadGroupElement>
+	      <AddItem name="TRspCd"  length=" 6" value="000000" desc="Ö÷»ú·µ»ØÂë"/>
+      </ReadElement>
+    </Response>
+  </Transaction>
+  
+</Application>

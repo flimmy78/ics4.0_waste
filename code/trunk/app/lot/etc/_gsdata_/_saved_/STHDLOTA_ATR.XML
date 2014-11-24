@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name="STHDLOTA" type="SCA" trace="${ics.plt.loglevel}" ip="${ics.plt.local_ip}">
+    <ThreadPool>
+      <MinWorkerThreads>100</MinWorkerThreads>
+      <MaxWorkerThreads>100</MaxWorkerThreads>
+    </ThreadPool>
+  <ProcessMemoryManager>
+    <BlockSize>102400</BlockSize>
+    <PoolInitSize>1</PoolInitSize>
+    <PoolMaxSize>1024</PoolMaxSize>
+    <PoolAddStep>1</PoolAddStep>
+    <TimeOut>1</TimeOut>
+    <ThreadMemoryManager>   
+      <PageSize>64</PageSize>   
+      <MaxBlocks>10</MaxBlocks>
+    </ThreadMemoryManager>
+  </ProcessMemoryManager>
+  <DllPriDataCtrl dllfile="dll/ecnsvrsync.so" initfunc="initChannel" donefunc="closeChannel">
+      <Para name="HostIp">_IP</Para>
+      <Para name="HostPort">_PORT</Para>
+      <Para name="ConnTyp">0</Para>
+      <Para name="MaxConn">10</Para>
+      <Para name="PreLen">8</Para>
+  </DllPriDataCtrl>
+  <DllPriDataCtrl dllfile="dll/dataparser.so" initfunc="initDataParser" donefunc="closeDataParser">
+      <Para name="parserfile">etc/STHDLOTA_ITF.XML</Para>
+  </DllPriDataCtrl>
+  <QueuePair name="LeftQueuePair">
+    <RequestProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry> 
+            
+        <MessageType>SYSMNG</MessageType>
+            <ProcessModule>mngDataParser</ProcessModule>
+        </Entry>  
+        
+      <Entry> 
+            
+        <MessageType>OTHERS</MessageType>
+            <ProcessModule>dataParser</ProcessModule>
+        </Entry>  
+    </RequestProcessor> 
+  </QueuePair>
+  <QueuePair name="RightQueuePair">
+    <RequestProcessor dllfile="dll/ecnsvrsync.so" dbapplication="NO">
+        <Entry> 
+            
+        <MessageType>SAF001</MessageType>
+            <ProcessModule>clientSyncOut</ProcessModule>
+        </Entry>  
+        
+      <Entry> 
+            
+        <MessageType>PLTOUT</MessageType> 
+            
+        <ProcessModule>clientSyncOut</ProcessModule>
+        </Entry>  
+    </RequestProcessor> 
+    
+    <ResponseProcessor dllfile="dll/dataparser.so" dbapplication="NO">
+        <Entry>
+            <MessageType>OTHERS</MessageType>
+            <ProcessModule>dataParser</ProcessModule>
+        </Entry>
+    </ResponseProcessor>  
+  </QueuePair>
+ </Server>
+</Region>

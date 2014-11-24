@@ -1,0 +1,825 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Package>
+	<ConfigDeclare>
+		<Config name="OPFCSW"      value="etc/LOT_CSW_441999.XML"/>
+		<Config name="LOTFILFMT"  value="etc/LOT_FMT_441999.XML" />
+	</ConfigDeclare>
+	<PackageDeclare>
+		<Package name="LOT_PKG" value="etc/LOT_PKG.XML"/>
+	</PackageDeclare>
+	<BusDefDeclare>
+		<Busdef name="RcvPth"    value="dat/lot" />
+		<Busdef name="DealId"    value="141" /> <!--ÔËÓªÉÌ±àºÅ-->
+	</BusDefDeclare>
+	<TableDeclare>
+		<Table name="afetxnjnl"     value="afetxnjnl"/>    <!--ÒµÎñÁ÷Ë®±í-->
+		<Table name="lotsyscfg"     value="lotsyscfg"/>    <!--Æ½Ì¨²ÎÊý±í-->
+		<Table name="lotcusinf"     value="lotcusinf"/>    <!--¸£²ÊÓÃ»§±í-->
+		<Table name="lotautpln"     value="lotautpln"/>    <!--¶¨Í¶¼Æ»®±í-->
+		<Table name="lottxnjnl"     value="lottxnjnl"/>    <!--Í¶×¢Á÷Ë®±í-->
+		<Table name="lotchkctl"     value="lotchkctl"/>    <!--¶ÔÕË¿ØÖÆ±í-->
+		<Table name="lotchkdtl"     value="lotchkdtl"/>    <!--¶ÔÕËÃ÷Ï¸±í-->
+		<Table name="lotdrwtbl"     value="lotdrwtbl"/>    <!--½±ÆÚÐÅÏ¢±í-->
+		<Table name="lotprzinf"     value="lotprzinf"/>    <!--¿ª½±¹«¸æ±í-->
+		<Table name="lotdrwtbl"     value="lotdrwtbl"/>    <!--½±ÆÚÐÅÏ¢±í-->
+		<Table name="lotprzinf"     value="lotprzinf"/>    <!--¿ª½±¹«¸æ±í-->
+		<Table name="lotprzctl"     value="lotprzctl"/>    <!--ÖÐ½±¼ÇÂ¼¿ØÖÆ±í-->
+		<Table name="lotprzdtl"     value="lotprzdtl"/>    <!--ÖÐ½±¼ÇÂ¼Ã÷Ï¸±í-->
+		<Table name="lotawddtl"     value="lotawddtl"/>    <!--·µ½±½±¼ÇÂ¼Ã÷Ï¸±í-->
+	</TableDeclare>
+
+	
+	<!--¸ù¾ÝÓë¸£²ÊÖ®¼äµÄÊ±²î»ñÈ¡¸£²ÊÊ±¼ä	INPUT:		DealId:ÔËÓªÉÌID	OUTPUT:		FcTim:¸£²ÊÊ±¼äYYYYMMDDHHMISS	-->
+	<Function name="GetFcTim" desc="¸ù¾ÝÓë¸£²ÊÖ®¼äµÄÊ±²î»ñÈ¡¸£²ÊÊ±¼ä">
+		<Input>DealId|NodNo|BrNo|</Input>
+		<Output>FcTim|</Output>
+		<DynSentence name="GetSysCfg" desc="»ñÈ¡ÏµÍ³ÅäÖÃ">
+			<Sentence>
+				select DealId,UsrPam,UsrPas,SigTim,LclTim,LotTim,DiffTm
+				from LotSysCfg
+				where DealId='%s'
+			</Sentence>
+			<Fields>DealId|</Fields>
+		</DynSentence>
+		<Process>
+			<!-- ²éÑ¯ÏµÍ³²ÎÊý£¬»ñÈ¡µ±Ç°±¾µØÓë¸£²ÊÏµÍ³µÄÊ±²î -->
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+               <Arg name="SqlCmd" value="GetSysCfg"/>
+            </Exec>
+            <If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+            	<Set>DiffTm=0</Set><!-- Èç¹ûÎÞ·¨»ñÈ¡Ê±²î£¬ÔòÄ¬ÈÏÊ±²îÎª0 -->
+            </If>
+            
+            <!-- ¸ù¾ÝÊ±²î¼ÆËãµ±Ç°¸£²ÊÏµÍ³Ê±¼ä -->
+            <Set>CurTim=GETDATETIME(YYYYMMDDHHMISS)</Set>
+            
+            <!-- ¼¼ÊõÄÑÌâ´ý½â¾ö£¬ÔÝÊ±Ä¬ÈÏÊ±¼ä²îÎª0 -->
+			<Set>SrcDate=$CurTim</Set>
+			<Set>DifTim=$DiffTm</Set>
+            <Call package="LOT_PKG" function="CalTim" desc="¸ù¾ÝÊ±²î¼ÆËãÊ±¼ä"/>
+            <Set>FcTim=$DesDate</Set>
+            
+		</Process>
+	</Function>
+	
+	<!--ÏÂÔØ²»Í¬µÄÎÄ¼þ²¢Èë¿â
+	INPUT:
+		FilTyp:ÎÄ¼þÀàÐÍ£¨1£ºÓÎÏ·¹æÔòÎÄ¼þ·ÖÀà  2£ºÖÐ½±¼ÇÂ¼ÎÄ¼þ·ÖÀà  3:¶ÔÕËÎÄ¼þ·ÖÀà£©
+		GameId:ÓÎÏ·±àºÅ
+		DrawId:ÆÚºÅ
+	OUTPUT:
+		DownloadStatus:ÎÄ¼þÏÂÔØ×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		DownloadMsg:ÎÄ¼þÏÂÔØ½á¹ûÃèÊö
+	-->
+	<Function name="DownloadFile" desc="ÏÂÔØ²»Í¬µÄÎÄ¼þ²¢Èë¿â">
+		<Input>FilTyp|GameId|DrawId|FTxnTm|</Input>
+		<Output>DownloadStatus|DownloadMsg|FilTyp|</Output>
+		<DynSentence name="GetSysCfg" desc="»ñÈ¡ÏµÍ³ÅäÖÃ">
+			<Sentence>
+				select DealId,UsrPam,UsrPas,SigTim,LclTim,LotTim,DiffTm
+				from LotSysCfg
+				where DealId='%s'
+			</Sentence>
+			<Fields>DealId|</Fields>
+		</DynSentence>
+		<Process>
+
+			<!--·¢ËÍÎÄ¼þÏÂÔØµØÖ·²éÑ¯±¨ÎÄ£¬»ñÈ¡ÎÄ¼þµØÖ·-->
+            <Exec func="PUB:CallThirdOther" error="IGNORE">
+               <Arg name="HTxnCd" value="237" />
+               <Arg name="ObjSvr" value="STHDLOTA" />
+            </Exec>
+            <If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<Set>DownloadStatus=-1</Set>
+				<Set>DownloadMsg=²éÑ¯ÎÄ¼þÏÂÔØµØÖ·Ê§°Ü</Set>
+				<Return/>
+            </If>
+            <If condition="IS_NOEQUAL_STRING($RRspCod,0)">
+				<Set>DownloadStatus=-1</Set>
+				<Set>DownloadMsg=STRCAT(²éÑ¯ÎÄ¼þÏÂÔØµØÖ·Ê§°Ü[,$RRspCod,])</Set>
+				<Return/>
+            </If>
+            
+			<!--·¢ËÍÎÄ¼þÏÂÔØ±¨ÎÄ£¬ÏÂÔØÎÄ¼þ-->
+			<Set>FilNam=$Fil</Set>
+            <Exec func="PUB:CallThirdOther" error="IGNORE">
+               <Arg name="HTxnCd" value="STRCAT(238_,$FilTyp)" />
+               <Arg name="ObjSvr" value="STHDLOTA" />
+            </Exec>
+            <If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<Set>DownloadStatus=-1</Set>
+				<Set>DownloadMsg=ÏÂÔØÎÄ¼þÊ§°Ü</Set>
+				<Return/>
+            </If>
+            <If condition="IS_NOEQUAL_STRING($RRspCod,0)">
+				<Set>DownloadStatus=-1</Set>
+				<Set>DownloadMsg=STRCAT(ÏÂÔØÎÄ¼þÊ§°Ü[,$RRspCod,])</Set>
+				<Return/>
+            </If>
+            
+			<!-- ÎÄ¼þÈë¿â -->
+			<Call package="LOT_PKG" function="STRCAT(FileImport,$FilTyp)" desc="ÎÄ¼þÃ÷Ï¸Èë¿â"/>
+			<If condition="IS_EQUAL_STRING($FileImportStatus,0)">
+				<Set>DownloadStatus=0</Set>
+				<Set>DownloadMsg=ÎÄ¼þÏÂÔØÈë¿â³É¹¦</Set>
+			</If>
+			<Else>
+				<Set>DownloadStatus=-1</Set>
+				<Set>DownloadMsg=$FileImportMsg</Set>
+			</Else>
+          	
+		</Process>
+	</Function>
+	
+	<!--ÎÄ¼þÈë¿â
+	INPUT:
+	OUTPUT:
+		FileImportStatus:ÎÄ¼þÈë¿â×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		FileImportMsg:ÎÄ¼þÈë¿â½á¹ûÃèÊö
+	-->
+	<Function name="FileImport1" desc="ÓÎÏ·¹æÔòÎÄ¼þÈë¿â">
+		<Output>FileImportStatus|FileImportMsg|</Output>
+		<DynSentence name="GetSysCfg" desc="»ñÈ¡ÏµÍ³ÅäÖÃ">
+			<Sentence>
+				select DealId,UsrPam,UsrPas,SigTim,LclTim,LotTim,DiffTm
+				from LotSysCfg
+				where DealId='%s'
+			</Sentence>
+			<Fields>DealId|</Fields>
+		</DynSentence>
+		<Process>
+			<Exec func="PUB:InsertRecord">
+				<Arg name="TblNam" value="BBBBB"/>
+				<Arg name="GrpNam" value="BBBBB"/>
+				<Arg name="Ignore" value="0"/>
+				<Arg name="FldLst" value="BBBBB"/>
+			</Exec>
+		</Process>
+	</Function>
+	
+	<!--ÎÄ¼þÈë¿â
+	INPUT:
+	OUTPUT:
+		FileImportStatus:ÎÄ¼þÈë¿â×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		FileImportMsg:ÎÄ¼þÈë¿â½á¹ûÃèÊö
+	-->
+	<Function name="FileImport2" desc="ÖÐ½±ÎÄ¼þÈë¿â">
+		<Output>FileImportStatus|FileImportMsg|</Output>
+		<DynSentence name="InsLotPrzCtl" desc="ÐÂÔöÖÐ½±¼ÇÂ¼¿ØÖÆ±í">
+			<Sentence>
+				insert into LotPrzCtl (GameId, DrawId, KenoId, Cipher, BigBon, TotPrz, TxnLog, TLogNo, TermID )
+				values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|Cipher|BigBon|TotPrz|TxnLog|TLogNo|TermID|</Fields>
+		</DynSentence>
+		<DynSentence name="InsLotPrzDtl" desc="ÐÂÔöÖÐ½±¼ÇÂ¼Ã÷Ï¸±í">
+			<Sentence>
+				insert into LotPrzDtl (GameId, DrawId, KenoId, TxnLog, TLogNo, BetMod, BetMul, class, PrzAmt, BetLin)
+				values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|TxnLog|TLogNo|BetMod|BetMul|class|PrzAmt|BetLin|</Fields>
+		</DynSentence>
+		<DynSentence name="DelLotPrzCtl" desc="É¾³ýÖÐ½±¼ÇÂ¼¿ØÖÆ±í">
+			<Sentence>
+				delete from LotPrzCtl
+				where GameId='%s' and DrawId='%s' and KenoId='%s'
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|</Fields>
+		</DynSentence>
+		<DynSentence name="DelLotPrzDtl" desc="É¾³ýÖÐ½±¼ÇÂ¼Ã÷Ï¸±í">
+			<Sentence>
+				delete from LotPrzDtl
+				where GameId='%s' and DrawId='%s' and KenoId='%s'
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|</Fields>
+		</DynSentence>
+		<Process>
+		
+			<!-- É¾³ý¾É¼ÇÂ¼ -->
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="DelLotPrzCtl"/>
+			</Exec>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="DelLotPrzDtl"/>
+			</Exec>
+			
+			<!-- ÐÂÔö¼ÇÂ¼ -->
+			<Set>Cnt=1</Set>
+			<While condition="INTCMP($Cnt,2,$BonsCnt)">
+				<Delete>ROOT.LotSn</Delete>
+				<Delete>ROOT.LogDumpId</Delete>
+				<Delete>ROOT.Cipher</Delete>
+				<Delete>ROOT.BigBon</Delete>
+				<Delete>ROOT.TotPrz</Delete>
+				<Delete>ROOT.TLogNo</Delete>
+				<Delete>ROOT.TermID</Delete>
+				<Delete>ROOT.TxnLog</Delete>
+				<Delete>ROOT.BonsNodCnt</Delete>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.LotSn)"/>
+					<Arg name="DestName" value="ROOT.LotSn"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.LogDumpId)"/>
+					<Arg name="DestName" value="ROOT.LogDumpId"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.Cipher)"/>
+					<Arg name="DestName" value="ROOT.Cipher"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.BigBon)"/>
+					<Arg name="DestName" value="ROOT.BigBon"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.TotPrz)"/>
+					<Arg name="DestName" value="ROOT.TotPrz"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.TLogNo)"/>
+					<Arg name="DestName" value="ROOT.TLogNo"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.TermID)"/>
+					<Arg name="DestName" value="ROOT.TermID"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.TxnLog)"/>
+					<Arg name="DestName" value="ROOT.TxnLog"/>
+				</Exec>
+				<Exec func="PUB:GetValue">
+					<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.BonsNodCnt)"/>
+					<Arg name="DestName" value="ROOT.BonsNodCnt"/>
+				</Exec>
+				<Exec func="PUB:ExecSql" error="IGNORE">
+					<Arg name="SqlCmd"    value="InsLotPrzCtl"/>
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<Set>FileImportStatus=-1</Set>
+					<Set>FileImportMsg=ÐÂÔöÖÐ½±¿ØÖÆÐÅÏ¢Ê§°Ü</Set>
+					<Return/>
+				</If>
+				
+				<!-- ÐÂÔöÃ÷Ï¸ÐÅÏ¢ -->
+				<Set>NodCnt=1</Set>
+				<While condition="INTCMP($NodCnt,2,$BonsNodCnt)">
+					<Delete>ROOT.BetMod</Delete>
+					<Delete>ROOT.BetMul</Delete>
+					<Delete>ROOT.class</Delete>
+					<Delete>ROOT.PrzAmt</Delete>
+					<Delete>ROOT.BetLin</Delete>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.bonusNode_,$NodCnt,.BetMod)"/>
+						<Arg name="DestName" value="ROOT.BetMod"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.bonusNode_,$NodCnt,.BetMul)"/>
+						<Arg name="DestName" value="ROOT.BetMul"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.bonusNode_,$NodCnt,.class)"/>
+						<Arg name="DestName" value="ROOT.class"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.bonusNode_,$NodCnt,.PrzAmt)"/>
+						<Arg name="DestName" value="ROOT.PrzAmt"/>
+					</Exec>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.bonusItem_,$Cnt,.bonusNode_,$NodCnt,.BetLin)"/>
+						<Arg name="DestName" value="ROOT.BetLin"/>
+					</Exec>
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Arg name="SqlCmd"    value="InsLotPrzDtl"/>
+					</Exec>
+					<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+						<Set>FileImportStatus=-1</Set>
+						<Set>FileImportMsg=ÐÂÔöÖÐ½±Ã÷Ï¸ÐÅÏ¢Ê§°Ü</Set>
+						<Return/>
+					</If>
+					
+					<Set>NodCnt=ADD($NodCnt,1)</Set>
+				</While>
+			
+				<Set>Cnt=ADD($Cnt,1)</Set>
+			</While>
+			
+			<Set>FileImportStatus=0</Set>
+			<Set>FileImportMsg=ÖÐ½±Ã÷Èë¿â³É¹¦</Set>
+					
+		</Process>
+	</Function>
+	
+	<!--ÎÄ¼þÈë¿â
+	INPUT:
+	OUTPUT:
+		FileImportStatus:ÎÄ¼þÈë¿â×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		FileImportMsg:ÎÄ¼þÈë¿â½á¹ûÃèÊö
+	-->
+	<Function name="FileImport3" desc="¶ÔÕËÎÄ¼þÈë¿â">
+		<Output>FileImportStatus|FileImportMsg|</Output>
+		<DynSentence name="DelLotChkCtl" desc="É¾³ý¶ÔÕË¿ØÖÆ±íÖÐµÄ¾ÉÊý¾Ý">
+			<Sentence>
+				delete from LotChkCtl
+				where GameId='%s' and DrawId='%s' and KenoId='%s'
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|</Fields>
+		</DynSentence>
+		<DynSentence name="DelLotChkDtl" desc="É¾³ý¶ÔÕËÃ÷Ï¸±íÖÐµÄ¾ÉÊý¾Ý">
+			<Sentence>
+				delete from LotChkDtl
+				where GameId='%s' and DrawId='%s' and KenoId='%s'
+			</Sentence>
+			<Fields>GameId|DrawId|KenoId|</Fields>
+		</DynSentence>
+		<DynSentence name="InsLotChkCtl" desc="Ôö¼Ó¶ÔÕË¿ØÖÆ±íÊý¾Ý">
+			<Sentence>
+				insert into LotChkCtl (ChkDat, GameId, DrawId, KenoId, TotNum, TotAmt, ChkFlg, ChkTim)
+				values('%s','%s','%s','%s','%s','%s','%s','%s')
+			</Sentence>
+			<Fields>ChkDat|GameId|DrawId|KenoId|TotNum|TotAmt|ChkFlg|ChkTim|</Fields>
+		</DynSentence>
+		<DynSentence name="InsLotChkDtl" desc="Ôö¼Ó¶ÔÕËÃ÷Ï¸±íÊý¾Ý">
+			<Sentence>
+				insert into LotChkDtl (ChkDat, GameId, DrawId, KenoId, SeqNo, SchId, LotNam, TxnLog, PlayId, TxnTim, TxnAmt, ChkFlg, ChkTim)
+				values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
+			</Sentence>
+			<Fields>ChkDat|GameId|DrawId|KenoId|SeqNo|SchId|LotNam|TxnLog|PlayId|TxnTim|TxnAmt|ChkFlg|ChkTim|</Fields>
+		</DynSentence>
+		<Process>
+			<!-- ¶ÔÕËÎÄ¼þ²»µ¥¶À´¦ÀíÒ»¸ökenoÆÚ -->
+			<Set>KenoId= </Set>
+			
+			<!-- É¾³ý¶ÔÕË¿ØÖÆ±íºÍ¶ÔÕËÃ÷Ï¸±íÖÐ¶ÔÓ¦µÄÊý¾Ý -->
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="DelLotChkCtl"/>
+			</Exec>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="DelLotChkDtl"/>
+			</Exec>
+			
+			<!-- ÐÂÔö¶ÔÕË¿ØÖÆ±í -->
+			<Set>ChkDat=GETDATETIME(YYYYMMDD)</Set><!-- ¶ÔÕËÈÕÆÚ -->
+			<Set>TotNum=$sucessNum</Set>
+			<Set>TotAmt=$totalMoney</Set>
+			<Set>ChkFlg=0</Set>
+			<Set>ChkTim= </Set>
+			<Set>KenoId= </Set>
+			<Exec func="PUB:ExecSql" error="IGNORE">
+				<Arg name="SqlCmd"    value="InsLotChkCtl"/>
+			</Exec>
+			<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+				<Set>FileImportStatus=-1</Set>
+				<Set>FileImportMsg=ÐÂÔö¶ÔÕË¿ØÖÆÐÅÏ¢Ê§°Ü</Set>
+				<Return/>
+			</If>
+				
+			<If condition="IS_EQUAL_STRING($IsKeno,Y)">
+				<Set>Cnt=1</Set>
+				<While condition="INTCMP($Cnt,2,$RecNum)">
+					<Set>SubCnt=1</Set>
+					<Delete>ROOT.KenoId</Delete>
+					<Exec func="PUB:GetValue">
+						<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.KenoId)"/>
+						<Arg name="DestName" value="ROOT.KenoId"/>
+					</Exec>
+					<While>
+						<Delete>ROOT.Seq</Delete>
+						<Delete>ROOT.SchId</Delete>
+						<Delete>ROOT.LotNam</Delete>
+						<Delete>ROOT.TxnLog</Delete>
+						<Delete>ROOT.playId</Delete>
+						<Delete>ROOT.TxnTim</Delete>
+						<Delete>ROOT.TxnAmt</Delete>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.SeqNo)"/>
+							<Arg name="DestName" value="ROOT.SeqNo"/>
+						</Exec>
+						<If condition="IS_EQUAL_STRING($ROOT.SeqNo,)">
+							<Break/>
+						</If>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.SchId)"/>
+							<Arg name="DestName" value="ROOT.SchId"/>
+						</Exec>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.LotNam)"/>
+							<Arg name="DestName" value="ROOT.LotNam"/>
+						</Exec>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.TxnLog)"/>
+							<Arg name="DestName" value="ROOT.TxnLog"/>
+						</Exec>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.playId)"/>
+							<Arg name="DestName" value="ROOT.playId"/>
+						</Exec>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.TxnTim)"/>
+							<Arg name="DestName" value="ROOT.TxnTim"/>
+						</Exec>
+						<Exec func="PUB:GetValue">
+							<Arg name="SourName" value="STRCAT(ROOT.Rec_,$Cnt,.SubRec_,$SubCnt,.TxnAmt)"/>
+							<Arg name="DestName" value="ROOT.TxnAmt"/>
+						</Exec>
+						<Exec func="PUB:ExecSql" error="IGNORE">
+							<Arg name="SqlCmd"    value="InsLotChkDtl"/>
+						</Exec>
+						<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+							<Set>FileImportStatus=-1</Set>
+							<Set>FileImportMsg=STRCAT(ÐÂÔö¶ÔÕËÃ÷Ï¸ÐÅÏ¢Ê§°Ü[,$DrawId,-,$KenoId,])</Set>
+							<Return/>
+						</If>
+						<Set>SubCnt=ADD($SubCnt,1)</Set>
+					</While>
+					<Set>Cnt=ADD($Cnt,1)</Set>
+				</While>
+			</If>
+			<Else>
+				
+				<Exec func="PUB:InsertRecord" error="IGNORE">
+					<Arg name="TblNam"    value="lotchkdtl"/>
+					<Arg name="GrpNam"    value="Rec"/>
+					<Arg name="Ignore"    value="1"/>
+					<Arg name="FldLst"    value="ChkDat|GameId|DrawId|KenoId|ChkFlg|ChkTim|"/>
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<Set>FileImportStatus=-1</Set>
+					<Set>FileImportMsg=ÐÂÔö¶ÔÕËÃ÷Ï¸ÐÅÏ¢Ê§°Ü</Set>
+					<Return/>
+				</If>
+			</Else>
+			
+			<Set>FileImportStatus=0</Set>
+			<Set>FileImportMsg=¶ÔÕËÐÅÏ¢Èë¿â³É¹¦</Set>
+			
+		</Process>
+	</Function>
+	
+	<!--¼ÆËãÔþ²î
+	INPUT:
+	OUTPUT:
+		CalStat:Ôþ²î×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		CalMsg:Ôþ²î½á¹ûÃèÊö
+	-->
+	<Function name="CalcLotDifAmt" desc="¼ÆËãÔþ²î">
+		<Output>CalStat|CalMsg|</Output>
+		<DynSentence name="CalcLotDifAmt" desc="¼ÆËãÔþ²î">
+			<Sentence>
+				select GameId, DrawId, KenoId, TotAmt, PrzAmt
+				from LotDrwTbl 
+				where PrzAmt!='' and TotAmt!='' and ChkFlg='2' and FlwCtl='10' and KenoId in ('','AAAAA')
+					and (DifAmt='' or DifFlg='')
+			</Sentence>
+			<Fields></Fields>
+		</DynSentence>
+		<DynSentence name="UpdLotDifAmt" desc="¸üÐÂÔþ²î">
+			<Sentence>
+				update LotDrwTbl
+				set DifAmt='%s', DifFlg='%s'
+				where GameId='%s' and DrawId='%s' and KenoId='%s'
+			</Sentence>
+			<Fields>DifAmt|DifFlg|GameId|DrawId|KenoId|</Fields>
+		</DynSentence>
+		<DynSentence name="QryUnPrzDrw" desc="²éÑ¯Î´»ã×Ü·µ½±µÄ¼ÇÂ¼">
+			<Sentence>
+				select GameId, DrawId 
+				from LotDrwTbl 
+				where KenoId='AAAAA' and PrzAmt='' and FlwCtl!='10'
+			</Sentence>
+			<Fields></Fields>
+		</DynSentence>
+		<DynSentence name="StatUnPrzDrw" desc="Í³¼ÆKenoÆÚÎ´·µ½±µÄÊýÁ¿">
+			<Sentence>
+				select count(*) UnPrzCnt 
+				from LotDrwTbl 
+				where GameId='%s' and DrawId='%s' and PrzAmt='' and FlwCtl!='10' and KenoId != 'AAAAA'
+			</Sentence>
+			<Fields>GameId|DrawId|</Fields>
+		</DynSentence>
+		<DynSentence name="StatUnPrzDrw" desc="Í³¼ÆKenoÆÚÎ´·µ½±µÄÊýÁ¿">
+			<Sentence>
+				select count(*) UnPrzCnt 
+				from LotDrwTbl 
+				where GameId='%s' and DrawId='%s' and PrzAmt='' and FlwCtl!='10' and KenoId != 'AAAAA'
+			</Sentence>
+			<Fields>GameId|DrawId|</Fields>
+		</DynSentence>
+		<DynSentence name="SumPrzDrw" desc="»ã×Ü·µ½±½ð¶î">
+			<Sentence>
+				select COALESCE(sum(bigint(PrzAmt)),0) PrzSumAmt
+				from LotDrwTbl 
+				where GameId='%s' and DrawId='%s' and PrzAmt!='' and FlwCtl='10' and KenoId != 'AAAAA'
+			</Sentence>
+			<Fields>GameId|DrawId|</Fields>
+		</DynSentence>
+		<DynSentence name="UpdDrwPrzInf" desc="¸üÐÂ»ã×Ü·µ½±½ð¶î">
+			<Sentence>
+				update LotDrwTbl a
+				set a.PrzAmt='%s', a.FlwCtl='10',
+					a.PayAmt = (select cast(sum(bigint(case when b.PayAmt = '' then '0' else b.PayAmt end)) as char(15)) from LotDrwTbl b where a.GameId = b.GameId and a.DrawId = b.DrawId and b.KenoId != 'AAAAA'),
+					a.PayFlg = ( select (case when exists(select 'Y' from LotDrwTbl c where c.GameId = a.GameId and c.DrawId = a.DrawId and c.KenoId != 'AAAAA' and c.PayFlg = '1') then '1' else '0' end) from LotDrwTbl d where d.GameId=a.GameId and d.DrawId=a.DrawId and d.KenoId='AAAAA')
+				where a.GameId='%s' and a.DrawId='%s' and a.KenoId = 'AAAAA'
+			</Sentence>
+			<Fields>PrzSumAmt|GameId|DrawId|</Fields>
+		</DynSentence>
+		<Process>
+		
+			<!-- ´¦ÀíKenoÆÚ¼ÇÂ¼£¬Èç¹ûÄ³ÆÚµÄËùÓÐKenoÆÚ¶¼Íê³É·µ½±£¬Ôò¸üÐÂ¸ÄÆÚµÄ·µ½±×Ü½ð¶îºÍ·µ½±±êÖ¾ -->
+			<Exec func="PUB:OpenCursor" error="IGNORE">
+				<Arg name="sql" value="QryUnPrzDrw"/>
+				<Arg name="CursorName" value="CURSOR_PRZ"/>
+			</Exec>
+			<If condition="AND(IS_NOEQUAL_STRING(~RetCod,0),IS_NOEQUAL_STRING(~RetCod,-2))">
+				<Set>CalStat=-1</Set>
+				<Set>CalMsg=¸üÐÂ·µ½±»ã×ÜÐÅÏ¢Ê§°Ü</Set>
+				<Return/>
+			</If>
+			<While>
+				<Delete>ROOT.GameId</Delete>
+				<Delete>ROOT.DrawId</Delete>
+				<Exec func="PUB:FetchCursor" error="IGNORE">
+					<Arg name="CursorName" value="CURSOR_PRZ"/>
+				</Exec>
+				<If condition="~RetCod=100">
+					<Break/>
+				</If>
+				
+				<Exec func="PUB:ReadRecord" error="IGNORE">
+	               <Arg name="SqlCmd" value="StatUnPrzDrw"/>
+	            </Exec>
+	            <If condition="IS_EQUAL_STRING($UnPrzCnt,0)">
+	            	<!-- ¸ÃÆÚµÄËùÓÐKenoÆÚ¶¼ÒÑ¾­·µ½±Íê³É£¬¸üÐÂAAAAA¼ÇÂ¼µÄ»ã×ÜÐÅÏ¢ -->
+					<Exec func="PUB:ReadRecord" error="IGNORE">
+		               <Arg name="SqlCmd" value="SumPrzDrw"/>
+		            </Exec>
+					<Exec func="PUB:ExecSql" error="IGNORE">
+						<Arg name="SqlCmd"    value="UpdDrwPrzInf"/>
+					</Exec>
+					<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+						<Set>CalStat=-1</Set>
+						<Set>CalMsg=STRCAT(¸üÐÂ»ã×Ü·µ½±ÐÅÏ¢Ê§°Ü[,$GameId,-,$DrawId,])</Set>
+						<Return/>
+					</If>
+	            </If>
+			</While>
+			<Exec func="PUB:CloseCursor" error="IGNORE">
+				<Arg name="CursorName" value="CURSOR_PRZ"/>
+			</Exec>
+		
+			<!-- ²éÑ¯ÊÇ·ñÓÐ·ûºÏÌõ¼þµÄÎ´¼ÆËãÔþ²îµÄ¼ÇÂ¼ -->
+			<Exec func="PUB:OpenCursor" error="IGNORE">
+				<Arg name="sql" value="CalcLotDifAmt"/>
+				<Arg name="CursorName" value="CURSOR_CAL"/>
+			</Exec>
+			<If condition="AND(IS_NOEQUAL_STRING(~RetCod,0),IS_NOEQUAL_STRING(~RetCod,-2))">
+				<Set>CalStat=-1</Set>
+				<Set>CalMsg=Í³¼ÆÔþ²îÊ§°Ü</Set>
+				<Return/>
+			</If>
+			<While>
+				<Delete>ROOT.GameId</Delete>
+				<Delete>ROOT.DrawId</Delete>
+				<Delete>ROOT.KenoId</Delete>
+				<Delete>ROOT.TotAmt</Delete>
+				<Delete>ROOT.PrzAmt</Delete>
+				<Exec func="PUB:FetchCursor" error="IGNORE">
+					<Arg name="CursorName" value="CURSOR_CAL"/>
+				</Exec>
+				<If condition="~RetCod=100">
+					<Break/>
+				</If>
+				
+				<If condition="INTCMP($TotAmt,5,$PrzAmt)">
+					<!-- 1½è·½£¨¹º²Ê×Ü½ð¶î´óÓÚ·µ½±×Ü½ð¶î£© -->
+					<Set>DifFlg=1</Set>
+					<Set>DifAmt=SUB($TotAmt,$PrzAmt)</Set>
+				</If>
+				<Else>
+					<!-- 0´û·½£¨¹º²Ê×Ü½ð¶îÐ¡ÓÚ½±×Ü½ð¶î£© -->
+					<Set>DifFlg=0</Set>
+					<Set>DifAmt=SUB($PrzAmt,$TotAmt)</Set>
+				</Else>
+				
+				<Exec func="PUB:ExecSql" error="IGNORE">
+					<Arg name="SqlCmd"    value="UpdLotDifAmt"/>
+				</Exec>
+				<If condition="IS_NOEQUAL_STRING(~RetCod,0)">
+					<Set>CalStat=-1</Set>
+					<Set>CalMsg=STRCAT(¸üÐÂÔþ²îÊ§°Ü[,$GameId,-,$DrawId,])</Set>
+					<Return/>
+				</If>
+				
+			</While>
+			<Exec func="PUB:CloseCursor" error="IGNORE">
+				<Arg name="CursorName" value="CURSOR_CAL"/>
+			</Exec>
+
+		</Process>
+	</Function>	
+
+	<!--»ñÈ¡ÐéÄâ¹ñÔ±
+	INPUT:
+		BrNo:·ÖÐÐºÅ
+	OUTPUT:
+		GetVTlrIdStatus:»ñÈ¡×´Ì¬£¨0£º³É¹¦  -1£ºÊ§°Ü£©
+		Tlrid:µç×Ó¹ñÔ±ºÅ
+	-->
+	<Function name="GetVirtualTeller" desc="»ñÈ¡µç×Ó¹ñÔ±ºÅ">
+		<Input>BrNo|</Input>
+		<Output>GetVTlrIdStatus|Tlrid|</Output>
+		<Process>
+			<Set>TxnCnl=LOT</Set>
+			<Set>CnLSub=$BrNo</Set>
+			<Exec func="PUB:GetVirtualTeller" error="IGNORE">
+				<If condition="~RetCod=-1">
+					<Set>GetVTlrIdStatus=-1</Set>
+				</If>
+				<Else>
+					<Set>GetVTlrIdStatus=0</Set>
+				</Else>
+			</Exec>
+		</Process>
+	</Function>
+	
+	<Function name="GetTxnLogNo" desc="»ñÈ¡¹º²ÊÁ÷Ë®ºÅ">
+		<Input>DealId|</Input>
+		<Output>SelVal|</Output>
+		<DynSentence name="CndSts" desc="Ìõ¼þ">
+			<Sentence>
+				DealId='%s'
+			</Sentence>
+			<Fields>DealId|</Fields>
+		</DynSentence>
+		<Process>
+			<Exec func="PUB:GetSeqNoCircle" desc="»ñµÃ$SelVal">
+				<Arg name="TblNam" value="LotSysCfg"/>
+				<Arg name="SeqCol" value="LOGSEQ"/>
+				<Arg name="Len" value="9"/>
+				<Arg name="CndSts" value="CndSts"/>
+				<Arg name="ColNam" value="SelVal"/>
+			</Exec>
+			<Set>SelVal=STRCAT($DealId,$SelVal)</Set>
+		</Process>
+	</Function>
+	
+	<Function name="GetSysCfg" desc="»ñÈ¡ÏµÍ³ÅäÖÃ">
+		<Input>DealId|</Input>
+		<Output>DSCAgtNo|DFCAgtNo|HSActNo|WhPhone|GcActNo|FCActNo|DFActNo|</Output>
+		<DynSentence name="GetSysCfg" desc="»ñÈ¡ÏµÍ³ÅäÖÃ">
+			<Sentence>
+				select DSCAGTNO,DFCAGTNO,HSACTNO,WHPHONE
+				from LotSysCfg
+				where DealId='%s'
+			</Sentence>
+			<Fields>DealId|</Fields>
+		</DynSentence>
+		<DynSentence name="QryAgtInf" desc="²éÑ¯´úÊÕ´ú·¢Ð­ÒéÐÅÏ¢">
+			<Sentence>
+				select TACTNO, STLACT
+				from SAVCRPINF
+				where CAGTNO='%s'
+			</Sentence>
+			<Fields>CagtNo|</Fields>
+		</DynSentence>
+		<Process>
+			<Exec func="PUB:ReadRecord" error="IGNORE">
+               <Arg name="SqlCmd" value="GetSysCfg"/>
+            </Exec>
+            <Set>CagtNo=$DSCAgtNo</Set>
+			<Exec func="PUB:ReadRecord" desc="²éÑ¯Ð­ÒéÐÅÏ¢">
+				<Arg name="SqlCmd" value="QryAgtInf"/>
+			</Exec>
+			<Set>FCActNo=$STLACT</Set>
+			<Set>GcActNo=$TACTNO</Set>
+			
+            <Set>CagtNo=$DFCAGTNO</Set>
+			<Exec func="PUB:ReadRecord" desc="²éÑ¯Ð­ÒéÐÅÏ¢">
+				<Arg name="SqlCmd" value="QryAgtInf"/>
+			</Exec>
+			<Set>DFActNo=$STLACT</Set>
+            
+		</Process>
+	</Function>
+	
+	<!--¼ÆËãÊ±²î
+	INPUT:
+		NodNo:ÍøµãºÅ
+		BrNo:·ÖÐÐºÅ
+		Date1:Ê±¼ä1£¨¸£²ÊÊ±¼ä£©
+		Date2:Ê±¼ä2£¨±¾µØÊ±¼ä£©
+	OUTPUT:
+		DifTim:Ê±²î£¨Ãë£©
+	-->
+	<Function name="DifTim" desc="¼ÆËãÊ±²î">
+		<Input>NodNo|BrNo|Date1|Date2|</Input>
+		<Output>DifTim|</Output>
+		<Process>
+			<!-- ¼ì²é·ÖÐÐºÅÊÇ·ñ´æÔÚ -->
+			<If condition="IS_EQUAL_STRING($BrNo,)">
+				<Exec func="PUB:GetBranchNoByNodeNo" error="IGNORE"></Exec>
+				<If condition="IS_EQUAL_STRING(~RetCod,)">
+					<Set>BrNo=441999</Set>
+				</If>
+			</If>
+			
+			<!-- »ñÈ¡µ÷ÓÃÐòºÅ 
+			<Exec func="PUB:nGetPubSeqNo" desc="»ñµÃ$SelVal">
+				<Arg name="SeqNam" value="LOT:CALLID"/>
+				<Arg name="Len" value="9"/>
+				<Arg name="CycCnd" value="D"/>
+			</Exec>
+			-->
+			<Set>SelVal=000000001</Set>
+			
+			<!-- µ÷ÓÃÍâ²¿ÃüÁî»ñÈ¡½á¹û -->
+			<Set>ResultFile=STRCAT(/app/ics/dat/lot/,TIMEd,$SelVal,.dat)</Set>
+			<System command="java -cp /app/ics/app/lot/bin TimeCalTool " error="IGNORE">
+				<Arg name="funcTyp" value="d"/>
+				<Arg name="callId" value="$SelVal"/>
+				<Arg name="resultPath" value="/app/ics/dat/lot"/>
+				<Arg name="date1Fmt" value="yyyyMMddHHmmss"/>
+				<Arg name="date1" value="$Date1"/>
+				<Arg name="date2Fmt" value="yyyyMMddHHmmss"/>
+				<Arg name="date2" value="$Date2"/>
+			</System> 
+			
+			<!-- ¶ÁÈ¡½á¹û -->
+			<Exec func="PUB:OpenFile">
+				<Arg name="FileName" value="$ResultFile"/>
+				<Arg name="Mode" value="r"/>
+			</Exec>
+			<Exec func="PUB:ReadFile">
+				<Arg name="FieldName" value="CallResult"/>
+				<Arg name="ReadLen" value="20"/>
+			</Exec>
+			<Exec func="PUB:CloseFile">
+			</Exec>
+			
+			<!-- ·µ»Ø½á¹û -->
+			<Set>DifTim=DELBOTHSPACE($CallResult)</Set>
+
+		</Process>
+	</Function>
+	
+	<!--¼ÆËãÊ±¼ä
+	INPUT:
+		NodNo:ÍøµãºÅ
+		BrNo:·ÖÐÐºÅ
+		SrcDate:Ô­Ê±¼ä
+		DifTim:Ê±²î£¨Ãë£©
+	OUTPUT:
+		DesDate:¼ÆËãºóµÄÊ±¼ä
+	-->
+	<Function name="CalTim" desc="¼ÆËãÊ±¼ä">
+		<Input>NodNo|BrNo|SrcDate|DifTim|</Input>
+		<Output>DesDate|</Output>
+		<Process>
+			<!-- ¼ì²é·ÖÐÐºÅÊÇ·ñ´æÔÚ -->
+			<If condition="IS_EQUAL_STRING($BrNo,)">
+				<Exec func="PUB:GetBranchNoByNodeNo" error="IGNORE"></Exec>
+				<If condition="IS_EQUAL_STRING(~RetCod,)">
+					<Set>BrNo=441999</Set>
+				</If>
+			</If>
+			
+			<!-- »ñÈ¡µ÷ÓÃÐòºÅ 
+			<Exec func="PUB:nGetPubSeqNo" desc="»ñµÃ$SelVal">
+				<Arg name="SeqNam" value="LOT:CALLID"/>
+				<Arg name="Len" value="9"/>
+				<Arg name="CycCnd" value="D"/>
+			</Exec>
+			-->
+			<Set>SelVal=000000001</Set>
+			
+			<!-- µ÷ÓÃÍâ²¿ÃüÁî»ñÈ¡½á¹û -->
+			<Set>ResultFile=STRCAT(/app/ics/dat/lot/,TIMEc,$SelVal,.dat)</Set>
+			<System command="java -cp /app/ics/app/lot/bin TimeCalTool " error="IGNORE">
+				<Arg name="funcTyp" value="c"/>
+				<Arg name="callId" value="$SelVal"/>
+				<Arg name="resultPath" value="/app/ics/dat/lot"/>
+				<Arg name="date1Fmt" value="yyyyMMddHHmmss"/>
+				<Arg name="date1" value="$SrcDate"/>
+				<Arg name="date2Fmt" value="yyyyMMddHHmmss"/>
+				<Arg name="DifTim" value="$DifTim"/>
+			</System> 
+			
+			<!-- ¶ÁÈ¡½á¹û -->
+			<Exec func="PUB:OpenFile">
+				<Arg name="FileName" value="$ResultFile"/>
+				<Arg name="Mode" value="r"/>
+			</Exec>
+			<Exec func="PUB:ReadFile">
+				<Arg name="FieldName" value="CallResult"/>
+				<Arg name="ReadLen" value="20"/>
+			</Exec>
+			<Exec func="PUB:CloseFile">
+			</Exec>
+			
+			<!-- ·µ»Ø½á¹û -->
+			<Set>DesDate=DELBOTHSPACE($CallResult)</Set>
+
+		</Process>
+	</Function>
+
+	
+</Package>

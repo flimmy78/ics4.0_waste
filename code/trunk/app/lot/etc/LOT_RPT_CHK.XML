@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- ¶ÔÕË½á¹ûÇåµ¥ -->
+<Application  dbconnect="YES" trclog="GDS_RPT_44101_2.log">
+	<VarDef>
+		<String alias="RptTyp"   pos="1" />
+		<String alias="GameNm"   pos="2" />
+		<String alias="DrawId"   pos="3" />
+		<String alias="DrawNm"   pos="4" />
+		<String alias="Sql"      pos="5" />
+	</VarDef>
+	<MsgConvert>
+		<Item alias="RptTyp">
+			<Convert value="1"  msg="¶ÔÕË³É¹¦Çåµ¥" />
+			<Convert value="2"  msg="ÒøÐÐ·½¶ÔÕËÊ§°ÜÇåµ¥" />
+			<Convert value="3"  msg="¸£²Ê·½¶ÔÕËÊ§°ÜÇåµ¥" />
+			<DEFAULT msg="¶ÔÕËÇåµ¥"/>
+		</Item>
+	</MsgConvert>
+	
+	<DataSource object="sql">
+		<Iterative>
+			<Sql sql="%s">
+        		<FieldList>$Sql|</FieldList>
+			</Sql>
+		</Iterative>
+		<SubTotal type="field" groupby="NODNO|">
+			<Field fmtseq="1" field="NODNO">
+				<Sum count="SubCnt"/>
+			</Field>
+		</SubTotal>
+		<Summed type="field">
+			<Field count="TotCnt"/>
+		</Summed>
+
+	</DataSource>
+
+	<FormatDefine pagerows="50" pagesum="YES">
+		<TableHeader>
+			<Para label="01" alias="DELBOTHSPACE($RptTyp)"   spread="right"/>
+			<Para label="02" alias="DELBOTHSPACE($GameNm)"   spread="right"/>
+			<Para label="03" alias="DELBOTHSPACE($DrawId)"   spread="right"/>
+			<Para label="04" alias="DELBOTHSPACE($DrawNm)"   spread="right"/>
+			<Para label="05" alias="GETDATETIME(YYYY)"       spread="right"/> 
+			<Para label="06" alias="GETDATETIME(MM)"         spread="right"/> 
+			<Para label="07" alias="GETDATETIME(DD)"         spread="right"/>
+			<Format>
+                                                    #
+                                                 ========================================
+      ÓÎÏ·ÀàÐÍ:#                               ÆÚºÅ:#        ÆÚÃû:#                                       ´òÓ¡ÈÕÆÚ£º   # Äê  # ÔÂ  #ÈÕ 
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      KENOÆÚºÅ  Í¶×¢Á÷Ë®ºÅ    ºËÐÄÁ÷Ë®ºÅ      ²ÊÃñ±êÊ¶      Í¶×¢¿¨ºÅ               Íæ·¨±àºÅ  Í¶×¢½ð¶î         Í¶×¢Ê±¼ä
+      #         #             #               #             #                      #         #                #
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+			</Format>
+		</TableHeader>
+		<Iterative line="1">
+			<Para label="01" alias="ADDCHAR(DELBOTHSPACE($KenoId),5, ,0)"       spread="right"/>
+			<Para label="02" alias="ADDCHAR(DELBOTHSPACE($TxnLog),12, ,0)"      spread="right"/>
+			<Para label="03" alias="ADDCHAR(DELBOTHSPACE($HLogNo),15, ,0)"      spread="right"/>
+			<Para label="04" alias="ADDCHAR(DELBOTHSPACE($LotNam),13, ,0)"      spread="right"/>
+			<Para label="05" alias="ADDCHAR(DELBOTHSPACE($CrdNo),21, ,0)"       spread="right"/>
+			<Para label="06" alias="ADDCHAR(DELBOTHSPACE($PlayId),2, ,0)"       spread="right"/>
+			<Para label="07" alias="ADDCHAR(DELBOTHSPACE($TxnAmt),15, ,1)"      spread="right"/>
+			<Para label="08" alias="ADDCHAR(DELBOTHSPACE($TxnTim),14, ,0)"      spread="right"/>
+			<Format>
+      #         #             #               #             #                      #         #                #
+      --------------------------------------------------------------------------------------------------------------------------------
+			</Format>
+		</Iterative>
+		<Summed>
+			<Para label="01" alias="AMTDELZERO($TotCnt)" spread="right" />       
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ×Ü¼ÆÐÐÊý: #
+			</Format>
+		</Summed>
+    
+		<TableFooter>
+			<Para label="01" alias="$TlrId"   spread="right"/>
+			<Para label="02" alias="$PAGESUM" spread="mid"/>
+			<Para label="03" alias="$PAGENUM" spread="mid"/>
+			<Format>
+      ©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥©¥
+      ÖÆ±íÈË£º#                                                                                             ¹²  #  Ò³   µÚ  #  Ò³
+			</Format>
+		</TableFooter>
+	</FormatDefine>
+</Application>
