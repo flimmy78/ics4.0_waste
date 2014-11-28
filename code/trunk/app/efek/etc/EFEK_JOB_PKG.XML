@@ -78,8 +78,7 @@
       <If condition="~RetCod!=0">
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=缴费号查询失败</Set>
-        <Return/>      <Call package="AFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
-
+        <Return/>
       </If>
       <If condition="STRCMP($cnt1,0)=0">
         <Set>RspCod=EFE999</Set>

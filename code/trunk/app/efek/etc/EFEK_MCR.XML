@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<FrontTab>
+  <Macro name="EfeSqlLst" desc="Êý¾Ý²Ù×÷ºêÇåµ¥">
+    <DynSentence name="UpdJobLst" desc="¸üÐÂ´ý´¦ÀíÐÅÏ¢">
+      <Sentence>
+        update pfajoblst set JobSts='1' where pfasub='%s' and pfadat='%s' and SPfaCd='%s'
+      </Sentence>
+      <Fields>PfaSub|PfaDat|SPfaCd|</Fields>
+    </DynSentence>
+  </Macro>
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+  <Macro name="Chk_TxnSrc">  <!--¼ì²é½»Ò×À´Ô´-->
+    <If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
+      <Set>TxnCnl=TRM</Set>
+      <Set>CnlTyp=0</Set>
+    </If>
+    <Else>
+      <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
+      <Exec func="PUB:CodeSwitching">
+        <Arg name="DatSrc"  value="OPFCSW"/>
+        <Arg name="SourNam" value="TxnSrc"/>
+        <Arg name="DestNam" value="CnlTyp"/>
+        <Arg name="TblNam"  value="TxnSrc2CnlTyp"/>
+      </Exec>
+    </Else>
+  </Macro>
+
+  <Macro name="GetEfeId">
+    <Set>EfeId=STRCAT(SUBSTR($NodNo,1,3),999)</Set>
+  </Macro>
+
+  <Macro name="TxnSrc_TxnCnl">
+    <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
+    <Exec func="PUB:CodeSwitching">
+      <Arg name="DatSrc"  value="OPFCSW"/>
+      <Arg name="SourNam" value="TxnSrc"/>
+      <Arg name="DestNam" value="TxnCnl"/>
+      <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
+    </Exec>
+  </Macro>
+
+  <Macro name="InitTran" desc="½»Ò×³õÊ¼»¯">
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="TlrId"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="´æÔÚ">
+      <Exec func="PUB:GetBranchNoByTeller" error="IGNORE"/>
+    </If>
+    <Else>
+      <Exec func="PUB:GetBranchNoByNodeNo"/>
+    </Else>
+<!--
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="BrNo"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,-1)" desc="²»´æÔÚ">
+      <Set>MsgTyp=E</Set>
+      <Set>RspCod=EFE999</Set>
+      <Set>RspMsg=È±ÉÙ·ÖÐÐºÅÅäÖÃÐÅÏ¢</Set>
+      <Return/>
+    </If>
+-->
+    <Exec func="PUB:InitTransaction"/>
+    <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
+    <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+    <Set>OBrNo=$BrNo</Set>
+    <Set>BrNo=999999</Set>
+    <Exec func="PUB:nGetPubSeqNo">
+      <Arg name="SeqNam" value="EFE:JYLSH"/>
+      <Arg name="SeqCnt" value="1"/>
+      <Arg name="Len"    value="12"/>
+      <Arg name="CycCnd" value="Y"/>
+    </Exec>
+    <Set>JYBSH=STRCAT($JYRQ,$SelVal)</Set>
+    <Set>JYLSH=STRCAT($JYRQ,0301,$SelVal)</Set>
+    <Set>BrNo=$OBrNo</Set>
+    <Delete>OBrNo</Delete>
+  </Macro>
+
+  <Macro name="SendThirdOther" desc="·¢ËÍµÚÈý·½Á÷³Ì¡¾²éÑ¯Àà¡¿">
+    <Quote name="InitTran"/>
+    <Set>WDMC=@BCFG.BrNam</Set>
+    <Exec func="PUB:CallThirdOther" error="IGNORE">
+      <Arg name="TxnCod" value="$SvrCod"/>
+      <Arg name="ObjSvr" value="STHDEFEK"/>
+    </Exec>
+    <Switch expression="~RetCod">
+      <Case value="0" desc="³É¹¦">
+        <Set>MsgTyp=N</Set>
+        <Set>RspCod=000000</Set>
+        <Break/>
+      </Case>
+      <Case value="3" desc="½»Ò×Ê§°Ü">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=$TRspCd</Set>
+        <Break/>
+      </Case>
+      <Case value="-1" desc="³¬Ê±">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=½»Ò×³¬Ê±</Set>
+        <Break/>
+      </Case>
+      <Case value="-2" desc="ÏµÍ³¹ÊÕÏ">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=ÏµÍ³¹ÊÕÏ</Set>
+        <Break/>
+      </Case>
+      <Case value="-10" desc="½»Ò×·¢ËÍÊ§°Ü">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=½»Ò×·¢ËÍÊ§°Ü</Set>
+        <Break/>
+      </Case>
+      <Default>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=½»Ò×Ê§°Ü£¬ÆäËûÎ´ÖªÇé¿ö</Set>
+        <Break/>
+      </Default>
+    </Switch>
+  </Macro>
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+<!--ÒÔÉÏÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
+</FrontTab>

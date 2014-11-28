@@ -7,93 +7,21 @@
       <Column name="DWBM" sort="no"/>
       <Column name="CAgtNo" sort="no"/>
     </Table>
+    <Table name="RspCodToJYFHDM" file="etc/EFE_CSW_441999.XML">
+      <Column name="RspCod" sort="no"/>
+      <Column name="JYFHDM" sort="no"/>
+    </Table>
+
   </CodeSwitching>
 	<GetTxnCode>
 		<Item type="fixed" offset="96" length="2"/>
 	</GetTxnCode>
 
-  <!--CodeSwitching>
-    <Table name="RspCod2TRspCd_DL"  file="etc/EFE_CSW_441999.XML">
-      <Column name="RspCod"   sort="no"/>
-      <Column name="TRspCd"   sort="no"/>
-    </Table>
-    <Table name="RspCod2TRspMsg_DL" file="etc/EFE_CSW_441999.XML">
-      <Column name="RspCod"   sort="no"/>
-      <Column name="RspMsg"   sort="no"/>
-    </Table>
-		<Table name="DL_OAN"  file="etc/EFE_CSW_441999.XML">
-			<Column name="OAN" sort="no"/>
-			<Column name="CAgtNo" sort="no"/>
-		</Table>
-  </CodeSwitching-->
-
-	<Define>
-
-		<Macro name="req_head"> <!--交易请求报文头-->
-      <Item name="SJBCD"     length="10" desc="数据包长度"/>
-      <Item name="MYSY"     length="3" desc="密钥索引"/>
-      <Item name="MYCSXL"     length="32" desc="密钥初始向量"/>
-      <Item name="XYBBH"     length="5" desc="协议版本号"/>
-      <Item name="YWBSH"     length="6" desc="业务标识号"/>
-      <Item name="JYBSH"     length="20" desc="交易标识号"/>
-      <Item name="JYRBS"     length="20" desc="交易人标识"/>
-      <Item name="JYM"     length="2" desc="交易码"/>
-      <Item name="SJBLX"     length="1" desc="数据包类型"/>
-      <Item name="JYFQF"     length="8" desc="交易发起方"/>
-      <Item name="JYJSF"     length="8" desc="交易接收方"/>
-      <Item name="JYYDZ"     length="24" desc="交易源地址"/>
-      <Item name="JYMBDZ"     length="24" desc="交易目标地址"/>
-      <Item name="JYFSRQ"     length="8" desc="交易发送日期"/>
-      <Item name="JYFSSJ"     length="6" desc="交易发送时间"/>
-      <Item name="JYYXJ"     length="1" desc="交易优先级"/>
-      <Item name="JYFHDM"     length="5" desc="交易返回代码"/>
-      <Item name="YSBZ"     length="1" desc="压缩标志"/>
-		</Macro>
-
-		<Macro name="resp_head"> <!--交易应答报文头-->
-      <!--Item name="SJBCD"     length="10" desc="数据包长度"/-->
-      <Item name="MYSY"     length="3" desc="密钥索引"/>
-      <Item name="MYCSXL"     length="32" desc="密钥初始向量"/>
-      <Item name="XYBBH"     length="5" desc="协议版本号"/>
-      <Item name="YWBSH"     length="6" desc="业务标识号"/>
-      <Item name="JYBSH"     length="20" desc="交易标识号"/>
-      <Item name="JYRBS"     length="20" desc="交易人标识"/>
-      <Item name="JYM"     length="2" desc="交易码"/>
-      <Item name="SJBLX"     length="1" desc="数据包类型"/>
-      <Item name="JYFQF"     length="8" desc="交易发起方"/>
-      <Item name="JYJSF"     length="8" desc="交易接收方"/>
-      <Item name="JYYDZ"     length="24" desc="交易源地址"/>
-      <Item name="JYMBDZ"     length="24" desc="交易目标地址"/>
-      <Item name="JYFSRQ"     length="8" desc="交易发送日期"/>
-      <Item name="JYFSSJ"     length="6" desc="交易发送时间"/>
-      <Item name="JYYXJ"     length="1" desc="交易优先级"/>
-      <Item name="JYFHDM"     length="5" desc="交易返回代码"/>
-      <Item name="YSBZ"     length="1" desc="压缩标志"/>
-		</Macro>
-
-		<Macro name="err_head"> <!--交易应答报文头-->
-      <Item name="CWTSXX"     length="256" desc="错误提示信息"/>
-      <Item name="CWFSRQ"     length="8" desc="错误发生日期"/>
-      <Item name="CWFSSJ"     length="6" desc="错误发生时间"/>
-      <Item name="CWFSJYM"     length="2" desc="错误发生交易码"/>
-      <Item name="SQLCODE"     length="7" desc="SQL返回码"/>
-		</Macro>
-
-		<Macro name="err_case"> <!--交易应答报文头-->
-      <PackItem name="TmpDat">
-        <Quote name="resp_head"/>      <!--包头-->
-        <AddItem name="NUM_LEN" value="000001"/>
-        <Item name="NUM_LEN"     length="6" desc="子包个数" />
-        <Quote name="err_head"/>      <!--包头-->
-      </PackItem>
-      <Item name="TmpDat" head_len="10" include_len="no"/>
-		</Macro>
-
-	</Define>
+  <Include file="app/efek/etc/THDEFEK_IIT.XML"/>
 
 	<Transaction code="20" service="460420" log_switch="5" des="供电方发起批量代扣交易请求">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 	    <Group name="Rec" repeat_name="PkgCnt">
         <Item name="JYLSH"  length="24" desc="交易流水号"/>
@@ -114,11 +42,11 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
+          <Quote name="RcvRspHead"/>      <!--包头-->
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -131,7 +59,7 @@
 
 	<Transaction code="22" service="460422" log_switch="5" des="供电方发起单笔代扣交易请求">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 
       <Item name="WDMC"     length="64" desc="网点名称"/>
@@ -162,7 +90,7 @@
       <Switch expression="$MsgTyp">
         <Case value="N">
           <PackItem name="TmpDat">
-            <Quote name="resp_head"/>      <!--包头-->
+            <Quote name="RcvRspHead"/>      <!--包头-->
             <AddItem name="NUM_LEN" value="000001"/>
             <Item name="NUM_LEN"     length="6" desc="子包个数" />
 
@@ -195,7 +123,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -208,7 +136,7 @@
 
 	<Transaction code="23" service="460423" log_switch="5" des="供电方发起单笔当日代扣抹帐交易请求">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 	    <Group name="Rec"    repeat_name="PkgCnt">
         <Item name="WDMC"     length="64" desc="网点名称" />
@@ -238,12 +166,12 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
+          <Quote name="RcvRspHead"/>      <!--包头-->
 
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -256,7 +184,7 @@
 
 	<Transaction code="**" service="******" log_switch="5" des="">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 	    <Group name="Rec"    repeat_name="PkgCnt">
         <Item name="WDMC"     length="64" desc="网点名称" />
@@ -286,12 +214,12 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
+          <Quote name="RcvRspHead"/>      <!--包头-->
 
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -304,7 +232,7 @@
 
 	<Transaction code="24" service="460424" log_switch="5" des="供电批量代扣取消业务">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 	    <Group name="Rec"    repeat_name="PkgCnt">
         <Item name="JYLSH"     length="24" desc="交易流水号" />
@@ -327,7 +255,7 @@
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="resp_head"/>      <!--包头-->
+          <Quote name="RcvRspHead"/>      <!--包头-->
             <Item name="JYLSH"     length="24" desc="交易流水号" />
             <Item name="JYRQ"     length="8" desc="交易日期" />
             <Item name="JYSJ"     length="6" desc="交易时间" />
@@ -343,7 +271,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -356,7 +284,7 @@
 
 	<Transaction code="32" service="460432" log_switch="5" des="供电到银行变更代扣协议交易">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
+			<Quote name="RcvReqHead"/>      <!--包头-->
 	    <Item name="PkgCnt" length="6" desc="子包个数" />
 	    <Group name="Rec"    repeat_name="PkgCnt">
         <Item name="WDMC"     length="64" desc="网点名称"/>
@@ -392,7 +320,7 @@
       <Switch expression="$MsgTyp">
         <Case value="N">
           <PackItem name="TmpDat">
-            <Quote name="resp_head"/>      <!--包头-->
+            <Quote name="RcvRspHead"/>      <!--包头-->
             <AddItem name="NUM_LEN" value="000000"/>
             <Item name="NUM_LEN"     length="6" desc="子包个数" />
           </PackItem>
@@ -400,7 +328,7 @@
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -413,34 +341,35 @@
 
 	<Transaction code="91" service="460491" log_switch="5" des="供电方发起银电业务开工交易请求">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
-	    <Item name="PkgCnt" length="6" desc="子包个数" />
-	    <Group name="Rec"    repeat_name="PkgCnt">
-        <Item name="JYLSH"     length="24" desc="交易流水号" />
-        <Item name="JYRQ"     length="8" desc="交易日期" />
-        <Item name="JYSJ"     length="6" desc="交易时间" />
-        <Item name="DWBM"     length="8" expression="TRIM($DWBM,both)" desc="单位编码" />
-        <Item name="YWBSH"     length="6" desc="业务标识号" />
-        <Item name="CZRY"     length="20" desc="操作人员" />
-        <Item name="ZT"     length="1" desc="状态" />
-        <Item name="BZ"     length="128" desc="备注" />
+			<Quote name="RcvReqHead"/>
+	    <Item name="PKGCNT" length="6" desc="子包个数"/>
+	    <Group name="Rec" repeat_name="PKGCNT">
+        <Item name="JYLSH" length="24" desc="交易流水号"/>
+        <Item name="JYRQ"  length=" 8" desc="交易日期"/>
+        <Item name="JYSJ"  length=" 6" desc="交易时间"/>
+        <Item name="DWBM"  length=" 8" desc="单位编码"/>
+        <Item name="YWBSH" length=" 6" desc="业务标识号"/>
+        <Item name="CZRY"  length="20" desc="操作人员"/>
+        <Item name="ZT"    length=" 1" desc="状态"/>
+        <Item name="BZ"    length="128" desc="备注"/>
 	    </Group>
-			<SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
-			<AddItem name="TxnCnl"  value="THD"/>
+<!--
+			<SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
+			<AddItem name="TxnCnl" value="THD"/>
+-->
 		</Request>
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
           <PackItem name="TmpDat">
-            <Quote name="resp_head"/>      <!--包头-->
-            <AddItem name="NUM_LEN" value="000000"/>
-            <Item name="NUM_LEN"     length="6" desc="子包个数" />
+            <Quote name="RcvRspHead"/>
+            <Item name="PKGCNT" length="6" value="000000" desc="子包个数" />
           </PackItem>
           <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>
@@ -451,36 +380,37 @@
 	</Transaction>
 
 
-	<Transaction code="92" service="460492" log_switch="5" des="供电银电业务签退交易">
+	<Transaction code="92" service="460492" log_switch="5" des="供电方发起银电业务签退交易请求">
 		<Request>
-			<Quote name="req_head"/>      <!--包头-->
-	    <Item name="PkgCnt" length="6" desc="子包个数" />
-	    <Group name="Rec"    repeat_name="PkgCnt">
-        <Item name="JYLSH"     length="24" desc="交易流水号" />
-        <Item name="JYRQ"     length="8" desc="交易日期" />
-        <Item name="JYSJ"     length="6" desc="交易时间" />
-        <Item name="GDDW"     length="8" desc="供电单位" />
-        <Item name="YWBSH"     length="6" desc="业务标识号" />
-        <Item name="CZRY"     length="20" desc="操作人员" />
-        <Item name="ZT"     length="1" desc="状态" />
-        <Item name="BZ"     length="128" desc="备注" />
+			<Quote name="RcvReqHead"/>      <!--包头-->
+	    <Item name="PKGCNT" length="6" desc="子包个数"/>
+	    <Group name="Rec" repeat_name="PKGCNT">
+        <Item name="JYLSH" length="24" desc="交易流水号"/>
+        <Item name="JYRQ"  length=" 8" desc="交易日期"/>
+        <Item name="JYSJ"  length=" 6" desc="交易时间"/>
+        <Item name="DWBM"  length=" 8" desc="单位编码"/>
+        <Item name="YWBSH" length=" 6" desc="业务标识号"/>
+        <Item name="CZRY"  length="20" desc="操作人员"/>
+        <Item name="ZT"    length=" 1" desc="状态"/>
+        <Item name="BZ"    length="128" desc="备注"/>
 	    </Group>
-			<SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
-			<AddItem name="TxnCnl"  value="THD"/>
+<!--
+			<SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
+			<AddItem name="TxnCnl" value="THD"/>
+-->
 		</Request>
 		<Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
           <PackItem name="TmpDat">
-            <Quote name="resp_head"/>      <!--包头-->
-            <AddItem name="NUM_LEN" value="000000"/>
-            <Item name="NUM_LEN"     length="6" desc="子包个数" />
+            <Quote name="RcvRspHead"/>      <!--包头-->
+            <Item name="PKGCNT" length="6" value="000000" desc="子包个数" />
           </PackItem>
           <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">
-          <Quote name="err_case"/>
+          <Quote name="ErrCase"/>
           <Break/>
         </Case>
         <Default>

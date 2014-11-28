@@ -47,51 +47,11 @@
     <!--end by xuan_20101108-->
   </GlobalFunction>
   <Define>
-
-    <Macro name="Chk_TxnSrc">  <!--检查交易来源-->
-      <If condition="INTCMP(STRLEN(DELBOTHSPACE($TxnSrc)),3,0)">
-        <Set>TxnCnl=TRM</Set>
-        <Set>CnlTyp=0</Set>
-      </If>
-      <Else>
-        <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="TxnSrc"/>
-          <Arg name="DestNam" value="CnlTyp"/>
-          <Arg name="TblNam"  value="TxnSrc2CnlTyp"/>
-        </Exec>
-      </Else>
-    </Macro>
-
-    <Macro name="GetEfeId">
-        <Set>EfeId=STRCAT(SUBSTR($NodNo,1,3),999)</Set>
-    </Macro>
-
-    <Macro name="TxnSrc_TxnCnl">
-      <Set>TxnSrc=DELBOTHSPACE($TxnSrc)</Set>
-      <Exec func="PUB:CodeSwitching">
-        <Arg name="DatSrc"  value="OPFCSW"/>
-        <Arg name="SourNam" value="TxnSrc"/>
-        <Arg name="DestNam" value="TxnCnl"/>
-        <Arg name="TblNam"  value="TxnSrc2TxnCnl"/>
-      </Exec>
-    </Macro>
-
-    <Macro name="GetJYLSH" desc="获取外发交易流水号">
-      <Set>TmpDate=GETDATETIME(YYYYMMDD)</Set>
-      <Exec func="PUB:IsExistNode" error="IGNORE">
-        <Arg name="FieldName" value="LogNo"/>
-      </Exec>
-      <If condition="~RetCod=1">
-        <Exec func="PUB:GetLogNo"/>
-      </If>
-      <Set>JYLSH=STRCAT(TmpDate,LogNo)</Set>
-    </Macro>
-
+    <Include file="etc/EFEK_MCR.XML"/>
   </Define>
 
-<Transaction code="460400" desc="大小通道交易处理"> <!--RecSts 0:初始化 1:成功 2:失败-->
+
+  <Transaction code="460400" desc="大小通道交易处理"> <!--RecSts 0:初始化 1:成功 2:失败-->
     <DynSentence name="UpdRecSts">
       <Sentence>
         UPDATE afebatrec SET RecSts='%s',HTxnSt='%s',HRspCd='%s' WHERE DskNo='%s' AND SeqNo='%s'
@@ -224,7 +184,7 @@
         <Return/>
       </ElseIf>
     </FlowCtrl>
-</Transaction>
+  </Transaction>
 
 
   <Transaction code="460401" desc="银电业务开工交易">
@@ -431,9 +391,12 @@
       <Set>RspMsg=数据库处理失败!</Set>
       <Return/>
      </If>
-
     </FlowCtrl>
   </Transaction>
+
+
+
+
 
   <Transaction code="460444" desc="银行查询/增加/修改/删除客户信息交易">
     <Attributes>
@@ -480,10 +443,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
-
+      <Quote name="InitTran"/>
 
       <Switch expression="$QDBZ">
         <!--新增-->
@@ -732,75 +692,9 @@
 
 
   <Transaction code="460410" desc="银行柜台电费代收查询交易">
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
     <FlowCtrl>
-<!--测试返回开始-->
-<Set>MYSY=   </Set>
-<Set>MYCSXL=                                </Set>
-<Set>XYBBH=1.0.0</Set>
-<Set>YWBSH=YDLW04</Set>
-<Set>JYBSH=20141117000000035669</Set>
-<!-- Set>JYRBS=1030600000000490    </Set-->
-<Set>JYRBS=301_030600          </Set>
-<Set>JYM=10</Set>
-<Set>SJBLX=0</Set>
-<Set>JYFQF=301     </Set><!-- 发起方是我行 -->
-<Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
-<Set>JYYDZ=                        </Set>
-<Set>JYMBDZ=                        </Set>
-<Set>JYFSRQ=20141117</Set>
-<Set>JYFSSJ=103229</Set>
-<Set>JYYXJ=2</Set>
-<Set>JYFHDM=00   </Set>
-<Set>YSBZ=0</Set>
-<Set>WDMC=                                                                </Set>
-<Set>JYLSH=201411120301000000000001</Set>
-<Set>JYRQ=20141112</Set>
-<Set>JYSJ=150800</Set>
-<Set>SFFS=110</Set>
-<Set>CXFS=1</Set>
-<Set>PkgCnt=000001</Set>
-
-
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460410"/>
-        <Arg name="ObjSvr" value="STHDEFEK"/>
-      </Exec>
-
-        <Set>RspCod=000000</Set>
-        <Set>MsgTyp=N</Set>
-        <Set>RspMsg=N</Set>
-        <Return></Return>
-<!--测试返回结束-->
-
-      <Quote name="GetEfeId"/>
-
-      <!--读取开工信息记录-->
-      <Call package="EFE" function="CheckOpenByEfeId"/><!--由于银行发起没有DWBM,因此需要使用额外的方式判断是否开工-->
-
-      <!--得到网点名称-->
-      <Call package="EFE" function="GetWDMC"/>
-
-      <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
-
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460410"/>
-        <Arg name="ObjSvr" value="STHDEFEK"/>
-      </Exec>
-      <If condition="$JYFHDM!=00">
-        <Set>RspCod=EFE999</Set>
-        <Set>MsgTyp=E</Set>
-        <Set>RspMsg=$CWTSXX</Set>
-        <Return/>
-      </If>
-			<Set>MsgTyp=N</Set>
-			<Set>RspCod=000000</Set>
-			<Set>RspMsg=交易成功!</Set>
+      <Set>SvrCod=460410</Set>
+      <Quote name="SendThirdOther"/>
     </FlowCtrl>
   </Transaction>
 
@@ -911,9 +805,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
     	 
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
@@ -1335,9 +1227,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
 
       <!--根据柜员号取BrNo-->
       <Exec func="PUB:GetBranchNoByTeller"/>
@@ -2927,9 +2817,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
 
 
       <Switch  expression="$EfeId">
@@ -3158,32 +3046,30 @@
     <!--生成文件  取出表efecusagt-->
     <DynSentence name="GetTxnJnl">
       <Sentence>
-        SELECT JYLSH,JYRQ,JYSJ,QYBZ,JFH,QYYHDM,QYYHZH,QYYHZHMC,ZHLX,ZJLX,ZJHM,LXDH,SJHM,EMAIL
-        FROM efecusagt
-        WHERE ActDat='%s' AND CAgtNo='%s'
+        select * from efecusagt441 where ActDat='%s' AND CAgtNo='%s'
       </Sentence>
       <Fields>ActDat|CAgtNo|</Fields>
     </DynSentence>
      <DynSentence name="GetTotal">
       <Sentence>
-        SELECT count(*) as MXBS FROM efecusagt WHERE ActDat='%s' AND CAgtNo='%s'
+        SELECT count(*) as MXBS FROM efecusagt441 WHERE ActDat='%s' AND CAgtNo='%s'
       </Sentence>
       <Fields>ActDat|CAgtNo|</Fields>
     </DynSentence>
    
     <FlowCtrl>
+
+<!--
       <Quote name="GetEfeId"/>
-
-      <!--读取开工信息记录-->
+-->
+<!--读取开工信息记录
       <Call package="EFE" function="CheckOpenByEfeId"/>
-
-      <!--得到网点名称-->
+-->
+<!--得到网点名称
       <Call package="EFE" function="GetWDMC"/>
-
+-->
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
 
       <Exec func="PUB:InitTransaction"/>
       
@@ -4562,70 +4448,53 @@
 
 
   <Transaction code="460440" desc="银行查询客户缴费记录交易">
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
     <FlowCtrl>
-<!--测试-->
-<Set>MYSY=   </Set>
-<Set>MYCSXL=                                </Set>
-<Set>XYBBH=1.0.0</Set>
-<Set>YWBSH=YDLW04</Set>
-<Set>JYBSH=20141117000000035669</Set>
-<!-- Set>JYRBS=1030600000000490    </Set-->
-<Set>JYRBS=301_030600          </Set>
-<Set>JYM=10</Set>
-<Set>SJBLX=0</Set>
-<Set>JYFQF=301     </Set><!-- 发起方是我行 -->
-<Set>JYJSF=030600  </Set><!-- 接收方是电网 -->
-<Set>JYYDZ=                        </Set>
-<Set>JYMBDZ=                        </Set>
-<Set>JYFSRQ=20141117</Set>
-<Set>JYFSSJ=103229</Set>
-<Set>JYYXJ=2</Set>
-<Set>JYFHDM=00   </Set>
-<Set>YSBZ=0</Set>
-<Set>WDMC=                                                                </Set>
-<Set>JYLSH=201411120301000000000001</Set>
-<Set>JYRQ=20141112</Set>
-<Set>JYSJ=150800</Set>
-<Set>SFFS=110</Set>
-<Set>CXFS=1</Set>
-<Set>PkgCnt=000001</Set>
-<!--测试-->
-      <Quote name="GetEfeId"/>
-
-      <!--读取开工信息记录-->
-      <!--Call package="EFE" function="CheckOpenByEfeId"/-->
-
-      <!--得到网点名称-->
-      <Call package="EFE" function="GetWDMC"/>
-
-      <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
-
-       <!--发送第三方-->
-      <Exec func="PUB:CallThirdOther">
-        <Arg name="HTxnCd" value="460440"/>
-        <Arg name="ObjSvr" value="STHDEFEK"/>
-      </Exec>
-      <If condition="$RspCod=000000">
-        <Set>MsgTyp=N</Set>
-      </If>
-      <Else>
-        <Set>MsgTyp=E</Set>
-        <Exec func="PUB:CodeSwitching">
-          <Arg name="DatSrc"  value="OPFCSW"/>
-          <Arg name="SourNam" value="TRspCd"/>
-          <Arg name="DestNam" value="RspMsg"/>
-          <Arg name="TblNam"  value="EFE_TRspCd2RspMsg"/>
-        </Exec>
-        <Return/>
-     </Else>
+      <Set>SvrCod=460440</Set>
+      <Quote name="SendThirdOther"/>
     </FlowCtrl>
   </Transaction>
+
+
+  <Transaction code="460441" desc="银行发起批量查询欠费客户请求">
+    <DynSentence name="GetCusAgt" desc="根据单位代码获取签约客户信心">
+      <Sentence>
+        select DWBM, JFH from EfeCusAgt where DWDM='%s' and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
+      </Sentence>
+      <Fields>DWDM|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+<!--获取文件序号-->
+      <Set>OBrNo=$BrNo</Set>
+      <Set>BrNo=999999</Set>
+      <Exec func="PUB:nGetPubSeqNo">
+        <Arg name="SeqNam" value="EFE:FILSEQ"/>
+        <Arg name="SeqCnt" value="1"/>
+        <Arg name="Len"    value="4"/>
+        <Arg name="CycCnd" value="D"/>
+      </Exec>
+<!--生成银行查询客户信息文件-->
+      <Set>FilNam=STRCAT(PL0301,$DWBM,$ActDat,$SelVal,.txt)</Set>
+      <Set>LclDir=$EfeSndDir</Set>
+      <Set>DatFil=STRCAT( $LclDir,$FilNam )</Set>
+      <Exec func="PUB:ExportFromDB">
+        <Args>
+          <Arg name="FormatName" value="EfeCusAgt"/>
+          <Arg name="FileName"   value="$DatFil"/>
+          <Arg name="TableName"  value="EfeCusAgt"/>
+          <Arg name="SqlName"    value="GetCusAgt"/>
+        </Args>
+      </Exec>
+<!--将文件发到电力-->
+      <System command="EfeFilSend.sh" error="IGNORE">
+        <Arg name="FilNam" value="$FilNam"/>
+      </System>
+      <Set>SvrCod=460441</Set>
+      <Quote name="SendThirdOther"/>
+    </FlowCtrl>
+  </Transaction>
+
+
 
 
   <Transaction code="460450" desc="银行对总账交易">
@@ -4642,9 +4511,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
 
       <Call package="EFE" function="QryDZZ"/>
 
@@ -4691,9 +4558,7 @@
       <Call package="EFE" function="GetWDMC"/>
 
       <!--得到外发交易流水号-->
-      <Quote name="GetJYLSH"/>
-      <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-      <Set>JYSJ=GETDATETIME(HHMISS)</Set>
+      <Quote name="InitTran"/>
 
       <Exec func="PUB:OpenCursor" error="IGNORE">  <!--打开游标-->
         <Arg name="SqlCmd" value="QryBasInf"/>
@@ -4811,7 +4676,78 @@
 
       </While>
       <Exec func="PUB:CloseCursor"/>
+    </FlowCtrl>
+  </Transaction>
 
+
+  <Transaction code="460443" desc="银行方发起查询客户信息请求">
+    <DynSentence name="GetCusAgt" desc="根据单位代码、缴费号获取签约客户信息">
+      <Sentence>
+        select DWBM, JFH from EfeCusAgt where DWDM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWDM|JFH</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Set>SvrCod=460443</Set>
+      <Quote name="SendThirdOther"/>
+      <If condition="INTCMP(~RetCod,3,0)" desc="交易成功">
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Arg name="SqlCmd" value="GetCusAgt"/>
+        </Exec>
+        <If condition="INTCMP(~RetCod,3,-2)" desc="客户记录不存在">
+          <Exec func="PUB:InsertRecord">
+            <Arg name="TblNam" value="EfekCusAgt"/>
+          </Exec>
+        </If>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+
+  <Transaction code="460430" desc="银行方发起到供电方变更代扣协议请求">
+    <DynSentence name="UpdCusAgt" desc="根据单位代码、缴费号获取签约客户信息">
+      <Sentence>
+        DWDM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWDM|JFH</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Set>QYZT=2</Set>
+      <Set>ChkFlg=U</Set>
+      <Exec func="PUB:UpdateRecord" desc="更新协议内容到最新">
+         <Arg name="TblNam" value="EfekCusAgt"/>
+         <Arg name="CndSts" value="UpdCusAgt"/>
+      </Exec>
+      <Set>SvrCod=460430</Set>
+      <Quote name="SendThirdOther"/>
+      <If condition="INTCMP(~RetCod,3,0)" desc="交易成功">
+        <Set>ChkFlg=S</Set>
+        <Exec func="PUB:UpdateRecord" desc="更新协议核对状态为成功">
+           <Arg name="TblNam" value="EfekCusAgt"/>
+           <Arg name="CndSts" value="UpdCusAgt"/>
+        </Exec>
+      </If>
+    </FlowCtrl>
+  </Transaction>
+
+
+ <Transaction code="469999" desc="直接发第三方通讯">
+    <FlowCtrl>
+      <!--通知供电方-->
+      <Exec func="PUB:CallThirdOther">
+        <Arg name="HTxnCd" value="460431"/>
+        <Arg name="ObjSvr" value="STHDEFEK"/>
+      </Exec>
+      <If condition="~RetCod=-1">
+        <Set>MsgTyp=E</Set>
+        <Set>TRspCd=99</Set>
+        <Set>RtnMsg=对账交易超时</Set> 
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=$RtnMsg</Set>
+        <Return/>
+      </If>
 
     </FlowCtrl>
   </Transaction>

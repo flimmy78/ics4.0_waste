@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='ISO-8859-1'?> 
+<Config>
+  <Define> 
+		<Macro name="SndReqHead" desc="ÍùÕË½»Ò×ÇëÇó±¨ÎÄÍ·">
+      <Item name="MYSY"   length=" 3" value="000" desc="ÃÜÔ¿Ë÷Òý"/>
+      <Item name="MYCSXL" length="32" desc="ÃÜÔ¿³õÊ¼ÏòÁ¿"/>
+      <Item name="XYBBH"  length=" 5" value="1.0.0" desc="Ð­Òé°æ±¾ºÅ"/>
+			<SwitchCode name="SvrCod" new_name="YWBSH" tab_name="SvrCodToYWBSH" col_name="SvrCod"/>
+      <Item name="YWBSH"  length=" 6" desc="ÒµÎñ±êÊ¶ºÅ"/>
+      <Item name="JYBSH"  length="20" desc="½»Ò×±êÊ¶ºÅ"/>
+      <Item name="JYRBS"  length="20" value="301_030600" desc="½»Ò×ÈË±êÊ¶"/>
+			<SwitchCode name="SvrCod" new_name="JYM" tab_name="SvrCodToJYM" col_name="SvrCod"/>
+      <Item name="JYM"    length=" 2" desc="½»Ò×Âë"/>
+      <Item name="SJBLX"  length=" 1" value="0" desc="Êý¾Ý°üÀàÐÍ"/>
+      <Item name="JYFQF"  length=" 8" value="301" desc="½»Ò×·¢Æð·½"/>
+      <Item name="JYJSF"  length=" 8" desc="½»Ò×½ÓÊÕ·½"/>
+      <Item name="JYYDZ"  length="24" desc="½»Ò×Ô´µØÖ·"/>
+      <Item name="JYMBDZ" length="24" desc="½»Ò×Ä¿±êµØÖ·"/>
+      <AddItem name="JYFSRQ" expression="GETDATETIME(YYYYMMDD)" desc="½»Ò×·¢ËÍÈÕÆÚ"/>
+      <Item name="JYFSRQ" length=" 8" desc="½»Ò×·¢ËÍÈÕÆÚ"/>
+      <AddItem name="JYFSSJ" expression="GETDATETIME(HHMISS)" desc="½»Ò×·¢ËÍÊ±¼ä"/>
+      <Item name="JYFSSJ" length=" 6" desc="½»Ò×·¢ËÍÊ±¼ä"/>
+      <Item name="JYYXJ"  length=" 1" value="2" desc="½»Ò×ÓÅÏÈ¼¶"/>
+      <Item name="JYFHDM" length=" 5" value="00" desc="½»Ò×·µ»Ø´úÂë"/>
+      <Item name="YSBZ"   length=" 1" value="0" desc="Ñ¹Ëõ±êÖ¾"/>
+		</Macro>
+		<Macro name="SndRspHead" desc="ÍùÕË½»Ò×Ó¦´ð±¨ÎÄÍ·">
+      <Item name="SJBCD"  length="10" desc="Êý¾Ý°ü³¤¶È"/>
+      <Item name="MYSY"   length=" 3" desc="ÃÜÔ¿Ë÷Òý"/>
+      <Item name="MYCSXL" length="32" desc="ÃÜÔ¿³õÊ¼ÏòÁ¿"/>
+      <Item name="XYBBH"  length=" 5" desc="Ð­Òé°æ±¾ºÅ"/>
+      <Item name="YWBSH"  length=" 6" desc="ÒµÎñ±êÊ¶ºÅ"/>
+      <Item name="JYBSH"  length="20" desc="½»Ò×±êÊ¶ºÅ"/>
+      <Item name="JYRBS"  length="20" desc="½»Ò×ÈË±êÊ¶"/>
+      <Item name="JYM"    length=" 2" desc="½»Ò×Âë"/>
+      <Item name="SJBLX"  length=" 1" desc="Êý¾Ý°üÀàÐÍ"/>
+      <Item name="JYFQF"  length=" 8" desc="½»Ò×·¢Æð·½"/>
+      <Item name="JYJSF"  length=" 8" desc="½»Ò×½ÓÊÕ·½"/>
+      <Item name="JYYDZ"  length="24" desc="½»Ò×Ô´µØÖ·"/>
+      <Item name="JYMBDZ" length="24" desc="½»Ò×Ä¿±êµØÖ·"/>
+      <Item name="JYFSRQ" length=" 8" desc="½»Ò×·¢ËÍÈÕÆÚ"/>
+      <Item name="JYFSSJ" length=" 6" desc="½»Ò×·¢ËÍÊ±¼ä"/>
+      <Item name="JYYXJ"  length=" 1" desc="½»Ò×ÓÅÏÈ¼¶"/>
+      <Item name="JYFHDM" length=" 5" expression="TRIM($JYFHDM,both)" desc="½»Ò×·µ»Ø´úÂë"/>
+      <Item name="YSBZ"   length=" 1" desc="Ñ¹Ëõ±êÖ¾"/>
+      <Item name="PKGCNT" length=" 6" desc="×Ó°ü¸öÊý"/>
+      <AddItem name="TRspCd" expression="ADDCHAR($JYFHDM,6,0,1)" desc="·µ»ØÂë"/>
+			<SwitchCode name="JYFHDM" new_name="RspMsg" tab_name="JYFHDMToRspMsg" col_name="JYFHDM"/>
+		</Macro>
+
+
+
+		<Macro name="RcvReqHead" desc="À´ÕËÒµÎñÇëÇó±¨ÎÄÍ·">
+      <Item name="SJBCD"  length="10" desc="Êý¾Ý°ü³¤¶È"/>
+      <Item name="MYSY"   length=" 3" desc="ÃÜÔ¿Ë÷Òý"/>
+      <Item name="MYCSXL" length="32" desc="ÃÜÔ¿³õÊ¼ÏòÁ¿"/>
+      <Item name="XYBBH"  length=" 5" desc="Ð­Òé°æ±¾ºÅ"/>
+      <Item name="YWBSH"  length=" 6" desc="ÒµÎñ±êÊ¶ºÅ"/>
+      <Item name="JYBSH"  length="20" desc="½»Ò×±êÊ¶ºÅ"/>
+      <Item name="JYRBS"  length="20" desc="½»Ò×ÈË±êÊ¶"/>
+      <Item name="JYM"    length=" 2" desc="½»Ò×Âë"/>
+      <Item name="SJBLX"  length=" 1" desc="Êý¾Ý°üÀàÐÍ"/>
+      <Item name="JYFQF"  length=" 8" desc="½»Ò×·¢Æð·½"/>
+      <Item name="JYJSF"  length=" 8" desc="½»Ò×½ÓÊÕ·½"/>
+      <Item name="JYYDZ"  length="24" desc="½»Ò×Ô´µØÖ·"/>
+      <Item name="JYMBDZ" length="24" desc="½»Ò×Ä¿±êµØÖ·"/>
+      <Item name="JYFSRQ" length=" 8" desc="½»Ò×·¢ËÍÈÕÆÚ"/>
+      <Item name="JYFSSJ" length=" 6" desc="½»Ò×·¢ËÍÊ±¼ä"/>
+      <Item name="JYYXJ"  length=" 1" desc="½»Ò×ÓÅÏÈ¼¶"/>
+      <Item name="JYFHDM" length=" 5" desc="½»Ò×·µ»Ø´úÂë"/>
+      <Item name="YSBZ"   length=" 1" desc="Ñ¹Ëõ±êÖ¾"/>
+		</Macro>
+		<Macro name="RcvRspHead" desc="À´ÕËÒµÎñÓ¦´ð±¨ÎÄÍ·">
+      <Item name="MYSY"   length=" 3" desc="ÃÜÔ¿Ë÷Òý"/>
+      <Item name="MYCSXL" length="32" desc="ÃÜÔ¿³õÊ¼ÏòÁ¿"/>
+      <Item name="XYBBH"  length=" 5" desc="Ð­Òé°æ±¾ºÅ"/>
+      <Item name="YWBSH"  length=" 6" desc="ÒµÎñ±êÊ¶ºÅ"/>
+      <Item name="JYBSH"  length="20" desc="½»Ò×±êÊ¶ºÅ"/>
+      <Item name="JYRBS"  length="20" desc="½»Ò×ÈË±êÊ¶"/>
+      <Item name="JYM"    length=" 2" desc="½»Ò×Âë"/>
+      <Item name="SJBLX"  length=" 1" desc="Êý¾Ý°üÀàÐÍ"/>
+      <Item name="JYFQF"  length=" 8" desc="½»Ò×·¢Æð·½"/>
+      <Item name="JYJSF"  length=" 8" desc="½»Ò×½ÓÊÕ·½"/>
+      <Item name="JYYDZ"  length="24" desc="½»Ò×Ô´µØÖ·"/>
+      <Item name="JYMBDZ" length="24" desc="½»Ò×Ä¿±êµØÖ·"/>
+      <Item name="JYFSRQ" length=" 8" desc="½»Ò×·¢ËÍÈÕÆÚ"/>
+      <Item name="JYFSSJ" length=" 6" desc="½»Ò×·¢ËÍÊ±¼ä"/>
+      <Item name="JYYXJ"  length=" 1" desc="½»Ò×ÓÅÏÈ¼¶"/>
+			<SwitchCode name="RspCod" new_name="JYFHDM" tab_name="RspCodToJYFHDM" col_name="JYFHDM"/>
+      <Item name="JYFHDM" length=" 5" desc="½»Ò×·µ»Ø´úÂë"/>
+      <Item name="YSBZ"   length=" 1" desc="Ñ¹Ëõ±êÖ¾"/>
+		</Macro>
+
+		<Macro name="ErrHead" desc="½»Ò×Òì³£Ó¦´ð±¨ÎÄÍ·">
+      <Item name="CWTSXX"  length="256" desc="´íÎóÌáÊ¾ÐÅÏ¢"/>
+      <Item name="CWFSRQ"  length="  8" desc="´íÎó·¢ÉúÈÕÆÚ"/>
+      <Item name="CWFSSJ"  length="  6" desc="´íÎó·¢ÉúÊ±¼ä"/>
+      <Item name="CWFSJYM" length="  2" desc="´íÎó·¢Éú½»Ò×Âë"/>
+      <Item name="SQLCODE" length="  7" desc="SQL·µ»ØÂë"/>
+		</Macro>
+
+		<Macro name="ErrCase" desc="½»Ò×Ó¦´ð±¨ÎÄÍ·">
+      <PackItem name="TmpDat">
+        <Quote name="RcvRspHead"/>
+        <Item name="PKGCNT"  length="6" value="000001" desc="×Ó°ü¸öÊý" />
+        <Quote name="ErrHead"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+		</Macro>
+
+  </Define>
+</Config>
+ 
