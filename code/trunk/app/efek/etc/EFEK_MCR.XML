@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <FrontTab>
   <Macro name="EfeSqlLst" desc="Êý¾Ý²Ù×÷ºêÇåµ¥">
-    <DynSentence name="UpdJobLst" desc="¸üÐÂ´ý´¦ÀíÐÅÏ¢">
+    <DynSentence name="GetRunCtl" desc="¸ù¾Ýµ¥Î»±àÂë»ñÈ¡²ÎÊý">
       <Sentence>
-        update pfajoblst set JobSts='1' where pfasub='%s' and pfadat='%s' and SPfaCd='%s'
+        select ZT, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s'
       </Sentence>
-      <Fields>PfaSub|PfaDat|SPfaCd|</Fields>
+      <Fields>DWBM|</Fields>
     </DynSentence>
   </Macro>
 <!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
@@ -44,49 +44,45 @@
     </Exec>
   </Macro>
 
-  <Macro name="InitTran" desc="½»Ò×³õÊ¼»¯">
-    <Exec func="PUB:IsExistNode" error="IGNORE">
-      <Arg name="FieldName" value="TlrId"/>
+  <Macro name="GetSysPar" desc="»ñÈ¡½»Ò×²ÎÊý">
+    <Exec func="PUB:ReadRecord" error="IGNORE">
+      <Args>
+        <Arg name="SqlCmd" value="GetRunCtl"/>
+      </Args>
     </Exec>
-    <If condition="INTCMP(~RetCod,3,0)" desc="´æÔÚ">
-      <Exec func="PUB:GetBranchNoByTeller" error="IGNORE"/>
-    </If>
-    <Else>
-      <Exec func="PUB:GetBranchNoByNodeNo"/>
-    </Else>
-<!--
-    <Exec func="PUB:IsExistNode" error="IGNORE">
-      <Arg name="FieldName" value="BrNo"/>
-    </Exec>
-    <If condition="INTCMP(~RetCod,3,-1)" desc="²»´æÔÚ">
+    <If condition="INTCMP(~RetCod,4,0)">
       <Set>MsgTyp=E</Set>
       <Set>RspCod=EFE999</Set>
-      <Set>RspMsg=È±ÉÙ·ÖÐÐºÅÅäÖÃÐÅÏ¢</Set>
+      <Set>RspMsg=STRCAT(»ñÈ¡µ¥Î»±àÂë¡¾,$DWBM,¡¿½»Ò×²ÎÊý´í)</Set>
       <Return/>
     </If>
--->
+  </Macro>
+
+
+
+
+  <Macro name="InitTran" desc="½»Ò×³õÊ¼»¯">
+    <Quote name="GetSysPar"/>
     <Exec func="PUB:InitTransaction"/>
-    <Set>JYRQ=GETDATETIME(YYYYMMDD)</Set>
-    <Set>JYSJ=GETDATETIME(HHMISS)</Set>
-    <Set>OBrNo=$BrNo</Set>
-    <Set>BrNo=999999</Set>
+    <Set>YHJYRQ=GETDATETIME(YYYYMMDD)</Set>
+    <Set>YHJYSJ=GETDATETIME(HHMISS)</Set>
     <Exec func="PUB:nGetPubSeqNo">
-      <Arg name="SeqNam" value="EFE:JYLSH"/>
+      <Arg name="SeqNam" value="EFE:YHJYLSH"/>
       <Arg name="SeqCnt" value="1"/>
-      <Arg name="Len"    value="12"/>
+      <Arg name="Len"    value="9"/>
       <Arg name="CycCnd" value="Y"/>
     </Exec>
-    <Set>JYBSH=STRCAT($JYRQ,$SelVal)</Set>
-    <Set>JYLSH=STRCAT($JYRQ,0301,$SelVal)</Set>
-    <Set>BrNo=$OBrNo</Set>
-    <Delete>OBrNo</Delete>
+    <Set>YHJYBSH=STRCAT($YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
+    <Set>YHJYLSH=STRCAT($YHJYRQ,0301,SUBSTR($BrNo,1,3),$SelVal)</Set>
   </Macro>
+
+
 
   <Macro name="SendThirdOther" desc="·¢ËÍµÚÈý·½Á÷³Ì¡¾²éÑ¯Àà¡¿">
     <Quote name="InitTran"/>
     <Set>WDMC=@BCFG.BrNam</Set>
     <Exec func="PUB:CallThirdOther" error="IGNORE">
-      <Arg name="TxnCod" value="$SvrCod"/>
+      <Arg name="TxnCod" value="SUBSTR($SvrCod,1,6)"/>
       <Arg name="ObjSvr" value="STHDEFEK"/>
     </Exec>
     <Switch expression="~RetCod">

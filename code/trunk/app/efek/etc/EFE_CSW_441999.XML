@@ -279,36 +279,72 @@
     <Item TxnSrc="WE441" TxnCnl="WEB"/>
     <Default   TxnCnl="TRM"/>
   </Table>
-
 <!-- ADD BY Zhongxf Begin-->
 <!-- ADD BY Zhongxf Begin-->
 <!-- ADD BY Zhongxf Begin-->
 	<Table name="SvrCodToYWBSH" desc="服务码转换为电力业务标识号">
-    <Item SvrCod="460410" YWBSH="YDLW04"/>
-    <Item SvrCod="460411" YWBSH="YDLW04"/>
-    <Item SvrCod="460412" YWBSH="YDLW05"/>
-    <Item SvrCod="460413" YWBSH="YDLW19"/>
-    <Item SvrCod="460430" YWBSH="YDLW07"/>
-    <Item SvrCod="460431" YWBSH="YDLW08"/>
-    <Item SvrCod="460440" YWBSH="YDLW10"/>
-    <Item SvrCod="460443" YWBSH="YDLW07"/>
-    <Item SvrCod="460444" YWBSH="YDLW19"/>
-    <Item SvrCod="460450" YWBSH="YDLW17"/>
+    <Item SvrCod="460410" YWBSH="YDLW04" desc="银行方发起查询客户欠费请求"/>
+    <Item SvrCod="460411" YWBSH="YDLW04" desc="银行发起客户记账交易请求"/>
+    <Item SvrCod="460412" YWBSH="YDLW05" desc="银行方发起单笔当日代收抹账业务请求"/>
+    <Item SvrCod="460414A" YWBSH="YDLW12" desc="银行方发起批量托收记账交易请求"/>
+    <Item SvrCod="460414B" YWBSH="YDLW13" desc="银行方发起批量跨行托收记账交易请求"/>
+    <Item SvrCod="460420" YWBSH="YDLW01" desc="供电方发起批量代扣交易请求"/>
+    <Item SvrCod="460421" YWBSH="YDLW01" desc="银行方发起批量代扣记账交易请求"/>
+    <Item SvrCod="460422" YWBSH="YDLW03" desc="供电方发起单笔代扣交易请求"/>
+    <Item SvrCod="460423" YWBSH="YDLW06" desc="供电方发起单笔当日代扣抹账请求"/>
+    <Item SvrCod="460424" YWBSH="YDLW11" desc="供电方发起批量代扣取消请求"/>
+    <Item SvrCod="460430" YWBSH="YDLW07" desc="银行方发起到供电方变更代扣协议请求"/>
+    <Item SvrCod="460431" YWBSH="YDLW08" desc="银行方发起银行到供电核对代扣协议请求"/>
+    <Item SvrCod="460432" YWBSH="YDLW09" desc="供电方发起供电到银行变更代扣协议请求"/>
+    <Item SvrCod="460440" YWBSH="YDLW10" desc="银行方发起查询客户缴费记录请求"/>
+    <Item SvrCod="460441" YWBSH="YDLW10" desc="银行发起批量查询欠费客户请求"/>
+    <Item SvrCod="460442A" YWBSH="YDLW12" desc="银行方发起查询托收客户电费交易请求"/>
+    <Item SvrCod="460442B" YWBSH="YDLW13" desc="银行方发起查询跨行托收客户电费交易请求"/>
+    <Item SvrCod="460443" YWBSH="YDLW07" desc="银行方发起查询客户信息请求"/>
+    <Item SvrCod="460460" YWBSH="YDLW14" desc="银行方发起发票打印交易请求"/>
+    <Item SvrCod="460463" YWBSH="YDLW14" desc="银行方发起返回发票打印结果通知请求"/>
+    <Item SvrCod="460461" YWBSH="YDLW15" desc="银行发起发票作废交易请求"/>
+    <Item SvrCod="460462" YWBSH="YDLW16" desc="银行发起发票查询请求"/>
+    <Item SvrCod="460450" YWBSH="YDLW17" desc="银行方发起对总账交易请求"/>
+    <Item SvrCod="460451" YWBSH="YDLW18" desc="银行方发起对明细账交易请求"/>
+    <Item SvrCod="460444" YWBSH="YDLW19" desc="银行方发起查询客户基本信息请求"/>
+    <Item SvrCod="460413" YWBSH="YDLW19" desc="银行方发起存入预付款交易请求"/>
+    <Item SvrCod="460490" YWBSH="YDLW20" desc="银行发送代收失败日志服务交易请求"/>
+    <Item SvrCod="460491" YWBSH="YDLW21" desc="供电方发起银电业务开工交易请求"/>
+    <Item SvrCod="460492" YWBSH="YDLW22" desc="供电方发起银电业务签退交易请求"/>
     <Default YWBSH=""/>
   </Table>
 
 	<Table name="SvrCodToJYM" desc="服务码转换为电力交易码">
-    <Item SvrCod="460410" JYM="10"/>
-    <Item SvrCod="460411" JYM="11"/>
-    <Item SvrCod="460412" JYM="12"/>
-    <Item SvrCod="460413" JYM="13"/>
-    <Item SvrCod="460430" JYM="30"/>
-    <Item SvrCod="460431" JYM="31"/>
-    <Item SvrCod="460440" JYM="40"/>
-    <Item SvrCod="460443" JYM="43"/>
-    <Item SvrCod="460444" JYM="44"/>
-    <Item SvrCod="460445" JYM="45"/>
-    <Item SvrCod="460450" JYM="50"/>
+    <Item SvrCod="460410"  JYM="04" desc="银行方发起查询客户欠费请求"/>
+    <Item SvrCod="460411"  JYM="04" desc="银行发起客户记账交易请求"/>
+    <Item SvrCod="460412"  JYM="05" desc="银行方发起单笔当日代收抹账业务请求"/>
+    <Item SvrCod="460414A" JYM="12" desc="银行方发起批量托收记账交易请求"/>
+    <Item SvrCod="460414B" JYM="13" desc="银行方发起批量跨行托收记账交易请求"/>
+    <Item SvrCod="460420"  JYM="01" desc="供电方发起批量代扣交易请求"/>
+    <Item SvrCod="460421"  JYM="01" desc="银行方发起批量代扣记账交易请求"/>
+    <Item SvrCod="460422"  JYM="03" desc="供电方发起单笔代扣交易请求"/>
+    <Item SvrCod="460423"  JYM="06" desc="供电方发起单笔当日代扣抹账请求"/>
+    <Item SvrCod="460424"  JYM="11" desc="供电方发起批量代扣取消请求"/>
+    <Item SvrCod="460430"  JYM="07" desc="银行方发起到供电方变更代扣协议请求"/>
+    <Item SvrCod="460431"  JYM="08" desc="银行方发起银行到供电核对代扣协议请求"/>
+    <Item SvrCod="460432"  JYM="09" desc="供电方发起供电到银行变更代扣协议请求"/>
+    <Item SvrCod="460440"  JYM="10" desc="银行方发起查询客户缴费记录请求"/>
+    <Item SvrCod="460441"  JYM="10" desc="银行发起批量查询欠费客户请求"/>
+    <Item SvrCod="460442A" JYM="12" desc="银行方发起查询托收客户电费交易请求"/>
+    <Item SvrCod="460442B" JYM="13" desc="银行方发起查询跨行托收客户电费交易请求"/>
+    <Item SvrCod="460443"  JYM="07" desc="银行方发起查询客户信息请求"/>
+    <Item SvrCod="460460"  JYM="14" desc="银行方发起发票打印交易请求"/>
+    <Item SvrCod="460463"  JYM="14" desc="银行方发起返回发票打印结果通知请求"/>
+    <Item SvrCod="460461"  JYM="15" desc="银行发起发票作废交易请求"/>
+    <Item SvrCod="460462"  JYM="16" desc="银行发起发票查询请求"/>
+    <Item SvrCod="460450"  JYM="17" desc="银行方发起对总账交易请求"/>
+    <Item SvrCod="460451"  JYM="18" desc="银行方发起对明细账交易请求"/>
+    <Item SvrCod="460444"  JYM="19" desc="银行方发起查询客户基本信息请求"/>
+    <Item SvrCod="460413"  JYM="19" desc="银行方发起存入预付款交易请求"/>
+    <Item SvrCod="460490"  JYM="20" desc="银行发送代收失败日志服务交易请求"/>
+    <Item SvrCod="460491"  JYM="21" desc="供电方发起银电业务开工交易请求"/>
+    <Item SvrCod="460492"  JYM="22" desc="供电方发起银电业务签退交易请求"/>
     <Default JYM=""/>
   </Table>
 
@@ -428,44 +464,3 @@
 <!-- ADD BY Zhongxf End-->
 <!-- ADD BY Zhongxf End-->
 </root>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
