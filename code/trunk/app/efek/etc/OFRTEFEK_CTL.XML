@@ -1383,6 +1383,12 @@
         <Set>CWFSJYM=888888</Set>
         <Set>SQLCODE=123</Set>
 
+        <Set>YHJYLSH=20141117000000035669</Set>
+        <Set>YHJYRQ=20141129</Set>
+        <Set>YHJYSJ=155300</Set>
+        <Set>KKRQ=20141129</Set>
+        <Set>KKSJ=155300</Set>
+
         <Set>RspCod=000000</Set>
         <Set>MsgTyp=N</Set>
         <Set>RspMsg=N</Set>
@@ -1603,6 +1609,27 @@
        <Fields>Status|EfeId|LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
+<!--测试返回开始-->
+        <Set>CWTSXX=888888</Set>
+        <Set>CWFSRQ=20141111</Set>
+        <Set>CWFSSJ=115000</Set>
+        <Set>CWFSJYM=888888</Set>
+        <Set>SQLCODE=123</Set>
+
+        <Set>YHJYLSH=20141117000000035669</Set>
+        <Set>YHJYRQ=20141129</Set>
+        <Set>YHJYSJ=155300</Set>
+
+        <Set>PKGCNT=000000</Set>
+
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+<!--测试返回结束-->
+
+
+
       <Exec func="PUB:CodeSwitching" error="IGNORE">
         <Arg name="DatSrc" value="OPFCSW"></Arg>
         <Arg name="SourNam" value="DWBM"></Arg>
@@ -2803,6 +2830,24 @@
       <Fields>EfeId|JFH|</Fields>
     </DynSentence>
     <FlowCtrl>
+
+<!--测试返回开始 -->
+        <Set>CWTSXX=888888</Set>
+        <Set>CWFSRQ=20141111</Set>
+        <Set>CWFSSJ=115000</Set>
+        <Set>CWFSJYM=888888</Set>
+        <Set>SQLCODE=123</Set>
+
+<Set>JYLSH=201411200301000000000001</Set>
+<Set>JYRQ=20141120</Set>
+<Set>JYSJ=150800</Set>
+
+        <Set>RspCod=000000</Set>
+        <Set>MsgTyp=N</Set>
+        <Set>RspMsg=N</Set>
+        <Return></Return>
+<!--    测试返回结束-->
+
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->
@@ -4735,8 +4780,12 @@
 
  <Transaction code="469999" desc="直接发第三方通讯">
     <FlowCtrl>
+
+      <Set>DatFilNam=/app/ics/app/efek/bin/HDXY03010301121520141125001.test</Set>
+      <Call package="EFE" function="GetFilMD5"/>
+
       <!--通知供电方-->
-      <Exec func="PUB:CallThirdOther">
+      <!--Exec func="PUB:CallThirdOther">
         <Arg name="HTxnCd" value="460411"/>
         <Arg name="ObjSvr" value="STHDEFEK"/>
       </Exec>
@@ -4747,7 +4796,7 @@
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=$RtnMsg</Set>
         <Return/>
-      </If>
+      </If-->
 
     </FlowCtrl>
   </Transaction>

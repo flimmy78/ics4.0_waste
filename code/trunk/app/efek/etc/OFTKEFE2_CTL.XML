@@ -1,0 +1,529 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="EFEA" code="202">
+<!--µçÁ¦·¢ÆðÒµÎñÖ÷¿Ø-->
+  <ConfigDeclare>
+    <Config name="BatFormat" value="etc/EFE_FMT_441999.XML"/>
+    <Config name="OPFCSW"    value="etc/EFE_CSW_441999.XML"/>
+  </ConfigDeclare>
+  <TableDeclare>
+    <Table name="EfekRunCtl" value="EfeKRunCtl" desc="ÒµÎñ¿ØÖÆ±í"/>
+    <Table name="EfekCusAgt" value="EfekCusAgt" desc="¿Í»§Ð­Òé±í"/>
+  </TableDeclare>
+  <BusDefDeclare>
+    <Busdef name="AplCls" value="202"/>
+  </BusDefDeclare>
+  <GlobalFunction>
+    <Include file="etc/ActJudge_IIT.XML"/>     <!--Çø±ð¶Ô¹«¶ÔË½ÕÊºÅ-->
+    <Function name="_after">
+        <Process>
+           <If condition="ISNULL($MsgTyp)">
+              <If condition="ISNULL(DELBOTHSPACE($RspCod))"> <!--ÈôRspCodÎª¿Õ£¬ÔòÈÏÎª³É¹¦-->
+                 <Set>MsgTyp=N</Set>
+                 <Set>RspCod=000000</Set>
+              </If>
+              <Else>
+                 <If condition="IS_NOEQUAL_STRING($RspCod,000000)"> <!--·µ»ØÂë²»Îª000000-->
+                    <Set>MsgTyp=E</Set>
+                 </If>
+                 <Else>
+                    <Set>MsgTyp=N</Set>
+                 </Else>
+              </Else>
+           </If>
+        </Process>
+    </Function>
+  </GlobalFunction>
+  <Define>
+    <Include file="etc/EFEK_MCR.XML"/>
+  </Define>
+
+
+  <Transaction code="460420" error="PUB:DeleteDiskNoAndRollback" desc="¹©µç·½·¢ÆðÅúÁ¿´ú¿Û½»Ò×ÇëÇó">
+    <DynSentence name="GetBchRec" desc="¸ù¾ÝÎÄ¼þÃû»ñÈ¡ÎÄ¼þ´¦Àí¼ÇÂ¼">
+      <Sentence>
+        select RecSts from EfekBchRec where WJMC='%s'
+      </Sentence>
+      <Fields>WJMC|</Fields>
+    </DynSentence>
+
+    <Attributes>
+      <Attribute name="nodatabase" value="2"/>
+    </Attributes>
+    <FlowCtrl>
+      <Quote name="InitTran"/>
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetBchRec"></Arg>
+      </Exec>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="´æÔÚ¼ÇÂ¼">
+          <If condition="OR(IS_NOEQUAL_STRING($ZT,u),IS_NOEQUAL_STRING($ZT,U))">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=STRCAT(ÎÄ¼þ¡¾,$WJMC,¡¿ÖØ¸´·¢ËÍ)</Set>
+            <Return/>
+          </If>          
+          <Break/>
+        </Case>
+        <Case value="-2" desc="²»´æÔÚ¼ÇÂ¼">
+          <Set>RecSts=u</Set>
+          <Exec func="PUB:InsertRecord" error="IGNORE">
+            <Args>
+              <Arg name="tablename" value="EfekBchRec"/>
+            </Args>
+          </Exec>
+          <If condition="INTCMP(~RetCod,4,0)">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=STRCAT(ÎÄ¼þ¡¾,$WJMC,¡¿µÇ¼Ç»ã×Ü±í´í)</Set>
+            <Return/>
+          </If>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=STRCAT(»ñÈ¡ÎÄ¼þ¡¾,$WJMC,¡¿´¦Àí×´Ì¬Òì³£)</Set>
+          <Return/>
+        </Default>
+      </Switch>
+      <System command="EfeFilRecv.sh" error="IGNORE">
+        <Arg name="FilNam" value="$FilNam"/>
+      </System>
+      <Set>ObjSvr=OFTKEFE2</Set>
+      <Set>SumFlg=N</Set>          <!--ÊÇ·ñ½øÐÐ½ð¶î»òÊýÁ¿»ã×Ü-->
+      <Set>NamChk=1</Set>          <!--²»ÐèÒª¼ì²é»§Ãû-->
+      <Set>TxnMod=1</Set>          <!--ÐèÒªµ¥±ÊÉÏËÍ-->
+      <Set>CmtFlg=0</Set>          <!--´óÐ¡Í¨µÀ·¢ËÍ×´Ì¬-->
+      <Set>TrdTbl=EfeTxnJnl</Set>
+      <Set>HTxnCd=460499</Set>
+      <Set>HTxnSt=U</Set>
+      <Exec func="PUB:RegisterBatchDiskNo"/>
+      <Set>DatFil=STRCAT( $EfekRcvDir,$WJMC )</Set>
+      <Exec func="PUB:ImportToDB" error="IGNORE">
+        <Args>
+          <Arg name="FormatName" value="EfekTxnJnl"/>
+          <Arg name="FileName"   value="$DatFil"/>
+          <Arg name="TableName"  value="$EfekTxnJnl"/>
+          <Arg name="ApplyLogNoFlag" value="1"/>
+        </Args>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Exec func="PUB:DeleteDiskNo"/>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(ÎÄ¼þ¡¾,$WJMC,¡¿´¦ÀíÒì³£)</Set>
+        <Return/>
+      </If>
+      <Exec func="PUB:UpdateBatchStatus">
+        <Arg name="ChkFlg" value="1"/>
+      </Exec>
+      <Exec func="PUB:DeleteDiskNo" error="IGNORE"/>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+  <Transaction code="??????" desc="¹©µç·½·¢ÆðÅúÁ¿´ú¿Û½»Ò×ÇëÇó¡¾´ó¡¢Ð¡Í¨µÀ´¦Àí¡¿">
+    <FlowCtrl>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="460422" desc="¹©µç·½·¢Æðµ¥±Ê´ú¿Û½»Ò×ÇëÇó">
+    <Quote name="EfeSqlLst"/>
+    <DynSentence name="GetCusAgt" desc="¸ù¾ÝÎÄ¼þÃû»ñÈ¡ÎÄ¼þ´¦Àí¼ÇÂ¼">
+      <Sentence>
+        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and KKZH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|KKZH|</Fields>
+    </DynSentence>
+
+    <FlowCtrl>
+      <Quote name="InitTran"/>
+<!--Ð­ÒéÅÐ¶Ï-->
+<!--
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(µ¥Î»¡¾,$DWBM,¡¿½É·ÑºÅ¡¾,$JFH,¡¿ÕËºÅ¡¾,$KKZH,¡¿ÎªÓëÒøÐÐÇ©¶©´ú¿ÛÐ­Òé)</Set>
+        <Return/>
+      </If>
+-->
+      <Set>TxnCnl=EFE</Set>
+      <Set>CnlSub= </Set>
+      <Set>NodNo=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
+      <Exec func="PUB:GetVirtualTeller"/>
+<!--µÇ¼ÇÁ÷Ë®-->
+      <Set>TTxnCd=$TxnCod</Set>
+      <Exec func="PUB:GetLogNo"/>
+<!--µÇ¼Ç½»Ò×Ã÷Ï¸-->
+
+<!--¸Ã×Ö¶Î´ÓÐ­Òé±íÖÐ»ñÈ¡-->
+
+      <Switch expression="$ActFlg">
+        <Case value="0" desc="¶Ô¹«">
+          <Set>HTxnCd=451240</Set>
+          <Set>BusTyp=PFT57</Set>
+          <Set>CrpCod=EFE999999999</Set>
+          <Set>ActNo=$KKZH</Set>
+          <Set>ActNam=$KKZHMC</Set>
+          <Set>NamChk=1</Set> <!--²âÊÔ²»¼ì²é£¬Éú²ú¿¼ÂÇ´ò¿ª-->
+          <Set>VchFlg=0</Set> <!--ÇþµÀ½»Ò×²»¼ì²é-->
+          <Set>VchTyp=000</Set>
+          <Set>VchTyp=00000000</Set>
+          <Set>BilDat=$YHJYRQ</Set>
+          <Set>CcyCod=CNY</Set>
+          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
+          <Set>AccMod=1</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,1,6)</Set>
+          <Set>Smr=´ú¿Ûµç·Ñ</Set>
+          <Break/>
+        </Case>
+        <Case value="2" desc="´æÕÛ"/>
+        <Case value="4" desc="¿¨">
+          <Set>HTxnCd=471140</Set>
+          <Set>BusTyp=PCL52</Set>
+          <Set>CnlTyp=L</Set>
+          <Set>Mask=9102</Set>
+          <Set>ActNo=$KKZH</Set>
+          <If condition="IS_EQUAL_STRING($ActFlg,1)" desc="´æÕÛ">
+            <Set>VchCod=00000000</Set>
+          </If>
+          <Set>PayMod=0</Set>
+          <Set>TActNo=$InAcNo</Set>
+          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
+          <Set>CcyTyp=1</Set>
+          <Set>VchChk=0</Set>
+          <Set>CAgtNo=EFE999999</Set>
+          <Set>GthFlg=N</Set>
+          <Break/>
+        </Case>
+        <Case value="A" desc="ÖÐÑë"/>
+        <Case value="B" desc="µØ·½">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=ÔÝ²»¿ªÍ¨ÁãÓà¶îÕË»§ÒµÎñ</Set>
+          <Return/>
+        </Case>
+      </Switch>
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="TxnCod" value="$HTxnCd"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="³É¹¦">
+          <Set>MsgTyp=N</Set>
+          <Set>RspCod=000000</Set>
+          <Break/>
+        </Case>
+        <Case value="3" desc="½»Ò×Ê§°Ü">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=$TRspCd</Set>
+          <Break/>
+        </Case>
+        <Case value="-9" desc="½»Ò×ÐèÒªÊÚÈ¨">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=¿Í»§ÕË»§Òì³££¬Çë²éÑ¯¿ª»§ÒøÐÐ</Set>
+          <Break/>
+        </Case>
+        <Case value="-1" desc="³¬Ê±">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=½»Ò×³¬Ê±</Set>
+          <Break/>
+        </Case>
+        <Case value="-2" desc="ÏµÍ³¹ÊÕÏ">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=ÏµÍ³¹ÊÕÏ</Set>
+          <Break/>
+        </Case>
+        <Case value="-10" desc="½»Ò×·¢ËÍÊ§°Ü">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=½»Ò×·¢ËÍÊ§°Ü</Set>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=½»Ò×Ê§°Ü£¬ÆäËûÎ´ÖªÇé¿ö</Set>
+          <Break/>
+        </Default>
+      </Switch>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+
+
+  <Transaction code="460491" desc="¹©µç·½·¢ÆðÒøµçÒµÎñ¿ª¹¤½»Ò×ÇëÇó">
+<!--
+    <DynSentence name="UpdRunCtl" desc="¸ù¾Ýµ¥Î»´úÂë¸üÐÂ¿ª¹¤ÐÅÏ¢">
+      <Sentence>
+        DWDM='%s'
+      </Sentence>
+      <Fields>DWDM</Fields>
+    </DynSentence>
+-->
+    <DynSentence name="UpdRunCtl" desc="¸ù¾Ýµ¥Î»´úÂë¸üÐÂ¿ª¹¤ÐÅÏ¢">
+      <Sentence>
+        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', GDDW='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWDM='%s'
+      </Sentence>
+      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.GDDW|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWDM|</Fields>
+    </DynSentence>
+
+    <DynSentence name="InsRunCtl" desc="Ìí¼Ó¿ª¹¤¼ÇÂ¼">
+      <Sentence>
+        insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', '%s', 'Q' ,'%s','','','' )
+      </Sentence>
+      <Fields>ROOT.DWDM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.GDDW|ROOT.YWBSH|ROOT.CZRY|ROOT.BZ|</Fields>
+    </DynSentence>
+
+
+    <FlowCtrl>
+      <Set>Cnt=1</Set>
+      <While condition="INTCMP($Cnt,2,$PKGCNT)">
+        <Delete>ROOT.JYLSH</Delete>
+        <Delete>ROOT.JYRQ</Delete>
+        <Delete>ROOT.JYSJ</Delete>
+        <Delete>ROOT.DWBM</Delete>
+        <Delete>ROOT.YWBSH</Delete>
+        <Delete>ROOT.CZRY</Delete>
+        <Delete>ROOT.ZT</Delete>
+        <Delete>ROOT.BZ</Delete>
+        <Set>JYLSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYLSH)</Set>
+        <Set>JYRQ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYRQ)</Set>
+        <Set>JYSJ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYSJ)</Set>
+        <Set>DWBM_Nam=STRCAT(ROOT.Rec_,$Cnt,.DWBM)</Set>
+        <Set>YWBSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.YWBSH)</Set>
+        <Set>CZRY_Nam=STRCAT(ROOT.Rec_,$Cnt,.CZRY)</Set>
+        <Set>ZT_Nam=STRCAT(ROOT.Rec_,$Cnt,.ZT)</Set>
+        <Set>BZ_Nam=STRCAT(ROOT.Rec_,$Cnt,.BZ)</Set>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYLSH_Nam"/>
+          <Arg name="DestName" value="ROOT.JYLSH"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYRQ_Nam"/>
+          <Arg name="DestName" value="ROOT.JYRQ"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYSJ_Nam"/>
+          <Arg name="DestName" value="ROOT.JYSJ"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DWBM_Nam"/>
+          <Arg name="DestName" value="ROOT.DWBM"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$YWBSH_Nam"/>
+          <Arg name="DestName" value="ROOT.YWBSH"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$CZRY_Nam"/>
+          <Arg name="DestName" value="ROOT.CZRY"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$ZT_Nam"/>
+          <Arg name="DestName" value="ROOT.ZT"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$BZ_Nam"/>
+          <Arg name="DestName" value="ROOT.BZ"/>
+        </Exec>
+<!--
+        <Exec func="PUB:UpdateRecord" desc="¸üÐÂ¿ª¹¤">
+           <Arg name="TblNam" value="EfekRunCtl"/>
+           <Arg name="CndSts" value="UpdRunCtl"/>
+        </Exec>
+-->
+        <Exec func="PUB:ExecSql" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="UpdRunCtl"/>
+          </Args>
+        </Exec>
+        <Switch expression="~RetCod">
+          <Case value="0" desc="¸üÐÂ³É¹¦">
+            <Break/>
+          </Case>
+          <Case value="-1" desc="¸üÐÂÊ§°Ü">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE9999</Set>
+            <Set>RspMsg=STRCAT(µ¥Î»±àÂë¡¾,$ROOT.DWBM¡¿¸üÐÂ¿ª¹¤×´Ì¬Ê§°Ü)</Set>
+            <Continue/>
+<!--
+            <Return/>
+-->
+          </Case>
+          <Case value="-2" desc="Ã»ÓÐ¼ÇÂ¼">
+<!--Ìí¼Ó×´Ì¬Îª"Ç©ÍË"¼ÇÂ¼£¬´ýÒµÎñÎ¬»¤·ÖÐÐºÅµÄ×ÊÁÏºó£¬ÔÚÏÂÒ»"¿ª¹¤"±¨ÎÄµ½´ïÊ±¿ªÕ¹½»Ò×-->
+            <Exec func="PUB:ExecSql" error="IGNORE">
+              <Args>
+                <Arg name="SqlCmd" value="InsRunCtl"/>
+              </Args>
+            </Exec>
+            <If condition="INTCMP(~RetCod,4,0)" desc="Êý¾Ý¿â¸üÐÂÊ§°Ü">
+              <Set>MsgTyp=E</Set>
+              <Set>RspCod=EFE9999</Set>
+              <Set>RspMsg=STRCAT(µ¥Î»±àÂë¡¾,$ROOT.DWBM¡¿¸üÐÂ¿ª¹¤×´Ì¬Ê§°Ü)</Set>
+              <Continue/>
+<!--
+              <Return/>
+-->
+            </If>
+            <Break/>
+          </Case>
+        </Switch>
+        <Set>Cnt=ADD($Cnt,1)</Set>
+<!--Ìá½»µ±Ç°³É¹¦¸üÐÂµÄ¼ÇÂ¼£¬ÔÚÒì³£µÄÇé¿öÏÂ£¬±£Ö¤²¿·ÖÒµÎñÒ²¿ÉÒÔ¿ªÕ¹½»Ò×-->
+        <Exec func="PUB:CommitWork"/>
+      </While>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+
+
+  <Transaction code="460492" desc="¹©µç·½·¢ÆðÒøµçÒµÎñ¿ª¹¤½»Ò×ÇëÇó">
+<!--
+    <DynSentence name="UpdRunCtl" desc="¸ù¾Ýµ¥Î»´úÂë¸üÐÂ¿ª¹¤ÐÅÏ¢">
+      <Sentence>
+        DWDM='%s'
+      </Sentence>
+      <Fields>DWDM</Fields>
+    </DynSentence>
+-->
+    <DynSentence name="UpdRunCtl" desc="¸ù¾Ýµ¥Î»´úÂë¸üÐÂ¿ª¹¤ÐÅÏ¢">
+      <Sentence>
+        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', GDDW='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWDM='%s'
+      </Sentence>
+      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.GDDW|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWDM|</Fields>
+    </DynSentence>
+
+    <DynSentence name="InsRunCtl" desc="Ìí¼Ó¿ª¹¤¼ÇÂ¼">
+      <Sentence>
+        insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%s','','','' )
+      </Sentence>
+      <Fields>ROOT.DWDM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.GDDW|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
+    </DynSentence>
+
+
+    <FlowCtrl>
+      <Set>Cnt=1</Set>
+      <While condition="INTCMP($Cnt,2,$PKGCNT)">
+        <Delete>ROOT.JYLSH</Delete>
+        <Delete>ROOT.JYRQ</Delete>
+        <Delete>ROOT.JYSJ</Delete>
+        <Delete>ROOT.DWBM</Delete>
+        <Delete>ROOT.YWBSH</Delete>
+        <Delete>ROOT.CZRY</Delete>
+        <Delete>ROOT.ZT</Delete>
+        <Delete>ROOT.BZ</Delete>
+        <Set>JYLSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYLSH)</Set>
+        <Set>JYRQ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYRQ)</Set>
+        <Set>JYSJ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYSJ)</Set>
+        <Set>DWBM_Nam=STRCAT(ROOT.Rec_,$Cnt,.DWBM)</Set>
+        <Set>YWBSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.YWBSH)</Set>
+        <Set>CZRY_Nam=STRCAT(ROOT.Rec_,$Cnt,.CZRY)</Set>
+        <Set>ZT_Nam=STRCAT(ROOT.Rec_,$Cnt,.ZT)</Set>
+        <Set>BZ_Nam=STRCAT(ROOT.Rec_,$Cnt,.BZ)</Set>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYLSH_Nam"/>
+          <Arg name="DestName" value="ROOT.JYLSH"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYRQ_Nam"/>
+          <Arg name="DestName" value="ROOT.JYRQ"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$JYSJ_Nam"/>
+          <Arg name="DestName" value="ROOT.JYSJ"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$DWBM_Nam"/>
+          <Arg name="DestName" value="ROOT.DWBM"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$YWBSH_Nam"/>
+          <Arg name="DestName" value="ROOT.YWBSH"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$CZRY_Nam"/>
+          <Arg name="DestName" value="ROOT.CZRY"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$ZT_Nam"/>
+          <Arg name="DestName" value="ROOT.ZT"/>
+        </Exec>
+        <Exec func="PUB:GetValue">
+          <Arg name="SourName" value="$BZ_Nam"/>
+          <Arg name="DestName" value="ROOT.BZ"/>
+        </Exec>
+<!--
+        <Exec func="PUB:UpdateRecord" desc="¸üÐÂÇ©ÍË">
+           <Arg name="TblNam" value="EfekRunCtl"/>
+           <Arg name="CndSts" value="UpdRunCtl"/>
+        </Exec>
+-->
+        <Exec func="PUB:ExecSql" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="UpdRunCtl"/>
+          </Args>
+        </Exec>
+        <Switch expression="~RetCod">
+          <Case value="0" desc="¸üÐÂ³É¹¦">
+            <Break/>
+          </Case>
+          <Case value="-1" desc="¸üÐÂÊ§°Ü">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE9999</Set>
+            <Set>RspMsg=STRCAT(µ¥Î»±àÂë¡¾,$ROOT.DWBM¡¿¸üÐÂÇ©ÍË×´Ì¬Ê§°Ü)</Set>
+            <Continue/>
+<!--
+            <Return/>
+-->
+          </Case>
+          <Case value="-2" desc="Ã»ÓÐ¼ÇÂ¼">
+            <Exec func="PUB:ExecSql" error="IGNORE">
+              <Args>
+                <Arg name="SqlCmd" value="InsRunCtl"/>
+              </Args>
+            </Exec>
+            <If condition="INTCMP(~RetCod,4,0)" desc="Êý¾Ý¿â¸üÐÂÊ§°Ü">
+              <Set>MsgTyp=E</Set>
+              <Set>RspCod=EFE9999</Set>
+              <Set>RspMsg=STRCAT(µ¥Î»±àÂë¡¾,$ROOT.DWBM¡¿¸üÐÂÇ©ÍË×´Ì¬Ê§°Ü)</Set>
+              <Continue/>
+<!--
+              <Return/>
+-->
+            </If>
+            <Break/>
+          </Case>
+        </Switch>
+        <Set>Cnt=ADD($Cnt,1)</Set>
+<!--Ìá½»µ±Ç°³É¹¦¸üÐÂµÄ¼ÇÂ¼£¬ÔÚÒì³£µÄÇé¿öÏÂ£¬±£Ö¤²¿·ÖÒµÎñÒ²¿ÉÒÔ¹Ø±Õ½»Ò×-->
+        <Exec func="PUB:CommitWork"/>
+      </While>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+<!-- ADD OR MOD BY ZXF END -->
+<!-- ADD OR MOD BY ZXF END -->
+<!-- ADD OR MOD BY ZXF END -->
+<!-- ADD OR MOD BY ZXF END -->
+<!-- ADD OR MOD BY ZXF END -->
+<!-- ADD OR MOD BY ZXF END -->
+
+</Application>

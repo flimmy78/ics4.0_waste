@@ -1,0 +1,850 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Application name="EFE">
+  <CodeSwitching>
+    <Table name="SvrCodToYWBSH" file="etc/EFE_CSW_441999.XML">
+      <Column name="SvrCod" sort="no"/>
+      <Column name="YWBSH" sort="no"/>
+    </Table>
+    <Table name="SvrCodToJYM" file="etc/EFE_CSW_441999.XML">
+      <Column name="SvrCod" sort="no"/>
+      <Column name="JYM" sort="no"/>
+    </Table>
+    <Table name="JYFHDMToRspMsg" file="etc/EFE_CSW_441999.XML">
+      <Column name="JYFHDM" sort="no"/>
+      <Column name="RspMsg" sort="no"/>
+    </Table>
+  </CodeSwitching>
+
+  <Include file="app/zxf/etc/TDKEFE1_IIT.XML"/>
+
+  <Transaction code="460421" desc="ÒøÐÐ·½·¢ÆðÅúÁ¿´ú¿Û¼ÇÕË½»Ò×ÇëÇó">
+    <Request>
+      <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+        <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="RZYHDM" length=" 4" desc="ÈëÕËÒøÐÐ´úÂë"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+        <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+        <Item name="ZBS"    length="11" desc="×Ü±ÊÊý"/>
+        <Item name="ZJE"    length="16" desc="×Ü½ð¶î"/>
+        <Item name="CGBS"   length="11" desc="³É¹¦±ÊÊý"/>
+        <Item name="CGJE"   length="16" desc="³É¹¦½ð¶î"/>
+        <Item name="SBBS"   length="11" desc="Ê§°Ü±ÊÊý"/>
+        <Item name="SBJE"   length="16" desc="Ê§°Ü½ð¶î"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="460441" desc="ÒøÐÐ·¢ÆðÅúÁ¿²éÑ¯Ç··Ñ¿Í»§ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"  length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"  length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="WJMC"  length="36" desc="ÎÄ¼þÃû³Æ"/>
+        <Item name="WJLX"  length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Item name="WJMD5" length="32" desc="ÎÄ¼þMD5"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+          <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+          <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="460410" desc="ÒøÐÐ²éÑ¯¿Í»§Ç··Ñ½»Ò×">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="CXFS"   length=" 1" desc="²éÑ¯·½Ê½"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+          <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+          <Item name="JSHMC"  length="64" desc="½áËã»§Ãû³Æ"/>
+          <Item name="YDDZ"   length="128" desc="ÓÃµçµØÖ·"/>
+          <Item name="KKYHDM" length=" 4" desc="´ú¿ÛÒøÐÐ´úÂë"/>
+          <Item name="KKZH"   length="32" desc="¿Û¿îÕË»§"/>
+          <Item name="KKZHMC" length="128" desc="¿Û¿îÕË»§Ãû³Æ"/>
+          <Item name="BFJFBZ" length=" 1" desc="²¿·Ö½É·Ñ±êÖ¾"/>
+          <Item name="ZWLSH"  length="16" desc="ÕËÎñÁ÷Ë®ºÅ"/>
+          <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="QFJE"   length="16" desc="Ç··Ñ½ð¶î"/>
+          <Item name="BJ"     length="16" desc="±¾½ð"/>
+          <Item name="WYJ"    length="16" desc="Î¥Ô¼½ð"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="460411" desc="ÒøÐÐ´úÊÕ¿Í»§Ç··Ñ½»Ò×">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="KKYHDM" length=" 4" desc="¿Û¿îÒøÐÐ´úÂë"/>
+        <Item name="KKZH"   length="32" desc="¿Û¿îÕË»§"/>
+        <Item name="KKZHMC" length="128" desc="¿Û¿îÕË»§Ãû³Æ"/>
+        <Item name="BFJFBZ" length=" 1" desc="²¿·Ö½É·Ñ±êÖ¾"/>
+        <Item name="ZWLSH"  length="16" desc="ÕËÎñÁ÷Ë®ºÅ"/>
+        <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="QFJE"   length="16" desc="Ç··Ñ½ð¶î"/>
+        <Item name="BJ"     length="16" desc="±¾½ð"/>
+        <Item name="WYJ"    length="16" desc="Î¥Ô¼½ð"/>
+        <Item name="FKFS"   length=" 1" desc="¸¶¿î·½Ê½"/>
+        <Item name="HBFH"   length=" 5" desc="»õ±Ò·ûºÅ"/>
+        <Item name="SKJE"   length="16" desc="Êµ¿Û½ð¶î"/>
+        <Item name="KKRQ"   length=" 8" expression="$JYRQ" desc="¿Û¿îÈÕÆÚ"/>
+        <Item name="KKSJ"   length=" 6" expression="$JYSJ" desc="¿Û¿îÊ±¼ä"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"   length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"    length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"    length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH"  length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"   length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"   length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="JFH"     length="20" desc="½É·ÑºÅ"/>
+          <Item name="DFNY"    length=" 6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="SKJE"    length="16" desc="Êµ¿Û½ð¶î"/>
+          <Item name="JFJGSM"  length="128" desc="½É·Ñ½á¹ûËµÃ÷"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction code="460412" desc="ÒøÐÐ·½·¢Æðµ¥±Êµ±ÈÕ´úÊÕÄ¨ÕËÒµÎñÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+        <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="KKYHDM" length=" 4" desc="¿Û¿îÒøÐÐ´úÂë"/>
+        <Item name="KKZH"   length="32" desc="¿Û¿îÕË»§"/>
+        <Item name="KKZHMC" length="128" desc="¿Û¿îÕË»§Ãû³Æ"/>
+        <Item name="BFJFBZ" length=" 1" desc="²¿·Ö½É·Ñ±êÖ¾"/>
+        <Item name="ZWLSH"  length="16" desc="ÕËÎñÁ÷Ë®ºÅ"/>
+        <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="HBFH"   length=" 5" desc="»õ±Ò·ûºÅ"/>
+        <Item name="YSKJE"  length="16" desc="Ô­Êµ¿Û½ð¶î"/>
+        <Item name="CXJE"   length="16" desc="³åÏú½ð¶î"/>
+        <Item name="CXYY"   length="128" desc="³åÏúÔ­Òò"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+          <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="MZBZ"   length=" 1" desc="Ä¨ÕË±êÖ¾"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460443" desc="ÒøÐÐ²éÑ¯¿Í»§ÐÅÏ¢½»Ò×">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+          <Item name="JSHMC"  length="64" desc="½áËã»§Ãû³Æ"/>
+          <Item name="YDDZ"   length="128" desc="ÓÃµçµØÖ·"/>
+          <Item name="QYZT"   length=" 1" desc="Ç©Ô¼×´Ì¬"/>
+          <Item name="YQYYHDM" length=" 4" desc="Ô­Ç©Ô¼ÒøÐÐ´úÂë"/>
+          <Item name="YQYZH"   length="32" desc="Ô­Ç©Ô¼ÕË»§"/>
+          <Item name="YQYZHMC" length="128" desc="Ô­Ç©Ô¼ÕËºÅÃû³Æ"/>
+          <Item name="YJYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="BZ"     length="128" desc="±¸×¢"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460430" desc="ÒøÐÐµ½¹©µç±ä¸ü´ú¿ÛÐ­Òé½»Ò×">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"    length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH"   length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"    length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"    length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="QDBZ"    length=" 1" desc="Ç©¶©±êÖ¾"/>
+        <Item name="JFH"     length="20" desc="½É·ÑºÅ"/>
+        <Item name="JSHMC"   length="64" desc="½áËã»§Ãû³Æ"/>
+        <Item name="YQYYHDM" length=" 4" desc="Ô­Ç©Ô¼ÒøÐÐ´úÂë"/>
+        <Item name="YQYZH"   length="32" desc="Ô­Ç©Ô¼ÕË»§"/>
+        <Item name="YQYZHMC" length="128" desc="Ô­Ç©Ô¼ÕËºÅÃû³Æ"/>
+        <Item name="XQYYHDM" length=" 4" desc="ÐÂÇ©Ô¼ÒøÐÐ´úÂë"/>
+        <Item name="XQYZH"   length="32" desc="ÐÂÇ©Ô¼ÕË»§"/>
+        <Item name="XQYZHMC" length="128" desc="ÐÂÇ©Ô¼ÕË»§Ãû³Æ"/>
+        <Item name="ZHLX"    length=" 2" desc="ÕË»§ÀàÐÍ"/>
+        <Item name="ZJLX"    length=" 2" desc="Ö¤¼þÀàÐÍ"/>
+        <Item name="ZJHM"    length="32" desc="Ö¤¼þºÅÂë"/>
+        <Item name="LXDH"    length="20" desc="ÁªÏµµç»°"/>
+        <Item name="SJHM"    length="20" desc="ÊÖ»úºÅÂë"/>
+        <Item name="EMAIL"   length="64" desc="E-MAIL"/>
+        <Item name="BZ"      length="128" desc="±¸×¢"/>
+        <Item name="QYZT"    length="1" desc="Ç©Ô¼×´Ì¬"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460431" desc="ÒøÐÐµ½¹©µçºË¶Ô´ú¿ÛÐ­Òé½»Ò×">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+        <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460440" desc="ÒøÐÐ·½·¢Æð²éÑ¯¿Í»§½É·Ñ¼ÇÂ¼ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="JFKSSJ" length=" 8" desc="µç·Ñ¿ªÊ¼ÄêÔÂ"/>
+        <Item name="JFZZSJ" length=" 8" desc="µç·ÑÖÕÖ¹ÄêÔÂ"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+          <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+          <Item name="JSHMC"  length="64" desc="½áËã»§Ãû³Æ"/>
+          <Item name="YDDZ"   length="128" desc="ÓÃµçµØÖ·"/>
+          <Item name="DFNY"   length=" 6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="KKYHDM" length="4" desc="¿Û¿îÒøÐÐ´úÂë"/>
+          <Item name="KKZH" length="32" desc="¿Û¿îÕË»§"/>
+          <Item name="KKZHMC" length="128" desc="¿Û¿îÕË»§Ãû³Æ"/>
+          <Item name="SFJE" length="16" desc="Êµ¿Û½ð¶î"/>
+          <Item name="FKFS" length="1" desc="¸¶¿î·½Ê½"/>
+          <Group name="Rec" repeat_name="PKGCNT">
+            <Item name="MXXH"  length=" 7" desc="Ã÷Ï¸ÐòºÅ"/>
+            <Item name="NoUse" length=" 6" desc="È±Ê§×Ö¶Î£¬ÄÚÈÝÎ´Öª"/>
+            <Item name="CBRQ"  length=" 8" desc="³­±íÈÕÆÚ"/>
+            <Item name="BCYC"  length="16" desc="±¾´ÎÔ¤´æ"/>
+            <Item name="BYSS"  length="15" desc="±¾ÔÂÊ¾Êý"/>
+            <Item name="SYSS"  length="15" desc="ÉÏÔÂÊ¾Êý"/>
+            <Item name="SYDL"  length="16" desc="ÊµÓÃµçÁ¿"/>
+            <Item name="ZJDL"  length="16" desc="Ôö¼õµçÁ¿"/>
+            <Item name="DJ"    length="16" desc="µ¥¼Û"/>
+            <Item name="WYJ"   length="16" desc="Î¥Ô¼½ð"/>
+            <Item name="JFJE"  length="16" desc="½»·Ñ½ð¶î"/>
+            <Item name="JFRQ"  length=" 8" desc="½»·ÑÈÕÆÚ"/>
+            <Item name="JFSJ"  length=" 6" desc="½»·ÑÊ±¼ä"/>
+            <Item name="SFR"   length="20" desc="ÊÕ·ÑÈË"/>
+            <Item name="DFCS"  length=" 6" desc="µç·Ñ´ÎÊý"/>
+            <Item name="JLDBH" length="20" desc="¼ÆÁ¿µã±àºÅ"/>
+          </Group>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460442" desc="ÒøÐÐ·½·¢Æð²éÑ¯¡¾º¬¿çÐÐ¡¿ÍÐÊÕ¿Í»§µç·Ñ½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="CXRQ"   length=" 8" desc="²éÑ¯ÈÕÆÚ"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+          <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+          <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+          <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+          <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+          <Item name="ZBS"    length="11" desc="×Ü±ÊÊý"/>
+          <Item name="ZJE"    length="16" desc="×Ü½ð¶î"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460414" desc="ÒøÐÐ·½·¢ÆðÅúÁ¿ÍÐÊÕ¡¾º¬¿çÐÐ¡¿¼ÇÕË½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+        <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+        <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+        <Item name="ZBS"    length="11" desc="×Ü±ÊÊý"/>
+        <Item name="ZJE"    length="16" desc="×Ü½ð¶î"/>
+        <Item name="CGBS"   length="11" desc="³É¹¦±ÊÊý"/>
+        <Item name="CGJE"   length="16" desc="³É¹¦½ð¶î"/>
+        <Item name="SBBS"   length="11" desc="Ê§°Ü±ÊÊý"/>
+        <Item name="SBJE"   length="16" desc="Ê§°Ü½ð¶î"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460460" desc="ÒøÐÐ·½·¢Æð·¢Æ±´òÓ¡½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"  length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"  length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="DFNY"  length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="JFH"   length="20" desc="½É·ÑºÅ"/>
+        <Item name="PJLX"  length=" 2" desc="Æ±¾ÝÀàÐÍ"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="  4" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length="  8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length="  6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="OJYLSH" length="  4" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="OJYRQ"  length="  8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="OJYSJ"  length="  6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="PJLY"   length="  1" desc="Æ±¾ÝÀ´Ô´"/>
+          <Item name="PJLX"   length="  2" desc="Æ±¾ÝÀàÐÍ"/>
+          <Item name="FPDM"    length=" 32" desc="·¢Æ±´úÂë"/>
+          <Item name="PJHM"    length=" 16" desc="Æ±¾ÝºÅÂë"/>
+          <Item name="DWBM"    length="  8" desc="µ¥Î»±àÂë"/>
+          <Item name="DFNY"    length="  6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="JFH"    length=" 20" desc="½É·ÑºÅ"/>
+          <Item name="HM"     length=" 64" desc="»§Ãû"/>
+          <Item name="DZ"     length="128" desc="µØÖ·"/>
+          <Item name="SCCBRQ"  length="  8" desc="ÉÏ´Î³­±íÈÕÆÚ"/>
+          <Item name="BCCBRQ"  length="  8" desc="±¾´Î³­±íÈÕÆÚ"/>
+          <Item name="ZJFDL"  length=" 16" desc="×Ü¼Æ·ÑµçÁ¿"/>
+          <Item name="ZJDF"   length=" 16" desc="×Ü¼Æµç·Ñ"/>
+          <Item name="SSJE"   length=" 16" desc="ÊµÊÕ½ð¶î"/>
+          <Item name="SSJEDX"  length=" 64" desc="ÊµÊÕ½ð¶î´óÐ´"/>
+          <Item name="DDDF"   length=" 16" desc="µç¶Èµç·Ñ"/>
+          <Item name="DZDF"   length=" 16" desc="´úÕ÷µç·Ñ"/>
+          <Item name="JBDF"   length=" 16" desc="»ù±¾µç·Ñ"/>
+          <Item name="WYDF"   length=" 16" desc="Î¥Ô¼µç·Ñ"/>
+          <Item name="LTDF"   length=" 16" desc="Á¦µ÷µç·Ñ"/>
+          <Item name="DQJY"   length=" 16" desc="µ±Ç°½áÓà"/>
+          <Item name="BZ"     length="256" desc="±¸×¢"/>
+          <Group name="Rec" repeat_name="PKGCNT">
+            <Item name="HC"   length=" 7" desc="ÐÐ´Î"/>
+            <Item name="HCLB" length=" 6" desc="ÐÐ´ÎÀàÐÍ"/>
+            <Item name="BH"   length=" 8" desc="±íºÅ"/>
+            <Item name="BYSS" length="16" desc="±¾ÔÂÊ¾Êý"/>
+            <Item name="SYSS" length="15" desc="ÉÏÔÂÊ¾Êý"/>
+            <Item name="BL"   length="15" desc="±¶ÂÊ"/>
+            <Item name="ZJDL" length="16" desc="¼Ó¼õµçÁ¿"/>
+            <Item name="JFDL" length="16" desc="¼Æ·ÑµçÁ¿"/>
+            <Item name="DJ"   length="16" desc="µç¼Û"/>
+            <Item name="DF"   length="16" desc="µç·Ñ"/>
+          </Group>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460463" desc="ÒøÐÐ·½·¢Æð·µ»Ø·¢Æ±´òÓ¡½á¹ûÍ¨ÖªÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="OJYLSH" length=" 4" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="OJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="OJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DYRQ"   length=" 8" desc="´òÓ¡ÈÕÆÚ"/>
+        <Item name="DYSJ"   length=" 6" desc="´òÓ¡Ê±¼ä"/>
+        <Item name="DYCZRY" length="20" desc="´òÓ¡²Ù×÷ÈËÔ±"/>
+        <Item name="PJLX"   length=" 2" desc="Æ±¾ÝÀàÐÍ"/>
+        <Item name="FPDM"    length="32" desc="·¢Æ±´úÂë"/>
+        <Item name="PJHM"    length="16" desc="Æ±¾ÝºÅÂë"/>
+        <Item name="DWBM"    length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="DFNY"    length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="DZBZ"   length=" 1" desc="´òÓ¡±êÖ¾"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460461" desc="ÒøÐÐ·¢Æð·¢Æ±×÷·Ï½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"    length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="DFNY"    length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="PJLY"   length=" 1" desc="Æ±¾ÝÀ´Ô´"/>
+        <Item name="PJLX"   length=" 2" desc="Æ±¾ÝÀàÐÍ"/>
+        <Item name="FPDM"    length="32" desc="·¢Æ±´úÂë"/>
+        <Item name="PJHM"    length="16" desc="Æ±¾ÝºÅÂë"/>
+        <Item name="YSSJ"   length="16" desc="ÊµÊÕ½ð¶î"/>
+        <Item name="YSDF"   length="16" desc="Ó¦ÊÕµç·Ñ"/>
+        <Item name="BJ"     length="16" desc="±¾½ð"/>
+        <Item name="WYJ"    length="16" desc="Î¥Ô¼½ð"/>
+        <Item name="ZFCZRY" length="20" desc="´òÓ¡²Ù×÷ÈËÔ±"/>
+        <Item name="ZFRQ"   length=" 8" desc="×÷·ÏÈÕÆÚ"/>
+        <Item name="ZFSJ"   length=" 6" desc="×÷·ÏÊ±¼ä"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460462" desc="ÒøÐÐ·¢Æð·¢Æ±²éÑ¯ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"  length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="JFH"   length="20" desc="½É·ÑºÅ"/>
+        <Item name="DFNY"  length=" 6" desc="µç·ÑÄêÔÂ"/>
+        <Item name="PJLY"  length=" 1" desc="Æ±¾ÝÀ´Ô´"/>
+        <Item name="PJLX"  length=" 2" desc="Æ±¾ÝÀàÐÍ"/>
+        <Item name="FPDM"   length="32" desc="·¢Æ±´úÂë"/>
+        <Item name="PJHM"   length="16" desc="Æ±¾ÝºÅÂë"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="JYLSH"  length="  4" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length="  8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length="  6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="PJLY"   length="  1" desc="Æ±¾ÝÀ´Ô´"/>
+          <Item name="PJLX"   length="  2" desc="Æ±¾ÝÀàÐÍ"/>
+          <Item name="FPDM"    length=" 32" desc="·¢Æ±´úÂë"/>
+          <Item name="PJHM"    length=" 16" desc="Æ±¾ÝºÅÂë"/>
+          <Item name="DWBM"    length="  8" desc="µ¥Î»±àÂë"/>
+          <Item name="DFNY"    length="  6" desc="µç·ÑÄêÔÂ"/>
+          <Item name="JFH"    length=" 20" desc="½É·ÑºÅ"/>
+          <Item name="HM"     length=" 64" desc="»§Ãû"/>
+          <Item name="DZ"     length="128" desc="µØÖ·"/>
+          <Item name="SCCBRQ"  length="  8" desc="ÉÏ´Î³­±íÈÕÆÚ"/>
+          <Item name="BCCBRQ"  length="  8" desc="±¾´Î³­±íÈÕÆÚ"/>
+          <Item name="ZJFDL"  length=" 16" desc="×Ü¼Æ·ÑµçÁ¿"/>
+          <Item name="ZJDF"   length=" 16" desc="×Ü¼Æµç·Ñ"/>
+          <Item name="SSJE"   length=" 16" desc="ÊµÊÕ½ð¶î"/>
+          <Item name="SSJEDX"  length=" 64" desc="ÊµÊÕ½ð¶î´óÐ´"/>
+          <Item name="DDDF"   length=" 16" desc="µç¶Èµç·Ñ"/>
+          <Item name="DZDF"   length=" 16" desc="´úÕ÷µç·Ñ"/>
+          <Item name="JBDF"   length=" 16" desc="»ù±¾µç·Ñ"/>
+          <Item name="WYDF"   length=" 16" desc="Î¥Ô¼µç·Ñ"/>
+          <Item name="LTDF"   length=" 16" desc="Á¦µ÷µç·Ñ"/>
+          <Item name="DQJY"   length=" 16" desc="µ±Ç°½áÓà"/>
+          <Item name="BZ"     length="256" desc="±¸×¢"/>
+          <Group name="Rec" repeat_name="PKGCNT">
+            <Item name="HC"   length=" 7" desc="ÐÐ´Î"/>
+            <Item name="HCLB" length=" 6" desc="ÐÐ´ÎÀàÐÍ"/>
+            <Item name="BH"   length=" 8" desc="±íºÅ"/>
+            <Item name="BYSS" length="16" desc="±¾ÔÂÊ¾Êý"/>
+            <Item name="SYSS" length="15" desc="ÉÏÔÂÊ¾Êý"/>
+            <Item name="BL"   length="15" desc="±¶ÂÊ"/>
+            <Item name="ZJDL" length="16" desc="¼Ó¼õµçÁ¿"/>
+            <Item name="JFDL" length="16" desc="¼Æ·ÑµçÁ¿"/>
+            <Item name="DJ"   length="16" desc="µç¼Û"/>
+            <Item name="DF"   length="16" desc="µç·Ñ"/>
+          </Group>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460450" desc="ÒøÐÐ·½·¢Æð¶Ô×ÜÕË½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DZPCLSH" length="27" desc="¶ÔÕËÅú´ÎÁ÷Ë®ºÅ"/>
+        <Item name="DWBM"    length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="SFFS"    length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"    length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="ZBS"     length="11" desc="×Ü±ÊÊý"/>
+        <Item name="ZJE"     length="16" desc="×Ü½ð¶î"/>
+        <Item name="DAZRQ"   length=" 8" desc="´ïÕËÈÕÆÚ"/>
+        <Item name="DAZSJ"   length=" 6" desc="´ïÕËÊ±¼ä"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+      </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460451" desc="ÒøÐÐ·½·¢Æð¶ÔÃ÷Ï¸ÕË½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="RZYHDM" length=" 4" desc="ÈëÕËÒøÐÐ´úÂë"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="DAZRQ"  length=" 8" desc="´ïÕËÈÕÆÚ"/>
+        <Item name="DAZSJ"  length=" 6" desc="´ïÕËÊ±¼ä"/>
+        <Item name="WJS"    length=" 2" desc="Ã÷Ï¸ÎÄ¼þ¸öÊý"/>
+        <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Group name="Rec" repeat_name="WJS">
+          <Item name="XH"     length=" 2" desc="ÐòºÅ"/>
+          <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+          <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+        </Group>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+
+
+
+
+  <Transaction code="460444" desc="ÒøÐÐ·½·¢Æð²éÑ¯¿Í»§»ù±¾ÐÅÏ¢ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <Item name="CZYH"   length="20" desc="²Ù×÷ºÅ"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+          <Item name="JYLSH"  length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="JYRQ"   length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+          <Item name="JYSJ"   length=" 6" desc="½»Ò×Ê±¼ä"/>
+          <Item name="YJYLSH" length="24" desc="Ô­½»Ò×Á÷Ë®ºÅ"/>
+          <Item name="YJYRQ"  length=" 8" desc="Ô­½»Ò×ÈÕÆÚ"/>
+          <Item name="YJYSJ"  length=" 6" desc="Ô­½»Ò×Ê±¼ä"/>
+          <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+          <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+          <Item name="QFJE"    length="16" desc="Ç··Ñ½ð¶î"/>
+          <Item name="YHMC"   length="64" desc="ÓÃ»§Ãû³Æ"/>
+          <Item name="YDDZ"   length="128" desc="ÓÃµçµØÖ·"/>
+          <Item name="BZSM"  length="128" desc="±¸×¢ËµÃ÷"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460413" desc="ÒøÐÐ·½·¢Æð´æÈëÔ¤¸¶¿î½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="WDMC"   length="64" desc="ÍøµãÃû³Æ"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="SFFS"   length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+        <Item name="FYLX"   length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+        <Item name="DWBM"   length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="JFH"    length="20" desc="½É·ÑºÅ"/>
+        <AddItem name="CRRQ" expression="GETDATETIME(YYYYMMDD)" desc="´æÈëÈÕÆÚ"/>
+        <AddItem name="CRSJ" expression="GETDATETIME(HHMISS)" desc="´æÈëÊ±¼ä"/>
+        <Item name="CRRQ"   length=" 8" desc="´æÈëÈÕÆÚ"/>
+        <Item name="CRSJ"   length=" 6" desc="´æÈëÊ±¼ä"/>
+        <Item name="CRYFK"  length="16" desc="´æÈëÔ¤¸¶¿î"/>
+        <Item name="FKFS"   length=" 1" desc="¸¶¿î·½Ê½"/>
+        <Item name="CZYH"   length="20" desc="²Ù×÷Ô±ºÅ"/>
+        <Item name="BZSM"   length="128" desc="±¸×¢ËµÃ÷"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndRspHead"/>
+      <Switch expression="$JYFHDM">
+        <Case value="00">
+          <Break/>
+        </Case>
+        <Default>
+          <Quote name="ErrHead"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+
+  <Transaction code="460490" desc="ÒøÐÐ·¢ËÍ´úÊÕÊ§°ÜÈÕÖ¾·þÎñ½»Ò×ÇëÇó">
+    <Request>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
+        <Item name="YHJYLSH" length="24" desc="½»Ò×Á÷Ë®ºÅ"/>
+        <Item name="YHJYRQ"  length=" 8" desc="½»Ò×ÈÕÆÚ"/>
+        <Item name="YHJYSJ"  length=" 6" desc="½»Ò×Ê±¼ä"/>
+        <Item name="DWBM"  length=" 8" desc="µ¥Î»±àÂë"/>
+        <Item name="WJMC"  length="36" desc="ÎÄ¼þÃû³Æ"/>
+        <Item name="WJLX"  length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
+        <Item name="WJMD5" length="32" desc="ÎÄ¼þMD5"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Request>
+    <Response necessary="no">
+      <Quote name="SndStdRsp"/>
+    </Response>
+  </Transaction>
+</Application>

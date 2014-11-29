@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<Region>
+  <Server name="OFTKEFE2" type="OTA" trace="6" ip="_LOCAL_IP"> <!--ÊôÐÔÎÄ¼þ-->
+    <DBConnectionPool dbname="DB1">
+      <PoolSize>2</PoolSize>
+    </DBConnectionPool>
+    <ThreadPool>
+      <MinWorkerThreads>40</MinWorkerThreads>
+      <MaxWorkerThreads>40</MaxWorkerThreads>
+    </ThreadPool>
+    <DllPriDataCtrl dllfile="dll/pltmain.so" initfunc="initOnlineSvr" donefunc="closeOnlineSvr">
+      <Para>etc/OFTKEFE2_CTL.XML</Para>
+    </DllPriDataCtrl>
+    <QueuePair name="LeftQueuePair">
+      <QueueLength>100</QueueLength>
+      <RequestProcessor dllfile="dll/pltmain.so" dbapplication="YES">
+        <Entry>
+          <MessageType>OTHERS</MessageType>
+          <ProcessModule>onlineMainCtrl</ProcessModule>
+        </Entry>
+      </RequestProcessor>
+    </QueuePair>
+    <QueuePair name="RightQueuePair">
+    </QueuePair>
+  </Server>
+</Region>

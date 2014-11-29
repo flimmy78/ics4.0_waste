@@ -243,6 +243,29 @@
     </Process>
   </Function>
 
+  <!--
+    input:DatFilNam,需要计算MD5值的文件
+    output:Md5Val,文件的MD5值
+  -->
+  <Function name="GetFilMD5" desc="获取文件的md5值">
+    <Process>
+      <!--Set>DatFilNam=/app/ics/app/efek/bin/HDXY03010301121520141125001.test</Set-->
+      <System command="GeneMd5.sh" error="IGNORE">
+        <Arg name="FilNam" value="$DatFilNam"/>
+      </System>
+      <Set>Md5FilNam=/app/ics/app/efek/bin/md5</Set>
+      <Exec func="PUB:OpenFile">
+        <Arg name="FileName" value="$Md5FilNam"/>
+        <Arg name="Mode" value="r"/>
+        <Arg name="ObjectName" value="LstFilNam"/>
+      </Exec>
+      <Exec func="PUB:GetFileLine" error="IGNORE">
+        <Arg name="FieldName" value="Md5Val"/>
+        <Arg name="ObjectName" value="LstFilNam"/>
+      </Exec>
+    </Process>
+  </Function>
+
 
 
 
