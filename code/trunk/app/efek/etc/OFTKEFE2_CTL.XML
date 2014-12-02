@@ -138,7 +138,7 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetCusAgt" desc="根据文件名获取文件处理记录">
       <Sentence>
-        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and KKZH='%s'
+        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
@@ -182,7 +182,7 @@
           <Set>NamChk=1</Set> <!--测试不检查，生产考虑打开-->
           <Set>VchFlg=0</Set> <!--渠道交易不检查-->
           <Set>VchTyp=000</Set>
-          <Set>VchTyp=00000000</Set>
+          <Set>VchNo=00000000</Set>
           <Set>BilDat=$YHJYRQ</Set>
           <Set>CcyCod=CNY</Set>
           <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
@@ -199,7 +199,7 @@
           <Set>CnlTyp=L</Set>
           <Set>Mask=9102</Set>
           <Set>ActNo=$KKZH</Set>
-          <If condition="IS_EQUAL_STRING($ActFlg,1)" desc="存折">
+          <If condition="IS_EQUAL_STRING($ActFlg,4)" desc="卡">
             <Set>VchCod=00000000</Set>
           </If>
           <Set>PayMod=0</Set>
@@ -207,7 +207,7 @@
           <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
           <Set>CcyTyp=1</Set>
           <Set>VchChk=0</Set>
-          <Set>CAgtNo=EFE999999</Set>
+          <Set>CAgtNo=EFE9999999</Set>
           <Set>GthFlg=N</Set>
           <Break/>
         </Case>
@@ -297,9 +297,9 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetTxnDtl" desc="根据文件名获取文件处理记录">
       <Sentence>
-        select DtlSts, LogNo from EfekTxnDtl where OIFlag='I' and JYLSH='%s'
+        select DtlSts, LogNo OLogNo, TlrId, XH from EfekTxnDtl where OIFlag='I' and JYLSH='%s' and XH='%s' for read only
       </Sentence>
-      <Fields>YJYLSH|</Fields>
+      <Fields>YJYLSH|XH|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Quote name="InitTran"/>
@@ -311,7 +311,12 @@
           <Switch expression="$DtlSts">
             <Case value="U" desc="初始"/>
             <Case value="T" desc="超时">
+              <Set>OJYLSH=$JYLSH</Set>
+              <Set>JYLSH=$YJYLSH</Set>
               <Quote name="SyncHost"/>
+              <Set>JYLSH=$OJYLSH</Set>
+
+
               <Break/>
             </Case>
             <Case value="F" desc="失败">
@@ -387,23 +392,23 @@
 <!--
     <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
       <Sentence>
-        DWDM='%s'
+        DWBM='%s'
       </Sentence>
-      <Fields>DWDM</Fields>
+      <Fields>DWBM</Fields>
     </DynSentence>
 -->
     <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
       <Sentence>
-        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWDM='%s'
+        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM='%s'
       </Sentence>
-      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWDM|</Fields>
+      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWBM|</Fields>
     </DynSentence>
 
     <DynSentence name="InsRunCtl" desc="添加开工记录">
       <Sentence>
         insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', 'Q' ,'%s','','','' )
       </Sentence>
-      <Fields>ROOT.DWDM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.BZ|</Fields>
+      <Fields>ROOT.DWBM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.BZ|</Fields>
     </DynSentence>
 
 
@@ -512,27 +517,27 @@
 
 
 
-  <Transaction code="460492" desc="供电方发起银电业务开工交易请求">
+  <Transaction code="460492" desc="供电方发起银电业务签退交易请求">
 <!--
     <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
       <Sentence>
-        DWDM='%s'
+        DWBM='%s'
       </Sentence>
-      <Fields>DWDM</Fields>
+      <Fields>DWBM</Fields>
     </DynSentence>
 -->
     <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
       <Sentence>
-        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWDM='%s'
+        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM='%s'
       </Sentence>
-      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWDM|</Fields>
+      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWBM|</Fields>
     </DynSentence>
 
     <DynSentence name="InsRunCtl" desc="添加开工记录">
       <Sentence>
         insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%s','','','' )
       </Sentence>
-      <Fields>ROOT.DWDM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
+      <Fields>ROOT.DWBM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
     </DynSentence>
 
 
@@ -660,12 +665,15 @@
       </Exec>
       <Switch expression="~RetCod">
         <Case value="0" desc="存在记录">
+          <Set>QYBZ=1</Set>
           <Exec func="PUB:UpdateRecord" desc="更新记录">
             <Arg name="TblNam" value="EfekCusAgt"/>
             <Arg name="CndSts" value="UpdCusAgt"/>
           </Exec>
+          <Break/>
         </Case>
         <Case value="-2" desc="不存在记录">
+          <Set>QYBZ=0</Set>
           <Exec func="PUB:InsertRecord" error="IGNORE">
             <Args>
               <Arg name="tablename" value="EfekCusAgt"/>

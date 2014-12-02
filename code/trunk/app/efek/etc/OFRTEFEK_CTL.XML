@@ -13,6 +13,7 @@
   <TableDeclare>
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
+    <Table name="EfekCusAgt"    value="EfekCusAgt"/>  <!--银电客户签约表-->
     <!--Table name="efeinfctl"    value="efeinfctl"/-->  <!--银电开工控制表-->
     <!--Table name="efechkinf"    value="efechkinf"/-->  <!--银电对账信息表-->
     <!--Table name="efekchkdtl"    value="efekchkdtl"/-->  <!--银电对账明细表-->
@@ -2355,299 +2356,59 @@
     </FlowCtrl>
   </Transaction>
 
-  <Transaction code="460432" desc="供电发起代扣协议变更交易">
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
-    <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
+  <Transaction code="460432" desc="供电方发起供电到银行变更代扣协议请求">
+    <DynSentence name="UpdCusAgt" desc="根据单位代码更新开工信息">
       <Sentence>
-        SELECT BrNo FROM efeinfctl WHERE DLIP='%s'
+        DWBM='%s' and JFH='%s'
       </Sentence>
-      <Fields>DLIP|</Fields>
+      <Fields>DWBM|JFH|</Fields>
     </DynSentence>
-    <DynSentence name="InsCusAgt">             <!--新增签约记录 -->
+    <DynSentence name="GetCusAgt" desc="根据单位代码更新开工信息">
       <Sentence>
-        INSERT INTO efekcusagt(BrNo,NodNo,CAgtNo,WDMC,QDBZ,JFH,JSHMC,XQYYHDM,
-            XQYZH,XQYZHMC,ZHLX,ZJLX,ZJHM,LXDH,SJHM,EMAIL,BZ)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-               '%s','%s','%s','%s',
-               '%s','%s')
+        select * from EfekCusAgt where DWBM='%s' and JFH='%s'
       </Sentence>
-      <Fields>
-        BrNo|NodNo|CAgtNo|WDMC|QDBZ|JFH|JSHMC|XQYYHDM|XQYZH|XQYZHMC|ZHLX|ZJLX|ZJHM|LXDH|SJHM|EMAIL|BZ
-      </Fields>
+      <Fields>DWBM|JFH|</Fields>
     </DynSentence>
-     <DynSentence name="UdpCusAgt">             <!--修改签约记录 -->
-      <Sentence>
-        UPDATE efecusagt set BrNo='%s',NodNo='%s',CAgtNo='%s',WDMC='%s',
-          QDBZ='%s',JSHMC='%s',XQYYHDM='%s',XQYZH='%s',XQYZHMC='%s',
-          ZHLX='%s',ZJLX='%s',ZJHM='%s',LXDH='%s',SJHM='%s',EMAIL='%s',BZ='%s'
-          WHERE JFH='%s'
-      </Sentence>
-      <Fields>
-        EfeId|SBN|ECD|WDO|EDD|JFH|KKB|TActNo|ACT|TActNm|TIdTyp|TIdNo|JLD|TXT|UsrNam|JFH|
-      </Fields>
-    </DynSentence>
-    <DynSentence name="CclCusAgt">             <!--注销签约记录 -->
-      <Sentence>
-        UPDATE efecusagt SET QDBZ='%s' WHERE JFH='%s'
-      </Sentence>
-      <Fields>EfeId|JFH|</Fields>
-    </DynSentence>
+
     <FlowCtrl>
 
-<!--测试返回开始 -->
-        <Set>CWTSXX=888888</Set>
-        <Set>CWFSRQ=20141111</Set>
-        <Set>CWFSSJ=115000</Set>
-        <Set>CWFSJYM=888888</Set>
-        <Set>SQLCODE=123</Set>
-
-<Set>JYLSH=201411200301000000000001</Set>
-<Set>JYRQ=20141120</Set>
-<Set>JYSJ=150800</Set>
-
-        <Set>RspCod=000000</Set>
-        <Set>MsgTyp=N</Set>
-        <Set>RspMsg=N</Set>
-        <Return></Return>
-<!--    测试返回结束-->
-
-      <Quote name="GetEfeId"/>
-
-      <!--读取开工信息记录-->
-      <Call package="EFE" function="CheckZtByDWBM"/>
-      <If condition="$Status=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在停工状态</Set>
-        <Return/>
-      </If>
-
-      <!--得到网点名称-->
-      <Call package="EFE" function="GetWDMC"/>
-
-      <!--得到外发交易流水号-->
-      <Quote name="InitTran"/>
-
-
-      <Switch  expression="$EfeId">
-        <Case value="441999">
-          <Set>NodNo=441800</Set>
-          <Break/>
-        </Case>
-        <Case value="444999">
-          <Set>NodNo=444800</Set>
-          <Break/>
-        </Case>
-        <Case value="446999">
-          <Set>NodNo=446800</Set>
-          <Break/>
-        </Case>
-        <Case value="445999">
-          <Set>NodNo=445800</Set>
-          <Break/>
-        </Case>
-        <Case value="483999">
-          <Set>NodNo=483800</Set>
-          <Break/>
-        </Case>
-        <Case value="484999">
-          <Set>NodNo=484800</Set>
-          <Break/>
-        </Case>
-        <Case value="485999">
-          <Set>NodNo=485800</Set>
-          <Break/>
-        </Case>
-        <Case value="491999">
-          <Set>NodNo=491800</Set>
-          <Break/>
-        </Case>
-        <Case value="476999">
-          <Set>NodNo=476800</Set>
-          <Break/>
-        </Case>
-        <Case value="493999">
-          <Set>NodNo=493800</Set>
-          <Break/>
-        </Case>
-      </Switch>
-      <!--取电子柜员号-->
-      <Set>TxnCnl=EFA</Set>       <!--取电子柜员号用-->
-      <Set>TxnObj=OFRTEFEA</Set>
-      <Exec func="PUB:GetVirtualTeller">
-        <Arg name="TxnCnl" value="EFA"/>
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
       </Exec>
-
-
-      <Switch expression="$QDBZ">
-        <!--新增-->
-        <Case value="0">
-          <Call package="EFE" function="ChkIsExistAgt"/>
-          <!--校验各分行账号-->
-          <!--441999广东省分行-->
-          <!--444999珠海分行-->
-          <!--446999佛山分行-->
-          <!--445999汕头分行-->
-          <!--483999东莞分行-->
-          <!--484999中山分行-->
-          <!--485999揭阳支行-->
-          <!--491999惠州分行-->
-          <!--761999江门分行-->
-          <!--只有广州、珠海、佛山和中山有Acjud_行号函数，其他分行要加-->
-          <Set>ActNo=$TActNo</Set>
-          <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
-          <Call function="$AcJudFunc">
-            <Input name="ActNo|NewFlg|"/>
-            <Output name="OActNo|ActCls|"/>
-          </Call>
-          <!--向主机查询账户信息-->
-          <Switch expression="$ActCls">
-            <Case value="2" /> <!-- 对私 -->
-            <Case value="3" />
-            <Case value="5" >
-              <If condition="INTCMP($ActCls,3,3)">
-                 <Set>ActFlg=4</Set>  <!--对私卡号-->
-                 <Set>ActTyp=4</Set>
-              </If>
-              <Else>
-                 <Set>ActFlg=2</Set>  <!--对私帐号-->
-                 <Set>ActTyp=2</Set>
-              </Else>
-              <Set>GPF=P</Set>
-              <Set>CcyCod=CNY</Set>
-
-              <Call package="EFE" function="Chk476520"/>
-              <Break/>
-            </Case>
-            <Case value="0" /> <!-- 对公 -->
-            <Case value="4" >
-              <Set>GPF=G</Set>
-              <Set>ActTyp=1</Set>
-              <Call package="EFE" function="Chk109000"/>
-              <Break/>
-            </Case>
-            <Default>
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户类型不存在</Set>
-                <Return/>
-            </Default>
-          </Switch>
-
-          <!--取单位协议编号-->
-          <Set>CAgtNo= </Set>
-          <!--取协议序列号-->
-          <Set>SeqCnd=SUBSTR($BrNo,1,3)</Set><!--取个人协议编号-->
-          <Exec func="PUB:GetPubSeqNo">
-            <Arg name="SeqNam" value="efecusagt:PAgtNo"></Arg>   <!--业务码待定后再将其作为生成依据-->
-            <Arg name="SeqCnd" value="$SeqCnd"></Arg>
-            <Arg name="Len" value="10"></Arg>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="存在记录">
+          <Set>QYBZ=1</Set>
+          <Exec func="PUB:UpdateRecord" desc="更新记录">
+            <Arg name="TblNam" value="EfekCusAgt"/>
+            <Arg name="CndSts" value="UpdCusAgt"/>
           </Exec>
-          <Set>PAgtNo=STRCAT($SeqCnd,$SelVal)</Set>
-          <!--插入库表-->
-          <Exec func="PUB:ExecSql" error="IGNORE">
-            <Arg name="SqlCmd"   value="InsCusAgt"/>
-          </Exec>
-          <If condition="~RetCod=-1">
-            <Exec func="PUB:RollbackWork" error="IGNORE" />
-            <Set>MsgTyp=E</Set>
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=数据库处理失败!</Set>
-            <Return/>
-          </If>
           <Break/>
         </Case>
-        <!--修改-->
-        <Case value="1">
-          <Call package="EFE" function="ChkIsExistAgt"/>
-          <!--校验各分行账号-->
-          <!--441999广东省分行-->
-          <!--444999珠海分行-->
-          <!--446999佛山分行-->
-          <!--445999汕头分行-->
-          <!--483999东莞分行-->
-          <!--484999中山分行-->
-          <!--485999揭阳支行-->
-          <!--491999惠州分行-->
-          <!--761999江门分行-->
-          <!--只有广州、珠海、佛山和中山有Acjud_行号函数，其他分行要加-->
-          <Set>ActNo=$TActNo</Set>
-          <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
-          <Call function="$AcJudFunc">
-            <Input name="ActNo|NewFlg|"/>
-            <Output name="OActNo|ActCls|"/>
-          </Call>
-          <!--向主机查询账户信息-->
-          <Switch expression="$ActCls">
-            <Case value="2" /> <!-- 对私 -->
-            <Case value="3" />
-            <Case value="5" >
-              <If condition="INTCMP($ActCls,3,3)">
-                 <Set>ActFlg=4</Set>  <!--对私卡号-->
-                 <Set>ActTyp=4</Set>
-              </If>
-              <Else>
-                 <Set>ActFlg=2</Set>  <!--对私帐号-->
-                 <Set>ActTyp=2</Set>
-              </Else>
-              <Set>GPF=P</Set>
-              <Set>CcyCod=CNY</Set>
-
-              <Call package="EFE" function="Chk476520"/>
-              <Break/>
-            </Case>
-            <Case value="0" /> <!-- 对公 -->
-            <Case value="4" >
-              <Set>GPF=G</Set>
-              <Set>ActTyp=1</Set>
-              <!--上主机查询客户资料-->
-              <Call package="EFE" function="Chk109000"/>
-              <Break/>
-            </Case>
-            <Default>
-                <Set>RspCod=EFE999</Set>
-                <Set>RspMsg=帐户类型不存在</Set>
-                <Return/>
-            </Default>
-          </Switch>
-          <Exec func="PUB:ExecSql" error="IGNORE">
-            <Arg name="SqlCmd"   value="UdpCusAgt"/>
+        <Case value="-2" desc="不存在记录">
+          <Set>QYBZ=0</Set>
+          <Exec func="PUB:InsertRecord" error="IGNORE">
+            <Args>
+              <Arg name="tablename" value="EfekCusAgt"/>
+            </Args>
           </Exec>
-          <If condition="~RetCod=-1">
-            <Exec func="PUB:RollbackWork" error="IGNORE" />
+          <If condition="INTCMP(~RetCod,4,0)">
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=数据库处理失败!</Set>
-            <Return/>
-          </If>
-          <Break/>
-        </Case>
-        <!--查询-->
-        <Case value="3">
-            <Call package="EFE" function="QryCusAgt"/>
-          <Break/>
-        </Case>
-        <!--注销-->
-        <Case value="2">
-          <Call package="EFE" function="ChkIsExistAgt"/>
-          <Exec func="PUB:ExecSql" error="IGNORE">
-            <Arg name="SqlCmd"   value="CclCusAgt"/>
-          </Exec>
-          <If condition="~RetCod=-1">
-            <Exec func="PUB:RollbackWork" error="IGNORE" />
-            <Set>MsgTyp=E</Set>
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=数据库处理失败!</Set>
+            <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
             <Return/>
           </If>
           <Break/>
         </Case>
         <Default>
+          <Set>MsgTyp=E</Set>
           <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=没该种选择</Set>
+          <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
           <Return/>
         </Default>
       </Switch>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+
     </FlowCtrl>
   </Transaction>
 

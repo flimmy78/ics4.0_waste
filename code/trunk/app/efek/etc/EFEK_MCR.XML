@@ -3,7 +3,7 @@
   <Macro name="EfeSqlLst" desc="数据操作宏清单">
     <DynSentence name="GetRunCtl" desc="根据单位编码获取参数">
       <Sentence>
-        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s'
+        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s' for read only
       </Sentence>
       <Fields>DWBM|</Fields>
     </DynSentence>
@@ -22,11 +22,18 @@
       <Fields>LogNo|</Fields>
     </DynSentence>
 
-    <DynSentence name="UpdTxnDtl" desc="根据业务唯一标志更新明细信息">
+    <DynSentence name="UpdTxnJnlSts" desc="根据业务唯一标志更新流水信息">
       <Sentence>
-        OIFLAG='%s' and JYLSH='%s' and XH='%s'
+        update EfekTxnJnl set HRspCd='%s', HTxnSt='%s', HLogNo='%s', TckNo='%s' where LogNo='%s'
       </Sentence>
-      <Fields>OIFLAG|JYLSH|XH|</Fields>
+      <Fields>HRspCd|HTxnSt|HLogNo|TckNo|LogNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="UpdTxnDtlSts" desc="根据业务唯一标志更新明细信息">
+      <Sentence>
+        update EfekTxnDtl set DtlSts='%s', TckNo='%s' where OIFLAG='%s' and JYLSH='%s' and XH='%s'
+      </Sentence>
+      <Fields>DtlSts|TckNo|OIFLAG|JYLSH|XH|</Fields>
     </DynSentence>
 
   </Macro>
@@ -153,22 +160,23 @@
       <Arg name="HTxnCd" value="458980"/>
       <Arg name="ObjSvr" value="SHSTPUB1"/>
     </Exec>
+    <Set>LogNo=$OLogNo</Set>
     <Switch expression="$MsgTyp">
       <Case value="E">
         <Switch expression="$HRspCd">
-          <Case value="AG8001"/>   <!--该前置流水号不存在-->
-          <Case value="AG8981"/>   <!--该前置流水号不存在-->
-          <Case value="SC6129">    <!--原交易不存在-->
+          <Case value="AG8001" desc="该前置流水号不存在"/>
+          <Case value="AG8981" desc="该前置流水号不存在"/>
+          <Case value="SC6129" desc="原交易不存在">
             <Set>HTxnSt=F</Set>
             <Set>DtlSts=F</Set>
             <Exec func="PUB:ExecSql">
-              <Arg name="sql" value="UpdTxnJnl"/>
+              <Arg name="sql" value="UpdTxnJnlSts"/>
             </Exec>
             <Exec func="PUB:ExecSql">
-              <Arg name="sql" value="UpdTxnDtl"/>
+              <Arg name="sql" value="UpdTxnDtlSts"/>
             </Exec>
             <Exec func="PUB:CommitWork" error="IGNORE"/>
-            <Return/>
+            <Break/>
           </Case>
           <Default>     <!--其他错误(非原交易不存在)-->
             <Set>MsgTyp=E</Set>
@@ -183,10 +191,10 @@
           <Set>HTxnSt=C</Set>
           <Set>DtlSts=C</Set>
           <Exec func="PUB:ExecSql">
-            <Arg name="sql" value="UpdTxnJnl"/>
+            <Arg name="sql" value="UpdTxnJnlSts"/>
           </Exec>
           <Exec func="PUB:ExecSql">
-            <Arg name="sql" value="UpdTxnDtl"/>
+            <Arg name="sql" value="UpdTxnDtlSts"/>
           </Exec>
           <Break/>
         </If>
@@ -194,10 +202,10 @@
           <Set>HTxnSt=S</Set>
           <Set>DtlSts=S</Set>
           <Exec func="PUB:ExecSql">
-            <Arg name="sql" value="UpdTxnJnl"/>
+            <Arg name="sql" value="UpdTxnJnlSts"/>
           </Exec>
           <Exec func="PUB:ExecSql">
-            <Arg name="sql" value="UpdTxnDtl"/>
+            <Arg name="sql" value="UpdTxnDtlSts"/>
           </Exec>
           <Exec func="PUB:CommitWork" error="IGNORE"/>
         </Else>
@@ -205,7 +213,7 @@
       </Case>
       <Default>
         <Set>MsgTyp=E</Set>
-        <Set>RspCod=PFA999</Set>
+        <Set>RspCod=EFE999</Set>
         <Set>RspMsg=STRCAT(查询主机流水【,$OLogNo,】失败)</Set>
         <Return/>
       </Default>

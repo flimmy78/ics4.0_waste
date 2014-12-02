@@ -13,7 +13,16 @@
       <Column name="RspCod" sort="no"/>
       <Column name="JYFHDM" sort="no"/>
     </Table>
+    <Table name="DWBMtoBrNo" file="etc/EFE_CSW_441999.XML">
+      <Column name="DWBM" sort="no"/>
+      <Column name="BrNo" sort="no"/>
+    </Table>
+    <Table name="ZHLXtoActFlg" file="etc/EFE_CSW_441999.XML">
+      <Column name="ZHLX" sort="no"/>
+      <Column name="ActFlg" sort="no"/>
+    </Table>
   </CodeSwitching>
+
 
   <GetTxnCode>
     <Item type="fixed" offset="96" length="2"/>
@@ -171,8 +180,11 @@
       <Item name="YQYZH"   length="32" desc="原签约账户"/>
       <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
       <Item name="XQYYHDM" length=" 4" desc="新签约银行代码"/>
+      <CopyItem dest_name="QYYHDM" sour_name="XQYYHDM"/>
       <Item name="XQYZH"   length="32" desc="新签约账户"/>
+      <CopyItem dest_name="QYYHZH" sour_name="XQYZH"/>
       <Item name="XQYZHMC" length="128" desc="新签约账户名称"/>
+      <CopyItem dest_name="QYYHZHMC" sour_name="XQYZHMC"/>
       <Item name="ZHLX"    length=" 2" desc="账户类型"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
       <Item name="ZJHM"    length="32" desc="证件号码"/>
@@ -184,6 +196,9 @@
       <Item name="YJYLSH"  length="24" desc="原交易流水号"/>
       <Item name="YJYRQ"   length=" 8" desc="原交易日期"/>
       <Item name="YJYSJ"   length=" 6" desc="原交易时间"/>
+      <AddItem name="NodNo" value="441200"/>
+      <SwitchCode name="DWBM" new_name="BrNo" tab_name="DWBMtoBrNo" col_name="DWBM"/>
+      <SwitchCode name="ZHLX" new_name="ActFlg" tab_name="ZHLXtoActFlg" col_name="ZHLX"/>
       <SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
       <AddItem name="TxnCnl"  value="THD"/>
     </Request>
@@ -245,10 +260,10 @@
 
 
 
-  <Transaction code="91" service="460491" log_switch="5" des="供电方发起银电业务开工交易请求">
+  <Transaction code="91" service="460491" server="OFTKEFE2" log_switch="5" des="供电方发起银电业务开工交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <Item name="PKGCNT" length="6" desc="子包个数"/>
+      <!--Item name="PKGCNT" length="6" desc="子包个数"/-->
       <Group name="Rec" repeat_name="PKGCNT">
         <Item name="JYLSH" length="24" desc="交易流水号"/>
         <Item name="JYRQ"  length=" 8" desc="交易日期"/>
