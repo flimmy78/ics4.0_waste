@@ -510,6 +510,7 @@
 <!--提交当前成功更新的记录，在异常的情况下，保证部分业务也可以开展交易-->
         <Exec func="PUB:CommitWork"/>
       </While>
+      <Set>PKGCNT=000000</Set>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>
@@ -638,6 +639,7 @@
 <!--提交当前成功更新的记录，在异常的情况下，保证部分业务也可以关闭交易-->
         <Exec func="PUB:CommitWork"/>
       </While>
+      <Set>PKGCNT=000000</Set>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>
