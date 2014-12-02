@@ -3,10 +3,19 @@
   <Macro name="EfeSqlLst" desc="数据操作宏清单">
     <DynSentence name="GetRunCtl" desc="根据单位编码获取参数">
       <Sentence>
-        select ZT, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s'
+        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s'
       </Sentence>
       <Fields>DWBM|</Fields>
     </DynSentence>
+
+    <DynSentence name="GetCanDat" desc="根据业务唯一标志获取抹账信息">
+      <Sentence>
+        select LogNo, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo where LogNo='%s'
+      </Sentence>
+      <Fields>LogNo|</Fields>
+    </DynSentence>
+
+
   </Macro>
 <!--以下是应用操作的宏清单-->
 <!--以下是应用操作的宏清单-->
@@ -122,6 +131,70 @@
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=交易失败，其他未知情况</Set>
         <Break/>
+      </Default>
+    </Switch>
+  </Macro>
+
+  <Macro name="SyncHost" desc="同步主机流水">
+    <Exec func="PUB:CallHostOther" error="IGNORE">
+      <Arg name="HTxnCd" value="458980"/>
+      <Arg name="ObjSvr" value="SHSTPUB1"/>
+    </Exec>
+    <Switch expression="$MsgTyp">
+      <Case value="E">
+        <Switch expression="$HRspCd">
+          <Case value="AG8001"/>   <!--该前置流水号不存在-->
+          <Case value="AG8981"/>   <!--该前置流水号不存在-->
+          <Case value="SC6129">    <!--原交易不存在-->
+            <Set>HTxnSt=F</Set>
+            <Set>DtlSts=F</Set>
+            <Exec func="PUB:ExecSql">
+              <Arg name="sql" value="UpdTxnJnl"/>
+            </Exec>
+            <Exec func="PUB:ExecSql">
+              <Arg name="sql" value="UpdTxnDtl"/>
+            </Exec>
+            <Exec func="PUB:CommitWork" error="IGNORE"/>
+            <Return/>
+          </Case>
+          <Default>     <!--其他错误(非原交易不存在)-->
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=$HRspCd</Set>
+            <Return/>
+          </Default>
+        </Switch>
+        <Break/>
+      </Case>
+      <Case value="N">
+        <If condition="$CrcSts=Y">  <!--交易状态为抹账,该情况出现可能也不大-->
+          <Set>HTxnSt=C</Set>
+          <Set>DtlSts=C</Set>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnJnl"/>
+          </Exec>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnDtl"/>
+          </Exec>
+          <Break/>
+        </If>
+        <Else>
+          <Set>HTxnSt=S</Set>
+          <Set>DtlSts=S</Set>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnJnl"/>
+          </Exec>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnDtl"/>
+          </Exec>
+          <Exec func="PUB:CommitWork" error="IGNORE"/>
+        </Else>
+        <Break/>
+      </Case>
+      <Default>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=PFA999</Set>
+        <Set>RspMsg=STRCAT(查询主机流水【,$OLogNo,】失败)</Set>
+        <Return/>
       </Default>
     </Switch>
   </Macro>

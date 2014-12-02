@@ -13,13 +13,18 @@
       <Column name="JYFHDM" sort="no"/>
       <Column name="RspMsg" sort="no"/>
     </Table>
+    <Table name="HBFHToCCyCod" file="etc/EFE_CSW_441999.XML">
+      <Column name="HBFH"   sort="no"/>
+      <Column name="CCyCod" sort="no"/>
+    </Table>
   </CodeSwitching>
 
   <Include file="app/zxf/etc/TDKEFE1_IIT.XML"/>
 
   <Transaction code="460421" desc="银行方发起批量代扣记账交易请求">
     <Request>
-      <Quote name="SndReqHead"/>
+      <PackItem name="TmpDat">
+        <Quote name="SndReqHead"/>
         <Item name="YHJYLSH" length="24" desc="交易流水号"/>
         <Item name="YHJYRQ"  length=" 8" desc="交易日期"/>
         <Item name="YHJYSJ"  length=" 6" desc="交易时间"/>
@@ -27,7 +32,6 @@
         <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
         <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
         <Item name="DWBM"   length=" 8" desc="单位编码"/>
-        <!--Item name="RZYHDM" length=" 4" desc="入账银行代码"/-->
         <Item name="SFFS"   length=" 3" desc="收费方式"/>
         <Item name="FYLX"   length=" 3" desc="费用类型"/>
         <Item name="WJMC"   length="36" desc="文件名称"/>
@@ -39,6 +43,8 @@
         <Item name="CGJE"   length="16" desc="成功金额"/>
         <Item name="SBBS"   length="11" desc="失败笔数"/>
         <Item name="SBJE"   length="16" desc="失败金额"/>
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
     </Request>
     <Response necessary="no">
       <Quote name="SndStdRsp"/>
@@ -625,16 +631,16 @@
     <Request>
       <PackItem name="TmpDat">
         <Quote name="SndReqHead"/>
-        <Item name="WDMC"  length="64" desc="网点名称"/>
+        <Item name="WDMC" length="64" desc="网点名称"/>
         <Item name="YHJYLSH" length="24" desc="交易流水号"/>
         <Item name="YHJYRQ"  length=" 8" desc="交易日期"/>
         <Item name="YHJYSJ"  length=" 6" desc="交易时间"/>
-        <Item name="JFH"   length="20" desc="缴费号"/>
-        <Item name="DFNY"  length=" 6" desc="电费年月"/>
-        <Item name="PJLY"  length=" 1" desc="票据来源"/>
-        <Item name="PJLX"  length=" 2" desc="票据类型"/>
-        <Item name="FPDM"   length="32" desc="发票代码"/>
-        <Item name="PJHM"   length="16" desc="票据号码"/>
+        <Item name="JFH"  length="20" desc="缴费号"/>
+        <Item name="DFNY" length=" 6" desc="电费年月"/>
+        <Item name="PJLY" length=" 1" desc="票据来源"/>
+        <Item name="PJLX" length=" 2" desc="票据类型"/>
+        <Item name="FPDM" length="32" desc="发票代码"/>
+        <Item name="PJHM" length="16" desc="票据号码"/>
       </PackItem>
       <Item name="TmpDat" head_len="10" include_len="no"/>
     </Request>
@@ -647,19 +653,19 @@
           <Item name="JYSJ"   length="  6" desc="交易时间"/>
           <Item name="PJLY"   length="  1" desc="票据来源"/>
           <Item name="PJLX"   length="  2" desc="票据类型"/>
-          <Item name="FPDM"    length=" 32" desc="发票代码"/>
-          <Item name="PJHM"    length=" 16" desc="票据号码"/>
-          <Item name="DWBM"    length="  8" desc="单位编码"/>
-          <Item name="DFNY"    length="  6" desc="电费年月"/>
+          <Item name="FPDM"   length=" 32" desc="发票代码"/>
+          <Item name="PJHM"   length=" 16" desc="票据号码"/>
+          <Item name="DWBM"   length="  8" desc="单位编码"/>
+          <Item name="DFNY"   length="  6" desc="电费年月"/>
           <Item name="JFH"    length=" 20" desc="缴费号"/>
           <Item name="HM"     length=" 64" desc="户名"/>
           <Item name="DZ"     length="128" desc="地址"/>
-          <Item name="SCCBRQ"  length="  8" desc="上次抄表日期"/>
-          <Item name="BCCBRQ"  length="  8" desc="本次抄表日期"/>
+          <Item name="SCCBRQ" length="  8" desc="上次抄表日期"/>
+          <Item name="BCCBRQ" length="  8" desc="本次抄表日期"/>
           <Item name="ZJFDL"  length=" 16" desc="总计费电量"/>
           <Item name="ZJDF"   length=" 16" desc="总计电费"/>
           <Item name="SSJE"   length=" 16" desc="实收金额"/>
-          <Item name="SSJEDX"  length=" 64" desc="实收金额大写"/>
+          <Item name="SSJEDX" length=" 64" desc="实收金额大写"/>
           <Item name="DDDF"   length=" 16" desc="电度电费"/>
           <Item name="DZDF"   length=" 16" desc="代征电费"/>
           <Item name="JBDF"   length=" 16" desc="基本电费"/>

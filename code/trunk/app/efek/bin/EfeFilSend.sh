@@ -1,3 +1,4 @@
+#!/usr/bin/ksh
 # $1: 远程主机IP 182.53.201.46
 # $2: 远程主机用户 bcm
 # $3: 远程主机目录 exchange
@@ -11,13 +12,14 @@ then
     exit -1
 fi
 
+tmpFileName=/app/ics/dat/ftpSendTmp
 
+echo "cd $3"    >  $tmpFileName
+echo "lcd $4"   >> $tmpFileName
+echo "-put $5"  >> $tmpFileName
+echo "quit"     >> $tmpFileName
 
-echo "cd $3" > /app/ics/app/efek/dat/ftpTmp
-echo "lcd $4"      >> /app/ics/app/efek/dat/ftpTmp
-echo "-put $5"     >> /app/ics/app/efek/dat/ftpTmp
-echo "quit"        >> /app/ics/app/efek/dat/ftpTmp
+sftp -b $tmpFileName $2@$1
 
-sftp -b /app/ics/app/efek/dat/ftpTmp $2@$1
-
+rm $tmpFileName
 exit 0

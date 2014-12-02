@@ -7,6 +7,6 @@ then
     exit -1
 fi
 
-cat $1 |openssl md5 > /app/ics/efek/bin/md5
+cat $1 |openssl md5 > /app/ics/app/efek/bin/md5
 
 exit 0
