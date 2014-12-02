@@ -641,18 +641,54 @@
 
 
   <Transaction code="460432" desc="供电方发起供电到银行变更代扣协议请求">
-    <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
+    <DynSentence name="UpdCusAgt" desc="根据单位代码更新开工信息">
       <Sentence>
-        DWDM='%s' and JFH='%s'
+        DWBM='%s' and JFH='%s'
       </Sentence>
-      <Fields>DWDM|JFH|</Fields>
+      <Fields>DWBM|JFH|</Fields>
+    </DynSentence>
+    <DynSentence name="GetCusAgt" desc="根据单位代码更新开工信息">
+      <Sentence>
+        select * from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
     </DynSentence>
 
     <FlowCtrl>
-      <Exec func="PUB:UpdateRecord" desc="更新记录">
-        <Arg name="TblNam" value="EfekCusAgt"/>
-        <Arg name="CndSts" value="UpdCusAgt"/>
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
       </Exec>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="存在记录">
+          <Exec func="PUB:UpdateRecord" desc="更新记录">
+            <Arg name="TblNam" value="EfekCusAgt"/>
+            <Arg name="CndSts" value="UpdCusAgt"/>
+          </Exec>
+        </Case>
+        <Case value="-2" desc="不存在记录">
+          <Exec func="PUB:InsertRecord" error="IGNORE">
+            <Args>
+              <Arg name="tablename" value="EfekCusAgt"/>
+            </Args>
+          </Exec>
+          <If condition="INTCMP(~RetCod,4,0)">
+            <Set>MsgTyp=E</Set>
+            <Set>RspCod=EFE999</Set>
+            <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
+            <Return/>
+          </If>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
+          <Return/>
+        </Default>
+      </Switch>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+
     </FlowCtrl>
   </Transaction>
 

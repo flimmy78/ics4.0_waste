@@ -15,6 +15,19 @@
       <Fields>LogNo|</Fields>
     </DynSentence>
 
+    <DynSentence name="UpdTxnJnl" desc="根据业务唯一标志更新流水信息">
+      <Sentence>
+        LogNo='%s'
+      </Sentence>
+      <Fields>LogNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="UpdTxnDtl" desc="根据业务唯一标志更新明细信息">
+      <Sentence>
+        OIFLAG='%s' and JYLSH='%s' and XH='%s'
+      </Sentence>
+      <Fields>OIFLAG|JYLSH|XH|</Fields>
+    </DynSentence>
 
   </Macro>
 <!--以下是应用操作的宏清单-->
