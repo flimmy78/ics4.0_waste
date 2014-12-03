@@ -13,7 +13,11 @@
   <TableDeclare>
     <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
     <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
-    <Table name="EfekCusAgt"    value="EfekCusAgt"/>  <!--银电客户签约表-->
+    <Table name="EfekRunCtl" value="EfeKRunCtl" desc="业务控制表"/>
+    <Table name="EfekCusAgt" value="EfekCusAgt" desc="客户协议表"/>
+    <Table name="EfekTxnJnl" value="EfekTxnJnl" desc="交易流水表"/>
+    <Table name="EfekTxnDtl" value="EfekTxnDtl" desc="交易明细表"/>
+    <Table name="EfekBchRec" value="EfekBchRec" desc="交易批量表"/>
     <!--Table name="efeinfctl"    value="efeinfctl"/-->  <!--银电开工控制表-->
     <!--Table name="efechkinf"    value="efechkinf"/-->  <!--银电对账信息表-->
     <!--Table name="efekchkdtl"    value="efekchkdtl"/-->  <!--银电对账明细表-->
@@ -1340,239 +1344,205 @@
   </Transaction>
 
 
-  <Transaction code="460422" desc="供电方发起单笔代扣交易">
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
-    <DynSentence name="QryCrpAgr">    <!--检查单位协议 -->
+  <Transaction code="460422" desc="供电方发起单笔代扣交易请求">
+    <Quote name="EfeSqlLst"/>
+    <DynSentence name="GetCusAgt" desc="根据文件名获取文件处理记录">
       <Sentence>
-         select BBusTyp,TActNo  from savcrpagr where BrNo='%s' and CAgtNo='%s' and SvrSts='1'
+        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
       </Sentence>
-      <Fields>BrNo|CAgtNo|</Fields>
-    </DynSentence>
-    <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
-      <Sentence>
-        SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
-      </Sentence>
-      <Fields>DLIP|</Fields>
-    </DynSentence>
-    <DynSentence name="Insefechkinf">          <!--银电对账信息表 -->
-      <Sentence>
-        INSERT INTO efechkinf(BrNo,CAgtNo,LogNo,TLogNo,TckNo,ECD,WDO,EDD,JFH,KKB,ActNo,KAT,CUN,TxnAmt,KFG,ActNam,PCF,MNT,JBR,GDO,WYSB,SFF,TxnCod,Status,EfeId)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
-      </Sentence>
-      <Fields>
-         BrNo|CAgtNo|LogNo|TLogNo|TckNo|ECD|WDO|EDD|JFH|KKB|ActNo|KAT|CUN|TxnAmt|KFG|ActNam|PCF|MNT|JBR|GDO|WYSB|SFF|TxnCod|Status|EfeId|
-      </Fields>
-    </DynSentence>
-    <DynSentence name="Insefekchkdtl">             <!--银电对账明细表 -->
-      <Sentence>
-        INSERT INTO efekchkdtl(BrNo,LogNo,TLogNo,JFXH,JFJE,MON,JLD,YSH,CPS,MNS,PCC,EfeId)
-        VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
-      </Sentence>
-      <Fields>
-         BrNo|LogNo|TLogNo|JFXH|JFJE|MON|JLD|YSH|CPS|MNS|PCC|EfeId|
-      </Fields>
+      <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
 
     <FlowCtrl>
-
-<!--测试返回开始-->
-        <Set>CWTSXX=888888</Set>
-        <Set>CWFSRQ=20141111</Set>
-        <Set>CWFSSJ=115000</Set>
-        <Set>CWFSJYM=888888</Set>
-        <Set>SQLCODE=123</Set>
-
-        <Set>YHJYLSH=20141117000000035669</Set>
-        <Set>YHJYRQ=20141129</Set>
-        <Set>YHJYSJ=155300</Set>
-        <Set>KKRQ=20141129</Set>
-        <Set>KKSJ=155300</Set>
-
-        <Set>RspCod=000000</Set>
-        <Set>MsgTyp=N</Set>
-        <Set>RspMsg=N</Set>
-        <Return></Return>
-<!--测试返回结束-->
-
-      <Set>SJBLX=1</Set>   <!--返回数据包类型为：1-响应-->
-      <!--查询对应分行号 -->
-      <Exec func="PUB:ReadRecord">    
-        <Arg name="SqlCmd" value="QryInfCtl"/>
+      <Quote name="InitTran"/>
+<!--协议判断-->
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
       </Exec>
-      <If condition="~RetCod!=0">
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>MsgTyp=E</Set>
         <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行号</Set>
-        <Return/>
-      </If>  
-      
-     
-      
-      <Set>AplCls=202</Set>
-      <Set>BusTyp=EFEA1</Set>
-      <Exec func="PUB:InitTransaction"/>    <!--交易初始化,预留-->
-      
-      <Exec func="PUB:GetAppInfo"/>
-
-
-      <Exec func="PUB:ReadRecord">    <!--检查单位协议 -->
-        <Arg name="SqlCmd" value="QryCrpAgr"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=单位协议不存在</Set>
+        <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】为与银行签订代扣协议)</Set>
         <Return/>
       </If>
-
-      <!--取前置流水号-->
+      <Set>TxnCnl=EFE</Set>
+      <Set>CnlSub= </Set>
+      <Set>NodNo=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
+      <Exec func="PUB:GetVirtualTeller"/>
+<!--登记流水-->
+      <Set>TTxnCd=$TxnCod</Set>
       <Exec func="PUB:GetLogNo"/>
-
-      
-      <Set>TTxnCd=460420</Set>
-      <Set>MsgTyp_tmp=$MsgTyp</Set>
-      <Set>HRspCd_tmp=$HRspCd</Set>
-
-      <!--校验各分行账号-->
-      <!--441999广东省分行-->
-      <!--444999珠海分行-->
-      <!--446999佛山分行-->
-      <!--445999汕头分行-->
-      <!--483999东莞分行-->
-      <!--484999中山分行-->
-      <!--485999揭阳支行-->
-      <!--491999惠州分行-->
-      <!--761999江门分行-->
-      <!--只有广州、珠海、佛山和中山有Acjud_行号函数，其他分行要加-->
-      <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
-      <Call function="$AcJudFunc">
-        <Input name="ActNo|NewFlg|"/>
-        <Output name="OActNo|ActCls|"/>
-      </Call>
-      <If condition="$MsgTyp=E">
-         <Set>TTxnCd=$TTxnCd_tmp</Set>
-         <Set>RspCod=$HRspCd</Set>
-         <Set>RspMsg=账号查询错误</Set>
-         <Return/>
-       </If>
-
-      <Switch expression="$ActCls">
-        <Case value="2" /> <!-- 对私 -->
-        <Case value="3" />
-        <Case value="5" >
-         <If condition="INTCMP($ActCls,3,3)">
-             <Set>ActFlg=4</Set>  <!--对私卡号-->
-             <Set>ActTyp=4</Set>
-          </If>
-          <Else>
-             <Set>ActFlg=2</Set>  <!--对私帐号-->
-             <Set>ActTyp=2</Set>
-          </Else>
+      <Exec func="PUB:InsertRecord">
+        <Args>
+          <Arg name="tablename" value="EfekTxnJnl"/>
+        </Args>
+      </Exec>
+      <Exec func="PUB:InsertRecord">
+        <Args>
+          <Arg name="tablename" value="EfekTxnDtl"/>
+        </Args>
+      </Exec>
+      <Switch expression="$ActFlg">
+        <Case value="0" desc="对公">
+          <Set>HTxnCd=451240</Set>
+          <Set>BusTyp=PFT57</Set>
+          <Set>CrpCod=EFE999999999</Set>
+          <Set>ActNo=$KKZH</Set>
+          <Set>ActNam=$KKZHMC</Set>
+          <Set>NamChk=1</Set> <!--测试不检查，生产考虑打开-->
+          <Set>VchFlg=0</Set> <!--渠道交易不检查-->
+          <Set>VchTyp=000</Set>
+          <Set>VchNo=00000000</Set>
+          <Set>BilDat=$YHJYRQ</Set>
+          <Set>CcyCod=CNY</Set>
+          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
+          <Set>AccMod=1</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,1,6)</Set>
+          <Set>Smr=代扣电费</Set>
           <Break/>
         </Case>
-        <Case value="0" /> <!-- 对公 -->
-        <Case value="4" >
-          <Set>ActTyp=1</Set>
+        <Case value="2" desc="存折"/>
+        <Case value="4" desc="卡">
+          <Set>HTxnCd=471140</Set>
+          <Set>BusTyp=PCL52</Set>
+          <Set>CnlTyp=L</Set>
+          <Set>Mask=9102</Set>
+          <Set>ActNo=$KKZH</Set>
+          <If condition="IS_EQUAL_STRING($ActFlg,4)" desc="卡">
+            <Set>VchCod=00000000</Set>
+          </If>
+          <Set>PayMod=0</Set>
+          <Set>TActNo=$InAcNo</Set>
+          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
+          <Set>CcyTyp=1</Set>
+          <Set>VchChk=0</Set>
+          <Set>CAgtNo=EFE9999999</Set>
+          <Set>GthFlg=N</Set>
+          <Break/>
+        </Case>
+<!--
+        <Case value="A" desc="中央">
+          <Set>BrNam=@BCFG.BrNam</Set>
+          <Set>EleBk=@BCFG.EleBk</Set>
+          <Set>APVchN=$LogNo</Set>
+          <Set>PayCod=$SubCod</Set>
+          <Set>FinAre=999</Set>
+          <Set>ActNo=$KKZH</Set>
+          <Set>ActNam=$KKZHMC</Set>
+          <Set>ANodNm=@BCFG.BrNam</Set>
+          <Set>PyeAct=$InAcNo</Set>
+          <Set>PyeNam=$InAcNm</Set>
+          <Set>PyeBk=@BCFG.BrNam</Set>
+          <Set>UdwDat=$ActDat</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
+          <Set>ActNod=SUBSTR($InAcNo,1,6)</Set>
+          <Set>StlMod=07</Set>
+          <Set>AthAmt=$TxnAmt</Set>
+          <Set>VInTlr=$TlrId</Set>
+          <Set>VRgNod=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
+          <Set>HSubCd=001</Set>
+          <Exec func="PUB:CallThirdOther" error="IGNORE">
+            <Arg name="TxnCod" value="363412"/>
+            <Arg name="ObjSvr" value="STHDFAP2"/>
+          </Exec>
+        <Case value="B" desc="地方">
+          <Set>PayAct=$KKZH</Set>
+          <Set>PayNam=$KKZHMC</Set>
+          <Set>PayBNm=@BCFG.BrNam</Set>
+          <Set>PyeAct=$InAcNo</Set>
+          <Set>PyeNam=$InAcNm</Set>
+          <Set>BankNo=$RcvBNo</Set>
+          <Quote name="ChkBankCd"/>
+          <Set>PyeBNm=@BCFG.BrNam</Set>
+          <Set>VchDat=$ActDat</Set>
+          <Set>TOIFlg=O</Set>
+          <Set>VchSmr=$Smr</Set>
+          <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
+          <Set>ActNod=SUBSTR($InAcNo,1,6)</Set>
+          <Set>NodNo=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
+          <Set>HSubCd=001</Set>
+          <Exec func="PUB:CallThirdOther" error="IGNORE">
+            <Arg name="TxnCod" value="461181"/>
+            <Arg name="ObjSvr" value="STHDPFA3"/>
+          </Exec>
+          <Break/>
+        </Case>
+-->
+      </Switch>
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="TxnCod" value="$HTxnCd"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="成功">
+          <Set>HTxnSt=S</Set>
+          <Set>DtlSts=S</Set>
+          <Set>MsgTyp=N</Set>
+          <Set>RspCod=000000</Set>
+          <Break/>
+        </Case>
+        <Case value="3" desc="交易失败">
+          <Set>HTxnSt=F</Set>
+          <Set>DtlSts=F</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=$TRspCd</Set>
+          <Break/>
+        </Case>
+        <Case value="-9" desc="交易需要授权">
+          <Set>HTxnSt=F</Set>
+          <Set>DtlSts=F</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=客户账户异常，请查询开户银行</Set>
+          <Break/>
+        </Case>
+        <Case value="-1" desc="超时">
+          <Set>HTxnSt=T</Set>
+          <Set>DtlSts=T</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=交易超时</Set>
+          <Break/>
+        </Case>
+        <Case value="-2" desc="系统故障">
+          <Set>HTxnSt=F</Set>
+          <Set>DtlSts=F</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=系统故障</Set>
+          <Break/>
+        </Case>
+        <Case value="-10" desc="交易发送失败">
+          <Set>HTxnSt=F</Set>
+          <Set>DtlSts=F</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=交易发送失败</Set>
           <Break/>
         </Case>
         <Default>
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=帐户类型不存在</Set>
-            <Return/>
+          <Set>HTxnSt=F</Set>
+          <Set>DtlSts=F</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=交易失败，其他未知情况</Set>
+          <Break/>
         </Default>
       </Switch>
-
-
-
-      <If condition="OR(INTCMP($ActTyp,3,0),INTCMP($ActTyp,3,2),INTCMP($ActTyp,3,4))"><!--对私-->
-        <Set>HTxnCd=471140</Set>
-        <Set>PayMod=1</Set>
-        <Set>ActFlg=$ActTyp</Set>
-        <Set>VchChk=1</Set><!--监督标志由业务上确定-->
-        <!--
-        <Set>BusTyp=EFEA1</Set>
-        -->
-      </If>
-      <ElseIf condition="INTCMP($ActTyp,3,1)"><!--对公-->
-        <Set>HTxnCd=451610</Set>
-        <Set>ActNod=SUBSTR($TActNo,1,6)</Set>
-        <Set>ActSqn=SUBSTR($TActNo,14,5)</Set>
-        <Delete>TActNo</Delete>
-        <Set>BusTyp=CRP51</Set>
-        <Set>BusSub=01</Set>   <!--应用子码，对应业务类型CRP51-->
-        <Set>ActFlg=2</Set>
-      </ElseIf>
-      <Else>    <!--第三方-->
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=账号类型输入有误</Set>
-        <Return/>
-      </Else>
-
-      <Exec func="PUB:ReadModuleCfg">
-        <Arg name="Application" value="GD_DLDF"/><!--可以使用单位编号-->
-        <Arg name="Transaction" value="$TxnCod"/><!--可以用交易码或者模块名-->
+      <Exec func="PUB:UpdateRecord" desc="更新流水">
+        <Arg name="TblNam" value="EfekTxnJnl"/>
+        <Arg name="CndSts" value="UpdTxnJnl"/>
       </Exec>
-
-      <Set>TCusNm=$ActNam</Set>
-
-      <Set>PayMod=0</Set>
-      <Set>CnlTyp=L</Set><!--交易渠道类型：L第三方系统-->
-      <Set>VchChk=1</Set><!--监督标志由业务上确定-->
-      <Set>VchCod=00000000</Set>
-      <Set>AplCls=202</Set>
-      <Set>MstChk=1</Set>  <!--20100511-->
-      <Set>FRspCd= </Set>  <!--20100511-->
-      <Set>ItgTyp=0</Set>  <!--20100511-->
-      <Set>TXNTYP=N</Set>  <!--20100511-->
-<Set>NodNo=441800</Set>
-      <Call package="AFE" function="AFE_SglThdPay"/>
-      <If condition="$RspCod=000000">
-        <Set>SFF=04</Set> <!--收费方式:04实时代扣-->
-        <!--设置唯一识别码-->
-        <Exec func="PUB:GetPubSeqNoCircle">
-          <Arg name="SeqNam" value="EFE:WYSB"/>
-          <Arg name="Len"    value="10"/>
-        </Exec>
-        <Set>WYSB=STRCAT(301,$DstCod,$ActDat,$SelVal)</Set>
-   
-        <Set>MNT=01</Set> <!--资金种别,默认现金01-->
-        <Set>SFF=04</Set> <!--收费方式实时代扣,04-->
-        <Set>Status=S</Set>
-        <Set>TTxnCd=$TTxnCd_tmp</Set>
-
-        <!--记录交易的请求报文里详细信息，用于对帐时返回这些信息-->
-        <!--插入银电对账信息表-->
-        <Exec func="PUB:ExecSql" error="IGNORE">
-           <Arg name="SqlCmd"   value="Insefechkinf"/>
-        </Exec>
-        <If condition="~RetCod=-1">
-          <Exec func="PUB:RollbackWork" error="IGNORE" />
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=数据库处理失败!</Set>
-          <Return/>
-        </If>
-
-        <Set>JFXH=01</Set>      <!--缴费项序号-->
-        <Set>JFJE=$TxnAmt</Set> <!--缴费项金额-->
-        <!--插入银电对账明细表--> 
-        <Exec func="PUB:ExecSql" error="IGNORE">
-           <Arg name="SqlCmd"   value="Insefekchkdtl"/>
-        </Exec>
-        <If condition="~RetCod=-1">
-          <Exec func="PUB:RollbackWork" error="IGNORE" />
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=数据库处理失败!</Set>
-          <Return/>
-        </If>
-      </If>
-
-      
-
+      <Exec func="PUB:UpdateRecord" desc="更新明细">
+        <Arg name="TblNam" value="EfekTxnDtl"/>
+        <Arg name="CndSts" value="UpdTxnDtl"/>
+      </Exec>
     </FlowCtrl>
-
   </Transaction>
+
+
+
 
 
   <Transaction code="460421" desc="批量代扣返回">
@@ -1647,198 +1617,102 @@
   </Transaction>
 
 
-  <Transaction code="460423" desc="供电单笔当日代扣抹帐交易">
-    <DynSentence name="QryInfCtl">             <!--查询对应分行号-->
+  <Transaction code="460423" desc="供电方发起单笔当日代扣抹账请求">
+    <Quote name="EfeSqlLst"/>
+    <DynSentence name="GetTxnDtl" desc="根据文件名获取文件处理记录">
       <Sentence>
-        SELECT BrNo,EfeId FROM efeinfctl WHERE DLIP='%s'
+        select DtlSts, LogNo OLogNo, TlrId, XH from EfekTxnDtl where OIFlag='I' and JYLSH='%s' and XH='%s' for read only
       </Sentence>
-      <Fields>DLIP|</Fields>
-    </DynSentence>
-    <DynSentence name="Chk_TLogNo"><!--检查凭单号是否重复 -->
-      <Sentence>
-        select HTxnSt,LogNo,TlrId, HLogNo OHLogNo, TckNo OTckNo,TXNAMT TTXNAMT
-        from afetxnjnl
-        where CAgtNo='%s' and LogNo='%s' AND HTxnSt IN ('T','S','U','C')
-        order by LogNo desc
-      </Sentence>
-      <Fields>CAgtNo|LogNo|</Fields>
-    </DynSentence>
-    <DynSentence name="UdpEfeaSts"> <!--更新购彩流水辅表 -->
-       <Sentence>
-         update efechkinf set Status='%s' where EfeId='%s' and LogNo='%s'
-       </Sentence>
-       <Fields>Status|EfeId|LogNo|</Fields>
+      <Fields>YJYLSH|XH|</Fields>
     </DynSentence>
     <FlowCtrl>
-<!--测试返回开始-->
-        <Set>CWTSXX=888888</Set>
-        <Set>CWFSRQ=20141111</Set>
-        <Set>CWFSSJ=115000</Set>
-        <Set>CWFSJYM=888888</Set>
-        <Set>SQLCODE=123</Set>
-
-        <Set>YHJYLSH=20141117000000035669</Set>
-        <Set>YHJYRQ=20141129</Set>
-        <Set>YHJYSJ=155300</Set>
-
-        <Set>PKGCNT=000000</Set>
-
-        <Set>RspCod=000000</Set>
-        <Set>MsgTyp=N</Set>
-        <Set>RspMsg=N</Set>
-        <Return></Return>
-<!--测试返回结束-->
-
-
-
-      <Exec func="PUB:CodeSwitching" error="IGNORE">
-        <Arg name="DatSrc" value="OPFCSW"></Arg>
-        <Arg name="SourNam" value="DWBM"></Arg>
-        <Arg name="DestNam" value="BrNo"></Arg>
-        <Arg name="TblNam" value="DWBMtoBrNo"></Arg>
+      <Quote name="InitTran"/>
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetTxnDtl"></Arg>
       </Exec>
-      <If condition="~RetCod=-1"><!--失败 -->
-        <Set>RspCod=EFE999</Set>
-        <Return></Return>
-      </If>
-     
-      <Set>AplCls=202</Set>
-      <Set>BusTyp=EFEA1</Set>
-      <Exec func="PUB:InitTransaction"/>
-      <Exec func="PUB:ReadRecord">  <!--检查凭单号是否记帐-->
-        <Arg name="SqlCmd" value="Chk_TLogNo"/>
-      </Exec>
-
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无冲正记录</Set>
-        <Return/>
-      </If>
-
-      <If condition="$HTxnSt=C">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=已冲正</Set>
-        <Return/>
-      </If>
-
-      <Set>RspMsg=$TTxnAmt</Set>
-      <Set>RspMsg=$TxnAmt</Set>
-      <If condition="IS_EQUAL_INT($TTxnAmt,$TxnAmt)">
-      </If>
-      <Else>
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=金额不符</Set>
-        <Return/>
-      </Else>
-
-      <Set>Rsfld1=$AAC</Set>
-
-      <Exec func="PUB:ReadModuleCfg">
-        <Arg name="Application" value="GD_DLDF"/>
-        <Arg name="Transaction" value="460421"/>
-      </Exec>
-
-      <Set>ActNo=$KAC</Set>
-
-      <!--校验各分行账号-->
-      <!--441999广东省分行-->
-      <!--444999珠海分行-->
-      <!--446999佛山分行-->
-      <!--445999汕头分行-->
-      <!--483999东莞分行-->
-      <!--484999中山分行-->
-      <!--485999揭阳支行-->
-      <!--491999惠州分行-->
-      <!--761999江门分行-->
-      <!--只有广州、珠海、佛山和中山有Acjud_行号函数，其他分行要加-->
-      <Set>AcJudFunc=STRCAT(AcJud_,$BrNo)</Set>
-      <Call function="$AcJudFunc">
-        <Input name="ActNo|NewFlg|"/>
-        <Output name="OActNo|ActCls|"/>
-      </Call>
-      <If condition="$MsgTyp=E">
-         <Set>TTxnCd=$TTxnCd_tmp</Set>
-         <Set>RspCod=$HRspCd</Set>
-         <Set>RspMsg=账号查询错误</Set>
-         <Return/>
-       </If>
-
-      <Switch expression="$ActCls">
-        <Case value="2" /> <!-- 对私 -->
-        <Case value="3" />
-        <Case value="5" >
-         <If condition="INTCMP($ActCls,3,3)">
-             <Set>ActFlg=4</Set>  <!--对私卡号-->
-             <Set>ActTyp=4</Set>
-          </If>
-          <Else>
-             <Set>ActFlg=2</Set>  <!--对私帐号-->
-             <Set>ActTyp=2</Set>
-          </Else>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="存在记录">
+          <Switch expression="$DtlSts">
+            <Case value="U" desc="初始"/>
+            <Case value="T" desc="超时">
+              <Set>OJYLSH=$JYLSH</Set>
+              <Set>JYLSH=$YJYLSH</Set>
+              <Quote name="SyncHost"/>
+              <Set>JYLSH=$OJYLSH</Set>
+              <If condition="IS_EQUAL_STRING($DtlSts,F)" desc="失败">
+                <Set>MsgTyp=N</Set>
+                <Set>RspCod=000000</Set>
+                <Return/>
+              </If>
+              <Break/>
+            </Case>
+            <Case value="F" desc="失败">
+              <Set>MsgTyp=N</Set>
+              <Set>RspCod=000000</Set>
+              <Return/>
+            </Case>
+            <Case value="S" desc="成功">
+              <Break/>
+            </Case>
+          </Switch>
           <Break/>
         </Case>
-        <Case value="0" /> <!-- 对公 -->
-        <Case value="4" >
-          <Set>ActTyp=1</Set>
-          <Break/>
+        <Case value="-1" desc="故障">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=000000</Set>
+          <Set>RspMsg=系统处理异常，请稍后重新提交</Set>
+          <Return/>
         </Case>
-        <Default>
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=帐户类型不存在</Set>
-            <Return/>
-        </Default>
+        <Case value="-2" desc="无记录">
+          <Set>MsgTyp=N</Set>
+          <Set>RspCod=000000</Set>
+          <Return/>
+        </Case>
       </Switch>
-
-     
-      <Set>OLogNo=$LogNo</Set>
-      <If condition="OR(INTCMP($ActTyp,3,0),INTCMP($ActTyp,3,2),INTCMP($ActTyp,3,4))"><!--对私-->
-        <Set>HTxnCd=471149</Set>
-      </If>
-      <ElseIf condition="INTCMP($ActTyp,3,1)"> <!--对公-->
-        <Set>HTxnCd=451619</Set>
-      </ElseIf>
-      <Else>                                   <!--第三方-->
-        <Return/>
-      </Else>
-      <Set>OTTxnCd=460420</Set>
-      <Set>TTxnCd=$TxnCod</Set>
-
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCanDat"></Arg>
+      </Exec>
       <Set>TIATyp=C</Set>
-   <!--  <Set>TxnDat=20131122</Set>
-      <Set>ActDat=20131122</Set> 20131021下午测试13112200000208成功那一次有用这个语句-->
-      <Set>TxnDat=$ActDat</Set>
-      <Exec func="PUB:BeginWork"/>    <!--启动完整性控制-->
-      <Exec func="PUB:CallHostAcc" error="IGNORE"><!--上送主机进行冲正交易-->
+      <Set>HTxnCd=STRCAT(SUBSTR($OHTxnCd,1,5),9)</Set>
+      <Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="HTxnCd" value="959999"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
       </Exec>
-
-      <If condition="IS_EQUAL_STRING(~RetCod,0)">    <!--上主机冲正成功-->
-        <Set>HTxnSt=C</Set>
-        <Set>TxnSts=C</Set>
-      
-        <Exec func="PUB:UpdateJournal">
-        </Exec>
-        <Set>Status=X</Set>
-        <!--更新银电对账信息表-->
-        <Exec func="PUB:ExecSql" error="IGNORE">
-           <Arg name="SqlCmd"   value="UdpEfeaSts"/>
-        </Exec>
-        <If condition="~RetCod=-1">
+      <Switch expression="~RetCod">
+        <Case value="0" desc="成功">
+          <Set>HTxnSt=C</Set>
+          <Set>DtlSts=C</Set>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnJnl"/>
+          </Exec>
+          <Exec func="PUB:ExecSql">
+            <Arg name="sql" value="UpdTxnDtl"/>
+          </Exec>
+          <Exec func="PUB:CommitWork" error="IGNORE"/>
+          <Set>MsgTyp=N</Set>
+          <Set>RspCod=000000</Set>
+          <Break/>
+        </Case>
+        <Case value="3" desc="交易失败"/>
+        <Case value="-9" desc="交易需要授权"/>
+        <Case value="-1" desc="超时"/>
+        <Case value="-2" desc="系统故障"/>
+        <Case value="-10" desc="交易发送失败">
           <Set>MsgTyp=E</Set>
           <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=数据库处理失败!</Set>
-          <Return/>
-        </If>
-      </If>    	
-      <Else>
-        <Set>MsgTyp=E</Set>
-        <Set>RspCod=$HRspCd</Set>
-        <Set>RspMsg=冲正不成功</Set>      	
-      </Else>
-
+          <Set>RspMsg=交易发送失败</Set>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=交易失败，其他未知情况</Set>
+          <Break/>
+        </Default>
+      </Switch>
     </FlowCtrl>
   </Transaction>
+
 
 
 
@@ -1940,6 +1814,7 @@
 
 
   <Transaction code="460424" desc="供电发起批量代扣取消">
+    <Quote name="EfeSqlLst"/>
 
     <DynSentence name="ChkDskSts">
       <Sentence>
@@ -1965,7 +1840,26 @@
 
 
     <FlowCtrl>
-    	
+      <Quote name="InitTran"/>
+
+<!--测试返回开始-->
+    <Set>YHJYRQ=20141203</Set>
+    <Set>YHJYSJ=105900</Set>
+    <Set>YHJYBSH=20141203441000000001</Set>
+    <Set>YHJYLSH=201412030301441000000001</Set>
+
+
+      <Set>QXBZ=2</Set>
+      <Set>BZ= </Set>
+
+
+        <Return/>
+
+
+
+
+
+
       <Set>AplCls=202</Set>
       <Set>BusTyp=EFEA1</Set>
       <Exec func="PUB:InitTransaction"/>
