@@ -10,9 +10,16 @@
 
     <DynSentence name="GetCanDat" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
-        select LogNo, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo where LogNo='%s'
+        select LogNo, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo from efektxndtl where LogNo='%s'
       </Sentence>
       <Fields>LogNo|</Fields>
+    </DynSentence>
+
+    <DynSentence name="UpdTxnDtl" desc="根据业务唯一标志更新流水信息">
+      <Sentence>
+        OIFLAG='%s' and JYLSH='%s' and XH='%s'
+      </Sentence>
+      <Fields>OIFLAG|JYLSH|XH|</Fields>
     </DynSentence>
 
     <DynSentence name="UpdTxnJnl" desc="根据业务唯一标志更新流水信息">
@@ -36,6 +43,13 @@
       <Fields>DtlSts|TckNo|OIFLAG|JYLSH|XH|</Fields>
     </DynSentence>
 
+
+    <DynSentence name="GetCusAgt" desc="根据文件名获取文件处理记录">
+      <Sentence>
+        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|KKZH|</Fields>
+    </DynSentence>
   </Macro>
 <!--以下是应用操作的宏清单-->
 <!--以下是应用操作的宏清单-->
@@ -81,9 +95,9 @@
 <!-- ADD BY ZXF BEGIN -->
   <Macro name="GetSysPar" desc="获取交易参数">
     <Exec func="PUB:ReadRecord" error="IGNORE">
-      <!--Args-->
+      <Args>
         <Arg name="SqlCmd" value="GetRunCtl"/>
-      <!--/Args-->
+      </Args>
     </Exec>
     <If condition="INTCMP(~RetCod,4,0)">
       <Set>MsgTyp=E</Set>
@@ -113,9 +127,15 @@
   <Macro name="SendThirdOther" desc="发送第三方流程【查询类】">
     <Quote name="InitTran"/>
     <Set>WDMC=@BCFG.BrNam</Set>
+    <Set>MYSY= </Set>
+    <Set>MYCSXL= </Set>
+    <Set>JYJSF=030600</Set>
+    <Set>JYYDZ= </Set>
+    <Set>JYMBDZ= </Set>
+    <Set>JYMBDZ= </Set>
     <Exec func="PUB:CallThirdOther" error="IGNORE">
       <Arg name="TxnCod" value="SUBSTR($SvrCod,1,6)"/>
-      <Arg name="ObjSvr" value="STHDEFEK"/>
+      <Arg name="ObjSvr" value="STDKEFE1"/>
     </Exec>
     <Switch expression="~RetCod">
       <Case value="0" desc="成功">

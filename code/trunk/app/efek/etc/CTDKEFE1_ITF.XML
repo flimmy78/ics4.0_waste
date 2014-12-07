@@ -21,6 +21,11 @@
       <Column name="ZHLX" sort="no"/>
       <Column name="ActFlg" sort="no"/>
     </Table>
+    <Table name="HBFHToCcyCod" file="etc/EFE_CSW_441999.XML">
+      <Column name="HBFH" sort="no"/>
+      <Column name="CcyCod" sort="no"/>
+    </Table>
+
   </CodeSwitching>
 
 
@@ -33,25 +38,18 @@
   <Transaction code="20" service="460420" server="OFTKEFE2" log_switch="5" des="供电方发起批量代扣交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-<!--
-      <Group name="Rec" repeat_name="PKGCNT">
--->
-        <Item name="JYLSH"  length="24" desc="交易流水号"/>
-        <Item name="JYRQ"   length=" 8" desc="交易日期"/>
-        <Item name="JYSJ"   length=" 6" desc="交易时间"/>
-        <Item name="DWBM"   length=" 8" desc="单位编码"/>
-        <Item name="SFFS"   length=" 3" desc="收费方式"/>
-        <Item name="FYLX"   length=" 3" desc="费用类型"/>
-        <Item name="KHBZ"   length=" 1" desc="跨行标志"/>
-        <Item name="WJMC"   length="36" expression="DELSPACE($WJMC,all)" desc="文件名称"/>
-        <Item name="WJLX"   length=" 2" desc="文件类型"/>
-        <Item name="WJMD5"  length="32" desc="文件MD5"/>
-        <Item name="ZBS"    length="11" desc="总笔数"/>
-        <Item name="ZJE"    length="16" desc="总金额"/>
-<!--
-      </Group>
-      <SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
--->
+      <Item name="JYLSH" length="24" desc="交易流水号"/>
+      <Item name="JYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="JYSJ"  length=" 6" desc="交易时间"/>
+      <Item name="DWBM"  length=" 8" desc="单位编码"/>
+      <Item name="SFFS"  length=" 3" desc="收费方式"/>
+      <Item name="FYLX"  length=" 3" desc="费用类型"/>
+      <Item name="KHBZ"  length=" 1" desc="跨行标志"/>
+      <Item name="WJMC"  length="36" expression="DELSPACE($WJMC,all)" desc="文件名称"/>
+      <Item name="WJLX"  length=" 2" desc="文件类型"/>
+      <Item name="WJMD5" length="32" desc="文件MD5"/>
+      <Item name="ZBS"   length="11" expression="DELSPACE($ZBS,all)" desc="总笔数"/>
+      <Item name="ZJE"   length="16" expression="FABSAMT($ZJE,15)" desc="总金额"/>
       <AddItem name="TxnCnl" value="THD"/>
     </Request>
     <Response necessary="no">
@@ -60,7 +58,7 @@
   </Transaction>
 
 
-  <Transaction code="22" service="460422" server="OFRTEFEK" log_switch="5" des="供电方发起单笔代扣交易请求">
+  <Transaction code="22" service="460422" server="OFTKEFE2" log_switch="5" des="供电方发起单笔代扣交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
       <Item name="WDMC"   length="64" desc="网点名称"/>
@@ -78,15 +76,15 @@
       <Item name="ZWLSH"  length="16" desc="账务流水号"/>
       <Item name="DFNY"   length=" 6" desc="电费年月"/>
       <Item name="HBFH"   length=" 5" desc="货币符号"/>
+      <SwitchCode name="HBFH" new_name="CcyCod" tab_name="HBFHToCcyCod" col_name="HBFH"/>
       <Item name="KFJE"   length="16" desc="扣费金额"/>
       <Item name="BJ"     length="16" desc="本金"/>
       <Item name="WYJ"    length="16" desc="违约金"/>
       <Item name="YFFBZ"  length=" 1" desc="预付费标志"/>
       <Item name="YFFJE"  length="16" desc="预付费金额"/>
       <Item name="XJYDGJXX" length="128" desc="需校验的关键信息"/>
-      <SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
+      <SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
       <AddItem name="TxnCnl"  value="THD"/>
-      <AddItem name="OIFLAG" value="I"/>
       <AddItem name="XH" value="0000000001"/>
     </Request>
     <Response necessary="no">
@@ -139,26 +137,24 @@
   <Transaction code="23" service="460423" server="OFRTEFEK" log_switch="5" des="供电方发起单笔当日代扣抹帐交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <Group name="Rec" repeat_name="PKGCNT">
-        <Item name="WDMC"   length="64" desc="网点名称"/>
-        <Item name="JYLSH"  length="24" desc="交易流水号"/>
-        <Item name="JYRQ"   length=" 8" desc="交易日期"/>
-        <Item name="JYSJ"   length=" 6" desc="交易时间"/>
-        <Item name="YJYLSH" length="24" desc="原交易流水号"/>
-        <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
-        <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
-        <Item name="SFFS"   length=" 3" desc="收费方式"/>
-        <Item name="FYLX"   length=" 3" desc="费用类型"/>
-        <Item name="DWBM"   length=" 8" desc="单位编码"/>
-        <Item name="JFH"    length="20" desc="缴费号"/>
-        <Item name="DFNY"   length=" 6" desc="电费年月"/>
-        <Item name="KKYHDM" length=" 4" desc="扣款银行代码"/>
-        <Item name="KKZH"   length="32" desc="扣款账户"/>
-        <Item name="KKZHMC" length="128" desc="扣款账户名称"/>
-        <Item name="YSKJE"  length="16" desc="原实扣金额"/>
-        <Item name="MZJE"   length="16" desc="抹账金额"/>
-      </Group>
-      <SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
+      <Item name="WDMC"   length="64" desc="网点名称"/>
+      <Item name="JYLSH"  length="24" desc="交易流水号"/>
+      <Item name="JYRQ"   length=" 8" desc="交易日期"/>
+      <Item name="JYSJ"   length=" 6" desc="交易时间"/>
+      <Item name="YJYLSH" length="24" desc="原交易流水号"/>
+      <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
+      <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
+      <Item name="SFFS"   length=" 3" desc="收费方式"/>
+      <Item name="FYLX"   length=" 3" desc="费用类型"/>
+      <Item name="DWBM"   length=" 8" desc="单位编码"/>
+      <Item name="JFH"    length="20" desc="缴费号"/>
+      <Item name="DFNY"   length=" 6" desc="电费年月"/>
+      <Item name="KKYHDM" length=" 4" desc="扣款银行代码"/>
+      <Item name="KKZH"   length="32" desc="扣款账户"/>
+      <Item name="KKZHMC" length="128" desc="扣款账户名称"/>
+      <Item name="YSKJE"  length="16" desc="原实扣金额"/>
+      <Item name="MZJE"   length="16" desc="抹账金额"/>
+      <AddItem name="XH" value="0000000001"/>
       <AddItem name="TxnCnl"  value="THD"/>
     </Request>
     <Response necessary="no">
@@ -188,7 +184,7 @@
       <CopyItem dest_name="QYYHZH" sour_name="XQYZH"/>
       <Item name="XQYZHMC" length="128" desc="新签约账户名称"/>
       <CopyItem dest_name="QYYHZHMC" sour_name="XQYZHMC"/>
-      <Item name="ZHLX"    length=" 2" desc="账户类型"/>
+      <Item name="ZHLX"    length=" 2" expression="TRIM($ZHLX,both)" desc="账户类型"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
       <Item name="ZJHM"    length="32" desc="证件号码"/>
       <Item name="LXDH"    length="20" desc="联系电话"/>

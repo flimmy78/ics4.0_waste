@@ -11,19 +11,19 @@
     <Package name="AFE"        value="etc/DAFE_PKG.XML"/>
   </PackageDeclare>
   <TableDeclare>
-    <Table name="afetxnjnl"    value="afetxnjnl"/>  <!--业务流水表-->
-    <Table name="afebatrec"    value="afebatrec"/>  <!--批量扩展表-->
+    <Table name="afetxnjnl"  value="afetxnjnl"/>  <!--业务流水表-->
+    <Table name="afebatrec"  value="afebatrec"/>  <!--批量扩展表-->
     <Table name="EfekRunCtl" value="EfeKRunCtl" desc="业务控制表"/>
     <Table name="EfekCusAgt" value="EfekCusAgt" desc="客户协议表"/>
     <Table name="EfekTxnJnl" value="EfekTxnJnl" desc="交易流水表"/>
     <Table name="EfekTxnDtl" value="EfekTxnDtl" desc="交易明细表"/>
     <Table name="EfekBchRec" value="EfekBchRec" desc="交易批量表"/>
-    <!--Table name="efeinfctl"    value="efeinfctl"/-->  <!--银电开工控制表-->
-    <!--Table name="efechkinf"    value="efechkinf"/-->  <!--银电对账信息表-->
-    <!--Table name="efekchkdtl"    value="efekchkdtl"/-->  <!--银电对账明细表-->
-    <!--Table name="efecusagt"    value="efecusagt"/-->  <!--银电客户签约表-->
-    <!--Table name="efebatinf"    value="efebatinf"/-->  <!--银电批量代扣表-->
-    <!--Table name="efechkrec"    value="efechkrec"/-->  <!--银电对账记录表-->
+    <!--Table name="efeinfctl"  value="efeinfctl"/-->  <!--银电开工控制表-->
+    <!--Table name="efechkinf"  value="efechkinf"/-->  <!--银电对账信息表-->
+    <!--Table name="efekchkdtl" value="efekchkdtl"/-->  <!--银电对账明细表-->
+    <!--Table name="efecusagt"  value="efecusagt"/-->  <!--银电客户签约表-->
+    <!--Table name="efebatinf"  value="efebatinf"/-->  <!--银电批量代扣表-->
+    <!--Table name="efechkrec"  value="efechkrec"/-->  <!--银电对账记录表-->
   </TableDeclare>
   <BusDefDeclare>
     <Busdef name="AplCls"    value="202"/> <!--add by xuan_20101108-->
@@ -70,10 +70,10 @@
       <Fields>RspCod|DskNo|SeqNo|</Fields>
     </DynSentence>
     <DynSentence name="UpdThdJnl"><!--更新流水表-->
-         <Sentence>
-            LogNo='%s'
-         </Sentence>
-         <Fields>LogNo|</Fields>
+      <Sentence>
+        LogNo='%s'
+      </Sentence>
+      <Fields>LogNo|</Fields>
     </DynSentence>
     <FlowCtrl>
       <Quote name="GetEfeId"/>
@@ -1620,8 +1620,11 @@
   <Transaction code="460423" desc="供电方发起单笔当日代扣抹账请求">
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetTxnDtl" desc="根据文件名获取文件处理记录">
-      <Sentence>
+      <!--Sentence>
         select DtlSts, LogNo OLogNo, TlrId, XH from EfekTxnDtl where OIFlag='I' and JYLSH='%s' and XH='%s' for read only
+      </Sentence-->
+      <Sentence>
+        select DtlSts, LogNo, TlrId, XH from EfekTxnDtl where OIFlag='I' and JYLSH='%s' and XH='%s' for read only
       </Sentence>
       <Fields>YJYLSH|XH|</Fields>
     </DynSentence>
@@ -2391,313 +2394,75 @@
   </Transaction>
 
   <Transaction code="460450" desc="银行发起银行代扣代收电费对帐交易">
-    <DynSentence name="QryInfCtl">             <!--查询开工信息表 -->
+    <Quote name="EfeSqlLst"/>
+    <DynSentence name="QryTolDS">    <!--银行发起单笔代收 -->
       <Sentence>
-        SELECT StrAddr,DstAddr,WdoDat,CreOrg,OprCod,Status FROM efeinfctl WHERE EfeId='%s'
-      </Sentence>
-      <Fields>EfeId|</Fields>
+         select JYLSH DZPCLSH, DWBM, FYLX, SFFS, count(*) ZBS, sum(cast(YKJE as bigint)) ZJE  from EfekTxnDtl group by JYLSH, DWBM, FYLX, SFFS
+      </Sentence> <Fields>DAZRQ|</Fields>
     </DynSentence>
-    <!--生成文件  只统计主机成功状态的-->
-    <DynSentence name="GetTxnJnl">
+    <DynSentence name="QryTolDK">    <!--供电发起单笔代扣 -->
       <Sentence>
-        SELECT  a.*,b.*,c.*
-        FROM afetxnjnl a,efechkinf b,efekchkdtl c
-        WHERE a.CAgtNo = '%s'
-        AND a.ActDat='%s' AND TxnSts='S' AND a.TLOGNO = b.TLOGNO AND a.BrNo=b.Brno AND a.LOGNO=b.LOGNO
-        AND b.TLOGNO = c.TLOGNO AND b.BrNo=c.Brno AND b.LOGNO=c.LOGNO
+         select JYLSH DZPCLSH, DWBM, SFFS, count(*) ZBS, sum(cast(YKJE as bigint)) ZJE  from EfekTxnDtl group by JYLSH, DWBM, SFFS
       </Sentence>
-      <Fields>CAgtNo|TxnDat|</Fields>
+      <Fields>BrNo|CAgtNo|</Fields>
     </DynSentence>
-    <!--生成文件 总笔数 只统计主机成功状态的-->
-    <DynSentence name="TotalDeal">
+    <DynSentence name="QryTolBat">    <!--供电发起批量 -->
       <Sentence>
-        SELECT Count(*) TotalDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) TotalFee
-        FROM afetxnjnl
-        WHERE CAgtNo  = '%s'
-        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460405','460420')
+         select JYLSH DZPCLSH, DWBM, SFFS, count(*) ZBS, sum(cast(YKJE as bigint)) ZJE  from EfekTxnDtl group by JYLSH, DWBM, SFFS
       </Sentence>
-      <Fields>CAgtNo|TxnDat|</Fields>
+      <Fields>BrNo|CAgtNo|</Fields>
     </DynSentence>
-
-
-    <!--生成文件 单日单笔代扣成功-->
-    <DynSentence name="PaySuccDeal">
-      <Sentence>
-        SELECT Count(*) PaySuccDeal, COALESCE(sum(CAST(TxnAmt AS BIGINT)),0) PaySuccBill
-        FROM afetxnjnl
-        WHERE CAgtNo = '%s'
-        AND ActDat='%s' AND TxnSts='S' AND TxnCod in ('460405','460420')
-      </Sentence>
-      <Fields>CAgtNo|TxnDat|</Fields>
-    </DynSentence>
-    <!--插入对账记录-->
-    <DynSentence name="InsChkRec">
-      <Sentence>
-         INSERT INTO efechkrec values('%s','%s','%s','%s','%s',' ',' ','%s')
-      </Sentence>
-      <Fields>BrNo|ActDat|SndTim|LogNo|LclFil|EfeId|</Fields>
-    </DynSentence>
-    <!--修改对账记录-->
-    <DynSentence name="UpdChkRec">
-      <Sentence>
-         UPDATE efechkrec SET TRspCd='%s',RtnMsg='%s' WHERE EfeId='%s' AND LogNo='%s'
-      </Sentence>
-      <Fields>TRspCd|RtnMsg|EfeId|LogNo|</Fields>
-    </DynSentence>
-    
     <FlowCtrl>
-    	 <Quote name="GetEfeId"/>
-      <!--根据柜员号取BrNo-->
-      <Exec func="PUB:GetBranchNoByTeller"/>
-      <Exec func="PUB:InitTransaction"/>
-     
 
-       <!--读取开工信息记录-->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="QryInfCtl"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=无$BrNo分行开工信息记录</Set>
-        <Return/>
-      </If>
-      <If condition="$Status=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=银电系统已在关闭状态</Set>
-        <Return/>
-      </If>
+      <Quote name="InitTran"/>
+<!--Set>MYSY= </Set>
+<Set>MYCSXL= </Set>
+<Set>MYCSXL= </Set-->
+      <!--配置基本数据，银行发起单笔代收-->
+      <Set>DAZRQ= </Set>
+      <Set>DAZSJ= </Set>
 
-       <!-- 判断是否自动触发, add 20120502 -->
-      <Exec func="PUB:IsExistNode" error="IGNORE">
-        <Arg name="FieldName" value="WDO"/>
+      <Exec func="PUB:OpenCursor" error="IGNORE">
+        <Arg name="sql" value="QryTolDS"/>
+        <Arg name="CursorName" value="CURSOR_PRC"/>
       </Exec>
-      <If condition="INTCMP(~RetCod,3,0)">  <!--自动发起标志-->
-        <Set>WDO=GETDATETIME(YYYYMMDD)</Set>
-      </If>
-      
-      <Exec func="PUB:GetCommInf" error="IGNORE">
-        <Arg name="CndId"  value="STRCAT(efe_,$EfeId)"/>
-      </Exec>
-      <If condition="~RetCod!=0">
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=没对应分行IP设置</Set>
-        <Return/>
-      </If>
-
-      <Set>@MSG.OIP=$HstIp</Set>  <!--第三方IP-->
-      <Set>@MSG.OPT=$HstPrt</Set> <!--第三方PORT-->
-
-      <Set>TxnDat=$WDO</Set>
-      
-      <Set>LclDir=dat/efe</Set>
-        <!--441999广东省分行-->
-        <!--444999珠海分行-->
-        <!--446999佛山分行-->
-        <!--445999汕头分行-->
-        <!--483999东莞分行-->
-        <!--484999中山分行-->
-        <!--485999揭阳支行-->
-        <!--491999惠州分行-->
-        <!--761999江门分行-->
-      <Switch  expression="$EfeId">
-      	 <Case value="493999">
-          <Set>LclFil=STRCAT(301601003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="441999">
-          <Set>LclFil=STRCAT(301581003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="444999">
-          <Set>LclFil=STRCAT(301585003dz,$TxnDat,.txt)</Set>  <!--设置文件名 301交通银行代号(3位) 5850珠海地区代码（4位）03对帐文件类型(2 位 )-->
-          <Break/>
-        </Case>
-        <Case value="446999">
-          <Set>LclFil=STRCAT(301588003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="445999">
-          <Set>LclFil=STRCAT(301586003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="483999">
-          <Set>LclFil=STRCAT(301602003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="484999">
-          <Set>LclFil=STRCAT(301603003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="485999">
-          <Set>LclFil=STRCAT(301586503dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="491999">
-          <Set>LclFil=STRCAT(301595003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Case value="761999">
-          <Set>LclFil=STRCAT(301589003dz,$TxnDat,.txt)</Set>
-          <Break/>
-        </Case>
-        <Default>
-          <Set>LclFil=STRCAT(301581003dz,$TxnDat,.txt)</Set>
-        </Default>
-      </Switch>
-
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="TotalDeal"/>
-      </Exec>
-
-      <!--Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="PayCancDeal"/>
-      </Exec-->
-      <Exec func="PUB:ReadRecord">
-        <Arg name="SqlCmd" value="PaySuccDeal"/>
-      </Exec>
-      <Set>FSC=DELBOTHSPACE($TotalDeal)</Set>
-      <Set>FSM=DELBOTHSPACE($TotalFee)</Set>
-      <!--
-      <Set>FMC=DELBOTHSPACE($PayCancDeal)</Set>
-      <Set>FMM=DELBOTHSPACE($PayCancBill)</Set>
-      -->
-      <Set>FMC=  </Set>
-      <Set>FMM=  </Set>
-
-      <Set>FDC=DELBOTHSPACE($PaySuccDeal)</Set>
-      <Set>FDM=DELBOTHSPACE($PaySuccBill)</Set>
-      <Set>CCD=GETDATE()</Set>
-      <Set>WDO=GETDATE()</Set>
-      <Set>DTN=DELBOTHSPACE($TotalDeal)</Set>
-      <Exec func="PUB:ExportFromDB">    <!--产生上送供电方的文件-->
-        <Arg name="SqlName" value="GetTxnJnl"/>
-        <Arg name="FormatName" value="EFE_DZ"/>
-        <Arg name="FileName" value="STRCAT($LclDir,/,$LclFil)"/>
-        <Arg name="TableName" value="afetxnjnl"/>
-      </Exec>
-          <!--441999广东省分行-->
-          <!--444999珠海分行-->
-          <!--446999佛山分行-->
-          <!--445999汕头分行-->
-          <!--483999东莞分行-->
-          <!--484999中山分行-->
-          <!--485999揭阳支行-->
-          <!--491999惠州分行-->
-          <!--761999江门分行-->
-        <Switch  expression="$EfeId">
-        	<Case value="493999">
-            <Set>EFESnd=EFE_SND_493</Set>
-            <Break/>
-          </Case>
-          <Case value="441999">
-            <Set>EFESnd=EFE_SND_441</Set>
-            <Break/>
-          </Case>
-          <Case value="444999">
-          	<Set>EFESnd=EFE_SND_444</Set>
-            <Break/>
-          </Case>
-          <Case value="446999">
-          	<Set>EFESnd=EFE_SND_446</Set>
-            <Break/>
-          </Case>
-          <Case value="445999">
-          	<Set>EFESnd=EFE_SND_445</Set>
-            <Break/>
-          </Case>
-          <Case value="483999">
-          	<Set>EFESnd=EFE_SND_483</Set>
-            <Break/>
-          </Case>
-          <Case value="484999">
-          	<Set>EFESnd=EFE_SND_484</Set>
-            <Break/>
-          </Case>
-          <Case value="485999">
-          	<Set>EFESnd=EFE_SND_485</Set>
-            <Break/>
-          </Case>
-          <Case value="491999">
-          	<Set>EFESnd=EFE_SND_491</Set>
-            <Break/>
-          </Case>
-          <Case value="761999">
-          	<Set>EFESnd=EFE_SND_761</Set>
-            <Break/>
-          </Case>
-          <Default>
-            <Set>EFESnd=EFE_SND_441</Set>
-          </Default>
-        </Switch>
-      <Exec func="PUB:FtpPut">
-        <Arg name="FtpId" value="$EFESnd"/>
-      </Exec>
-      <Set>MsgInf1=STRCAT(向供电方发送对账文件成功)</Set>
-			<Set>MsgTyp=N</Set>
-			<Set>RspCod=000000</Set>
-			<Set>RspMsg=交易成功!</Set>      
-      
-      
-      <Exec func="PUB:GetLogNo"/>
-      
-      <Exec func="PUB:PutResponse"/> <!--返回前端-->
-      
-      <Set>SndTim=GETDATETIME()</Set>
-      <!--发送对账交易前记录对账信息-->
-      <Exec func="PUB:ExecSql" error="IGNORE">
-        <Arg name="SqlCmd"   value="InsChkRec"/>
-      </Exec>
-      <If condition="~RetCod=-1">
-        <Exec func="PUB:RollbackWork" error="IGNORE" />
+      <If condition="IS_NOEQUAL_STRING(~RetCod,0)">
         <Set>MsgTyp=E</Set>
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=数据库处理失败!</Set>
+        <Set>RspCod=EFE9999</Set>
+        <Set>RspMsg=无对账明细信息</Set>
         <Return/>
       </If>
 
-      <Set>FileName=$LclFil</Set>
-      <Set>recordNum=$DTN</Set>
+      <!-- 循环处理每一笔明细 -->
+      <While>
+        <!--删除旧数据 -->
+        <Delete>ROOT.DZPCLSH</Delete>
+        <Delete>ROOT.DWBM</Delete>
+        <Delete>ROOT.SFFS</Delete>
+        <Delete>ROOT.ZBS</Delete>
+        <Delete>ROOT.ZJE</Delete>
 
-      <Exec func="PUB:CallThirdOther">  <!--通知供电方-->
-        <Arg name="HTxnCd" value="460450"/>
-        <Arg name="ObjSvr" value="STHDEFEA"/>
-      </Exec>
-      <If condition="~RetCod=-1">
-        <Set>MsgTyp=E</Set>
-        <Set>TRspCd=99</Set>
-        <Set>RtnMsg=对账交易超时</Set> 
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=$RtnMsg</Set>
-        <Exec func="PUB:ExecSql" error="IGNORE">
-          <Arg name="SqlCmd"   value="UpdChkRec"/>
+        <Exec func="PUB:FetchCursor" error="IGNORE">
+          <Arg name="CursorName" value="CURSOR_PRC"/>
         </Exec>
-        <If condition="~RetCod=-1">
-          <Exec func="PUB:RollbackWork" error="IGNORE" />
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=数据库处理失败!</Set>
+        <If condition="~RetCod=100">
+          <Break/>
         </If>
-        <Return/>
-      </If>
-      <If condition="$RspCod=000000">
-        <Set>MsgTyp=N</Set>
-      </If>
-      <Else>
-        <Exec func="PUB:RollbackWork" error="IGNORE" />
-        <Set>MsgTyp=E</Set>
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=$RtnMsg</Set>
-      </Else>    
-      <!--供电局返回对账信息修改对账记录表-->
-      <Exec func="PUB:ExecSql" error="IGNORE">
-        <Arg name="SqlCmd"   value="UpdChkRec"/>
-      </Exec>
-      <If condition="~RetCod=-1">
-        <Exec func="PUB:RollbackWork" error="IGNORE" />
-        <Set>MsgTyp=E</Set>
-        <Set>RspCod=EFE999</Set>
-        <Set>RspMsg=数据库处理失败!</Set>
-      </If>
+
+        <!--Exec func="PUB:CallThirdOther"-->  <!--通知供电方-->
+          <!--Arg name="HTxnCd" value="460450"/>
+          <Arg name="ObjSvr" value="STDKEFE1"/>
+        </Exec-->
+
+        <Set>SvrCod=460450</Set>
+        <Quote name="SendThirdOther"/>
+        
+      </While>
+
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+      <Set>RspMsg=交易成功!</Set>      
+      <Return/>
 
     </FlowCtrl>
 
@@ -3767,6 +3532,11 @@
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
+
+
+
+
+
       <Quote name="GetEfeId"/>
 
       <!--读取开工信息记录-->

@@ -42,20 +42,25 @@
   </Define>
 
 
-  <Transaction code="460420" error="PUB:DeleteDiskNoAndRollback" desc="供电方发起批量代扣交易请求">
+  <Transaction code="460420" error="PUB:DeleteDiskNoAndRollback" timeout="3600" desc="供电方发起批量代扣交易请求">
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetBchRec" desc="根据文件名获取文件处理记录">
       <Sentence>
-        select RecSts from EfekBchRec where WJMC='%s'
+        select RecSts from EfekBchRec where OIFlag='%s' and WJMC='%s'
       </Sentence>
-      <Fields>WJMC|</Fields>
+      <Fields>OIFlag|WJMC|</Fields>
+    </DynSentence>
+    <DynSentence name="UpdBchRec" desc="根据文件名获取文件处理记录">
+      <Sentence>
+        update EfekBchRec set RecSts='%s',DskNo='%s' where OIFlag='%s' and WJMC='%s'
+      </Sentence>
+      <Fields>RecSts|DskNo|OIFlag|WJMC|</Fields>
     </DynSentence>
 
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
     <FlowCtrl>
-<Set>OIFlag=I</Set>
       <Quote name="InitTran"/>
       <Exec func="PUB:ReadRecord" error="IGNORE">
         <Arg name="SqlCmd" value="GetBchRec"></Arg>
@@ -63,10 +68,10 @@
       <Switch expression="~RetCod">
         <Case value="0" desc="存在记录">
           <If condition="IS_EQUAL_STRING($ZT,U)">
-            <Exec func="PUB:ExecSql" error="IGNORE">
+            <Exec func="PUB:ExecSql">
               <Arg name="sql" value="DelTxnDtl"/>
             </Exec>
-            <Exec func="PUB:ExecSql" error="IGNORE">
+            <Exec func="PUB:ExecSql">
               <Arg name="sql" value="DelTxnRec"/>
             </Exec>
           </If>
@@ -107,20 +112,29 @@
 -->
       <Set>CrpCod=EFE9999999</Set>
       <Set>ObjSvr=OFTKEFE2</Set>
+      <Set>TxnObj=OFTKEFE2</Set>
       <Set>SumFlg=N</Set>          <!--是否进行金额或数量汇总-->
       <Set>NamChk=1</Set>          <!--不需要检查户名-->
       <Set>TxnMod=1</Set>          <!--需要单笔上送-->
       <Set>CmtFlg=0</Set>          <!--大小通道发送状态-->
       <Set>TrdTbl=EfekTxnDtl</Set>
-      <Set>HTxnCd=460499</Set>
+      <Set>UpdFlg=Y</Set>
+      <Set>UpdFld=STRCAT(HTXNCD,|,TCKNO,|,BUSTYP)</Set>
       <Set>HTxnSt=U</Set>
-      <Exec func="PUB:RegisterBatchDiskNo"/>
+      <Set>TTxnCd=$TxnCod</Set>
+      <Set>HTxnCd=460499</Set>
+      <Set>FTxnCd=460498</Set>
+      <Set>IsTxn=Y</Set><!-- 交易不等于Y的明细,不会被触发-->
+      <Set>OrnCnt=$ZBS</Set>
+      <Delete>DskNo</Delete>
+      <Exec func="PUB:RegisterBatchDiskNo"/><!--登记入pubbatinf-->
       <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekRcvDir,$WJMC)</Set>
       <Exec func="PUB:ImportToDB" error="IGNORE">
         <Args>
           <Arg name="FormatName" value="PTFS"/>
           <Arg name="FileName"   value="$DatFil"/>
           <Arg name="TableName"  value="EfekTxnDtl"/>
+          <Arg name="ApplyLogNoFlag" value="1"/>
         </Args>
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
@@ -128,8 +142,13 @@
         <Set>MsgTyp=E</Set>
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=STRCAT(文件【,$WJMC,】处理异常)</Set>
+        <Exec func="PUB:RollbackWork" error="IGNORE"/>
         <Return/>
       </If>
+      <Set>RecSts=b</Set>
+      <Exec func="PUB:ExecSql">
+        <Arg name="sql" value="UpdBchRec"/>
+      </Exec>
       <Exec func="PUB:UpdateBatchStatus">
         <Arg name="ChkFlg" value="1"/>
       </Exec>
@@ -141,16 +160,25 @@
 
 
   <Transaction code="460499" desc="供电方发起批量代扣交易请求【大、小通道处理】">
+    <Quote name="EfeSqlLst"/>
     <FlowCtrl>
-<!--除了取流水号，写明细表外，其他流程，同460422-->
+<!--协议判断-->
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
+      </Exec>
+      <If condition="INTCMP(~RetCod,4,0)">
+        <Set>DtlSts=F</Set>
+        <Set>HTxnSt=F</Set>
+        <Set>HRspCd=EFE999</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】为与银行签订代扣协议)</Set>
+        <Goto>UpdTag</Goto>
+      </If>
+      <Set>FTxnTm=GETDATETIME(YYYYMMDDHHMISS)</Set>
+      <Set>TxnAmt=$YKJE</Set>
       <Set>TxnCnl=EFE</Set>
       <Set>CnlSub= </Set>
       <Exec func="PUB:GetVirtualTeller"/>
-      <Exec func="PUB:InsertRecord">
-        <Args>
-          <Arg name="tablename" value="EfekTxnJnl"/>
-        </Args>
-      </Exec>
       <Switch expression="$ActFlg">
         <Case value="0" desc="对公">
           <Set>HTxnCd=451240</Set>
@@ -164,7 +192,6 @@
           <Set>VchNo=00000000</Set>
           <Set>BilDat=$YHJYRQ</Set>
           <Set>CcyCod=CNY</Set>
-          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
           <Set>AccMod=1</Set>
           <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
           <Set>ActSqn=SUBSTR($InAcNo,1,6)</Set>
@@ -183,7 +210,6 @@
           </If>
           <Set>PayMod=0</Set>
           <Set>TActNo=$InAcNo</Set>
-          <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
           <Set>CcyTyp=1</Set>
           <Set>VchChk=0</Set>
           <Set>CAgtNo=EFE9999999</Set>
@@ -215,6 +241,8 @@
             <Arg name="TxnCod" value="363412"/>
             <Arg name="ObjSvr" value="STHDFAP2"/>
           </Exec>
+          <Break/>
+        </Case>
         <Case value="B" desc="地方">
           <Set>PayAct=$KKZH</Set>
           <Set>PayNam=$KKZHMC</Set>
@@ -239,10 +267,13 @@
         </Case>
 -->
       </Switch>
-      <Exec func="PUB:CallHostOther" error="IGNORE">
+      <!--Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="TxnCod" value="$HTxnCd"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
-      </Exec>
+      </Exec-->
+	  <!--TEST BEGIN QM -->
+          <Set>~RetCod=0</Set>
+	  <!--TEST END QM -->
       <Switch expression="~RetCod">
         <Case value="0" desc="成功">
           <Set>HTxnSt=S</Set>
@@ -299,27 +330,39 @@
           <Break/>
         </Default>
       </Switch>
-      <Exec func="PUB:UpdateRecord" desc="更新流水">
-        <Arg name="TblNam" value="EfekTxnJnl"/>
-        <Arg name="CndSts" value="UpdTxnJnl"/>
-      </Exec>
+      <Label>UpdTag</Label>
       <Exec func="PUB:UpdateRecord" desc="更新明细">
         <Arg name="TblNam" value="EfekTxnDtl"/>
         <Arg name="CndSts" value="UpdTxnDtl"/>
       </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
     </FlowCtrl>
   </Transaction>
 
 
+  <Transaction code="460498" desc="供电方发起批量代扣交易请求【大、小通道处理】">
+    <DynSentence name="UpdBchRecByDskNo" desc="根据磁盘号更新处理状态">
+      <Sentence>
+        update EfekBchRec set RecSts='%s' where DskNo='%s'
+      </Sentence>
+      <Fields>RecSts|DskNo|</Fields>
+    </DynSentence>
+    <FlowCtrl>
+      <Set>RecSts=B</Set>
+      <Set>DskNo=$LogNo</Set>
+      <Exec func="PUB:ExecSql">
+        <Arg name="sql" value="UpdBchRecByDskNo"/>
+      </Exec>
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
+    </FlowCtrl>
+  </Transaction>
+
+<!--TODO 定时机制发起银行方发起批量代扣记账交易请求-->
 
   <Transaction code="460422" desc="供电方发起单笔代扣交易请求">
     <Quote name="EfeSqlLst"/>
-    <DynSentence name="GetCusAgt" desc="根据文件名获取文件处理记录">
-      <Sentence>
-        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
-      </Sentence>
-      <Fields>DWBM|JFH|KKZH|</Fields>
-    </DynSentence>
 
     <FlowCtrl>
       <Quote name="InitTran"/>
@@ -340,11 +383,13 @@
 <!--登记流水-->
       <Set>TTxnCd=$TxnCod</Set>
       <Exec func="PUB:GetLogNo"/>
+<!--
       <Exec func="PUB:InsertRecord">
         <Args>
           <Arg name="tablename" value="EfekTxnJnl"/>
         </Args>
       </Exec>
+-->
       <Exec func="PUB:InsertRecord">
         <Args>
           <Arg name="tablename" value="EfekTxnDtl"/>
@@ -414,6 +459,8 @@
             <Arg name="TxnCod" value="363412"/>
             <Arg name="ObjSvr" value="STHDFAP2"/>
           </Exec>
+          <Break/>
+        </Case>
         <Case value="B" desc="地方">
           <Set>PayAct=$KKZH</Set>
           <Set>PayNam=$KKZHMC</Set>
@@ -438,10 +485,13 @@
         </Case>
 -->
       </Switch>
-      <Exec func="PUB:CallHostOther" error="IGNORE">
+<!--TEST BEGIN BY QM ,20141206-->
+      <!--Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="TxnCod" value="$HTxnCd"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
-      </Exec>
+      </Exec-->
+          <Set>~RetCod=0</Set>
+<!--TEST BEGIN BY QM ,20141206-->
       <Switch expression="~RetCod">
         <Case value="0" desc="成功">
           <Set>HTxnSt=S</Set>
@@ -498,10 +548,12 @@
           <Break/>
         </Default>
       </Switch>
+<!--
       <Exec func="PUB:UpdateRecord" desc="更新流水">
         <Arg name="TblNam" value="EfekTxnJnl"/>
         <Arg name="CndSts" value="UpdTxnJnl"/>
       </Exec>
+-->
       <Exec func="PUB:UpdateRecord" desc="更新明细">
         <Arg name="TblNam" value="EfekTxnDtl"/>
         <Arg name="CndSts" value="UpdTxnDtl"/>
@@ -577,9 +629,11 @@
         <Case value="0" desc="成功">
           <Set>HTxnSt=C</Set>
           <Set>DtlSts=C</Set>
+<!--
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnJnl"/>
           </Exec>
+-->
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnDtl"/>
           </Exec>
@@ -704,6 +758,7 @@
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE9999</Set>
             <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
+			<Set>Cnt=ADD($Cnt,1)</Set>
             <Continue/>
 <!--
             <Return/>
@@ -720,6 +775,7 @@
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE9999</Set>
               <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
+			  <Set>Cnt=ADD($Cnt,1)</Set>
               <Continue/>
 <!--
               <Return/>
@@ -834,6 +890,7 @@
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE9999</Set>
             <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新签退状态失败)</Set>
+			<Set>Cnt=ADD($Cnt,1)</Set>
             <Continue/>
 <!--
             <Return/>
@@ -849,6 +906,7 @@
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE9999</Set>
               <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新签退状态失败)</Set>
+			  <Set>Cnt=ADD($Cnt,1)</Set>
               <Continue/>
 <!--
               <Return/>
@@ -878,10 +936,16 @@
     </DynSentence>
     <DynSentence name="GetCusAgt" desc="根据单位代码更新开工信息">
       <Sentence>
-        select * from EfekCusAgt where DWBM='%s' and JFH='%s'
+        select count(*) CusCnt from EfekCusAgt where DWBM='%s' and JFH='%s'
       </Sentence>
       <Fields>DWBM|JFH|</Fields>
     </DynSentence>
+    <!--DynSentence name="GetCusAgt" desc="根据单位代码更新开工信息">
+      <Sentence>
+        select * from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
+    </DynSentence-->
 
     <FlowCtrl>
       <Exec func="PUB:ReadRecord" error="IGNORE">
