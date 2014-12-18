@@ -288,6 +288,11 @@
     <Item TxnSrc="WE441" TxnCnl="WEB"/>
     <Default   TxnCnl="TRM"/>
   </Table>
+
+	<Table name="ZHLXtoActTyp">
+    <Item ZHLX="01" ActTyp="15"/>
+    <Default   ActTyp="XX"/>
+  </Table>
 <!-- ADD BY Zhongxf Begin-->
 <!-- ADD BY Zhongxf Begin-->
 <!-- ADD BY Zhongxf Begin-->
@@ -359,61 +364,227 @@
 
 	<Table name="RspCodToJYFHDM" desc="行内错误码转换为电力返回码">
     <Item RspCod="000000" JYFHDM="00" desc="交易成功，未发生任何错误"/>
-    <Item RspCod="" JYFHDM="0a" desc="调用服务出错"/>
-    <Item RspCod="" JYFHDM="0b" desc="银行数据包长度小于交易代码长度"/>
-    <Item RspCod="" JYFHDM="0c" desc="非法交易代码"/>
-    <Item RspCod="" JYFHDM="0d" desc="无法打开银行传来文件"/>
-    <Item RspCod="" JYFHDM="0e" desc="电力端服务发生内部错误"/>
-    <Item RspCod="" JYFHDM="0f" desc="协议以外错误"/>
-    <Item RspCod="" JYFHDM="0g" desc="解析银行文件错误"/>
-    <Item RspCod="" JYFHDM="0h" desc="解析包头错误"/>
-    <Item RspCod="" JYFHDM="0i" desc="解析包体或文件错误"/>
-    <Item RspCod="" JYFHDM="0j" desc="数据包长度错误"/>
-    <Item RspCod="" JYFHDM="0k" desc="数据字段个数错误"/>
-    <Item RspCod="" JYFHDM="0l" desc="字段类型错误"/>
-    <Item RspCod="" JYFHDM="0m" desc="数据库操作错误"/>
-    <Item RspCod="" JYFHDM="0n" desc="电力方生成文件错误"/>
-    <Item RspCod="" JYFHDM="0p" desc="产生返回包错误"/>
-    <Item RspCod="" JYFHDM="0q" desc="数据溢出错误"/>
-    <Item RspCod="" JYFHDM="01" desc="对方程序失效，应答方处理"/>
-    <Item RspCod="" JYFHDM="03" desc="电力无此户号"/>
-    <Item RspCod="" JYFHDM="04" desc="发起工作站到发起方前置机网络不通"/>
-    <Item RspCod="" JYFHDM="05" desc="双方前置机之间无法通讯，网络连接故障"/>
-    <Item RspCod="" JYFHDM="06" desc="客户无欠费信息"/>
-    <Item RspCod="" JYFHDM="07" desc="客户所在营业区域没在该银行开户"/>
-    <Item RspCod="" JYFHDM="09" desc="客户需到供电交费，在供电有其它业务"/>
-    <Item RspCod="" JYFHDM="13" desc="银行方交易码错误，银行端数据格式或内容错误"/>
-    <Item RspCod="" JYFHDM="14" desc="抹账业务,交易已结账请使用抹账交易"/>
-    <Item RspCod="" JYFHDM="15" desc="抹账业务,处理失败,电力无此银行的收费记录"/>
-    <Item RspCod="" JYFHDM="18" desc="正在进行批量代扣业务，需等本业务完成后才能办理本手续"/>
-    <Item RspCod="" JYFHDM="27" desc="客户欠费需全部缴清，不允许部分缴费"/>
-    <Item RspCod="" JYFHDM="28" desc="该户是欠费停电户，交费后，须到供电办理复电手续"/>
-    <Item RspCod="" JYFHDM="29" desc="电力执行入账失败"/>
-    <Item RspCod="" JYFHDM="50" desc="数据库处理数据出错"/>
-    <Item RspCod="" JYFHDM="59" desc="未知交易码"/>
-    <Item RspCod="" JYFHDM="62" desc="客户账户挂失"/>
-    <Item RspCod="" JYFHDM="63" desc="客户账号冻结"/>
-    <Item RspCod="" JYFHDM="70" desc="批量代扣,产生扣款文件错，银行应扣款文件未处理完"/>
-    <Item RspCod="" JYFHDM="71" desc="批量代扣,产生扣款文件错,没有可扣款电费数据"/>
-    <Item RspCod="" JYFHDM="73" desc="回填收费信息或冲账时,电量(电费)发生变动"/>
-    <Item RspCod="" JYFHDM="74" desc="单笔扣款,电力提供客户账号不存在"/>
-    <Item RspCod="" JYFHDM="75" desc="单笔扣款,客户在银行存款余额不足"/>
-    <Item RspCod="" JYFHDM="76" desc="单笔扣款,客户账户存在，但已销户"/>
-    <Item RspCod="" JYFHDM="77" desc="单笔扣款,客户账户存在，但未与银行方签扣款协议"/>
-    <Item RspCod="" JYFHDM="78" desc="银行提供交易字符串错误，与联网协议约定不符"/>
-    <Item RspCod="" JYFHDM="79" desc="单笔扣款，银行自定义返回错误提示"/>
-    <Item RspCod="" JYFHDM="81" desc="供电签订代扣协议,客户账号不存在或已销户"/>
-    <Item RspCod="" JYFHDM="83" desc="供电签订代扣协议,银行自定义异常信息"/>
-    <Item RspCod="" JYFHDM="84" desc="银行正在日结中，无法进行缴费"/>
-    <Item RspCod="" JYFHDM="85" desc="用户有欠费，不能进行收取预付款，需要先结清电费"/>
-    <Item RspCod="" JYFHDM="99" desc="前置机无法登录服务器，登录失败"/>
-    <Item RspCod="" JYFHDM="FF" desc="代表供电的服务正在退出，暂时拒绝交易"/>
-    <Item RspCod="" JYFHDM="100" desc="供电账户锁定，无法进行缴费，请致电供电95598"/>
-    <Item RspCod="" JYFHDM="101" desc="交易状态未知"/>
+    <Item RspCod="" JYFHDM="BW001" desc="银行数据包长度小于交易代码长度"/>
+    <Item RspCod="" JYFHDM="BW002" desc="数据字段必填项无填值"/>
+    <Item RspCod="" JYFHDM="BW003" desc="解析数据包头错误"/>
+    <Item RspCod="" JYFHDM="BW004" desc="解析数据包体错误"/>
+    <Item RspCod="" JYFHDM="BW005" desc="数据包长度错误"/>
+    <Item RspCod="" JYFHDM="BW006" desc="数据字段个数错误"/>
+    <Item RspCod="" JYFHDM="BW007" desc="数据字段类型错误"/>
+    <Item RspCod="" JYFHDM="BW008" desc="产生返回包错误"/>
+    <Item RspCod="" JYFHDM="BW009" desc="数据溢出错误"/>
+    <Item RspCod="" JYFHDM="BW010" desc="清算日期错误"/>
+    <Item RspCod="" JYFHDM="BW011" desc="备注错误"/>
+    <Item RspCod="" JYFHDM="BW012" desc="数据包字段信息错误"/>
+    <Item RspCod="" JYFHDM="BW013" desc="数据包验证码不正确"/>
+    <Item RspCod="" JYFHDM="BW014" desc="代扣协议验证不通过"/>
+    <Item RspCod="" JYFHDM="BW015" desc="校验信息不成功"/>
+    <Item RspCod="" JYFHDM="BW016" desc="解密不成功"/>
+    <Item RspCod="" JYFHDM="BW017" desc="机构代码与交易机构代码不一致          "/>
+    <Item RspCod="" JYFHDM="BW018" desc="报文格式不正确  "/>
+    <Item RspCod="" JYFHDM="BW019" desc="付款行行号不能为空"/>
+    <Item RspCod="" JYFHDM="BW020" desc="收款行行号不能为空"/>
+    <Item RspCod="" JYFHDM="BW021" desc="凭证号码非法"/>
+    <Item RspCod="" JYFHDM="BW022" desc="金额和日期不正确"/>
+    <Item RspCod="" JYFHDM="BW023" desc="处理日期与当前日期不一致，不进行处理  "/>
+    <Item RspCod="" JYFHDM="BW024" desc="总户数或总金额不符                                          "/>
+    <Item RspCod="" JYFHDM="BW025" desc="附言长度超限"/>
+    <Item RspCod="" JYFHDM="BW026" desc="原加急标志检查出错"/>
+    <Item RspCod="" JYFHDM="BW027" desc="日期错误"/>
+    <Item RspCod="" JYFHDM="FW001" desc="调用服务出错"/>
+    <Item RspCod="" JYFHDM="FW002" desc="供电方端服务发生内部错误"/>
+    <Item RspCod="" JYFHDM="FW003" desc="对方程序失效，应答方处理"/>
+    <Item RspCod="" JYFHDM="FW004" desc="数据库处理数据出错"/>
+    <Item RspCod="" JYFHDM="FW005" desc="供电的服务正在退出，暂时拒绝代扣机构提交的任何交易"/>
+    <Item RspCod="" JYFHDM="FW006" desc="供电客户电费账务处于冻结状态，无法进行缴费，请致电供电95598"/>
+    <Item RspCod="" JYFHDM="FW007" desc="不允许代扣机构发起的交易"/>
+    <Item RspCod="" JYFHDM="FW008" desc="撤销代扣协议只能由原签约单位发起"/>
+    <Item RspCod="" JYFHDM="FW009" desc="超时应答"/>
+    <Item RspCod="" JYFHDM="FW010" desc="代收机构未开通此交易业务"/>
+    <Item RspCod="" JYFHDM="FW010" desc="该交易业务不能撤销"/>
+    <Item RspCod="" JYFHDM="FW012" desc="银电联网系统停运"/>
+    <Item RspCod="" JYFHDM="FW013" desc="发送数据包失败"/>
+    <Item RspCod="" JYFHDM="FW014" desc="系统忙，请稍后再提交"/>
+    <Item RspCod="" JYFHDM="FW015" desc="该交易未开工"/>
+    <Item RspCod="" JYFHDM="FW016" desc="只能对当日发生的交易进行取消"/>
+    <Item RspCod="" JYFHDM="FW017" desc="系统超时  "/>
+    <Item RspCod="" JYFHDM="FW018" desc="生成系统流水号失败！"/>
+    <Item RspCod="" JYFHDM="FW019" desc="本交易不支持跨省交易"/>
+    <Item RspCod="" JYFHDM="FW020" desc="本交易不支持异地交易                                        "/>
+    <Item RspCod="" JYFHDM="FW021" desc="冲正时间超限                                                "/>
+    <Item RspCod="" JYFHDM="FW022" desc="本交易不支持跨行交易 "/>
+    <Item RspCod="" JYFHDM="FW023" desc="查询失败"/>
+    <Item RspCod="" JYFHDM="FW024" desc="系统交易出错"/>
+    <Item RspCod="" JYFHDM="FW025" desc="银行账务交易处理失败"/>
+    <Item RspCod="" JYFHDM="JE001" desc="金额错误"/>
+    <Item RspCod="" JYFHDM="JE002" desc="交易金额超过约定金额上限"/>
+    <Item RspCod="" JYFHDM="JE003" desc="交易金额低于约定金额下限"/>
+    <Item RspCod="" JYFHDM="JE004" desc="批扣总金额超过规定总金额上限"/>
+    <Item RspCod="" JYFHDM="JE005" desc="批扣总金额低于规定总金额下限"/>
+    <Item RspCod="" JYFHDM="JE006" desc="货币不符"/>
+    <Item RspCod="" JYFHDM="JE007" desc="交易总笔数错误"/>
+    <Item RspCod="" JYFHDM="JE008" desc="交易总金额错误"/>
+    <Item RspCod="" JYFHDM="JE009" desc="交易失败笔数错误"/>
+    <Item RspCod="" JYFHDM="JE010" desc="交易失败金额错误"/>
+    <Item RspCod="" JYFHDM="JE011" desc="汇总笔数与文件头总笔数不符                                  "/>
+    <Item RspCod="" JYFHDM="JE012" desc="汇总金额与文件头总金额不符                                  "/>
+    <Item RspCod="" JYFHDM="JE013" desc="当日账户累计汇出金额大于500万元"/>
+    <Item RspCod="" JYFHDM="JE014" desc="支付金额异常"/>
+    <Item RspCod="" JYFHDM="JE015" desc="交易金额非法"/>
+    <Item RspCod="" JYFHDM="JE016" desc="预付费交易金额不足"/>
+    <Item RspCod="" JYFHDM="JE017" desc="抹账金额不正确，请上送正确的抹账金额"/>
+    <Item RspCod="" JYFHDM="KH001" desc="供电方无此用户信息"/>
+    <Item RspCod="" JYFHDM="KH002" desc="客户无欠费信息"/>
+    <Item RspCod="" JYFHDM="KH003" desc="客户所在营业区域没在该银行开户"/>
+    <Item RspCod="" JYFHDM="KH004" desc="客户需到供电交费，在供电有其它业务"/>
+    <Item RspCod="" JYFHDM="KH005" desc="供电方无此银行的收费记录，处理失败"/>
+    <Item RspCod="" JYFHDM="KH006" desc="客户欠费需全部缴清，不允许部分缴费"/>
+    <Item RspCod="" JYFHDM="KH007" desc="用户有欠费，不能进行收取预付款，需要先结清电费"/>
+    <Item RspCod="" JYFHDM="KH008" desc="该客户所属单位编码未维护"/>
+    <Item RspCod="" JYFHDM="ZH001" desc="客户账户挂失"/>
+    <Item RspCod="" JYFHDM="ZH002" desc="客户账户冻结"/>
+    <Item RspCod="" JYFHDM="ZH003" desc="单笔扣款,供电方提供客户银行账号不存在"/>
+    <Item RspCod="" JYFHDM="ZH004" desc="单笔扣款,客户在银行存款余额不足"/>
+    <Item RspCod="" JYFHDM="ZH005" desc="单笔扣款,客户账户存在，但已销户"/>
+    <Item RspCod="" JYFHDM="ZH006" desc="客户未与银行（供电）签订代扣协议"/>
+    <Item RspCod="" JYFHDM="ZH007" desc="供电签订代扣协议,客户银行账号不存在或已销户"/>
+    <Item RspCod="" JYFHDM="ZH008" desc="客户银行账户信息有误"/>
+    <Item RspCod="ZH009" JYFHDM="ZH009" desc="客户卡（帐）户状态有误"/>
+    <Item RspCod="" JYFHDM="ZH010" desc="供电入款账户信息有误"/>
+    <Item RspCod="" JYFHDM="ZH011" desc="坏账户及其他"/>
+    <Item RspCod="" JYFHDM="ZH012" desc="不允许持卡人进行的交易"/>
+    <Item RspCod="" JYFHDM="ZH013" desc="余额不足"/>
+    <Item RspCod="" JYFHDM="ZH014" desc="账户不符"/>
+    <Item RspCod="" JYFHDM="ZH015" desc="超出交易次数限制"/>
+    <Item RspCod="" JYFHDM="ZH016" desc="账户已销"/>
+    <Item RspCod="" JYFHDM="ZH017" desc="客户银行账户被临时锁定"/>
+    <Item RspCod="" JYFHDM="ZH018" desc="有效身份证件种类错                                          "/>
+    <Item RspCod="" JYFHDM="ZH019" desc="有效身份证件号码错                                          "/>
+    <Item RspCod="" JYFHDM="ZH020" desc="证件已到期   "/>
+    <Item RspCod="" JYFHDM="ZH021" desc="账户类型选择错误                                            "/>
+    <Item RspCod="" JYFHDM="ZH022" desc="账户止付状态,不能再做止付                                   "/>
+    <Item RspCod="" JYFHDM="ZH023" desc="无密户或印鉴户必须在开户机构办理                            "/>
+    <Item RspCod="" JYFHDM="ZH024" desc="客户证件信息不全"/>
+    <Item RspCod="" JYFHDM="ZH025" desc="公司账户只能全额冲正"/>
+    <Item RspCod="" JYFHDM="ZH026" desc="对方账号不存在或不属于本机构                                "/>
+    <Item RspCod="" JYFHDM="ZH027" desc="卡为副卡或不存在"/>
+    <Item RspCod="" JYFHDM="ZH028" desc="客户姓名不一致"/>
+    <Item RspCod="" JYFHDM="ZH029" desc="证件类型或证件号码不一致"/>
+    <Item RspCod="" JYFHDM="WL001" desc="发起工作站到发起方前置机网络不通"/>
+    <Item RspCod="" JYFHDM="WL002" desc="双方前置机之间无法通讯，网络连接故障"/>
+    <Item RspCod="" JYFHDM="WL003" desc="通讯超时  "/>
+    <Item RspCod="" JYFHDM="WL004" desc="与第三方通讯失败"/>
+    <Item RspCod="" JYFHDM="WL005" desc="sftp服务器无法连接"/>
+    <Item RspCod="" JYFHDM="WJ001" desc="无法打开银行传来文件"/>
+    <Item RspCod="" JYFHDM="WJ002" desc="解析银行文件错误"/>
+    <Item RspCod="" JYFHDM="WJ003" desc="供电方生成文件错误"/>
+    <Item RspCod="" JYFHDM="WJ004" desc="文件重发"/>
+    <Item RspCod="" JYFHDM="WJ005" desc="文件名错误"/>
+    <Item RspCod="" JYFHDM="WJ006" desc="文件首行定义规范错误"/>
+    <Item RspCod="" JYFHDM="WJ007" desc="原文件不存在"/>
+    <Item RspCod="" JYFHDM="WJ008" desc="交易笔数超过约定笔数上限"/>
+    <Item RspCod="" JYFHDM="WJ009" desc="文件存放路径地址错误"/>
+    <Item RspCod="" JYFHDM="WJ010" desc="卡品种与批量文件中的摘要不符                                "/>
+    <Item RspCod="" JYFHDM="WJ011" desc="文件不存在             "/>
+    <Item RspCod="" JYFHDM="WJ012" desc="文件已处理                                              "/>
+    <Item RspCod="" JYFHDM="WJ013" desc="约定记录数超限"/>
+    <Item RspCod="" JYFHDM="WJ014" desc="文件校验失败"/>
+    <Item RspCod="" JYFHDM="WJ015" desc="批量文件为空"/>
+    <Item RspCod="" JYFHDM="WJ016" desc="批量类型不正确"/>
+    <Item RspCod="" JYFHDM="WJ017" desc="记录数小于等于0"/>
+    <Item RspCod="" JYFHDM="WJ018" desc="总金额小于等于0"/>
+    <Item RspCod="" JYFHDM="WJ019" desc="文件内数据不一致"/>
+    <Item RspCod="" JYFHDM="WJ020" desc="文件数据过大，不做处理"/>
+    <Item RspCod="" JYFHDM="WJ021" desc="文件交易种类不正确"/>
+    <Item RspCod="" JYFHDM="WJ022" desc="上载SFTP错误"/>
+    <Item RspCod="" JYFHDM="WJ023" desc="上传sftp文件失败"/>
+    <Item RspCod="" JYFHDM="WJ024" desc="下载Sftp文件失败"/>
+    <Item RspCod="" JYFHDM="WJ025" desc="校验md5错误"/>
+    <Item RspCod="" JYFHDM="00000" desc="交易成功，未发生任何错误"/>
+    <Item RspCod="" JYFHDM="XY001" desc="非法交易代码"/>
+    <Item RspCod="" JYFHDM="XY002" desc="银行方交易码错误，银行端数据格式或内容错误"/>
+    <Item RspCod="" JYFHDM="XY003" desc="正在进行批量代扣业务，需等本业务完成后才能办理本手续"/>
+    <Item RspCod="" JYFHDM="XY004" desc="用户您是欠费停电户，交费后，须到供电办理复电手续"/>
+    <Item RspCod="" JYFHDM="XY005" desc="供电方执行入账失败"/>
+    <Item RspCod="" JYFHDM="XY006" desc="批量代扣,产生扣款文件错，银行应扣款文件未处理完"/>
+    <Item RspCod="" JYFHDM="XY007" desc="批量代扣,产生扣款文件错，没有可扣款电费数据"/>
+    <Item RspCod="" JYFHDM="XY008" desc="回填收费信息或冲账时,电费(电量)发生变动"/>
+    <Item RspCod="" JYFHDM="XY009" desc="银行提供交易字符串错误，与联网协议约定不符"/>
+    <Item RspCod="" JYFHDM="XY010" desc="不允许变更代扣协议"/>
+    <Item RspCod="" JYFHDM="XY011" desc="银行正在日结中，无法进行缴费"/>
+    <Item RspCod="" JYFHDM="XY012" desc="交易状态未知"/>
+    <Item RspCod="" JYFHDM="XY013" desc="只允许变更指定字段内容"/>
+    <Item RspCod="" JYFHDM="XY014" desc="代扣协议变更错误"/>
+    <Item RspCod="" JYFHDM="99999" desc="其他错误"/>
+    <Item RspCod="" JYFHDM="XY015" desc="协议号不正确"/>
+    <Item RspCod="" JYFHDM="XY016" desc="冲正不成功"/>
+    <Item RspCod="" JYFHDM="XY017" desc="原交易已被取消或冲正"/>
+    <Item RspCod="" JYFHDM="XY018" desc="日期切换正在处理"/>
+    <Item RspCod="" JYFHDM="XY019" desc="原始交易不成功"/>
+    <Item RspCod="" JYFHDM="XY020" desc="无此原交易"/>
+    <Item RspCod="" JYFHDM="XY021" desc="客户未与银行（供电）签订代扣协议"/>
+    <Item RspCod="" JYFHDM="XY022" desc="交易重复发送"/>
+    <Item RspCod="" JYFHDM="XY023" desc="代扣机构批扣回执包未到规定最短回执期限"/>
+    <Item RspCod="" JYFHDM="XY024" desc="代扣机构批扣回执包超过规定最长回执期限"/>
+    <Item RspCod="" JYFHDM="XY025" desc="发送状态错误"/>
+    <Item RspCod="" JYFHDM="XY026" desc="交易处理失败"/>
+    <Item RspCod="" JYFHDM="XY027" desc="不允许冲正"/>
+    <Item RspCod="" JYFHDM="XY028" desc="不允许跨行代收交易"/>
+    <Item RspCod="" JYFHDM="XY029" desc="冲正金额不等于原交易金额                                  "/>
+    <Item RspCod="" JYFHDM="XY030" desc="取消交易机构必须为原交易机构                                "/>
+    <Item RspCod="" JYFHDM="XY031" desc="已办理退费"/>
+    <Item RspCod="" JYFHDM="XY032" desc="原汇出账户信息不符                                          "/>
+    <Item RspCod="" JYFHDM="XY033" desc="原交易信息不正确"/>
+    <Item RspCod="" JYFHDM="XY034" desc="不允许执行此类交易"/>
+    <Item RspCod="" JYFHDM="XY035" desc="报文头响应码错误"/>
+    <Item RspCod="" JYFHDM="XY036" desc="对公代理机构未加办跨行业务                                  "/>
+    <Item RspCod="" JYFHDM="XY037" desc="该批量交易不支持零金额     "/>
+    <Item RspCod="" JYFHDM="XY038" desc="该批量交易已办理过取消！ "/>
+    <Item RspCod="" JYFHDM="XY039" desc="该交易必须在原交易机构或开户机构办理  "/>
+    <Item RspCod="" JYFHDM="XY040" desc="变更协议信息不完整"/>
+    <Item RspCod="" JYFHDM="XY041" desc="原批次信息不存在                                            "/>
+    <Item RspCod="" JYFHDM="XY042" desc="原交易渠道不符                                              "/>
+    <Item RspCod="" JYFHDM="XY043" desc="原交易金额不符                                              "/>
+    <Item RspCod="" JYFHDM="XY044" desc="本交易必须在原交易网点或开户网点办理                        "/>
+    <Item RspCod="" JYFHDM="XY045" desc="取消交易必须由原柜员发起                                    "/>
+    <Item RspCod="" JYFHDM="XY046" desc="没有符合条件的记录！"/>
+    <Item RspCod="" JYFHDM="XY047" desc="该交易不允许取消或冲正"/>
+    <Item RspCod="" JYFHDM="XY048" desc="该交易已入账！"/>
+    <Item RspCod="" JYFHDM="XY049" desc="取得系统代码失败！"/>
+    <Item RspCod="" JYFHDM="XY050" desc="付款类型错误！"/>
+    <Item RspCod="" JYFHDM="XY051" desc="与原交易信息记录不符                                        "/>
+    <Item RspCod="" JYFHDM="XY052" desc="没有符合条件的记录  "/>
+    <Item RspCod="" JYFHDM="XY053" desc="取交易机构错误"/>
+    <Item RspCod="" JYFHDM="XY054" desc="交易状态不合法"/>
+    <Item RspCod="" JYFHDM="XY055" desc="退回应答结果不符合"/>
+    <Item RspCod="" JYFHDM="XY056" desc="不支持该业务种类"/>
+    <Item RspCod="" JYFHDM="XY057" desc="原交易类型不符"/>
+    <Item RspCod="" JYFHDM="XY058" desc="原流水隔日状态异常"/>
+    <Item RspCod="" JYFHDM="XY059" desc="不能与原交易信息相同"/>
+    <Item RspCod="" JYFHDM="XY060" desc="原交易已处理"/>
+    <Item RspCod="" JYFHDM="XY061" desc="原交易未入账"/>
+    <Item RspCod="" JYFHDM="XY062" desc="交易类型不合法"/>
+    <Item RspCod="" JYFHDM="XY063" desc="已超过截止日期"/>
+    <Item RspCod="" JYFHDM="XY064" desc="原交易日期错误"/>
+    <Item RspCod="" JYFHDM="XY065" desc="无此流水"/>
+    <Item RspCod="" JYFHDM="XY066" desc="原平台账号不符 "/>
+    <Item RspCod="" JYFHDM="XY067" desc="原支付交易序号不一致"/>
+    <Item RspCod="" JYFHDM="XY068" desc="客户协议已签约，不能重复签约"/>
+    <Item RspCod="" JYFHDM="XY069" desc="上送数据与原签约协议不一致，请按原签约协议数据重新输入"/>
+    <Item RspCod="" JYFHDM="XY070" desc="该用户不支持网上缴费"/>
+    <Item RspCod="" JYFHDM="XY071" desc="该笔交易正在抹账或已经抹账"/>
+    <Item RspCod="" JYFHDM="XY999" desc="昆明电力代缴专用错误码，其他缴费项目查询不能用此错误码"/>
+    <Item RspCod="" JYFHDM="YH001" desc="代扣机构信息（状态）不正确"/>
+    <Item RspCod="" JYFHDM="YH002" desc="只能查询本机构 "/>
+    <Item RspCod="" JYFHDM="YH003" desc="存在其他有权机构冻结信息无法扣划"/>
+    <Item RspCod="" JYFHDM="YH004" desc="该支付行号不存在！"/>
+    <Item RspCod="" JYFHDM="YH005" desc="机构号码不存在！"/>
+    <Item RspCod="" JYFHDM="YH006" desc="取交易机构错误失败！"/>
     <Default JYFHM="101"/>
   </Table>
 
 	<Table name="JYFHDMToRspMsg" desc="行内错误码转换为电力返回码">
+    <Item JYFHDM="00" RspMsg="成功"/>
     <Item JYFHDM="0a" RspMsg="调用服务出错"/>
     <Item JYFHDM="0b" RspMsg="银行数据包长度小于交易代码长度"/>
     <Item JYFHDM="0c" RspMsg="非法交易代码"/>

@@ -2,9 +2,12 @@
 <Application name="EFEA" code="202">
 <!--银行发起业务-->
   <ConfigDeclare>
-    <Config name="BatFormat" value="etc/EFE_FMT_441999.XML"/>
+    <Config name="BatFormat" value="etc/EFEK_FMT.XML"/>
     <Config name="OPFCSW"    value="etc/EFE_CSW_441999.XML"/>
   </ConfigDeclare>
+  <PackageDeclare>
+    <Package name="EFE"        value="etc/EFEK_JOB_PKG.XML"/>
+  </PackageDeclare>
   <TableDeclare>
     <Table name="EfekCusAgt" value="EfekCusAgt" desc="客户协议表"/>
     <Table name="EfekRunCtl" value="EfekRunCtl" desc="业务状态控制表"/>
@@ -50,9 +53,11 @@
 
 
   <Transaction code="460411" desc="银行发起客户记账交易请求">
+    <Quote name="EfeSqlLst"/>
     <Attribute name="integrity" value="2" code="EFECAN" desc="交易失败自动冲正"/>
     <FlowCtrl>
-      <Quote name="InitTran"/>
+      <!--外发的时候会自动调用-->
+      <!--Quote name="InitTran"/-->
 <!--
 460410查询接口数据
 费用类型	FYLX
@@ -71,81 +76,33 @@
 收费方式	SFFS
 付款方式  FKFS
 -->
+      <Set>FKFS=2</Set><!--1 现金;2 非现金-->
       <Set>HBFH=RMB</Set>
       <Set>SKJE=$QFJE</Set>
-      <Set>KKRQ=$JYRQ</Set>
-      <Set>KKSJ=$JYSJ</Set>
+      <!--Set>KKRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>KKSJ=GETDATETIME(HHMISS)</Set-->
 <!--登记流水、明细表-->
-<!--主机账务处理-->
+<!--主机账务处理
 451240 PCL51
-471140 PCL52
+471140 PCL52-->
 
-      <Exec func="PUB:CallThirdOther" error="IGNORE">
-        <Arg name="TxnCod" value="$SvrCod"/>
-        <Arg name="ObjSvr" value="STHDEFEK"/>
-      </Exec>
-      <Switch expression="~RetCod">
-        <Case value="0" desc="成功">
-          <Set>MsgTyp=N</Set>
-          <Set>RspCod=000000</Set>
-<!--变更明细状态-->
-          <Set>RspMsg=交易成功</Set>
-          <Break/>
-        </Case>
-        <Case value="3" desc="交易失败">
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=$TRspCd</Set>
-          <Set>RspMsg=$CWTSXX</Set>
-<!--变更明细状态-->
-<!--
-          <Exec func="PUB:DefaultErrorProc"/>
--->
-          <Break/>
-        </Case>
-        <Case value="-1" desc="超时">
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=交易超时</Set>
-<!--变更明细状态-->
-<!--如果有同步交易，执行同步操作-->
-          <Break/>
-        </Case>
-        <Case value="-2" desc="系统故障">
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=系统故障</Set>
-<!--变更明细状态-->
-<!--
-          <Exec func="PUB:DefaultErrorProc"/>
--->
-          <Break/>
-        </Case>
-        <Case value="-10" desc="交易发送失败">
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=交易发送失败</Set>
-<!--变更明细状态-->
-<!--
-          <Exec func="PUB:DefaultErrorProc"/>
--->
-          <Break/>
-        </Case>
-        <Default>
-          <Set>MsgTyp=E</Set>
-          <Set>RspCod=EFE999</Set>
-          <Set>RspMsg=交易失败，其他未知情况</Set>
-<!--变更明细状态-->
-          <Break/>
-        </Default>
-      </Switch>
+      <Set>SvrCod=460411</Set>
+      <Quote name="SendThirdOther"/>
+
     </FlowCtrl>
   </Transaction>
 
 
 
   <Transaction code="460412" desc="银行方发起单笔当日代收抹账业务请求">
+    <Quote name="EfeSqlLst"/>
+    <DynSentence name="GetTxnJnl" desc="获取原交易流水">
+      <Sentence>
+        select  YHLSH YJYLSH, YHJYRQ YJYRQ, YHJYSJ YJYSJ, SFFS, FYLX, DWBM, JFH, KKYHDM, KKZH, KKZHMC, BFJFBZ, ZWLSH, DFNY, HBFH, YKJE YSKJE, YKJE CXJE from efektxndtl where TckNo='%s'
+      </Sentence>
+      <Fields>TckNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
-      <Quote name="InitTran"/>
 <!--
 460411交易数据
 原交易流水号	YJYLSH
@@ -174,9 +131,29 @@
         <Return/>
       </If>
       <If condition="IS_NOEQUAL_STRING($TIATYP,A)" desc="当前非授权交易，先发第三方处理">
+<!--查询原交易流水-->
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Arg name="SqlCmd" value="GetTxnJnl"></Arg>
+        </Exec>
+        <If condition="INTCMP(~RetCod,4,0)">
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=STRCAT(会计流水号【,$TckNo,】交易不存在</Set>
+          <Return/>
+        </If>
+
+        <Quote name="InitTran"/>
+        <Set>WDMC=@BCFG.BrNam</Set>
+        <Set>MYSY=0</Set>
+        <Set>MYCSXL= </Set>
+        <Set>JYJSF=030600</Set>
+        <Set>JYYDZ= </Set>
+        <Set>JYMBDZ= </Set>
+        <Set>JYMBDZ= </Set>
+        <Set>SvrCod=460412</Set>
         <Exec func="PUB:CallThirdOther" error="IGNORE">
           <Arg name="TxnCod" value="$SvrCod"/>
-          <Arg name="ObjSvr" value="STHDEFEK"/>
+          <Arg name="ObjSvr" value="STDKEFE1"/>
         </Exec>
         <Switch expression="~RetCod">
           <Case value="0" desc="成功">
@@ -425,30 +402,32 @@
 
 
   <Transaction code="460431" desc="银行方发起银行到供电核对代扣协议请求">
+    <Quote name="EfeSqlLst"/>
     <DynSentence name="GetCusAgtDWBM" desc="单位代码">
       <Sentence>
-        select distinct DWBM from EfeCusAgt where ActDat='%s' and SndFlg='0'
+        select distinct DWBM from EfekCusAgt where JYRQ='%s'
       </Sentence>
       <Fields>QryDat|</Fields>
     </DynSentence>
      <DynSentence name="CntCusAgt" desc="统计数量">
       <Sentence>
-        select count(*) MXBS from EfeCusAgt where ActDat='%s' and DWBM='%s' and SndFlg='0'
+        select count(*) MXBS from EfekCusAgt where JYRQ='%s' and DWBM='%s'
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
-    <DynSentence name="GetCusAgt" desc="明细记录">
+    <DynSentence name="GetCusDtl" desc="明细记录">
       <Sentence>
-        select * from EfeCusAgt where ActDat='%s' and DWBM='%s' and SndFlg='0'
+        select * from EfekCusAgt where JYRQ='%s' and DWBM='%s'
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
-    <DynSentence name="UpdCusAgt" desc="更新明细记录发送状态">
+    <!--程序里面没有使用到-->
+    <!--DynSentence name="UpdCusAgt" desc="更新明细记录发送状态">
       <Sentence>
         update EfeCusAgt set SndFlg='1' where ActDat='%s' and DWBM='%s' and SndFlg='0'
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
-    </DynSentence>
+    </DynSentence-->
 
     <Attributes>
       <Attribute name="nodatabase" value="2" desc="数据库长连接"/>
@@ -456,6 +435,13 @@
 
     <FlowCtrl>
       <Quote name="InitTran"/>
+      <!--赋值表头的银行代码-->
+      <Set>YHDM=301</Set>
+      <Set>RemoteIp=182.53.201.46</Set>
+      <Set>UserName=bcm</Set>
+      <Set>RemoteDir=exchange</Set>
+      <Set>LocalDir=/app/ics/dat/efek/send/</Set>
+      <Set>EfeSndDir=dat/efek/send/</Set>
 
       <Set>RecKey=STRCAT($AplCls,$BrNo,$TxnCod)</Set>
       <Exec func="PUB:Lock">
@@ -501,26 +487,42 @@
           <Set>RspMsg=统计明细记录总数出错</Set>
           <Return/>
         </If>
+        <Set>ZKHS=$MXBS</Set>
         <Set>FilNam=STRCAT(HDXY0301,$DWBM,$ActDat,001.txt)</Set>
+        <Set>WJMC=$FilNam</Set>
+        <Set>WJLX=04</Set>
+        <!--Set>WJMD5=</Set-->
+        <!--Set>LclDir=$EfeSndDir</Set-->
         <Set>LclDir=$EfeSndDir</Set>
         <Set>DatFil=STRCAT( $LclDir,$FilNam )</Set>
         <Exec func="PUB:ExportFromDB">
           <Args>
-            <Arg name="FormatName" value="EfeCusAgt"/>
+            <Arg name="FormatName" value="HDXY"/>
             <Arg name="FileName"   value="$DatFil"/>
-            <Arg name="TableName"  value="EfeCusAgt"/>
-            <Arg name="SqlName"    value="GetCusAgt"/>
+            <Arg name="TableName"  value="EfekCusAgt"/>
+            <Arg name="SqlName"    value="GetCusDtl"/>
           </Args>
         </Exec>
+        <!--生成文件的md5-->
+        <Set>DatFilNam=STRCAT(/app/ics/,$DatFil)</Set>
+        <Call package="EFE" function="GetFilMD5"/>
+        <Set>WJMD5=DELCTRL($Md5Val)</Set>
+        <Set>WJMD5=de443479a78a05e953c3d062d7aa2f30</Set>
         <System command="EfeFilSend.sh" error="IGNORE">
-          <Arg name="FilNam" value="$FilNam"/>
+          <Arg name="RemoteIp" value="$RemoteIp"/>
+          <Arg name="UserName" value="$UserName"/>
+          <Arg name="RemoteDir" value="$RemoteDir"/>
+          <Arg name="LocalDir" value="$LocalDir"/>
+          <Arg name="Localfile" value="$FilNam"/>
         </System>
-        <Exec func="PUB:CallThirdOther" error="IGNORE">
+        <!--Exec func="PUB:CallThirdOther" error="IGNORE">
           <Arg name="TxnCod" value="460431"/>
-          <Arg name="ObjSvr" value="STHDEFEK"/>
-        </Exec>
+          <Arg name="ObjSvr" value="STDKEFE1"/>
+        </Exec-->
+        <Set>SvrCod=460431</Set>
+        <Quote name="SendThirdOther"/>
         <If condition="INTCMP(~RetCod,3,0)">
-          <Exec func="PUB:ExecSql" error="IGNORE">
+          <!--Exec func="PUB:ExecSql" error="IGNORE">
             <Args>
               <Arg name="SqlCmd" value="UpdCusAgt"/>
             </Args>
@@ -534,7 +536,7 @@
             <Set>RspCod=EFE999</Set>
             <Set>RspMsg=STRCAT(更新单面编码【,$DWBM,】明细记录出错)</Set>
             <Return/>
-          </If>
+          </If-->
           <Exec func="PUB:CommitWork"/>
         </If>
         <Else>
@@ -572,7 +574,7 @@
   <Transaction code="460441" desc="银行发起批量查询欠费客户请求">
     <DynSentence name="GetCusAgt" desc="根据单位代码获取签约客户信心">
       <Sentence>
-        select DWBM, JFH from EfeCusAgt where DWDM='%s' and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
+        select DWBM, JFH from EfekCusAgt where DWDM='%s' and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
       </Sentence>
       <Fields>DWDM|</Fields>
     </DynSentence>
@@ -591,9 +593,9 @@
       <Set>DatFil=STRCAT( $LclDir,$FilNam )</Set>
       <Exec func="PUB:ExportFromDB">
         <Args>
-          <Arg name="FormatName" value="EfeCusAgt"/>
+          <Arg name="FormatName" value="EfekCusAgt"/>
           <Arg name="FileName"   value="$DatFil"/>
-          <Arg name="TableName"  value="EfeCusAgt"/>
+          <Arg name="TableName"  value="EfekCusAgt"/>
           <Arg name="SqlName"    value="GetCusAgt"/>
         </Args>
       </Exec>
@@ -608,19 +610,20 @@
 
 
   <Transaction code="460443" desc="银行方发起查询客户信息请求">
-    <DynSentence name="GetCusAgt" desc="根据单位代码、缴费号获取签约客户信息">
+    <Quote name="EfeSqlLst"/>
+    <!--DynSentence name="GetCusAgt" desc="根据单位代码、缴费号获取签约客户信息">
       <Sentence>
-        select DWBM, JFH from EfeCusAgt where DWDM='%s' and JFH='%s'
+        select DWBM, JFH from EfekCusAgt where DWDM='%s' and JFH='%s'
       </Sentence>
       <Fields>DWDM|JFH|</Fields>
-    </DynSentence>
+    </DynSentence-->
 
     <FlowCtrl>
       <Set>SvrCod=460443</Set>
       <Quote name="SendThirdOther"/>
       <If condition="INTCMP(~RetCod,3,0)" desc="交易成功">
         <Exec func="PUB:ReadRecord" error="IGNORE">
-          <Arg name="SqlCmd" value="GetCusAgt"/>
+          <Arg name="SqlCmd" value="GetCusAgtByJFH"/>
         </Exec>
         <If condition="INTCMP(~RetCod,3,-2)" desc="客户记录不存在">
           <Exec func="PUB:InsertRecord">
@@ -634,23 +637,114 @@
 
 
   <Transaction code="460444" desc="银行方发起查询客户基本信息请求">
+    <Quote name="EfeSqlLst"/>
     <FlowCtrl>
       <Set>SvrCod=460444</Set>
       <Quote name="SendThirdOther"/>
     </FlowCtrl>
   </Transaction>
 
+  <Transaction code="460445" desc="查询客户基本信息">
+    <Quote name="EfeSqlLst"/>
+    <FlowCtrl>
+      <Set>SvrCod=460445</Set>
+      <Quote name="SendThirdOther"/>
+    </FlowCtrl>
+  </Transaction>
 
 
   <Transaction code="460430" desc="银行方发起到供电方变更代扣协议请求">
+    <Quote name="EfeSqlLst"/>
     <DynSentence name="UpdCusAgt" desc="根据单位代码、缴费号获取签约客户信息">
       <Sentence>
-        DWDM='%s' and JFH='%s'
+        DWBM='%s' and JFH='%s'
       </Sentence>
-      <Fields>DWDM|JFH|</Fields>
+      <Fields>DWBM|JFH|</Fields>
+    </DynSentence>
+    <DynSentence name="GetCusAgtCnt" desc="查询签约信息">
+      <Sentence>
+        select count(*) CusCnt from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+
+      <!--上主机查询客户资料-->
+      <Exec func="PUB:GetLogNo"/>
+      <!--Exec func="PUB:InitTransaction"/-->
+      <Set>TTxnCd=460430</Set>
+      <Set>CcyCod=CNY</Set>
+      <Set>ActTyp=4</Set>
+      <!--TODO 主机报SC6041,经咨询总行环境异常-->
+      <!--Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="HTxnCd" value="476520"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="$MsgTyp!=N">
+        <Set>RspCod=ZH009</Set>
+        <Set>RspMsg=帐户不存在</Set>
+        <Return/>
+      </If-->
+      <!--校验账户名称、开户证件类型和开户证件号码-->
+      <!--Set>ActNam=DELBOTHSPACE($ActNam)</Set>
+      <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
+      <If condition="IS_NOEQUAL_STRING(TRIM($XQYZHMC,both),$ActNam)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=账户名称不符</Set>
+        <Return/>
+      </If>
+      <If condition="IS_NOEQUAL_STRING(TRIM($ZJHM,both),$IDNo)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=证件号码不符</Set>
+        <Return/>
+      </If-->
+
+      <Set>QYZT=TRIM($QYZT,both)</Set>
+      <If condition="OR(IS_EQUAL_STRING($QYZT,0),IS_EQUAL_STRING($QYZT,3))">
+        <Set>QDBZ=0</Set>
+      </If>
+      <ElseIf condition="OR(IS_EQUAL_STRING($QYZT,1),IS_EQUAL_STRING($QYZT,2))">
+        <Set>QDBZ=1</Set>
+      </ElseIf>
+
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Arg name="SqlCmd" value="GetCusAgtCnt"></Arg>
+      </Exec>
+      <Switch expression="~RetCod">
+        <Case value="0" desc="存在记录">
+          <If condition="INTCMP($CusCnt,6,0)">
+            <Set>QYBZ=1</Set>
+            <Exec func="PUB:UpdateRecord" desc="更新记录">
+              <Arg name="TblNam" value="EfekCusAgt"/>
+              <Arg name="CndSts" value="UpdCusAgt"/>
+            </Exec>
+          </If>
+          <Else>
+            <Set>QYBZ=0</Set>
+            <Exec func="PUB:InsertRecord" error="IGNORE">
+              <Args>
+                <Arg name="tablename" value="EfekCusAgt"/>
+              </Args>
+            </Exec>
+            <If condition="INTCMP(~RetCod,4,0)">
+              <Set>MsgTyp=E</Set>
+              <Set>RspCod=EFE999</Set>
+              <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
+              <Return/>
+            </If>
+          </Else>
+          <Break/>
+        </Case>
+        <Default>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
+          <Return/>
+        </Default>
+      </Switch>
+
+
       <Set>QYZT=2</Set>
       <Set>ChkFlg=U</Set>
       <Exec func="PUB:UpdateRecord" desc="更新协议内容到最新">
@@ -666,6 +760,9 @@
            <Arg name="CndSts" value="UpdCusAgt"/>
         </Exec>
       </If>
+
+      <Set>MsgTyp=N</Set>
+      <Set>RspCod=000000</Set>
     </FlowCtrl>
   </Transaction>
 </Application>

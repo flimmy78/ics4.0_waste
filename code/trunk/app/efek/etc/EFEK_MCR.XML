@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <FrontTab>
   <Macro name="EfeSqlLst" desc="Êý¾Ý²Ù×÷ºêÇåµ¥">
+    <!--modify by qm 20141218, ÓÉÓÚ¶Ô·½ÓÐ¿ÉÄÜÒÔ¹©µç¾Ö»òÕß¹©µçËùÀ´½øÐÐÇ©µ½»òÇ©ÍË
+        ²Ù×÷,µ«ÊÇÖ»ÒªÅÐ¶Ï¹©µçËù»òÕßÉÏ¼¶¹©µç¾ÖÇ©µ½ÁË¼´¿É½øÐÐ½»Ò×
+    -->
     <DynSentence name="GetRunCtl" desc="¸ù¾Ýµ¥Î»±àÂë»ñÈ¡²ÎÊý">
       <Sentence>
-        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s' for read only
+        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s' or DWBM=SUBSTR('%s',1,4) for read only
       </Sentence>
       <Fields>DWBM|</Fields>
     </DynSentence>
@@ -49,6 +52,12 @@
         select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
+    </DynSentence>
+    <DynSentence name="GetCusAgtByJFH" desc="¸ù¾ÝÎÄ¼þÃû»ñÈ¡ÎÄ¼þ´¦Àí¼ÇÂ¼">
+      <Sentence>
+        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
     </DynSentence>
   </Macro>
 <!--ÒÔÏÂÊÇÓ¦ÓÃ²Ù×÷µÄºêÇåµ¥-->
@@ -119,7 +128,13 @@
       <Arg name="Len"    value="9"/>
       <Arg name="CycCnd" value="Y"/>
     </Exec>
-    <Set>YHJYBSH=STRCAT($YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
+    <!--¹©µçÊ¹ÓÃJYBSHÎ¨Ò»¶¨Î»Ò»±Ê½»Ò×-->
+    <If condition="IS_EQUAL_STRING($JYBSH,)" >
+      <Set>YHJYBSH=STRCAT($YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
+    </If>
+    <Else>
+      <Set>YHJYBSH=$JYBSH</Set>
+    </Else>
     <Set>YHJYLSH=STRCAT($YHJYRQ,0301,SUBSTR($BrNo,1,3),$SelVal)</Set>
   </Macro>
 
@@ -127,7 +142,7 @@
   <Macro name="SendThirdOther" desc="·¢ËÍµÚÈý·½Á÷³Ì¡¾²éÑ¯Àà¡¿">
     <Quote name="InitTran"/>
     <Set>WDMC=@BCFG.BrNam</Set>
-    <Set>MYSY= </Set>
+    <Set>MYSY=0</Set>
     <Set>MYCSXL= </Set>
     <Set>JYJSF=030600</Set>
     <Set>JYYDZ= </Set>

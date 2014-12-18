@@ -236,7 +236,8 @@
   <Transaction service="460430" code="460430" log_switch='5' desc="银行方发起到供电方变更代扣协议请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="QDBZ"    length=" 1" desc="签订标志"/>
+      <!--签订标志由签约状态决定,0/3为新增,1/2为修改-->
+      <!--Item name="QDBZ"    length=" 1" desc="签订标志"/-->
       <Item name="JFH"     length="20" desc="缴费号"/>
       <Item name="JSHMC"   length="64" desc="结算户名称"/>
       <Item name="YQYYHDM" length=" 4" desc="原签约银行代码"/>
@@ -244,6 +245,7 @@
       <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
       <Item name="XQYYHDM" length=" 4" desc="新签约银行代码"/>
       <Item name="XQYZH"   length="32" desc="新签约账户"/>
+      <CopyItem dest_name="ActNo" sour_name="XQYZH"/>
       <Item name="XQYZHMC" length="128" desc="新签约账户名称"/>
       <Item name="ZHLX"    length=" 2" desc="账户类型"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
@@ -265,6 +267,7 @@
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
       <Item name="DWBM" length="8" desc="单位编码"/>
+      <Item name="QryDat" length="8" desc="查询日期"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
@@ -364,6 +367,57 @@
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
       <Quote name="EFE_RES"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460445" code="460445" log_switch='5' desc="查询客户基本信息请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="WDMC"   length="64" desc="网点名称"/>
+      <Item name="JFH" length="20" desc="供电用户编号"/>
+      <Item name="CZYH" length=" 1" desc="操作员号"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="46"/>
+            <Item name="OFmtCd" length="3" value="999"/>
+            <Item name="WDMC" length="64" desc="网点名称"/>
+            <Item name="JYLSH" length="24" desc="交易流水号"/>
+            <Item name="JYRQ" length="8" desc="交易日期"/>
+            <Item name="JYSJ" length="6" desc="交易时间"/>
+            <Item name="YJYLSH" length="24" desc="原交易流水号"/>
+            <Item name="YJYRQ" length="8" desc="原交易日期"/>
+            <Item name="YJYSJ" length="6" desc="原交易时间"/>
+            <Item name="DWBM" length="8" desc="单位编码"/>
+            <Item name="JFH" length="20" desc="缴费号"/>
+            <Item name="QFJE" length="16" desc="欠费金额"/>
+            <Item name="YHMC" length="64" desc="用户名称"/>
+            <Item name="YDDZ" length="128" desc="用电地址"/>
+            <Item name="BZSM" length="128" desc="备注说明"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001" />
+            <Item name="RspMsg" length="56"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
     </Response>
   </Transaction>
 

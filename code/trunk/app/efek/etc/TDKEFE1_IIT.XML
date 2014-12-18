@@ -2,7 +2,7 @@
 <Config>
   <Define> 
     <Macro name="SndReqHead" desc="往账交易请求报文头">
-      <Item name="MYSY"   length=" 3" value="0" desc="密钥索引"/>
+      <Item name="MYSY"   length=" 3" desc="密钥索引"/>
       <Item name="MYCSXL" length="32" desc="密钥初始向量"/>
       <Item name="XYBBH"  length=" 5" value="1.0.0" desc="协议版本号"/>
       <SwitchCode name="SvrCod" new_name="YWBSH" tab_name="SvrCodToYWBSH" col_name="SvrCod"/>
@@ -106,7 +106,7 @@
       <SwitchCode name="RspCod" new_name="JYFHDM" tab_name="RspCodToJYFHDM" col_name="RspCod"/>
       <Item name="JYFHDM" length=" 5" desc="交易返回代码"/>
       <Item name="YSBZ"   length=" 1" desc="压缩标志"/>
-      <Item name="PKGCNT" length=" 6" desc="子包个数" />
+      <Item name="PKGCNT" length=" 6" value="000001" desc="子包个数" />
     </Macro>
 
     <Macro name="ErrHead" desc="交易异常应答报文头">
@@ -119,7 +119,7 @@
     <Macro name="ErrCase" desc="交易应答报文头">
       <PackItem name="TmpDat">
         <Quote name="RcvRspHead"/>
-        <Item name="PKGCNT"  length="6" value="000001" desc="子包个数" />
+        <!--Item name="PKGCNT"  length="6" value="000001" desc="子包个数" /-->
         <Quote name="ErrHead"/>
       </PackItem>
       <Item name="TmpDat" head_len="10" include_len="no"/>

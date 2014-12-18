@@ -267,13 +267,10 @@
         </Case>
 -->
       </Switch>
-      <!--Exec func="PUB:CallHostOther" error="IGNORE">
+      <Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="TxnCod" value="$HTxnCd"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
-      </Exec-->
-	  <!--TEST BEGIN QM -->
-          <Set>~RetCod=0</Set>
-	  <!--TEST END QM -->
+      </Exec>
       <Switch expression="~RetCod">
         <Case value="0" desc="成功">
           <Set>HTxnSt=S</Set>
@@ -422,14 +419,17 @@
           <Set>CnlTyp=L</Set>
           <Set>Mask=9102</Set>
           <Set>ActNo=$KKZH</Set>
+          <Set>VchTyp=000</Set>
           <If condition="IS_EQUAL_STRING($ActFlg,4)" desc="卡">
             <Set>VchCod=00000000</Set>
           </If>
           <Set>PayMod=0</Set>
           <Set>TActNo=$InAcNo</Set>
+          <Set>CcyCod=CNY</Set>
           <Set>TxnAmt=FABSAMT($KFJE,15)</Set>
           <Set>CcyTyp=1</Set>
           <Set>VchChk=0</Set>
+          <Set>ActSeq=SUBSTR($TActNo,14,5)</Set>
           <Set>CAgtNo=EFE9999999</Set>
           <Set>GthFlg=N</Set>
           <Break/>
@@ -485,11 +485,12 @@
         </Case>
 -->
       </Switch>
-<!--TEST BEGIN BY QM ,20141206-->
-      <!--Exec func="PUB:CallHostOther" error="IGNORE">
+
+      <Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="TxnCod" value="$HTxnCd"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
-      </Exec-->
+      </Exec>
+<!--TEST BEGIN BY QM ,20141206-->
           <Set>~RetCod=0</Set>
 <!--TEST BEGIN BY QM ,20141206-->
       <Switch expression="~RetCod">
@@ -675,7 +676,7 @@
 -->
     <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
       <Sentence>
-        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM='%s'
+        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM = '%s'
       </Sentence>
       <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWBM|</Fields>
     </DynSentence>
@@ -758,7 +759,7 @@
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE9999</Set>
             <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
-			<Set>Cnt=ADD($Cnt,1)</Set>
+            <Set>Cnt=ADD($Cnt,1)</Set>
             <Continue/>
 <!--
             <Return/>
@@ -775,7 +776,7 @@
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE9999</Set>
               <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
-			  <Set>Cnt=ADD($Cnt,1)</Set>
+              <Set>Cnt=ADD($Cnt,1)</Set>
               <Continue/>
 <!--
               <Return/>
@@ -936,7 +937,7 @@
     </DynSentence>
     <DynSentence name="GetCusAgt" desc="根据单位代码更新开工信息">
       <Sentence>
-        select count(*) CusCnt from EfekCusAgt where DWBM='%s' and JFH='%s'
+        select coalesce(COUNT(*),0) CusCnt from EfekCusAgt where DWBM='%s' and JFH='%s'
       </Sentence>
       <Fields>DWBM|JFH|</Fields>
     </DynSentence>
@@ -948,31 +949,62 @@
     </DynSentence-->
 
     <FlowCtrl>
+
+      <!--上主机查询客户资料-->
+      <Exec func="PUB:CallHostOther" error="IGNORE">
+        <Arg name="HTxnCd" value="476520"/>
+        <Arg name="ObjSvr" value="SHSTPUB1"/>
+      </Exec>
+      <If condition="$MsgTyp!=N">
+        <Set>RspCod=ZH009</Set>
+        <Set>RspMsg=帐户不存在</Set>
+        <Return/>
+      </If>
+      <!--校验账户名称、开户证件类型和开户证件号码-->
+      <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
+      <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
+      <If condition="IS_NOEQUAL_STRING(TRIM($XQYZHMC,both),$ActNam)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=账户名称不符</Set>
+        <Return/>
+      </If>
+      <If condition="IS_NOEQUAL_STRING(TRIM($ZJHM,both),$IDNo)">
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=证件号码不符</Set>
+        <Return/>
+      </If>
+
+
       <Exec func="PUB:ReadRecord" error="IGNORE">
         <Arg name="SqlCmd" value="GetCusAgt"></Arg>
       </Exec>
       <Switch expression="~RetCod">
         <Case value="0" desc="存在记录">
-          <Set>QYBZ=1</Set>
-          <Exec func="PUB:UpdateRecord" desc="更新记录">
-            <Arg name="TblNam" value="EfekCusAgt"/>
-            <Arg name="CndSts" value="UpdCusAgt"/>
-          </Exec>
+          <If condition="INTCMP($CusCnt,6,0)">
+            <Set>QYBZ=1</Set>
+            <Exec func="PUB:UpdateRecord" desc="更新记录">
+              <Arg name="TblNam" value="EfekCusAgt"/>
+              <Arg name="CndSts" value="UpdCusAgt"/>
+            </Exec>
+            <Break/>
+          </If>
+          <Else>
+            <Set>QYBZ=0</Set>
+            <Exec func="PUB:InsertRecord" error="IGNORE">
+              <Args>
+                <Arg name="tablename" value="EfekCusAgt"/>
+              </Args>
+            </Exec>
+            <If condition="INTCMP(~RetCod,4,0)">
+              <Set>MsgTyp=E</Set>
+              <Set>RspCod=EFE999</Set>
+              <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
+              <Return/>
+            </If>
+          </Else>
           <Break/>
         </Case>
         <Case value="-2" desc="不存在记录">
-          <Set>QYBZ=0</Set>
-          <Exec func="PUB:InsertRecord" error="IGNORE">
-            <Args>
-              <Arg name="tablename" value="EfekCusAgt"/>
-            </Args>
-          </Exec>
-          <If condition="INTCMP(~RetCod,4,0)">
-            <Set>MsgTyp=E</Set>
-            <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=STRCAT(登记【,$JFH,】错误)</Set>
-            <Return/>
-          </If>
           <Break/>
         </Case>
         <Default>

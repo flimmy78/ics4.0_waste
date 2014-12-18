@@ -2441,6 +2441,9 @@
         <Delete>ROOT.SFFS</Delete>
         <Delete>ROOT.ZBS</Delete>
         <Delete>ROOT.ZJE</Delete>
+        <!--由于对方返回的PKGCNT字段为000000,
+        会将我们这边的字段覆盖,因此需要重新赋值-->
+        <Set>PKGCNT=000001</Set>
 
         <Exec func="PUB:FetchCursor" error="IGNORE">
           <Arg name="CursorName" value="CURSOR_PRC"/>

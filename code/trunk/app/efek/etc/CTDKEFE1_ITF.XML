@@ -25,6 +25,10 @@
       <Column name="HBFH" sort="no"/>
       <Column name="CcyCod" sort="no"/>
     </Table>
+    <Table name="ZHLXtoActTyp" file="etc/EFE_CSW_441999.XML">
+      <Column name="ZHLX" sort="no"/>
+      <Column name="ActTyp" sort="no"/>
+    </Table>
 
   </CodeSwitching>
 
@@ -75,7 +79,7 @@
       <Item name="BFJFBZ" length=" 1" desc="部分缴费标志"/>
       <Item name="ZWLSH"  length="16" desc="账务流水号"/>
       <Item name="DFNY"   length=" 6" desc="电费年月"/>
-      <Item name="HBFH"   length=" 5" desc="货币符号"/>
+      <Item name="HBFH"   length=" 5" expression="DELSPACE($HBFH,both)" desc="货币符号"/>
       <SwitchCode name="HBFH" new_name="CcyCod" tab_name="HBFHToCcyCod" col_name="HBFH"/>
       <Item name="KFJE"   length="16" desc="扣费金额"/>
       <Item name="BJ"     length="16" desc="本金"/>
@@ -182,9 +186,12 @@
       <CopyItem dest_name="QYYHDM" sour_name="XQYYHDM"/>
       <Item name="XQYZH"   length="32" desc="新签约账户"/>
       <CopyItem dest_name="QYYHZH" sour_name="XQYZH"/>
+      <CopyItem dest_name="ActNo" sour_name="XQYZH"/>
+      <AddItem name="CcyCod" value="CNY"/>
       <Item name="XQYZHMC" length="128" desc="新签约账户名称"/>
       <CopyItem dest_name="QYYHZHMC" sour_name="XQYZHMC"/>
       <Item name="ZHLX"    length=" 2" expression="TRIM($ZHLX,both)" desc="账户类型"/>
+      <SwitchCode name="ZHLX" new_name="ActTyp" tab_name="ZHLXtoActTyp" col_name="ZHLX"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
       <Item name="ZJHM"    length="32" desc="证件号码"/>
       <Item name="LXDH"    length="20" desc="联系电话"/>
