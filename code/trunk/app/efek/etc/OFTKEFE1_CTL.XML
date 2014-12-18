@@ -488,7 +488,7 @@
           <Return/>
         </If>
         <Set>ZKHS=$MXBS</Set>
-        <Set>FilNam=STRCAT(HDXY0301,$DWBM,$ActDat,001.txt)</Set>
+        <Set>FilNam=STRCAT(HDXY0301,$DWBM,$QRYDAT,001.txt)</Set>
         <Set>WJMC=$FilNam</Set>
         <Set>WJLX=04</Set>
         <!--Set>WJMD5=</Set-->
@@ -507,7 +507,6 @@
         <Set>DatFilNam=STRCAT(/app/ics/,$DatFil)</Set>
         <Call package="EFE" function="GetFilMD5"/>
         <Set>WJMD5=DELCTRL($Md5Val)</Set>
-        <Set>WJMD5=de443479a78a05e953c3d062d7aa2f30</Set>
         <System command="EfeFilSend.sh" error="IGNORE">
           <Arg name="RemoteIp" value="$RemoteIp"/>
           <Arg name="UserName" value="$UserName"/>
@@ -621,7 +620,9 @@
     <FlowCtrl>
       <Set>SvrCod=460443</Set>
       <Quote name="SendThirdOther"/>
-      <If condition="INTCMP(~RetCod,3,0)" desc="交易成功">
+      <!--由于多个业务流程都会使用到这个查询客户信息,为避免副作用,屏蔽返回时的
+      客户信息更新-->
+      <!--If condition="INTCMP(~RetCod,3,0)" desc="交易成功">
         <Exec func="PUB:ReadRecord" error="IGNORE">
           <Arg name="SqlCmd" value="GetCusAgtByJFH"/>
         </Exec>
@@ -630,7 +631,7 @@
             <Arg name="TblNam" value="EfekCusAgt"/>
           </Exec>
         </If>
-      </If>
+      </If-->
     </FlowCtrl>
   </Transaction>
 
@@ -671,8 +672,8 @@
     <FlowCtrl>
 
       <!--上主机查询客户资料-->
+      <Exec func="PUB:InitTransaction"/>
       <Exec func="PUB:GetLogNo"/>
-      <!--Exec func="PUB:InitTransaction"/-->
       <Set>TTxnCd=460430</Set>
       <Set>CcyCod=CNY</Set>
       <Set>ActTyp=4</Set>
@@ -701,11 +702,21 @@
       </If-->
 
       <Set>QYZT=TRIM($QYZT,both)</Set>
-      <If condition="OR(IS_EQUAL_STRING($QYZT,0),IS_EQUAL_STRING($QYZT,3))">
+      <If condition="IS_EQUAL_STRING($QYZT,0">
         <Set>QDBZ=0</Set>
       </If>
-      <ElseIf condition="OR(IS_EQUAL_STRING($QYZT,1),IS_EQUAL_STRING($QYZT,2))">
+      <ElseIf condition="IS_EQUAL_STRING($QYZT,1)">
         <Set>QDBZ=1</Set>
+      </ElseIf>
+      <ElseIf condition="IS_EQUAL_STRING($QYZT,2)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(【,$JFH,】本行已变更待确定)</Set>
+      </ElseIf>
+      <ElseIf condition="IS_EQUAL_STRING($QYZT,3)">
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(【,$JFH,】他行已签)</Set>
       </ElseIf>
 
       <Exec func="PUB:ReadRecord" error="IGNORE">
@@ -722,6 +733,12 @@
           </If>
           <Else>
             <Set>QYBZ=0</Set>
+            <Set>QYZT=2</Set>
+            <Set>ChkFlg=U</Set>
+            <Exec func="PUB:UpdateRecord" desc="更新协议内容到最新">
+               <Arg name="TblNam" value="EfekCusAgt"/>
+               <Arg name="CndSts" value="UpdCusAgt"/>
+            </Exec>
             <Exec func="PUB:InsertRecord" error="IGNORE">
               <Args>
                 <Arg name="tablename" value="EfekCusAgt"/>
@@ -745,12 +762,6 @@
       </Switch>
 
 
-      <Set>QYZT=2</Set>
-      <Set>ChkFlg=U</Set>
-      <Exec func="PUB:UpdateRecord" desc="更新协议内容到最新">
-         <Arg name="TblNam" value="EfekCusAgt"/>
-         <Arg name="CndSts" value="UpdCusAgt"/>
-      </Exec>
       <Set>SvrCod=460430</Set>
       <Quote name="SendThirdOther"/>
       <If condition="INTCMP(~RetCod,3,0)" desc="交易成功">

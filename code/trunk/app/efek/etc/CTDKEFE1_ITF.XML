@@ -239,7 +239,8 @@
     <Response necessary="no">
       <Switch expression="$MsgTyp">
         <Case value="N">
-          <Quote name="RcvRspHead"/>
+          <PackItem name="TmpDat">
+            <Quote name="RcvRspHead"/>
             <Item name="YHJYLSH" length="24" desc="交易流水号"/>
             <Item name="YHJYRQ"  length=" 8" desc="交易日期"/>
             <Item name="YHJYSJ"  length=" 6" desc="交易时间"/>
@@ -251,6 +252,8 @@
             <Item name="WJLX"   length=" 2" desc="文件类型"/>
             <Item name="QXBZ"   length=" 2" desc="取消标志"/>
             <Item name="BZ"     length="128" desc="备注"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="10" include_len="no"/>
           <Break/>
         </Case>
         <Case value="E">

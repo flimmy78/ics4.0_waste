@@ -951,7 +951,13 @@
     <FlowCtrl>
 
       <!--上主机查询客户资料-->
-      <Exec func="PUB:CallHostOther" error="IGNORE">
+      <Exec func="PUB:InitTransaction"/>
+      <Exec func="PUB:GetLogNo"/>
+      <Set>TTxnCd=460432</Set>
+      <Set>TlrId=EEFEBI2</Set>
+      <Set>ActTyp=4</Set>
+<!--主机返回SC6001,先屏蔽-->
+      <!--Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="HTxnCd" value="476520"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
       </Exec>
@@ -959,9 +965,9 @@
         <Set>RspCod=ZH009</Set>
         <Set>RspMsg=帐户不存在</Set>
         <Return/>
-      </If>
+      </If-->
       <!--校验账户名称、开户证件类型和开户证件号码-->
-      <Set>ActNam=DELBOTHSPACE($ActNam)</Set>
+      <!--Set>ActNam=DELBOTHSPACE($ActNam)</Set>
       <Set>IDNo=DELBOTHSPACE($IDNo)</Set>
       <If condition="IS_NOEQUAL_STRING(TRIM($XQYZHMC,both),$ActNam)">
         <Set>RspCod=EFE999</Set>
@@ -972,7 +978,7 @@
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=证件号码不符</Set>
         <Return/>
-      </If>
+      </If-->
 
 
       <Exec func="PUB:ReadRecord" error="IGNORE">
