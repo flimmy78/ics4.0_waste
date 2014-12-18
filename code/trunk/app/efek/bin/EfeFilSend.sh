@@ -12,7 +12,7 @@ then
     exit -1
 fi
 
-tmpFileName=/app/ics/dat/ftpSendTmp
+tmpFileName=/app/ics/dat/efek/ftpSendTmp
 
 echo "cd $3"    >  $tmpFileName
 echo "lcd $4"   >> $tmpFileName
