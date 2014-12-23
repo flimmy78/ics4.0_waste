@@ -3,13 +3,21 @@
   <Macro name="EfeSqlLst" desc="数据操作宏清单">
     <!--modify by qm 20141218, 由于对方有可能以供电局或者供电所来进行签到或签退
         操作,但是只要判断供电所或者上级供电局签到了即可进行交易
-    -->
     <DynSentence name="GetRunCtl" desc="根据单位编码获取参数">
       <Sentence>
         select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM='%s' or DWBM=SUBSTR('%s',1,4) for read only
       </Sentence>
       <Fields>DWBM|DWBM|</Fields>
     </DynSentence>
+    -->
+
+    <DynSentence name="GetRunCtl" desc="根据单位编码获取参数">
+      <Sentence>
+        select ZT, JYRQ, BrNo, InAcNo, ClrAct from EfekRunCtl where DWBM=SUBSTR('%s',1,4) for read only
+      </Sentence>
+      <Fields>DWBM|</Fields>
+    </DynSentence>
+
 
     <DynSentence name="GetCanDat" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
@@ -20,11 +28,11 @@
 
     <DynSentence name="UpdTxnDtl" desc="根据业务唯一标志更新流水信息">
       <Sentence>
-        OIFLAG='%s' and JYLSH='%s' and XH='%s'
+        OIFLAG='%s' and FQFJYLSH='%s' and XH='%s'
       </Sentence>
-      <Fields>OIFLAG|JYLSH|XH|</Fields>
+      <Fields>OIFLAG|FQFJYLSH|XH|</Fields>
     </DynSentence>
-
+<!--
     <DynSentence name="UpdTxnJnl" desc="根据业务唯一标志更新流水信息">
       <Sentence>
         LogNo='%s'
@@ -38,7 +46,7 @@
       </Sentence>
       <Fields>HRspCd|HTxnSt|HLogNo|TckNo|LogNo|</Fields>
     </DynSentence>
-
+-->
     <DynSentence name="UpdTxnDtlSts" desc="根据业务唯一标志更新明细信息">
       <Sentence>
         update EfekTxnDtl set DtlSts='%s', TckNo='%s' where OIFLAG='%s' and JYLSH='%s' and XH='%s'
@@ -46,13 +54,13 @@
       <Fields>DtlSts|TckNo|OIFLAG|JYLSH|XH|</Fields>
     </DynSentence>
 
-
-    <DynSentence name="GetCusAgt" desc="根据文件名获取文件处理记录">
+    <DynSentence name="ChkCusAgt" desc="根据单位编码和缴费号获取记录">
       <Sentence>
         select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
+
     <DynSentence name="GetCusAgtByJFH" desc="根据文件名获取文件处理记录">
       <Sentence>
         select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s'
@@ -116,31 +124,141 @@
     </If>
   </Macro>
 
-
-  <Macro name="InitTran" desc="交易初始化">
-    <Quote name="GetSysPar"/>
-    <Exec func="PUB:InitTransaction"/>
-    <Set>YHJYRQ=GETDATETIME(YYYYMMDD)</Set>
-    <Set>YHJYSJ=GETDATETIME(HHMISS)</Set>
+  <Macro name="CreatYHJYLSH" desc="产生交易流水号">
     <Exec func="PUB:nGetPubSeqNo">
       <Arg name="SeqNam" value="EFE:YHJYLSH"/>
-      <Arg name="SeqCnt" value="1"/>
+      <Arg name="SeqCnt" value="$TotNum"/>
       <Arg name="Len"    value="9"/>
       <Arg name="CycCnd" value="Y"/>
     </Exec>
-    <!--供电使用JYBSH唯一定位一笔交易-->
-    <If condition="IS_EQUAL_STRING($JYBSH,)" >
-      <Set>YHJYBSH=STRCAT($YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
+<!--供电使用JYBSH唯一定位一笔交易，一次应答，该号码相同-->
+    <If condition="INTCMP(STRLEN(DELSPACE($JYBSH,all)),3,0)" >
+      <Set>JYBSH=STRCAT($FQFJYRQ,0301,SUBSTR($SelVal,2,8))</Set>
+    </If>
+<!--根据交易方向决定，产生的流水号是发起流水还是响应流水-->
+    <If condition="IS_EQUAL_STRING($OIFlag,O)" desc="交易银行发起">
+      <Set>FQFJYRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>FQFJYSJ=GETDATETIME(HHMISS)</Set>
+      <Set>FQFJYLSH=STRCAT($REQJYRQ,0301,SUBSTR($BrNo,1,3),$SelVal)</Set>
     </If>
     <Else>
-      <Set>YHJYBSH=$JYBSH</Set>
+      <Set>JSFJYRQ=GETDATETIME(YYYYMMDD)</Set>
+      <Set>JSFJYSJ=GETDATETIME(HHMISS)</Set>
+      <Set>JSFJYLSH=STRCAT($RESJYRQ,0301,SUBSTR($BrNo,1,3),$SelVal)</Set>
     </Else>
-    <Set>YHJYLSH=STRCAT($YHJYRQ,0301,SUBSTR($BrNo,1,3),$SelVal)</Set>
+  </Macro>
+
+  <Macro name="CreatYHSFLSH" desc="产生银行收费流水号【单笔业务的交易流水号】">
+    <Exec func="PUB:nGetPubSeqNo">
+      <Arg name="SeqNam" value="EFE:YHSFLSH"/>
+      <Arg name="SeqCnt" value="1"/>
+      <Arg name="Len"    value="5"/>
+      <Arg name="CycCnd" value="Y"/>
+    </Exec>
+    <Set>YHSFLSH=STRCAT(0301,$YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
+  </Macro>
+
+
+  <Macro name="CreatYHWJMC" desc="产生银行文件序号">
+    <Exec func="PUB:nGetPubSeqNo">
+      <Arg name="SeqNam" value="EFE:FILSEQ"/>
+      <Arg name="SeqCnt" value="1"/>
+      <Arg name="Len"    value="4"/>
+      <Arg name="CycCnd" value="D"/>
+    </Exec>
+  </Macro>
+
+
+  <Macro name="InitTranByDWBM" desc="根据单位编码初始化交易">
+    <Quote name="GetSysPar"/>
+    <Exec func="PUB:InitTransaction"/>
+    <Set>TotNum=1</Set>
+    <Quote name="CreatYHJYLSH"/>
+  </Macro>
+
+  <Macro name="InitTranByNodNo" desc="根据网点号初始化交易">
+    <Exec func="PUB:GetBranchNoByNodeNo"/>
+    <Exec func="PUB:InitTransaction"/>
+    <Set>TotNum=1</Set>
+    <Quote name="CreatYHJYLSH"/>
+  </Macro>
+
+  <Macro name="ChkCusAgt" desc="客户协议检查">
+    <Set>ODWBM=TRIM($DWBM,all)</Set>
+    <Set>LEN=0</Set>
+    <While condition="INTCMP(STRLEN($DWBM),5,4)" desc="单位编码至少4位【5表示大于或等于】">
+      <Exec func="PUB:ReadRecord" error="IGNORE">
+        <Args>
+          <Arg name="SqlCmd" value="ChkCusAgt"/>
+        </Args>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,-1)" desc="系统故障">
+        <Set>AgtFlg=0</Set>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
+        <Return/>
+      </If>
+      <If condition="INTCMP(~RetCod,3,0)" desc="找到协议">
+        <Set>AgtFlg=1</Set>
+        <Break/>
+      </If>
+      <If condition="INTCMP(~RetCod,3,-2)" desc="无协议">
+        <Set>LEN=ADD($LEN,2)</Set>
+        <Set>DWBM=SUBSTR($ODWBM,1,SUB(STRLEN($ODWBM),$LEN))</Set>
+        <Set>AgtFlg=0</Set>
+      </If>
+    </While>
+    <Set>DWBM=$ODWBM</Set>
+    <If condition="IS_EQUAL_STRING($AgtFlg,0)" desc="无协议">
+      <Set>AgtFlg=0</Set>
+<!--留下交易痕迹-->
+      <Exec func="PUB:InsertRecord">
+        <Args>
+          <Arg name="tablename" value="EfekTxnDtl"/>
+        </Args>
+      </Exec>
+      <Set>MsgTyp=E</Set>
+      <Set>RspCod=EFE999</Set>
+      <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
+      <Return/>
+    </If>
+  </Macro>
+
+
+  <Macro name="GetRspMsg" desc="根据电力返回代码获取中文">
+    <If condition="INTCMP(STRLEN(TRIM($CWTSXX,all)),3,0)" desc="错误提示信息无内容时，通过返回码转换">
+      <Exec func="PUB:CodeSwitching" error="IGNORE">
+        <Arg name="DatSrc"  value="EFECSW"/>
+        <Arg name="SourNam" value="JYFHDM"/>
+        <Arg name="DestNam" value="RspMsg"/>
+        <Arg name="TblNam"  value="JYFHDMToRspMsg"/>
+      </Exec>
+    </If>
+    <Else>
+      <Set>RspMsg=$CWTSXX</Set>
+    </Else>
+    <Set>RspMsg=STRCAT(电网方提示：,$RspMsg)</Set>
   </Macro>
 
 
   <Macro name="SendThirdOther" desc="发送第三方流程【查询类】">
-    <Quote name="InitTran"/>
+<!--报文头常量-->
+<!--报文头常量-->
+<!--报文头常量-->
+    <Set>XYBBH=1.0.0</Set>
+    <Set>JYRBS=301_030600</Set>
+    <Set>SJBLX=0</Set>
+    <Set>JYFQF=301</Set>
+    <Set>JYFSRQ=GETDATETIME(YYYYMMDD)</Set>
+    <Set>JYFSSJ=GETDATETIME(HHMISS)</Set>
+    <Set>JYYXJ=2</Set>
+    <Set>JYFHDM=00</Set>
+    <Set>YSBZ=0</Set>
+    <Set>JYFHDM=00</Set>
+<!--报文头常量-->
+<!--报文头常量-->
+<!--报文头常量-->
     <Set>WDMC=@BCFG.BrNam</Set>
     <Set>MYSY=0</Set>
     <Set>MYCSXL= </Set>
@@ -160,7 +278,9 @@
       </Case>
       <Case value="3" desc="交易失败">
         <Set>MsgTyp=E</Set>
-        <Set>RspCod=$TRspCd</Set>
+        <Set>SucFlg=F</Set>
+        <Set>RspCod=EFE999</Set>
+        <Quote name="GetRspMsg"/>
         <Break/>
       </Case>
       <Case value="-1" desc="超时">
@@ -171,24 +291,28 @@
       </Case>
       <Case value="-2" desc="系统故障">
         <Set>MsgTyp=E</Set>
+        <Set>SucFlg=F</Set>
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=系统故障</Set>
         <Break/>
       </Case>
       <Case value="-10" desc="交易发送失败">
         <Set>MsgTyp=E</Set>
+        <Set>SucFlg=F</Set>
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=交易发送失败</Set>
         <Break/>
       </Case>
       <Default>
         <Set>MsgTyp=E</Set>
+        <Set>SucFlg=F</Set>
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=交易失败，其他未知情况</Set>
         <Break/>
       </Default>
     </Switch>
   </Macro>
+
 
   <Macro name="SyncHost" desc="同步主机流水">
     <Exec func="PUB:CallHostOther" error="IGNORE">
@@ -204,9 +328,11 @@
           <Case value="SC6129" desc="原交易不存在">
             <Set>HTxnSt=F</Set>
             <Set>DtlSts=F</Set>
+<!--
             <Exec func="PUB:ExecSql">
               <Arg name="sql" value="UpdTxnJnlSts"/>
             </Exec>
+-->
             <Exec func="PUB:ExecSql">
               <Arg name="sql" value="UpdTxnDtlSts"/>
             </Exec>
@@ -225,9 +351,11 @@
         <If condition="$CrcSts=Y">  <!--交易状态为抹账,该情况出现可能也不大-->
           <Set>HTxnSt=C</Set>
           <Set>DtlSts=C</Set>
+<!--
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnJnlSts"/>
           </Exec>
+-->
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnDtlSts"/>
           </Exec>
@@ -236,9 +364,11 @@
         <Else>
           <Set>HTxnSt=S</Set>
           <Set>DtlSts=S</Set>
+<!--
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnJnlSts"/>
           </Exec>
+-->
           <Exec func="PUB:ExecSql">
             <Arg name="sql" value="UpdTxnDtlSts"/>
           </Exec>

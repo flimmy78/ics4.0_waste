@@ -7,7 +7,7 @@
       <Item name="XYBBH"  length=" 5" value="1.0.0" desc="协议版本号"/>
       <SwitchCode name="SvrCod" new_name="YWBSH" tab_name="SvrCodToYWBSH" col_name="SvrCod"/>
       <Item name="YWBSH"  length=" 6" desc="业务标识号"/>
-      <Item name="YHJYBSH" length="20" desc="交易标识号"/>
+      <Item name="JYBSH"  length="20" desc="交易标识号"/>
       <Item name="JYRBS"  length="20" value="301_030600" desc="交易人标识"/>
       <SwitchCode name="SvrCod" new_name="JYM" tab_name="SvrCodToJYM" col_name="SvrCod"/>
       <Item name="JYM"    length=" 2" desc="交易码"/>
@@ -46,8 +46,16 @@
       <Item name="YSBZ"   length=" 1" desc="压缩标志"/>
       <Item name="PKGCNT" length=" 6" desc="子包个数"/>
       <AddItem name="TRspCd" expression="ADDCHAR($JYFHDM,6,0,1)" desc="返回码"/>
-      <SwitchCode name="JYFHDM" new_name="RspMsg" tab_name="JYFHDMToRspMsg" col_name="JYFHDM"/>
     </Macro>
+
+    <Macro name="SndErrHead" desc="往账交易异常应答报文头">
+      <Item name="CWTSXX"  length="256" desc="错误提示信息"/>
+      <Item name="CWFSRQ"  length="  8" desc="错误发生日期"/>
+      <Item name="CWFSSJ"  length="  6" desc="错误发生时间"/>
+      <Item name="CWFSJYM" length="  2" desc="错误发生交易码"/>
+      <Item name="SQLCODE" length="  7" desc="SQL返回码"/>
+    </Macro>
+
     <Macro name="SndStdRsp" desc="往账交易应答标准回应格式">
       <Quote name="SndRspHead"/>
       <Switch expression="$JYFHDM">
@@ -55,13 +63,11 @@
           <Break/>
         </Case>
         <Default>
-          <Quote name="ErrHead"/>
+          <Quote name="SndErrHead"/>
           <Break/>
         </Default>
       </Switch>
     </Macro>
-
-
 
     <Macro name="RcvReqHead" desc="来账业务请求报文头">
       <Item name="SJBCD"  length="10" desc="数据包长度"/>
@@ -88,12 +94,12 @@
     <Macro name="RcvRspHead" desc="来账业务应答报文头">
       <Item name="MYSY"   length=" 3" desc="密钥索引"/>
       <Item name="MYCSXL" length="32" desc="密钥初始向量"/>
-      <Item name="XYBBH"  length=" 5" desc="协议版本号"/>
+      <Item name="XYBBH"  length=" 5" value="1.0.0" desc="协议版本号"/>
       <Item name="YWBSH"  length=" 6" desc="业务标识号"/>
-      <Item name="YHJYBSH" length="20" desc="交易标识号"/>
+      <Item name="JYBSH"  length="20" desc="交易标识号"/>
       <Item name="JYRBS"  length="20" desc="交易人标识"/>
       <Item name="JYM"    length=" 2" desc="交易码"/>
-      <Item name="SJBLX"  length=" 1" desc="数据包类型"/>
+      <Item name="SJBLX"  length=" 1" value="1" desc="数据包类型"/>
       <Item name="JYFQF"  length=" 8" desc="交易发起方"/>
       <Item name="JYJSF"  length=" 8" desc="交易接收方"/>
       <Item name="JYYDZ"  length="24" desc="交易源地址"/>
@@ -106,33 +112,26 @@
       <SwitchCode name="RspCod" new_name="JYFHDM" tab_name="RspCodToJYFHDM" col_name="RspCod"/>
       <Item name="JYFHDM" length=" 5" desc="交易返回代码"/>
       <Item name="YSBZ"   length=" 1" desc="压缩标志"/>
-      <Item name="PKGCNT" length=" 6" value="000001" desc="子包个数" />
+      <Item name="PKGCNT" length=" 6" value="000001" desc="子包个数"/>
     </Macro>
 
-    <Macro name="ErrHead" desc="交易异常应答报文头">
-      <Item name="CWTSXX"  length="256" desc="错误提示信息"/>
-      <Item name="CWFSRQ"  length="  8" desc="错误发生日期"/>
-      <Item name="CWFSSJ"  length="  6" desc="错误发生时间"/>
-      <Item name="CWFSJYM" length="  2" desc="错误发生交易码"/>
+    <Macro name="RcvErrHead" desc="来账交易异常应答报文头">
+      <Item name="CWTSXX"  length="256" expression="$RspMsg" desc="错误提示信息"/>
+      <Item name="CWFSRQ"  length="  8" expression="$JYFSRQ" desc="错误发生日期"/>
+      <Item name="CWFSSJ"  length="  6" expression="$JYFSSJ" desc="错误发生时间"/>
+      <Item name="CWFSJYM" length="  2" expression="$JYM" desc="错误发生交易码"/>
       <Item name="SQLCODE" length="  7" desc="SQL返回码"/>
     </Macro>
-    <Macro name="ErrCase" desc="交易应答报文头">
-      <PackItem name="TmpDat">
-        <Quote name="RcvRspHead"/>
-        <!--Item name="PKGCNT"  length="6" value="000001" desc="子包个数" /-->
-        <Quote name="ErrHead"/>
-      </PackItem>
-      <Item name="TmpDat" head_len="10" include_len="no"/>
-    </Macro>
+
     <Macro name="RcvStdRsp" desc="来账交易应答标准回应格式">
       <PackItem name="TmpDat">
+        <Quote name="RcvRspHead"/>
         <Switch expression="$MsgTyp">
           <Case value="N">
-            <Quote name="RcvRspHead"/>
             <Break/>
           </Case>
           <Case value="E">
-            <Quote name="ErrCase"/>
+            <Quote name="RcvErrHead"/>
             <Break/>
           </Case>
           <Default>

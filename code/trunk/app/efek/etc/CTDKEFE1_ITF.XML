@@ -17,7 +17,7 @@
       <Column name="DWBM" sort="no"/>
       <Column name="BrNo" sort="no"/>
     </Table>
-    <Table name="ZHLXtoActFlg" file="etc/EFE_CSW_441999.XML">
+    <Table name="ZHLXToActFlg" file="etc/EFE_CSW_441999.XML">
       <Column name="ZHLX" sort="no"/>
       <Column name="ActFlg" sort="no"/>
     </Table>
@@ -25,11 +25,6 @@
       <Column name="HBFH" sort="no"/>
       <Column name="CcyCod" sort="no"/>
     </Table>
-    <Table name="ZHLXtoActTyp" file="etc/EFE_CSW_441999.XML">
-      <Column name="ZHLX" sort="no"/>
-      <Column name="ActTyp" sort="no"/>
-    </Table>
-
   </CodeSwitching>
 
 
@@ -42,17 +37,17 @@
   <Transaction code="20" service="460420" server="OFTKEFE2" log_switch="5" des="供电方发起批量代扣交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <Item name="JYLSH" length="24" desc="交易流水号"/>
-      <Item name="JYRQ"  length=" 8" desc="交易日期"/>
-      <Item name="JYSJ"  length=" 6" desc="交易时间"/>
-      <Item name="DWBM"  length=" 8" desc="单位编码"/>
+      <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ" length=" 6" desc="交易时间"/>
+      <Item name="DWBM"  length=" 8" expression="DELSPACE($DWBM,both)" desc="单位编码"/>
       <Item name="SFFS"  length=" 3" desc="收费方式"/>
       <Item name="FYLX"  length=" 3" desc="费用类型"/>
       <Item name="KHBZ"  length=" 1" desc="跨行标志"/>
-      <Item name="WJMC"  length="36" expression="DELSPACE($WJMC,all)" desc="文件名称"/>
-      <Item name="WJLX"  length=" 2" desc="文件类型"/>
-      <Item name="WJMD5" length="32" desc="文件MD5"/>
-      <Item name="ZBS"   length="11" expression="DELSPACE($ZBS,all)" desc="总笔数"/>
+      <Item name="FQFWJMC"  length="36" expression="DELSPACE($FQFWJMC,both)" desc="文件名称"/>
+      <Item name="FQFWJLX"  length=" 2" desc="文件类型"/>
+      <Item name="FQFWJMD5" length="32" desc="文件MD5"/>
+      <Item name="ZBS"   length="11" expression="DELSPACE($ZBS,both)" desc="总笔数"/>
       <Item name="ZJE"   length="16" expression="FABSAMT($ZJE,15)" desc="总金额"/>
       <AddItem name="TxnCnl" value="THD"/>
     </Request>
@@ -66,13 +61,13 @@
     <Request>
       <Quote name="RcvReqHead"/>
       <Item name="WDMC"   length="64" desc="网点名称"/>
-      <Item name="JYLSH"  length="24" desc="交易流水号"/>
-      <Item name="JYRQ"   length=" 8" desc="交易日期"/>
-      <Item name="JYSJ"   length=" 6" desc="交易时间"/>
+      <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
       <Item name="SFFS"   length=" 3" desc="收费方式"/>
       <Item name="FYLX"   length=" 3" desc="费用类型"/>
-      <Item name="DWBM"   length=" 8" desc="单位编码"/>
-      <Item name="JFH"    length="20" desc="缴费号"/>
+      <Item name="DWBM"   length=" 8" expression="DELSPACE($DWBM,both)" desc="单位编码"/>
+      <Item name="JFH"    length="20" expression="DELSPACE($JFH,both)" desc="缴费号"/>
       <Item name="KKYHDM" length=" 4" desc="扣款银行代码"/>
       <Item name="KKZH"   length="32" expression="DELSPACE($KKZH,both)" desc="扣款账户"/>
       <Item name="KKZHMC" length="128" desc="扣款账户名称"/>
@@ -81,27 +76,29 @@
       <Item name="DFNY"   length=" 6" desc="电费年月"/>
       <Item name="HBFH"   length=" 5" expression="DELSPACE($HBFH,both)" desc="货币符号"/>
       <SwitchCode name="HBFH" new_name="CcyCod" tab_name="HBFHToCcyCod" col_name="HBFH"/>
-      <Item name="KFJE"   length="16" desc="扣费金额"/>
-      <Item name="BJ"     length="16" desc="本金"/>
-      <Item name="WYJ"    length="16" desc="违约金"/>
+      <Item name="KFJE"   length="16" expression="FABSAMT($KFJE,15)" desc="扣费金额"/>
+      <Item name="BJ"     length="16" expression="FABSAMT($BJ,15)" desc="本金"/>
+      <Item name="WYJ"    length="16" expression="FABSAMT($WYJ,15)" desc="违约金"/>
       <Item name="YFFBZ"  length=" 1" desc="预付费标志"/>
-      <Item name="YFFJE"  length="16" desc="预付费金额"/>
+      <Item name="YFFJE"  length="16" expression="FABSAMT($YFFJE,15)" desc="预付费金额"/>
       <Item name="XJYDGJXX" length="128" desc="需校验的关键信息"/>
-      <SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
       <AddItem name="TxnCnl"  value="THD"/>
+      <AddItem name="BatFlg" value="S"/>
       <AddItem name="XH" value="0000000001"/>
+      <CopyItem dest_name="YKJE" sour_name="KFJE"/>
+      <CopyItem dest_name="SKJE" sour_name="KFJE"/>
     </Request>
     <Response necessary="no">
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Quote name="RcvRspHead"/>
-            <Item name="YHJYLSH"  length="24" desc="交易流水号"/>
-            <Item name="YHJYRQ"   length=" 8" desc="交易日期"/>
-            <Item name="YHJYSJ"   length=" 6" desc="交易时间"/>
-            <Item name="YJYLSH" length="24" desc="原交易流水号"/>
-            <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
-            <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
+      <PackItem name="TmpDat">
+        <Quote name="RcvRspHead"/>
+        <Switch expression="$MsgTyp">
+          <Case value="N">
+            <Item name="JSFJYLSH" length="24" desc="交易流水号"/>
+            <Item name="JSFJYRQ"  length=" 8" desc="交易日期"/>
+            <Item name="JSFJYSJ"  length=" 6" desc="交易时间"/>
+            <Item name="FQFJYLSH" length="24" desc="原交易流水号"/>
+            <Item name="FQFJYRQ"  length=" 8" desc="原交易日期"/>
+            <Item name="FQFJYSJ"  length=" 6" desc="原交易时间"/>
             <Item name="SFFS"   length=" 3" desc="收费方式"/>
             <Item name="FYLX"   length=" 3" desc="费用类型"/>
             <Item name="DWBM"   length=" 8" desc="缴费号"/>
@@ -113,38 +110,38 @@
             <Item name="ZWLSH"  length="16" desc="账务流水号"/>
             <Item name="DFNY"   length=" 6" desc="电费年月"/>
             <Item name="HBFH"   length=" 5" desc="货币符号"/>
-            <Item name="KFJE"   length="16" desc="扣费金额"/>
-            <Item name="BJ"     length="16" desc="本金"/>
-            <Item name="WYJ"    length="16" desc="违约金"/>
+            <Item name="KFJE"   length="16" expression="AMTDELZERO($KFJE)" desc="扣费金额"/>
+            <Item name="BJ"     length="16" expression="AMTDELZERO($BJ)" desc="本金"/>
+            <Item name="WYJ"    length="16" expression="AMTDELZERO($WYJ)" desc="违约金"/>
             <Item name="YFFBZ"  length=" 1" desc="预付费标志"/>
-            <Item name="YFFJE"  length="16" desc="预付费金额"/>
-            <Item name="SKJE"   length="16" expression="$KFJE" desc="实扣金额"/>
+            <Item name="YFFJE"  length="16" expression="AMTDELZERO($YFFJE)" desc="预付费金额"/>
+            <Item name="SKJE"   length="16" expression="AMTDELZERO($SKJE)"  desc="实扣金额"/>
             <Item name="XJYDGJXX" length="128" desc="需校验的关键信息"/>
-            <Item name="KKRQ"   length=" 8" expression="$YHJYRQ" desc="扣款日期"/>
-            <Item name="KKSJ"   length=" 6" expression="$YHJYSJ" desc="扣款时间"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="10" include_len="no"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <Quote name="ErrCase"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Break/>
-        </Default>
-      </Switch> 
+            <Item name="KKRQ"   length=" 8" expression="$JSFJYRQ" desc="扣款日期"/>
+            <Item name="KKSJ"   length=" 6" expression="$JSFJYSJ" desc="扣款时间"/>
+            <Break/>
+          </Case>
+          <Case value="E">
+            <Quote name="RcvErrHead"/>
+            <Break/>
+          </Case>
+          <Default>
+            <Break/>
+          </Default>
+        </Switch> 
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
     </Response>
   </Transaction>
 
 
-  <Transaction code="23" service="460423" server="OFRTEFEK" log_switch="5" des="供电方发起单笔当日代扣抹帐交易请求">
+  <Transaction code="23" service="460423" server="OFTKEFE2" log_switch="5" des="供电方发起单笔当日代扣抹帐交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
       <Item name="WDMC"   length="64" desc="网点名称"/>
-      <Item name="JYLSH"  length="24" desc="交易流水号"/>
-      <Item name="JYRQ"   length=" 8" desc="交易日期"/>
-      <Item name="JYSJ"   length=" 6" desc="交易时间"/>
+      <Item name="FQFJYLSH"  length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"   length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ"   length=" 6" desc="交易时间"/>
       <Item name="YJYLSH" length="24" desc="原交易流水号"/>
       <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
       <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
@@ -172,41 +169,36 @@
     <Request>
       <Quote name="RcvReqHead"/>
       <Item name="WDMC"  length="64" desc="网点名称"/>
-      <Item name="JYLSH" length="24" desc="交易流水号"/>
-      <Item name="JYRQ"  length=" 8" desc="交易日期"/>
-      <Item name="JYSJ"  length=" 6" desc="交易时间"/>
+      <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
       <Item name="QDBZ"  length=" 1" desc="签订标志"/>
       <Item name="DWBM"  length=" 8" desc="单位编码"/>
-      <Item name="JFH"   length="20" desc="缴费号"/>
+      <Item name="JFH"   length="20" expression="DELSPACE($JFH,both)" desc="缴费号"/>
       <Item name="JSHMC" length="64" desc="结算户名称"/>
       <Item name="YQYYHDM" length=" 4" desc="原签约银行代码"/>
       <Item name="YQYZH"   length="32" desc="原签约账户"/>
       <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
       <Item name="XQYYHDM" length=" 4" desc="新签约银行代码"/>
       <CopyItem dest_name="QYYHDM" sour_name="XQYYHDM"/>
-      <Item name="XQYZH"   length="32" desc="新签约账户"/>
+      <Item name="XQYZH"   length="32" expression="DELSPACE($XQYZH,both)" desc="新签约账户"/>
       <CopyItem dest_name="QYYHZH" sour_name="XQYZH"/>
       <CopyItem dest_name="ActNo" sour_name="XQYZH"/>
       <AddItem name="CcyCod" value="CNY"/>
-      <Item name="XQYZHMC" length="128" desc="新签约账户名称"/>
+      <Item name="XQYZHMC" length="128" expression="DELSPACE($XQYZHMC,both)" desc="新签约账户名称"/>
       <CopyItem dest_name="QYYHZHMC" sour_name="XQYZHMC"/>
       <Item name="ZHLX"    length=" 2" expression="TRIM($ZHLX,both)" desc="账户类型"/>
-      <SwitchCode name="ZHLX" new_name="ActTyp" tab_name="ZHLXtoActTyp" col_name="ZHLX"/>
+      <SwitchCode name="ZHLX" new_name="ActFlg" tab_name="ZHLXToActFlg" col_name="ZHLX"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
-      <Item name="ZJHM"    length="32" desc="证件号码"/>
+      <Item name="ZJHM"    length="32" expression="DELSPACE($ZJHM,both)" desc="证件号码"/>
       <Item name="LXDH"    length="20" desc="联系电话"/>
       <Item name="SJHM"    length="20" desc="手机号码"/>
       <Item name="EMAIL"   length="64" desc="E-MAIL"/>
-      <Item name="BZ"      length="128" desc="备注"/>
+      <Item name="BZ"      length="128" expression="DELSPACE($BZ,both)" desc="备注"/>
       <Item name="QYZT"    length=" 1" desc="签约状态"/>
       <Item name="YJYLSH"  length="24" desc="原交易流水号"/>
       <Item name="YJYRQ"   length=" 8" desc="原交易日期"/>
       <Item name="YJYSJ"   length=" 6" desc="原交易时间"/>
-      <AddItem name="NodNo" value="441200"/>
-      <SwitchCode name="DWBM" new_name="BrNo" tab_name="DWBMtoBrNo" col_name="DWBM"/>
-      <SwitchCode name="ZHLX" new_name="ActFlg" tab_name="ZHLXtoActFlg" col_name="ZHLX"/>
-      <SwitchCode name="DWBM" new_name="CAgtNo" tab_name="DWBM_CAgtNo" col_name="DWBM"/>
-      <AddItem name="TxnCnl"  value="THD"/>
     </Request>
     <Response necessary="no">
       <Quote name="RcvStdRsp"/>
@@ -216,54 +208,51 @@
 
 
 
-  <Transaction code="24" service="460424" log_switch="5" des="供电方发起批量代扣取消请求">
+  <Transaction code="24" service="460424" server="OFTKEFE2" log_switch="5" des="供电方发起批量代扣取消请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <!--Group name="Rec" repeat_name="PKGCNT"-->
-        <Item name="JYLSH"  length="24" desc="交易流水号"/>
-        <Item name="JYRQ"   length=" 8" desc="交易日期"/>
-        <Item name="JYSJ"   length=" 6" desc="交易时间"/>
-        <Item name="YJYLSH" length="24" desc="原交易流水号"/>
-        <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
-        <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
-        <Item name="DWBM"   length=" 8" desc="单位编码"/>
-        <Item name="YWJMC"  length="36" desc="原文件名称"/>
-        <Item name="WJLX"   length=" 2" desc="文件类型"/>
-        <Item name="ZBS"    length="11" desc="总笔数"/>
-        <Item name="ZJE"    length="16" desc="总金额"/>
-        <Item name="BZ"     length="128" desc="备注"/>
-      <!--/Group-->
-      <SwitchCode name="DWBM" new_name="CAgtNo"  tab_name="DWBM_CAgtNo"  col_name="DWBM"/>
+      <Item name="FQFJYLSH"  length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"   length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ"   length=" 6" desc="交易时间"/>
+      <Item name="YJYLSH" length="24" desc="原交易流水号"/>
+      <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
+      <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
+      <Item name="DWBM"   length=" 8" expression="DELSPACE($DWBM,both)" desc="单位编码"/>
+      <Item name="YWJMC"  length="36" expression="DELSPACE($YWJMC,both)" desc="原文件名称"/>
+      <Item name="WJLX"   length=" 2" desc="文件类型"/>
+      <Item name="ZBS"    length="11" expression="DELSPACE($ZBS,both)" desc="总笔数"/>
+      <Item name="ZJE"    length="16" expression="DELSPACE($ZJE,both)" desc="总金额"/>
+      <Item name="BZ"     length="128" expression="DELSPACE($BZ,both)" desc="备注"/>
       <AddItem name="TxnCnl"  value="THD"/>
     </Request>
     <Response necessary="no">
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Quote name="RcvRspHead"/>
-            <Item name="YHJYLSH" length="24" desc="交易流水号"/>
-            <Item name="YHJYRQ"  length=" 8" desc="交易日期"/>
-            <Item name="YHJYSJ"  length=" 6" desc="交易时间"/>
-            <Item name="YJYLSH" length="24" desc="原交易流水号"/>
-            <Item name="YJYRQ"  length=" 8" desc="原交易日期"/>
-            <Item name="YJYSJ"  length=" 6" desc="原交易时间"/>
-            <Item name="DWBM"   length=" 8" desc="单位编码"/>
-            <Item name="YWJMC"  length="36" desc="原文件名称"/>
-            <Item name="WJLX"   length=" 2" desc="文件类型"/>
-            <Item name="QXBZ"   length=" 2" desc="取消标志"/>
-            <Item name="BZ"     length="128" desc="备注"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="10" include_len="no"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <Quote name="ErrCase"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Break/>
-        </Default>
-      </Switch> 
+      <PackItem name="TmpDat">
+        <Quote name="RcvRspHead"/>
+        <Switch expression="$MsgTyp">
+          <Case value="N">
+            <Item name="JSFHJYLSH" length="24" desc="交易流水号"/>
+            <Item name="JSFHJYRQ"  length=" 8" desc="交易日期"/>
+            <Item name="JSFHJYSJ"  length=" 6" desc="交易时间"/>
+            <Item name="FQFJYLSH"  length="24" desc="原交易流水号"/>
+            <Item name="FQFJYRQ"   length=" 8" desc="原交易日期"/>
+            <Item name="FQFJYSJ"   length=" 6" desc="原交易时间"/>
+            <Item name="DWBM"    length=" 8" desc="单位编码"/>
+            <Item name="YWJMC"   length="36" desc="原文件名称"/>
+            <Item name="WJLX"    length=" 2" desc="文件类型"/>
+            <Item name="QXBZ"    length=" 2" desc="取消标志"/>
+            <Item name="BZ"      length="128" desc="备注"/>
+            <Break/>
+          </Case>
+          <Case value="E">
+            <Quote name="RcvErrHead"/>
+            <Break/>
+          </Case>
+          <Default>
+            <Break/>
+          </Default>
+        </Switch> 
+      </PackItem>
+      <Item name="TmpDat" head_len="10" include_len="no"/>
     </Response>
   </Transaction>
 
@@ -272,16 +261,15 @@
   <Transaction code="91" service="460491" server="OFTKEFE2" log_switch="5" des="供电方发起银电业务开工交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <!--Item name="PKGCNT" length="6" desc="子包个数"/-->
       <Group name="Rec" repeat_name="PKGCNT">
-        <Item name="JYLSH" length="24" desc="交易流水号"/>
-        <Item name="JYRQ"  length=" 8" desc="交易日期"/>
-        <Item name="JYSJ"  length=" 6" desc="交易时间"/>
-        <Item name="DWBM"  length=" 8" desc="单位编码"/>
+        <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+        <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+        <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
+        <Item name="DWBM"  length=" 8" expression="DELSPACE($DWBM,both)" desc="单位编码"/>
         <Item name="YWBSH" length=" 6" desc="业务标识号"/>
-        <Item name="CZRY"  length="20" desc="操作人员"/>
+        <Item name="CZRY"  length="20" expression="DELSPACE($CZRY,both)" desc="操作人员"/>
         <Item name="ZT"    length=" 1" desc="状态"/>
-        <Item name="BZ"    length="128" desc="备注"/>
+        <Item name="BZ"   length="128" expression="DELSPACE($BZ,both)"  desc="备注"/>
       </Group>
     </Request>
     <Response necessary="no">
@@ -293,11 +281,10 @@
   <Transaction code="92" service="460492" server="OFTKEFE2" log_switch="5" des="供电方发起银电业务签退交易请求">
     <Request>
       <Quote name="RcvReqHead"/>
-      <!--Item name="PKGCNT" length="6" desc="子包个数"/-->
       <Group name="Rec" repeat_name="PKGCNT">
-        <Item name="JYLSH" length="24" desc="交易流水号"/>
-        <Item name="JYRQ"  length=" 8" desc="交易日期"/>
-        <Item name="JYSJ"  length=" 6" desc="交易时间"/>
+        <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+        <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+        <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
         <Item name="DWBM"  length=" 8" desc="单位编码"/>
         <Item name="YWBSH" length=" 6" desc="业务标识号"/>
         <Item name="CZRY"  length="20" desc="操作人员"/>
@@ -309,7 +296,5 @@
       <Quote name="RcvStdRsp"/>
     </Response>
   </Transaction>
-
-
 
 </Application>

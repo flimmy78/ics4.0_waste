@@ -1,10 +1,18 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <BATCH debug_file="Efek.log" err_file="Efek.err">
 	<CodeSwitching>
-		<Table name="RspCodToJYFHDM"  file="etc/EFE_CSW_441999.XML">
+		<Table name="RspCodToJYFHDM" file="etc/EFE_CSW_441999.XML">
 			<Column name="RspCod" sort="no"/>
 			<Column name="JYFHDM" sort="no"/>
 		</Table>
+  	<Table name="HRspCdToJYFHDM" file="etc/EFE_CSW_441999.XML" desc="Ö÷»ú´íÎóÂë×ª»»ÎªµçÁ¦·µ»ØÂë">
+			<Column name="HRspCd" sort="no"/>
+			<Column name="JYFHDM" sort="no"/>
+    </Table>
+  	<Table name="HRspCdToBZ" file="etc/EFE_CSW_441999.XML" desc="Ö÷»ú´íÎóÂë×ª»»ÎªµçÁ¦·µ»ØÔ­Òò">
+			<Column name="HRspCd" sort="no"/>
+			<Column name="BZ" sort="no"/>
+    </Table>
 	</CodeSwitching>
 <!--ADD BY ZXF BEGING-->
 <!--ADD BY ZXF BEGING-->
@@ -14,16 +22,16 @@
 <!--ADD BY ZXF BEGING-->
   <Process name="PTFS" stat_flag="N" desc="¹©µçÅúÁ¿¿Û¿î·¢ËÍÎÄ¼þ">
 		<Head>
-			<Item name="PLDSXXBS" length=" 27" expression="TRIM($PLDSXXBS,both)" desc="ÅúÁ¿´úÊÕÐÅÏ¢±êÊ¶"/>
-			<Item name="YHDM"     length="  4" desc="ÒøÐÐ´úÂë"/>
-			<Item name="DWBM"     length="  8" expression="TRIM($DWBM,both)" desc="µ¥Î»±àÂë"/>
-			<Item name="SYHRQ"    length="  8" desc="ËÍÒøÐÐÈÕÆÚ"/>
-			<Item name="HBFH"     length="  5" desc="»õ±Ò·ûºÅ"/>
-			<Item name="SFFS"     length="  3" desc="ÊÕ·Ñ·½Ê½"/>
-			<Item name="FYLX"     length="  3" desc="·ÑÓÃÀàÐÍ"/>
-			<Item name="ZBS"      length=" 11" expression="TRIM($ZBS,both)" desc="×Ü±ÊÊý"/>
-			<Item name="ZJE"      length=" 16" expression="FABSAMT($ZJE,15)" desc="×Ü½ð¶î"/>
-			<Item name="DGBZ"     length="  2" desc="¶Ô¹«±êÖ¾"/>
+			<Item name="PLDSXXBS" length="27" expression="TRIM($PLDSXXBS,both)" desc="ÅúÁ¿´úÊÕÐÅÏ¢±êÊ¶"/>
+			<Item name="YHDM"     length=" 4" desc="ÒøÐÐ´úÂë"/>
+			<Item name="DWBM"     length=" 8" expression="TRIM($DWBM,both)" desc="µ¥Î»±àÂë"/>
+			<Item name="SYHRQ"    length=" 8" desc="ËÍÒøÐÐÈÕÆÚ"/>
+			<Item name="HBFH"     length=" 5" desc="»õ±Ò·ûºÅ"/>
+			<Item name="SFFS"     length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
+			<Item name="FYLX"     length=" 3" desc="·ÑÓÃÀàÐÍ"/>
+			<Item name="ZBS"      length="11" expression="TRIM($ZBS,both)" desc="×Ü±ÊÊý"/>
+			<Item name="ZJE"      length="16" expression="FABSAMT($ZJE,15)" desc="×Ü½ð¶î"/>
+			<Item name="DGBZ"     length=" 2" desc="¶Ô¹«±êÖ¾"/>
 			<Item name="SM"       deli_asc="-1" expression="TRIM($SM,both)" desc="ËµÃ÷"/>
 		</Head>
 		<Data>
@@ -36,9 +44,12 @@
 			<Item name="BFJFBZ" length="  1" desc="²¿·Ö½É·Ñ±êÖ¾"/>
 			<Item name="ZWLSH"  length=" 16" desc="ÕËÎñÁ÷Ë®ºÅ"/>
 			<Item name="DFNY"   length="  6" desc="µç·ÑÄêÔÂ"/>
-			<Item name="YKJE"   length=" 16" expression="FABSAMT($ZJE,15)" desc="Ó¦¿Û½ð¶î"/>
+			<Item name="YKJE"   length=" 16" expression="FABSAMT($YKJE,15)" desc="Ó¦¿Û½ð¶î"/>
 			<Item name="BJ"     length=" 16" expression="FABSAMT($BJ,15)" desc="±¾½ð"/>
 			<Item name="WYJ"    deli_asc="-1" expression="FABSAMT(TRIM($WYJ,both),15)" desc="Î¥Ô¼½ð"/>
+      <AddItem name="SFFS" expression="$ROOT.SFFS"/>
+      <AddItem name="SKJE" expression="$YKJE"/>
+      <AddItem name="BatFlg" value="B"/>
 		</Data>
 	</Process>
 
@@ -51,9 +62,9 @@
 			<Item name="SFFS"     length=" 3" desc="ÊÕ·Ñ·½Ê½"/>
 			<Item name="FYLX"     length=" 3" desc="·ÑÓÃÀàÐÍ"/>
 			<Item name="ZBS"      length="11" desc="×Ü±ÊÊý"/>
-			<Item name="ZJE"      length="16" expression="AMTDELZEOR($ZJE)" desc="×Ü½ð¶î"/>
+			<Item name="ZJE"      length="16" expression="AMTDELZERO($ZJE)" desc="×Ü½ð¶î"/>
 			<Item name="DGBZ"     length=" 2" desc="¶Ô¹«±êÖ¾"/>
-			<Item name="ZJE"      length="16" expression="AMTDELZEOR($ZJE)" desc="×Ü½ð¶î"/>
+			<Item name="ZJE"      length="16" expression="AMTDELZERO($ZJE)" desc="×Ü½ð¶î"/>
 			<Item name="CGBS"     length="11" desc="³É¹¦±ÊÊý"/>
 			<Item name="CGJE"     length="16" desc="³É¹¦½ð¶î"/>
 			<Item name="SBBS"     length="11" desc="Ê§°Ü±ÊÊý"/>
@@ -73,12 +84,13 @@
 			<Item name="YKJE"    length=" 16" expression="AMTDELZERO($YKJE)" desc="Ó¦¿Û½ð¶î"/>
 			<Item name="BJ"      length=" 16" expression="AMTDELZERO($BJ)" desc="±¾½ð"/>
 			<Item name="WYJ"     length=" 16" expression="AMTDELZERO($WYJ)" desc="Î¥Ô¼½ð"/>
-      <SwitchCode name="RspCod" new_name="KKJGDM" tab_name="RspCodToJYFHDM" col_name="RspCod"/>
+      <SwitchCode name="HRspCd" new_name="KKJGDM" tab_name="HRspCdToJYFHDM" col_name="HRspCd"/>
 			<Item name="KKJGDM"  length=" 32" desc="¿Û¿î½á¹û´úÂë"/>
 			<Item name="SKJE"    length=" 32" expression="AMTDELZERO($SKJE)" desc="Êµ¿Û½ð¶î"/>
 			<Item name="YHSFLSH" length=" 32" desc="ÒøÐÐÊÕ·ÑÁ÷Ë®ºÅ"/>
 			<Item name="KKRQ"    length=" 32" desc="¿Û¿îÈÕÆÚ"/>
 			<Item name="KKSJ"    length=" 32" desc="¿Û¿îÊ±¼ä"/>
+      <SwitchCode name="HRspCd" new_name="BZ" tab_name="HRspCdToBZ" col_name="HRspCd"/>
 			<Item name="BZ"      length=" 32" desc="±¸×¢"/>
 		</Data>
 	</Process>
