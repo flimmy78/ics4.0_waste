@@ -180,13 +180,9 @@
       <Item name="YQYZH"   length="32" desc="原签约账户"/>
       <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
       <Item name="XQYYHDM" length=" 4" desc="新签约银行代码"/>
-      <CopyItem dest_name="QYYHDM" sour_name="XQYYHDM"/>
       <Item name="XQYZH"   length="32" expression="DELSPACE($XQYZH,both)" desc="新签约账户"/>
-      <CopyItem dest_name="QYYHZH" sour_name="XQYZH"/>
-      <CopyItem dest_name="ActNo" sour_name="XQYZH"/>
       <AddItem name="CcyCod" value="CNY"/>
       <Item name="XQYZHMC" length="128" expression="DELSPACE($XQYZHMC,both)" desc="新签约账户名称"/>
-      <CopyItem dest_name="QYYHZHMC" sour_name="XQYZHMC"/>
       <Item name="ZHLX"    length=" 2" expression="TRIM($ZHLX,both)" desc="账户类型"/>
       <SwitchCode name="ZHLX" new_name="ActFlg" tab_name="ZHLXToActFlg" col_name="ZHLX"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
@@ -285,11 +281,11 @@
         <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
         <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
         <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
-        <Item name="DWBM"  length=" 8" desc="单位编码"/>
+        <Item name="DWBM"  length=" 8" expression="DELSPACE($DWBM,both)" desc="单位编码"/>
         <Item name="YWBSH" length=" 6" desc="业务标识号"/>
-        <Item name="CZRY"  length="20" desc="操作人员"/>
+        <Item name="CZRY"  length="20" expression="DELSPACE($CZRY,both)" desc="操作人员"/>
         <Item name="ZT"    length=" 1" desc="状态"/>
-        <Item name="BZ"    length="128" desc="备注"/>
+        <Item name="BZ"   length="128" expression="DELSPACE($BZ,both)"  desc="备注"/>
       </Group>
     </Request>
     <Response necessary="no">

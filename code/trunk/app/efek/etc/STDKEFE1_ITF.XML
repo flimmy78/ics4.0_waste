@@ -346,7 +346,7 @@
         <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
         <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
         <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
-        <Item name="WJMC"   length="36" desc="文件名称"/>
+        <Item name="YHWJMC"   length="36" desc="文件名称"/>
         <Item name="WJLX"   length=" 2" desc="文件类型"/>
         <Item name="WJMD5"  length="32" desc="文件MD5"/>
       </PackItem>
@@ -758,7 +758,18 @@
     <Request>
       <PackItem name="TmpDat">
         <Quote name="SndReqHead"/>
-        <Group name="Rec1" necessary="no">
+        <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+        <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+        <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
+        <Item name="DZPCLSH" length="27" desc="对账批次流水号"/>
+        <Item name="DWBM"    length=" 8" desc="单位编码"/>
+        <Item name="SFFS"    length=" 3" desc="收费方式"/>
+        <Item name="FYLX"    length=" 3" desc="费用类型"/>
+        <Item name="ZBS"     length="11" desc="总笔数"/>
+        <Item name="ZJE"     length="16" desc="总金额"/>
+        <Item name="DAZRQ"   length=" 8" desc="达账日期"/>
+        <Item name="DAZSJ"   length=" 6" desc="达账时间"/>
+        <!--Group name="Rec1" necessary="no">
           <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
           <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
           <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
@@ -783,7 +794,7 @@
           <Item name="ZJE"     length="16" desc="总金额"/>
           <Item name="DAZRQ"   length=" 8" desc="达账日期"/>
           <Item name="DAZSJ"   length=" 6" desc="达账时间"/>
-        </Group>
+        </Group-->
       </PackItem>
       <Item name="TmpDat" head_len="10" include_len="no"/>
       </Request>

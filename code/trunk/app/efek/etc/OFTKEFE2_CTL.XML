@@ -617,7 +617,7 @@
     <FlowCtrl>
       <Quote name="InitTranByDWBM"/>
       <Exec func="PUB:ReadRecord" error="IGNORE">
-        <Arg name="SqlCmd" value="GetTxnDtl"></Arg>
+        <Arg name="SqlCmd" value="GetTxnDtl"/>
       </Exec>
       <Switch expression="~RetCod">
         <Case value="0" desc="存在记录">
@@ -807,29 +807,7 @@
 
 
   <Transaction code="460491" desc="供电方发起银电业务开工交易请求">
-<!--
-    <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
-      <Sentence>
-        DWBM='%s'
-      </Sentence>
-      <Fields>DWBM</Fields>
-    </DynSentence>
--->
-    <DynSentence name="UpdRunCtl" desc="根据单位代码更新开工信息">
-      <Sentence>
-        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM = '%s'
-      </Sentence>
-      <Fields>ROOT.FQFJYLSH|ROOT.FQFJYRQ|ROOT.FQFJYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWBM|</Fields>
-    </DynSentence>
-
-    <DynSentence name="InsRunCtl" desc="添加开工记录">
-      <Sentence>
-        insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', 'Q' ,'%s','','','' )
-      </Sentence>
-      <Fields>ROOT.DWBM|ROOT.FQFJYLSH|ROOT.FQFJYRQ|ROOT.FQFJYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.BZ|</Fields>
-    </DynSentence>
-
-
+    <Quote name="EfeSqlLst"/>
     <FlowCtrl>
       <Set>Cnt=1</Set>
       <While condition="INTCMP($Cnt,2,$PKGCNT)">
@@ -881,12 +859,6 @@
           <Arg name="SourName" value="$BZ_Nam"/>
           <Arg name="DestName" value="ROOT.BZ"/>
         </Exec>
-<!--
-        <Exec func="PUB:UpdateRecord" desc="更新开工">
-           <Arg name="TblNam" value="EfekRunCtl"/>
-           <Arg name="CndSts" value="UpdRunCtl"/>
-        </Exec>
--->
         <Exec func="PUB:ExecSql" error="IGNORE">
           <Args>
             <Arg name="SqlCmd" value="UpdRunCtl"/>
@@ -902,9 +874,6 @@
             <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
             <Set>Cnt=ADD($Cnt,1)</Set>
             <Continue/>
-<!--
-            <Return/>
--->
           </Case>
           <Case value="-2" desc="没有记录">
 <!--添加状态为"签退"记录，待业务维护分行号的资料后，在下一"开工"报文到达时开展交易-->
@@ -919,9 +888,6 @@
               <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新开工状态失败)</Set>
               <Set>Cnt=ADD($Cnt,1)</Set>
               <Continue/>
-<!--
-              <Return/>
--->
             </If>
             <Break/>
           </Case>
@@ -939,59 +905,37 @@
 
 
   <Transaction code="460492" desc="供电方发起银电业务签退交易请求">
-<!--
-    <DynSentence name="UpdRunCtl" desc="根据单位代码更新签退信息">
-      <Sentence>
-        DWBM='%s'
-      </Sentence>
-      <Fields>DWBM</Fields>
-    </DynSentence>
--->
-    <DynSentence name="UpdRunCtl" desc="根据单位代码更新签退信息">
-      <Sentence>
-        update EfekRunCtl set JYLSH='%s', JYRQ='%s', JYSJ='%s', YWBSH='%s', CZRY='%s', ZT='%s', BZ='%s' where DWBM='%s'
-      </Sentence>
-      <Fields>ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|ROOT.DWBM|</Fields>
-    </DynSentence>
-
-    <DynSentence name="InsRunCtl" desc="添加签退记录">
-      <Sentence>
-        insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%s','','','' )
-      </Sentence>
-      <Fields>ROOT.DWBM|ROOT.JYLSH|ROOT.JYRQ|ROOT.JYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
-    </DynSentence>
-
-
+    <Quote name="EfeSqlLst"/>
     <FlowCtrl>
       <Set>Cnt=1</Set>
       <While condition="INTCMP($Cnt,2,$PKGCNT)">
-        <Delete>ROOT.JYLSH</Delete>
-        <Delete>ROOT.JYRQ</Delete>
-        <Delete>ROOT.JYSJ</Delete>
+        <Delete>ROOT.FQFJYLSH</Delete>
+        <Delete>ROOT.FQFJYRQ</Delete>
+        <Delete>ROOT.FQFJYSJ</Delete>
         <Delete>ROOT.DWBM</Delete>
         <Delete>ROOT.YWBSH</Delete>
         <Delete>ROOT.CZRY</Delete>
         <Delete>ROOT.ZT</Delete>
         <Delete>ROOT.BZ</Delete>
-        <Set>JYLSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYLSH)</Set>
-        <Set>JYRQ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYRQ)</Set>
-        <Set>JYSJ_Nam=STRCAT(ROOT.Rec_,$Cnt,.JYSJ)</Set>
+        <Set>FQFJYLSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.FQFJYLSH)</Set>
+        <Set>FQFJYRQ_Nam=STRCAT(ROOT.Rec_,$Cnt,.FQFJYRQ)</Set>
+        <Set>FQFJYSJ_Nam=STRCAT(ROOT.Rec_,$Cnt,.FQFJYSJ)</Set>
         <Set>DWBM_Nam=STRCAT(ROOT.Rec_,$Cnt,.DWBM)</Set>
         <Set>YWBSH_Nam=STRCAT(ROOT.Rec_,$Cnt,.YWBSH)</Set>
         <Set>CZRY_Nam=STRCAT(ROOT.Rec_,$Cnt,.CZRY)</Set>
         <Set>ZT_Nam=STRCAT(ROOT.Rec_,$Cnt,.ZT)</Set>
         <Set>BZ_Nam=STRCAT(ROOT.Rec_,$Cnt,.BZ)</Set>
         <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JYLSH_Nam"/>
-          <Arg name="DestName" value="ROOT.JYLSH"/>
+          <Arg name="SourName" value="$FQFJYLSH_Nam"/>
+          <Arg name="DestName" value="ROOT.FQFJYLSH"/>
         </Exec>
         <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JYRQ_Nam"/>
-          <Arg name="DestName" value="ROOT.JYRQ"/>
+          <Arg name="SourName" value="$FQFJYRQ_Nam"/>
+          <Arg name="DestName" value="ROOT.FQFJYRQ"/>
         </Exec>
         <Exec func="PUB:GetValue">
-          <Arg name="SourName" value="$JYSJ_Nam"/>
-          <Arg name="DestName" value="ROOT.JYSJ"/>
+          <Arg name="SourName" value="$FQFJYSJ_Nam"/>
+          <Arg name="DestName" value="ROOT.FQFJYSJ"/>
         </Exec>
         <Exec func="PUB:GetValue">
           <Arg name="SourName" value="$DWBM_Nam"/>
@@ -1013,12 +957,6 @@
           <Arg name="SourName" value="$BZ_Nam"/>
           <Arg name="DestName" value="ROOT.BZ"/>
         </Exec>
-<!--
-        <Exec func="PUB:UpdateRecord" desc="更新签退">
-           <Arg name="TblNam" value="EfekRunCtl"/>
-           <Arg name="CndSts" value="UpdRunCtl"/>
-        </Exec>
--->
         <Exec func="PUB:ExecSql" error="IGNORE">
           <Args>
             <Arg name="SqlCmd" value="UpdRunCtl"/>
@@ -1032,11 +970,8 @@
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE9999</Set>
             <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新签退状态失败)</Set>
-			<Set>Cnt=ADD($Cnt,1)</Set>
+      			<Set>Cnt=ADD($Cnt,1)</Set>
             <Continue/>
-<!--
-            <Return/>
--->
           </Case>
           <Case value="-2" desc="没有记录">
             <Exec func="PUB:ExecSql" error="IGNORE">
@@ -1048,11 +983,8 @@
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE9999</Set>
               <Set>RspMsg=STRCAT(单位编码【,$ROOT.DWBM】更新签退状态失败)</Set>
-			  <Set>Cnt=ADD($Cnt,1)</Set>
+      			  <Set>Cnt=ADD($Cnt,1)</Set>
               <Continue/>
-<!--
-              <Return/>
--->
             </If>
             <Break/>
           </Case>
@@ -1091,7 +1023,10 @@
       <Set>NodNo=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
       <Exec func="PUB:GetVirtualTeller"/>
       <Set>TTxnCd=$TxnCod</Set>
-      <If condition="IS_NOEQUAL_STRING(QDBZ,2)" desc="注销不验证客户资料">
+      <If condition="IS_NOEQUAL_STRING($QDBZ,2)" desc="注销不验证客户资料">
+        <Set>QYYHDM=$XQYYHDM</Set>
+        <Set>QYYHZH=$XQYZH</Set>
+        <Set>QYYHZHMC=$XQYZHMC</Set>
         <Switch expression="$ZHLX">
           <Case value="0" desc="对公账户">
             <Set>HTxnCd=109000</Set>
@@ -1135,7 +1070,6 @@
           <Set>RspMsg=账户资料核对出错</Set>
           <Return/>
         </If>
-
 <!--
         <If condition="IS_NOEQUAL_STRING(DELSPACE($ActNam,both),$XQYZHMC)">
           <Set>MsgTyp=E</Set>
@@ -1166,10 +1100,11 @@
         </Switch>
 -->
       </If>
-      <Set>QYYHDM=$XQYYHDM</Set>
-      <Set>QYYHZH=$XQYZH</Set>
-      <Set>QYYHZHMC=$XQYZHMC</Set>
-      <Set>JYLSH=$FQFJYLSH</Set>
+      <Else>
+        <Set>QYYHDM=$YQYYHDM</Set>
+        <Set>QYYHZH=$YQYZH</Set>
+        <Set>QYYHZHMC=$YQYZHMC</Set>
+      </Else>
       <Set>ChkFlg=S</Set>
       <Exec func="PUB:ReadRecord" error="IGNORE">
         <Arg name="SqlCmd" value="GetCusAgt"/>
@@ -1197,6 +1132,7 @@
           <Return/>
         </Default>
       </Switch>
+      <Set>PKGCNT=000000</Set>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>

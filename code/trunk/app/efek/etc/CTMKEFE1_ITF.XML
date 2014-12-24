@@ -124,11 +124,11 @@
       <Item name="BFJFBZ" length=" 1" desc="部分缴费标志"/>
       <Item name="ZWLSH"  length="16" desc="账务流水号"/>
       <Item name="DFNY"   length=" 6" desc="电费年月"/>
-      <Item name="QFJE"   length="16" expression="FABSAMT($QFJE,15)" desc="欠费金额"/>
-      <Item name="BJ"     length="16" expression="FABSAMT($BJ,15)" desc="本金"/>
-      <Item name="WYJ"    length="16" expression="FABSAMT($WYJ,15)" desc="违约金"/>
+      <Item name="QFJE"   length="16" expression="FABSAMT(DELSPACE($QFJE,all),15)" desc="欠费金额"/>
+      <Item name="BJ"     length="16" expression="FABSAMT(DELSPACE($BJ,all),15)" desc="本金"/>
+      <Item name="WYJ"    length="16" expression="FABSAMT(DELSPACE($WYJ,all),15)" desc="违约金"/>
       <Item name="FKFS"   length=" 1" desc="付款方式"/>
-      <Item name="SKJE"   length="16" expression="FABSAMT($SKJE,15)" desc="实扣金额"/>
+      <Item name="SKJE"   length="16" expression="FABSAMT(DELSPACE($SKJE,all),15)" desc="实扣金额"/>
       <Item name="ActFlg" length=" 1" desc="账户种类"/>
       <Item name="AVchTp" length=" 3" desc="账户凭证种类"/>
       <Item name="VchCod" length=" 8" desc="存折号码"/>
@@ -138,6 +138,7 @@
       <Item name="RvsNo"  length="12" desc="销帐号"/>
       <Item name="VchTyp" length=" 3" desc="凭证种类"/>
       <Item name="VchNo"  length=" 8" desc="凭证号码"/>
+      <Item name="BilDat" length=" 8" desc="凭证日期"/>
       <CopyItem dest_name="KKZH" sour_name="BokAct" desc="扣款账户"/>
       <AddItem name="OIFlag" value="O" desc="发起方向"/>
       <AddItem name="BatFlg" value="S" desc="批量标识"/>
@@ -171,7 +172,7 @@
             <Item name="OFmtCd" length="3" value="D04"/>
             <Item name="RspCod" length="6"/>
             <Item name="InPos"  length="4" value="0001" />
-            <Item name="RspMsg" length="56"/>
+            <Item name="RspMsg" length="128"/>
           </PackItem>
           <Item name="TmpDat" head_len="4" include_len="yes"/>
           <Break/>
@@ -732,9 +733,10 @@
   <Transaction service="460450" code="460450" log_switch="5" desc="银行方发起对总账交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" desc="单位编码"/>
+      <!--Item name="DWBM" length="8" desc="单位编码"/>
       <Item name="SFFS" length="3" desc="收费方式"/>
-      <Item name="FYLX" length="3" desc="费用类型"/>
+      <Item name="FYLX" length="3" desc="费用类型"/-->
+      <Item name="ChkDat" length="8" desc="对账日期"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
