@@ -36,16 +36,16 @@
 <!--明细表【EfekTxnDtl】访问操作-->
     <DynSentence name="GetCanData" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
-        select HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo, DtlSts ODtlSts, TlrId, TrmNo, NodNo, BrNo
+        select LogNo, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo, DtlSts ODtlSts, TlrId, TrmNo, NodNo, BrNo
           from EfekTxnDtl where ( LogNo='%s' or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ))  for read only
       </Sentence>
       <Fields>LogNo|OIFLAG|YJYLSH|XH</Fields>
     </DynSentence>
     <DynSentence name="UpdCanData" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
-        update EfekTxnDtl set HTxnSt='C', DtlSts='C' where LogNo='%s'
+        update EfekTxnDtl set HTxnSt='C', DtlSts='C' where ( LogNo='%s' or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ) )
       </Sentence>
-      <Fields>LogNo|</Fields>
+      <Fields>LogNo|OIFLAG|YJYLSH|XH</Fields>
     </DynSentence>
     <DynSentence name="UpdTxnDtl" desc="根据业务唯一标志更新流水信息">
       <Sentence>
@@ -207,7 +207,7 @@
       </Exec>
     </If>
     <Else>
-      <Set>RspCod=EFE9999</Set>
+      <Set>RspCod=EFE999</Set>
       <Set>RspMsg=$CWTSXX</Set>
     </Else>
     <Set>RspMsg=STRCAT(电网方提示：,$RspMsg)</Set>

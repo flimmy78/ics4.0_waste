@@ -177,6 +177,8 @@
           <If condition="IS_EQUAL_STRING($TRspCd,000000)">
 <!--第三方，抹账交易成功-->
             <Set>TTxnSt=C</Set>
+            <Quote name="CanProc"/>
+<!--此处被CanProc替代
             <Set>TIATyp=C</Set>
             <Set>HTxnCd=STRCAT(SUBSTR($OHTxnCd,1,5),9)</Set>
             <Exec func="PUB:CallHostAcc" error="IGNORE">
@@ -188,7 +190,6 @@
                 <Set>MsgTyp=N</Set>
                 <Set>RspCod=000000</Set>
                 <Set>RspMsg=交易成功</Set>
-<!--变更明细状态，主机冲销成功-->
                 <Set>HTxnSt=C</Set>
                 <Break/>
               </Case>
@@ -208,7 +209,6 @@
                 <Set>MsgTyp=E</Set>
                 <Set>RspCod=EFE999</Set>
                 <Set>RspMsg=交易超时</Set>
-<!--如果有同步交易，执行同步操作-->
                 <Return/>
               </Case>
               <Case value="3" desc="交易失败">
@@ -229,6 +229,7 @@
                 <Return/>
               </Default>
             </Switch>
+-->
           </If>
           <Break/>
         </Case>
