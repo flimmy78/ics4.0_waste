@@ -278,15 +278,16 @@
       <Sentence>
   			select OIFLAG, FQFJYLSH, FQFJYRQ, FQFJYSJ, BrNo,
   			       PLDSXXBS, DWBM,YHDM,HBFH,SFFS,FYLX,ZBS ,ZJE ,DGBZ,ZJE ,CGBS, CGJE, SBBS, SBJE, SFY from EfekBchRec
-  			 where RecSts='B' for read only
+  			 where RecSts='B' and DskNo='%s' for read only
       </Sentence>
+      <Fields>DskNo|</Fields>
     </DynSentence>
     <DynSentence name="UpdBchRec" desc="更新处理完成的交易">
       <Sentence>
         update EfekBchRec set RecSts='%s', JSFJYLSH='%s',JSFJYRQ='%s',JSFJYSJ='%s',JSFWJMC='%s',JSFWJLX='02',JSFWJMD5='%s'
          where OIFLAG='%s' and FQFJYLSH='%s'
       </Sentence>
-      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|JSFWJMC|JSFWJMD5|OIFLAG|FQFJYLSH|</Fields>
+      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|YHWJMC|JSFWJMD5|OIFLAG|FQFJYLSH|</Fields>
     </DynSentence>
     <DynSentence name="GetTxnDtl" desc="获取扣款处理完成的交易">
       <Sentence>
@@ -335,7 +336,7 @@
           <Arg name="EfekUsr" value="$EfekUsr"/>
           <Arg name="EfekDir" value="$EfekDir"/>
           <Arg name="EfekSndDir" value="$EfekSndDir"/>
-          <Arg name="FilNam" value="$JSFWJMC"/>
+          <Arg name="FilNam" value="$YHWJMC"/>
           <Arg name="SndTim" value="GETDATETIME(YYYYMMDDHHMISS)"/>
         </System>
         <Delete>MD5FIL</Delete>
@@ -361,6 +362,11 @@
           </Args>
         </Exec>
         <Exec func="PUB:CommitWork"/>
+        <Set>WJMC=$YHWJMC</Set>
+        <Set>WJMD5=$JSFWJMD5</Set>
+        <Set>YJYLSH=$FQFJYLSH</Set>
+        <Set>YJYRQ=$FQFJYRQ</Set>
+        <Set>YJYSJ=$FQFJYSJ</Set>
         <Set>SvrCod=460421</Set>
         <Quote name="SendThirdOther"/>
         <If condition="IS_EQUAL_STRING($TRspCd,000000)">

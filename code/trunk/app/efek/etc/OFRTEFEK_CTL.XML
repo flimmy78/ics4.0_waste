@@ -750,10 +750,10 @@
 
     <DynSentence name="GetTxnDtl" desc="单笔业务对账">
       <Sentence>
-        select FQFJYLSH DZPCLSH, DWBM, SFFS, FYLX, JSFJYRQ DAZRQ, JSFJYSJ DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
+        select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, JSFJYRQ DAZRQ, '140000' DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
           from EfekTxnDtl
          where JSFJYRQ='%s' and DtlSts='S' and BatFlg='S'
-      group by FQFJYLSH, DWBM, SFFS, FYLX, JSFJYRQ, JSFJYSJ for read only
+      group by substr(DWBM, 1, 6), SFFS, FYLX, JSFJYRQ for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
     </DynSentence>
