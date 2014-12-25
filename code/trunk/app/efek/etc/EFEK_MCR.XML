@@ -513,6 +513,24 @@
 
 
   <Macro name="CanProc" desc="抹账">
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="OIFlag"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="不存在">
+      <Set>OIFlag= </Set>
+    </If>
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="YJYLSH"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="不存在">
+      <Set>YJYLSH= </Set>
+    </If>
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="XH"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="不存在">
+      <Set>XH= </Set>
+    </If>
     <Exec func="PUB:ReadRecord" error="IGNORE">
       <Args>
         <Arg name="SqlCmd" value="GetCanData"/>

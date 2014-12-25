@@ -733,10 +733,9 @@
   <Transaction service="460450" code="460450" log_switch="5" desc="银行方发起对总账交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <!--Item name="DWBM" length="8" desc="单位编码"/>
+      <Item name="DWBM" length="8" desc="单位编码"/>
       <Item name="SFFS" length="3" desc="收费方式"/>
-      <Item name="FYLX" length="3" desc="费用类型"/-->
-      <Item name="ChkDat" length="8" desc="对账日期"/>
+      <Item name="FYLX" length="3" desc="费用类型"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
@@ -807,12 +806,12 @@
   <Transaction service="460413" code="460413" log_switch='5' desc="银行方发起存入预付款交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="SFFS"  length=" 3" desc="收费方式"/>
       <Item name="FYLX"  length=" 3" desc="费用类型"/>
+      <Item name="SFFS"  length=" 3" desc="收费方式"/>
       <Item name="DWBM"  length=" 8" desc="单位编码"/>
       <Item name="JFH"   length="20" desc="缴费号"/>
-      <Item name="CRYFK" length="16" desc="存入预付款"/>
       <Item name="FKFS"  length=" 1" desc="付款方式"/>
+      <Item name="CRYFK" length="16" desc="存入预付款"/>
       <Item name="BZSM"  length="128" desc="备注说明"/>
       <Item name="ActFlg" length=" 1" desc="账户种类"/>
       <Item name="AVchTp" length=" 3" desc="账户凭证种类"/>
@@ -824,6 +823,10 @@
       <Item name="VchTyp" length=" 3" desc="凭证种类"/>
       <Item name="VchNo"  length=" 8" desc="凭证号码"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+      <AddItem name="BatFlg" value="S" desc="批量标识"/>
+      <AddItem name="XH" value="0000000001" desc="明细序号"/>
+      <CopyItem dest_name="KKZH" sour_name="BokAct"/>
+      <CopyItem dest_name="SKJE" sour_name="CRYFK"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>

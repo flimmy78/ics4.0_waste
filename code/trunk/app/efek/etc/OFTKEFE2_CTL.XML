@@ -193,7 +193,7 @@
     <FlowCtrl>
 <!--协议判断-->
       <Exec func="PUB:ReadRecord" error="IGNORE">
-        <Arg name="SqlCmd" value="GetCusAgt"></Arg>
+        <Arg name="SqlCmd" value="ChkCusAgt"></Arg>
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
         <Set>DtlSts=F</Set>
@@ -398,8 +398,13 @@
       </Exec>
       <Set>CGBS=$BS</Set>
       <Set>CGJE=FABSAMT($JE,15)</Set>
-      <Exec func="PUB:ExecSql">
+      <Exec func="PUB:ExecSql" error="IGNORE">
         <Arg name="sql" value="UpdBchRecByDskNo"/>
+      </Exec>
+      <!--批量代扣交易完成后,触发批量代扣记账交易21-->
+      <Exec func="PUB:CallLocal">  
+        <Arg name="TxnCod"  value="460421"/>
+        <Arg name="ObjSvr"  value="OFRTLCL1"/>
       </Exec>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
@@ -714,13 +719,13 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetBchRec">
       <Sentence>
-        select RecSts from EfekBchRec WHERE OIFlag='%s' and JYLSH='%s' and WJMC='%s' for read only
+        select RecSts from EfekBchRec WHERE OIFlag='%s' and FQFJYLSH='%s' and FQFWJMC='%s' for read only
       </Sentence>
       <Fields>OIFlag|YJYLSH|YWJMC|</Fields>
     </DynSentence>
     <DynSentence name="UpdBchRec">
       <Sentence>
-        update EfekBchRec set RecSts='C' WHERE OIFlag='%s' and JYLSH='%s' and WJMC='%s' and RecSts='%s'
+        update EfekBchRec set RecSts='C' WHERE OIFlag='%s' and FQFJYLSH='%s' and FQFWJMC='%s' and RecSts='%s'
       </Sentence>
       <Fields>OIFlag|YJYLSH|YWJMC|RecSts|</Fields>
     </DynSentence>
@@ -753,12 +758,25 @@
         <Return/>
       </If>
       <Switch expression="$RecSts">
-        <Case value="b" desc="账务处理完成"/>
+<!--add by qm, 20141225用于测试目的,需要返回"1 文件未扣款，取消成功"而特别制作的
+一个case.上生产前需要删除-->
         <Case value="B" desc="账务处理完成">
           <Set>MsgTyp=N</Set>
           <Set>RspCod=000000</Set>
+          <Set>RspMsg=STRCAT(批次【,$YJYLSH,】【,$YJYRQ,】【,$YJYSJ,】未扣款，取消成功)</Set>
+          <Set>QXBZ=1</Set>
+          <Set>BZ=$RspMsg</Set>
+          <Return/>
+        </Case>
+<!--add by qm, 20141225用于测试目的,需要返回"1 文件未扣款，取消成功"而特别制作的
+一个case.上生产前需要删除-->
+        <!--Case value="b" desc="账务处理完成" /-->
+        <!--Case value="B" desc="账务处理完成" -->
+        <Case value="b" desc="账务处理完成" >
+          <Set>MsgTyp=N</Set>
+          <Set>RspCod=000000</Set>
           <Set>RspMsg=STRCAT(批次【,$YJYLSH,】【,$YJYRQ,】【,$YJYSJ,】已扣款，取消失败)</Set>
-          <Set>QXBZ=2</Set>
+          <Set>QXBZ=4</Set>
           <Set>BZ=$RspMsg</Set>
           <Return/>
         </Case>
