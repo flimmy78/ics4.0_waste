@@ -116,11 +116,15 @@
       <Item name="KKYHDM"  length="  4" desc="扣款银行代码"/>
       <Item name="DFZH"    length=" 32" desc="对方账户"/>
       <Item name="DFZHMC"  length="128" desc="对方账户名称"/>
+      <!--AddItem name="RQ"    expression="STRCAT(FMTDATE($ROOT.KKRQ,1,4),-,SUBSTR($KKRQ,5,2),-,SUBSTR($KKRQ,7,2), ,SUBSTR($KKSJ,1,2),:,SUBSTR($KKSJ,3,2),:,SUBSTR($KKSJ,5,2))"/-->
+      <AddItem name="RQ"    expression="STRCAT(SUBSTR($ROOT.KKRQ,1,4),-,SUBSTR($ROOT.KKRQ,5,2),-,SUBSTR($ROOT.KKRQ,7,2), ,SUBSTR($ROOT.KKSJ,1,2),:,SUBSTR($ROOT.KKSJ,3,2),:,SUBSTR($ROOT.KKSJ,5,2))"/>
       <Item name="RQ"      length=" 19" desc="日期"/>
       <Item name="JE"      length=" 16" desc="金额"/>
       <Item name="ZY"      length="128" desc="摘要"/>
-      <Item name="SKRDM"   length=" 20" desc="收款人代码"/>
-      <Item name="DZWYBSM" length=" 32" desc="对账唯一标识码"/>
+      <AddItem name="SKRDM"    expression="STRCAT($ROOT.SKRDM)"/>
+      <Item name="SKRDM" length=" 20" desc="收款人代码"/>
+      <AddItem name="DZWYBSM"    expression="STRCAT($ROOT.DZWYBSM)"/>
+      <Item name="DZWYBSM" value="$ROOT.DZWYBSM" length=" 32" desc="对账唯一标识码"/>
 		</Data>
 	</Process>
 

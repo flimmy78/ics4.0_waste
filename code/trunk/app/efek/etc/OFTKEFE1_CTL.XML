@@ -135,7 +135,7 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetTxnDtl" desc="获取原交易流水">
       <Sentence>
-        select * from EfekTxnDtl where OIFlag='%s' and ActDat='%s' and TckNo='%s'
+        select * from EfekTxnDtl where OIFlag='%s' and ActDat='%s' and TckNo='%s' and DtlSts!='C'
       </Sentence>
       <Fields>OIFlag|ActDat|TckNo|</Fields>
     </DynSentence>
@@ -272,10 +272,11 @@
     </DynSentence>
     <DynSentence name="UpdBchRec" desc="更新处理完成的交易">
       <Sentence>
-        update EfekBchRec set RecSts='%s', JSFJYLSH='%s',JSFJYRQ='%s',JSFJYSJ='%s',JSFWJMC='%s',JSFWJLX='02',JSFWJMD5='%s'
+        update EfekBchRec set RecSts='%s', JSFJYLSH='%s',JSFJYRQ='%s',JSFJYSJ='%s',
+                JSFWJMC='%s',JSFWJLX='02',JSFWJMD5='%s',DAZRQ='%s',DAZSJ='%s'
          where OIFLAG='%s' and FQFJYLSH='%s'
       </Sentence>
-      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|YHWJMC|JSFWJMD5|OIFLAG|FQFJYLSH|</Fields>
+      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|YHWJMC|JSFWJMD5|DAZRQ|DAZSJ|OIFLAG|FQFJYLSH|</Fields>
     </DynSentence>
     <DynSentence name="GetTxnDtl" desc="获取扣款处理完成的交易">
       <Sentence>
@@ -797,12 +798,23 @@
 
     <DynSentence name="GetTxnDtl" desc="单笔业务对账">
       <Sentence>
-        select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, JSFJYRQ DAZRQ, '140000' DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
-          from EfekTxnDtl
-         where JSFJYRQ='%s' and DtlSts='S' and BatFlg='S'
-      group by substr(DWBM, 1, 6), SFFS, FYLX, JSFJYRQ for read only
+        select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, KKRQ DAZRQ, '160000' DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
+        from EfekTxnDtl
+        where KKRQ='%s'
+          and DtlSts='S' and BatFlg='S'
+        group by substr(DWBM, 1, 6), SFFS, FYLX, KKRQ for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
+    </DynSentence>
+
+    <DynSentence name="UpdTxnPch" desc="更新对账批次">
+      <Sentence>
+        update EfekTxnDtl
+        set DZPCLSH='%s'
+        where KKRQ='%s' and SFFS='%s' and FYLX='%s'
+          and DtlSts='S' and BatFlg='S'
+      </Sentence>
+      <Fields>DZPCLSH|ChkDat|SFFS|FYLX|</Fields>
     </DynSentence>
 
     <Attributes>
@@ -858,6 +870,9 @@
         </If>
         <Quote name="InitTranByNodNo"/>
         <Set>DZPCLSH=$FQFJYLSH</Set>
+        <Exec func="PUB:ExecSql" error="IGNORE">
+          <Arg name="sql" value="UpdTxnPch"/>
+        </Exec>
         <Set>PKGCNT=000001</Set>
         <Set>SvrCod=460450</Set>
         <Quote name="SendThirdOther"/>

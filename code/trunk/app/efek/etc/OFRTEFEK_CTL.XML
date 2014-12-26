@@ -750,29 +750,29 @@
       <Sentence>
         select distinct substr(DWBM, 1, 6) DWBM, SFFS, FYLX
         from EfekTxnDtl
-        where JSFJYRQ='%s' and DtlSts='S' and BatFlg='S' for read only
+        where KKRQ='%s' and DtlSts='S' and BatFlg='S' for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
     </DynSentence>
     <DynSentence name="GetTxnTol" desc="单笔业务对账表头汇总">
       <Sentence>
-        select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE,
-           DAZRQ, DAZSJ
+        select DZPCLSH PLDSXXBS, substr(DWBM, 1, 6) DWBM, SFFS, FYLX, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE,
+           KKRQ DAZRQ, '160000' DAZSJ
         from EfekTxnDtl
-        where JSFJYRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
-        group by substr(DWBM, 1, 6), SFFS, FYLX, JSFJYRQ, DAZRQ, DAZSJ for read only
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+        group by DZPCLSH, substr(DWBM, 1, 6), SFFS, FYLX, KKRQ for read only
       </Sentence>
       <Fields>ChkDat|DWBM|SFFS|FYLX|</Fields>
     </DynSentence>
     <DynSentence name="GetTxnDtl" desc="单笔业务对账明细">
       <Sentence>
         select FQFJYLSH JYLSH, substr(DWBM, 1, 6) DWBM, DFNY, JFH, JSHMC, KKYHDM,
-           KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, BZ ZY, '' SKRDM,
-           DAZRQ, DAZSJ
+           KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, '' ZY, '' SKRDM,
+           KKRQ DAZRQ, KKSJ DAZSJ
         from EfekTxnDtl
-        where JSFJYRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
       </Sentence>
-      <Fields>ChkDat|</Fields>
+      <Fields>ChkDat|DWBM|SFFS|FYLX|</Fields>
     </DynSentence>
 
     <Attributes>
@@ -801,8 +801,8 @@
         </If>
 
         <!--添加明细汇总行字段-->
-        <Set>PLDSXXBS= </Set>
         <Set>YHDM=0301</Set>
+        <Set>SKRDM=301_030600</Set>
         <Exec func="PUB:ReadRecord" error="IGNORE">
           <Args>
             <Arg name="SqlCmd" value="GetTxnTol"/>
@@ -836,7 +836,7 @@
         </System>
         <Delete>MD5FIL</Delete>
         <Delete>JSFWJMD5</Delete>
-        <Set>MD5FIL=STRCAT($DatFil,.MD5 )</Set>
+        <Set>MD5FIL=STRCAT($DatFil,.MD5)</Set>
         <Exec func="PUB:OpenFile">
           <Arg name="FileName" value="$MD5FIL"/>
           <Arg name="Mode" value="r"/>
@@ -855,6 +855,8 @@
         <Set>DZPCLSH=$FQFJYLSH</Set>
 
         <Set>PKGCNT=000001</Set>
+        <Set>WJMC=$DZWJMC</Set>
+        <Set>WJMD5=$JSFWJMD5</Set>
         <Set>SvrCod=460451</Set>
         <Quote name="SendThirdOther"/>
         <If condition="IS_NOEQUAL_STRING($TRspCd,000000)" desc="对账异常">

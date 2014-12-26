@@ -193,7 +193,7 @@
     <FlowCtrl>
 <!--协议判断-->
       <Exec func="PUB:ReadRecord" error="IGNORE">
-        <Arg name="SqlCmd" value="ChkCusAgt"></Arg>
+        <Arg name="SqlCmd" value="ChkCusAgt" />
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
         <Set>DtlSts=F</Set>
@@ -401,11 +401,11 @@
       <Exec func="PUB:ExecSql" error="IGNORE">
         <Arg name="sql" value="UpdBchRecByDskNo"/>
       </Exec>
-      <!--批量代扣交易完成后,触发批量代扣记账交易21-->
-      <Exec func="PUB:CallLocal">  
+      <!--21交易使用定时机制触发-->
+      <!--Exec func="PUB:CallLocal">  
         <Arg name="TxnCod"  value="460421"/>
         <Arg name="ObjSvr"  value="OFRTLCL1"/>
-      </Exec>
+      </Exec-->
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>
@@ -425,6 +425,8 @@
 
     <FlowCtrl>
       <Quote name="InitTranByDWBM"/>
+      <Set>KKRQ=$JSFJYRQ</Set>
+      <Set>KKSJ=$JSFJYSJ</Set>
 <!--协议判断-->
       <Quote name="ChkCusAgt"/>
 
