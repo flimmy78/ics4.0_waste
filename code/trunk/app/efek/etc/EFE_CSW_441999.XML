@@ -526,10 +526,33 @@
     <Item ActFlg="4" ZHLX="3"/>
   </Table>
 
+  <!--默认在数据库表里面的值是空,成功才是SC0000,所以要注释-->
 	<Table name="HRspCdToJYFHDM" desc="主机错误码转换为电力返回码">
     <Item HRspCd="000000" JYFHDM="00" desc="交易成功，未发生任何错误"/>
     <Item HRspCd="SC0000" JYFHDM="00" desc="交易成功，未发生任何错误"/>
-    <Default JYFHDM="79"/>
+    <!--Item HRspCd="" JYFHDM="1" desc="已部分扣款"/-->
+    <Item HRspCd="PD5100" JYFHDM="2" desc="余额不足"/>
+    <Item HRspCd="CD5200" JYFHDM="2" desc="余额不足"/>
+    <Item HRspCd="SD5200" JYFHDM="2" desc="余额不足"/>
+    <Item HRspCd="CD5205" JYFHDM="2" desc="余额不足"/>
+    <Item HRspCd="SD5205" JYFHDM="2" desc="余额不足"/>
+    <!--Item HRspCd="" JYFHDM="3" desc="账户不符"/>
+    <Item HRspCd="" JYFHDM="4" desc="账户已销"/>
+    <Item HRspCd="" JYFHDM="5" desc="坏账户及其他"/>
+    <Item HRspCd="" JYFHDM="6" desc="超出交易金额限制"/>
+    <Item HRspCd="" JYFHDM="7" desc="直接借记无授权记录"/>
+    <Item HRspCd="" JYFHDM="12" desc="非对私活期帐号"/>
+    <Item HRspCd="" JYFHDM="13" desc="储蓄非个人结算账户不支持外部账户转帐"/>
+    <Item HRspCd="" JYFHDM="14" desc="商户审核不通过"/>
+    <Item HRspCd="" JYFHDM="15" desc="查开户方原因"/>
+    <Item HRspCd="" JYFHDM="16" desc="不允许持卡人进行的交易"/>
+    <Item HRspCd="" JYFHDM="17" desc="受卡方与安全保密部门联系"/>
+    <Item HRspCd="" JYFHDM="18" desc="超出交易次数限制"/>
+    <Item HRspCd="" JYFHDM="19" desc="账户被临时锁定"/>
+    <Item HRspCd="" JYFHDM="20" desc="日期切换正在处理"/>
+    <Item HRspCd="" JYFHDM="21" desc="交易金额小于最低限额"/>
+    <Item HRspCd="" JYFHDM="22" desc="未与银行签约"/-->
+    <Default JYFHDM="99" desc="其他原因"/>
   </Table>
 
 	<Table name="RspCodToRspMsg" desc="主机错误码转换为电力返回码">

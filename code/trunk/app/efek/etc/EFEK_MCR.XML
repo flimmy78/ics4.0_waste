@@ -37,13 +37,13 @@
     <DynSentence name="GetCanData" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
         select LogNo, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo, DtlSts ODtlSts, TlrId, TrmNo, NodNo, BrNo
-          from EfekTxnDtl where ( LogNo='%s' or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ))  for read only
+          from EfekTxnDtl where ( ( LogNo='%s' and LogNo!='' ) or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ))  for read only
       </Sentence>
       <Fields>LogNo|OIFLAG|YJYLSH|XH</Fields>
     </DynSentence>
     <DynSentence name="UpdCanData" desc="根据业务唯一标志获取抹账信息">
       <Sentence>
-        update EfekTxnDtl set HTxnSt='C', DtlSts='C' where ( LogNo='%s' or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ) )
+        update EfekTxnDtl set HTxnSt='C', DtlSts='C' where ( ( LogNo='%s' and LogNo!='' ) or ( OIFlag='%s' and FQFJYLSH='%s' and XH='%s' ) )
       </Sentence>
       <Fields>LogNo|OIFLAG|YJYLSH|XH</Fields>
     </DynSentence>
@@ -64,7 +64,7 @@
 <!--协议表【EfekCusAgt】访问操作-->
     <DynSentence name="ChkCusAgt" desc="根据单位编码和缴费号获取记录">
       <Sentence>
-        select ActFlg from EfekCusAgt where DWBM='%s' and JFH='%s' and QYYHZH='%s'
+        select ActFlg from EfekCusAgt where DWBM like '%s%%' and JFH='%s' and QYYHZH='%s'
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
@@ -375,7 +375,7 @@
         <Set>VchNo=00000000</Set>
         <Set>BilDat=$YHJYRQ</Set>
         <Set>CcyCod=CNY</Set>
-        <Set>TxnAmt=FABSAMT($SKJE,15)</Set>
+        <Set>TxnAmt=FABSAMT(AMTDELZERO($SKJE),15)</Set>
         <Set>AccMod=1</Set>
         <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
         <Set>ActNod=SUBSTR($InAcNo,1,6)</Set>
@@ -396,7 +396,7 @@
         <Set>PayMod=0</Set>
         <Set>TActNo=$InAcNo</Set>
         <Set>CcyCod=CNY</Set>
-        <Set>TxnAmt=FABSAMT($SKJE,15)</Set>
+        <Set>TxnAmt=FABSAMT(AMTDELZERO($SKJE),15)</Set>
         <Set>CcyTyp=1</Set>
         <Set>VchChk=0</Set>
         <Set>ActSeq=SUBSTR($TActNo,14,5)</Set>
@@ -421,7 +421,7 @@
         <Set>ActSqn=SUBSTR($InAcNo,14,5)</Set>
         <Set>ActNod=SUBSTR($InAcNo,1,6)</Set>
         <Set>StlMod=07</Set>
-        <Set>AthAmt=$SKJE</Set>
+        <Set>AthAmt=FABSAMT(AMTDELZERO($SKJE),15)</Set>
         <Set>VInTlr=$TlrId</Set>
         <Set>VRgNod=STRCAT(SUBSTR($BrNo,1,3),800)</Set>
         <Set>HSubCd=001</Set>
@@ -527,7 +527,7 @@
       <Arg name="FieldName" value="LogNo"/>
     </Exec>
     <If condition="INTCMP(~RetCod,3,0)" desc="不存在">
-      <Set>LogNo= </Set>
+      <Set>OIFlag= </Set>
     </If>
     <Exec func="PUB:IsExistNode" error="IGNORE">
       <Arg name="FieldName" value="OIFlag"/>
@@ -563,14 +563,16 @@
             <Return/>
           </Case>
           <Case value="b" desc="正在记账"/>
-          <Case value="B" desc="记账成功">
+          <Case value="B" desc="记账成功"/>
+          <Case value="s" desc="正在成功"/>
+          <Case value="S" desc="发送成功">
             <Set>RspMsg=STRCAT(原记录【,$LogNo,】准备抹账)</Set>
             <Break/>
           </Case>
           <Default>
             <Set>MsgTyp=E</Set>
             <Set>RspCod=EFE999</Set>
-            <Set>RspMsg=STRCAT(原记录【,$LogNo,】状态,【,$ODtlSts】未明，不进行抹账)</Set>
+            <Set>RspMsg=STRCAT(原记录【,$LogNo,】状态,【,$ODtlSts,】未明，不进行抹账)</Set>
             <Return/>
           </Default>
         </Switch>

@@ -139,15 +139,6 @@
       </Sentence>
       <Fields>OIFlag|ActDat|TckNo|</Fields>
     </DynSentence>
-<!--
-    <DynSentence name="GetCanData1" desc="根据交易流水号获取抹账资料">
-      <Sentence>
-        select DtlSts, LogNo, TlrId, HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo
-          from EfekTxnDtl where OIFlag='%s' and FQFJYLSH='%s' and XH='%s' for read only
-      </Sentence>
-      <Fields>OIFlag|YJYLSH|XH|</Fields>
-    </DynSentence>
--->
     <FlowCtrl>
 <!--程序需要补充，当第三方抹账成功，但本地抹账失败的处理判断-->
 <!--程序需要补充，当第三方抹账成功，但本地抹账失败的处理判断-->
@@ -162,9 +153,6 @@
         </Case>
         <Case value="2" desc="抹账">
           <Quote name="InitTranByDWBM"/>
-          <Exec func="PUB:ReadRecord">
-            <Arg name="SqlCmd" value="GetCanData"/>
-          </Exec>
           <Set>WDMC=@BCFG.BrNam</Set>
           <Set>MYSY=0</Set>
           <Set>MYCSXL= </Set>
