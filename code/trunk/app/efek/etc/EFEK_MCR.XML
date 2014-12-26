@@ -129,7 +129,6 @@
     <Set>YHSFLSH=STRCAT(0301,$YHJYRQ,SUBSTR($BrNo,1,3),$SelVal)</Set>
   </Macro>
 
-
   <Macro name="CreatYHWJMC" desc="产生银行文件序号">
     <Exec func="PUB:nGetPubSeqNo">
       <Arg name="SeqNam" value="EFE:FILSEQ"/>
@@ -137,6 +136,17 @@
       <Arg name="Len"    value="4"/>
       <Arg name="CycCnd" value="D"/>
     </Exec>
+  </Macro>
+
+
+  <Macro name="CreatDZWYBSM" desc="产生对账唯一标识码">
+    <Exec func="PUB:nGetPubSeqNo">
+      <Arg name="SeqNam" value="EFE:DZWYBSM"/>
+      <Arg name="SeqCnt" value="1"/>
+      <Arg name="Len"    value="9"/>
+      <Arg name="CycCnd" value="Y"/>
+    </Exec>
+    <Set>YHSFLSH=STRCAT(0301,$DWBM,$YHJYRQ,$SFFS,$SelVal)</Set>
   </Macro>
 
 
@@ -513,6 +523,12 @@
 
 
   <Macro name="CanProc" desc="抹账">
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="LogNo"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="不存在">
+      <Set>LogNo= </Set>
+    </If>
     <Exec func="PUB:IsExistNode" error="IGNORE">
       <Arg name="FieldName" value="OIFlag"/>
     </Exec>

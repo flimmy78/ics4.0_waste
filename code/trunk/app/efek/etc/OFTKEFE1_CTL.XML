@@ -277,7 +277,7 @@
     <DynSentence name="GetBchRec" desc="获取扣款处理完成的交易">
       <Sentence>
   			select OIFLAG, FQFJYLSH, FQFJYRQ, FQFJYSJ, BrNo,
-  			       PLDSXXBS, DWBM,YHDM,HBFH,SFFS,FYLX,ZBS ,ZJE ,DGBZ,ZJE ,CGBS, CGJE, SBBS, SBJE, SFY from EfekBchRec
+  			       PLDSXXBS, DWBM,YHDM,HBFH,SFFS,FYLX,ZBS ,ZJE ,DGBZ,ZJE ,CGBS, CGJE, SBBS, SBJE, SFY, FQFWJMC from EfekBchRec
   			 where RecSts='B' and DskNo='%s' for read only
       </Sentence>
       <Fields>DskNo|</Fields>
@@ -320,7 +320,8 @@
         <Set>TotNum=1</Set>
         <Quote name="CreatYHJYLSH"/>
         <Quote name="CreatYHWJMC"/>
-        <Set>YHWJMC=STRCAT(PTFH_,$KHBZ,0301,$DWBM,GETDATETIME(YYYYMMDD),$SelVal,.txt)</Set>
+        <!--Set>YHWJMC=STRCAT(PTFH_,$KHBZ,0301,$DWBM,GETDATETIME(YYYYMMDD),$SelVal,.txt)</Set-->
+        <Set>YHWJMC=REPSTR($FQFWJMC,PTFS,PTFH)</Set>
         <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekSndDir,$YHWJMC)</Set>
         <Exec func="PUB:ExportFromDB">
           <Args>
@@ -795,7 +796,7 @@
 
 
 
-  <Transaction code="460450" desc="银行对总账服务【GROUP模式】">
+  <Transaction code="460450" desc="银行对总账服务【游标模式】">
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetBchRec" desc="批量业务对账">
       <Sentence>
@@ -808,99 +809,10 @@
 
     <DynSentence name="GetTxnDtl" desc="单笔业务对账">
       <Sentence>
-        select FQFJYLSH DZPCLSH, DWBM, SFFS, FYLX, JSFJYRQ DAZRQ, JSFJYSJ DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
+        select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, JSFJYRQ DAZRQ, '140000' DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
           from EfekTxnDtl
          where JSFJYRQ='%s' and DtlSts='S' and BatFlg='S'
-      group by FQFJYLSH, DWBM, SFFS, FYLX, JSFJYRQ, JSFJYSJ for read only
-      </Sentence>
-      <Fields>ChkDat|</Fields>
-    </DynSentence>
-
-    <Attributes>
-      <Attribute name="nodatabase" value="2"/>
-    </Attributes>
-
-    <FlowCtrl>
-      <Exec func="PUB:IsExistNode" error="IGNORE">
-        <Arg name="FieldName" value="ChkDat"/>
-      </Exec>
-      <If condition="INTCMP(~RetCod,3,0)" desc="非手工">
-        <Set>ChkDat=CALCDATE($ActDat,-,d,1)</Set>
-      </If>
-<!--批量类业务对账-->
-<!--批量类业务对账-->
-<!--批量类业务对账-->
-      <Exec func="PUB:QueryInGroup">
-        <Arg name="SqlCmd" value="GetBchRec"/>
-        <Arg name="RecordName" value="Rec1"/>
-      </Exec>
-      <Set>Cnt=1</Set>
-      <Set>PKGCNT=$RecNum</Set>
-      <While condition="INTCMP($Cnt,2,$RecNum)">
-        <Delete>ROOT.JSFJYLSH</Delete>
-        <Set>JSFJYLSH_Nam=STRCAT(ROOT.Rec1_,$Cnt,.JSFJYLSH)</Set>
-        <Quote name="InitTranByDWBM"/>
-        <Exec func="PUB:SetValue">
-          <Arg name="FieldName" value="$JSFJYLSH_Nam"/>
-          <Arg name="FieldValue" value="$ROOT.JSFJYLSH"/>
-        </Exec>
-        <Set>Cnt=ADD($Cnt,1)</Set>
-      </While>
-<!--单笔类业务对账-->
-<!--单笔类业务对账-->
-<!--单笔类业务对账-->
-      <Exec func="PUB:QueryInGroup">
-        <Arg name="SqlCmd" value="GetTxnDtl"/>
-        <Arg name="RecordName" value="Rec2"/>
-      </Exec>
-      <Set>Cnt=1</Set>
-      <Set>PKGCNT=ADD($PKGCNT,$RecNum)</Set>
-      <While condition="INTCMP($Cnt,2,$RecNum)">
-        <Delete>ROOT.JSFJYLSH</Delete>
-        <Set>YHJYLSH_Nam=STRCAT(ROOT.Rec2_,$Cnt,.YHJYLSH)</Set>
-        <Quote name="InitTranByDWBM"/>
-        <Exec func="PUB:SetValue">
-          <Arg name="FieldName" value="$YHJYLSH_Nam"/>
-          <Arg name="FieldValue" value="$ROOT.YHJYLSH"/>
-        </Exec>
-        <Set>Cnt=ADD($Cnt,1)</Set>
-      </While>
-      <Set>SvrCod=460450</Set>
-      <Quote name="SendThirdOther"/>
-      <If condition="IS_NOEQUAL_STRING($TRspCd,000000)" desc="对账异常">
-        <Set>MsgTyp=E</Set>
-        <Set>RspCod=EFE999</Set>
-        <If condition="INTCMP(STRLEN(TRIM($CWTSXX,all)),3,0)">
-          <Set>RspMsg=电网方返回未知错误</Set>
-        </If>
-        <Else>
-          <Set>RspMsg=$CWTSXX</Set>
-        </Else>
-      </If>
-      <Set>MsgTyp=N</Set>
-      <Set>RspCod=000000</Set>
-    </FlowCtrl>
-  </Transaction>
-
-
-
-  <Transaction code="460450OLD" desc="银行对总账服务【游标模式】">
-    <Quote name="EfeSqlLst"/>
-    <DynSentence name="GetBchRec" desc="批量业务对账">
-      <Sentence>
-        select PLDSXXBS DZPCLSH, DWBM, SFFS, FYLX, CGBS ZBS, CGJE ZJE, YHJYRQ DAZRQ, YHJYSJ DAZSJ
-          from EfekBchRec
-         where YHJYRQ='%s' and RecSts='S' and OIFlag='I' for read only
-      </Sentence>
-      <Fields>ChkDat|</Fields>
-    </DynSentence>
-
-    <DynSentence name="GetTxnDtl" desc="单笔业务对账">
-      <Sentence>
-        select JYLSH DZPCLSH, DWBM, SFFS, FYLX, YHJYRQ DAZRQ, YHJYSJ DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
-          from EfekTxnDtl
-         where YHJYRQ='%s' and DtlSts='S' and BatFlg='S'
-      group by JYLSH, DWBM, SFFS, FYLX, YHJYRQ, YHJYSJ for read only
+      group by substr(DWBM, 1, 6), SFFS, FYLX, JSFJYRQ for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
     </DynSentence>
@@ -927,10 +839,11 @@
         <Exec func="PUB:FetchCursor" error="IGNORE">
           <Arg name="CursorName" value="cur_bchrec"/>
         </Exec>
-        <If condition="~RetCod=100">
+        <If condition="INTCMP(~RetCod,4,0)">
           <Break/>
         </If>
-        <Quote name="InitTranByDWBM"/>
+        <Quote name="InitTranByNodNo"/>
+        <Set>PKGCNT=000001</Set>
         <Set>SvrCod=460450</Set>
         <Quote name="SendThirdOther"/>
         <If condition="IS_NOEQUAL_STRING($TRspCd,000000)" desc="对账异常">
@@ -952,10 +865,12 @@
         <Exec func="PUB:FetchCursor" error="IGNORE">
           <Arg name="CursorName" value="cur_txndtl"/>
         </Exec>
-        <If condition="~RetCod=100">
+        <If condition="INTCMP(~RetCod,4,0)">
           <Break/>
         </If>
-        <Quote name="InitTranByDWBM"/>
+        <Quote name="InitTranByNodNo"/>
+        <Set>DZPCLSH=$FQFJYLSH</Set>
+        <Set>PKGCNT=000001</Set>
         <Set>SvrCod=460450</Set>
         <Quote name="SendThirdOther"/>
         <If condition="IS_NOEQUAL_STRING($TRspCd,000000)" desc="对账异常">
@@ -970,7 +885,6 @@
       <Set>RspCod=000000</Set>
     </FlowCtrl>
   </Transaction>
-
 
 
   <Transaction code="460451" desc="银行对明细账服务">

@@ -1,4 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
+<!--
+<Application name="EFE" server="OFTKEFE1" pre_dll="dll/pre_efek.so" pre_func="efek_pre" spe_dll="dll/efek_pfa.so" spe_func="efek_spe" timeout="1200">
+-->
 <Application name="EFE">
   <CodeSwitching>
     <Table name="SvrCodToYWBSH" file="etc/EFE_CSW_441999.XML">
@@ -821,7 +824,12 @@
         <Item name="DAZSJ"  length=" 6" desc="´ïÕËÊ±¼ä"/>
         <Item name="WJS"    length=" 2" desc="Ã÷Ï¸ÎÄ¼þ¸öÊý"/>
         <Item name="WJLX"   length=" 2" desc="ÎÄ¼þÀàÐÍ"/>
-        <Group name="Rec" repeat_name="WJS">
+        <Group name="Rec1" necessary="no">
+          <Item name="XH"     length=" 2" desc="ÐòºÅ"/>
+          <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
+          <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
+        </Group>
+        <Group name="Rec2" necessary="no">
           <Item name="XH"     length=" 2" desc="ÐòºÅ"/>
           <Item name="WJMC"   length="36" desc="ÎÄ¼þÃû³Æ"/>
           <Item name="WJMD5"  length="32" desc="ÎÄ¼þMD5"/>
