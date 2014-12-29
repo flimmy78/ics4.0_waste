@@ -559,40 +559,58 @@
   </Transaction>
 
 
-  <Transaction code="460441" desc="银行发起批量查询欠费客户请求">
+  <Transaction code="460441" desc="银行发起批量查询欠费客户请求【交易由定时机制处理】">
+    <DynSentence name="GetDWBM" desc="获取单位代码">
+        select distinct DWBM from EfekCusAgt where ( DWDM='%s' or '%s' ) and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
+      </Sentence>
+      <Fields>DWDM|DWDM|</Fields>
+    </DynSentence>
+
     <DynSentence name="GetCusAgt" desc="根据单位代码获取签约客户信心">
       <Sentence>
-        select DWBM, JFH from EfekCusAgt where DWDM='%s' and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
+        select DWBM, JFH, %s DFNY from EfekCusAgt where DWDM='%s' and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
       </Sentence>
-      <Fields>DWDM|</Fields>
+      <Fields>DWDM|DFNY|</Fields>
     </DynSentence>
 
     <FlowCtrl>
+      <Set>DFNY=SUBSTR(CALCDATE(GETDATETIME(YYYYMMDD),-,m,1),1,6)</Set>
+      <Exec func="PUB:OpenCursor" error="IGNORE">
+        <Arg name="sql" value="GetDWBM"/>
+        <Arg name="CursorName" value="cur_bchrec"/>
+      </Exec>
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE"/>
+        <If condition="INTCMP(~RetCod,4,0)">
+          <Break/>
+        </If>
+        <Set>BrNo=999999</Set>
 <!--获取文件序号-->
-      <Exec func="PUB:nGetPubSeqNo">
-        <Arg name="SeqNam" value="EFE:FILSEQ"/>
-        <Arg name="SeqCnt" value="1"/>
-        <Arg name="Len"    value="4"/>
-        <Arg name="CycCnd" value="D"/>
-      </Exec>
+        <Exec func="PUB:nGetPubSeqNo">
+          <Arg name="SeqNam" value="EFE:FILSEQ"/>
+          <Arg name="SeqCnt" value="1"/>
+          <Arg name="Len"    value="4"/>
+          <Arg name="CycCnd" value="D"/>
+        </Exec>
 <!--生成银行查询客户信息文件-->
-      <Set>FilNam=STRCAT(PL0301,$DWBM,$ActDat,$SelVal,.txt)</Set>
-      <Set>LclDir=$EfeSndDir</Set>
-      <Set>DatFil=STRCAT( $LclDir,$FilNam )</Set>
-      <Exec func="PUB:ExportFromDB">
-        <Args>
-          <Arg name="FormatName" value="EfekCusAgt"/>
-          <Arg name="FileName"   value="$DatFil"/>
-          <Arg name="TableName"  value="EfekCusAgt"/>
-          <Arg name="SqlName"    value="GetCusAgt"/>
-        </Args>
-      </Exec>
+        <Set>FilNam=STRCAT(PL0301,$DWBM,$ActDat,$SelVal,.txt)</Set>
+        <Set>LclDir=$EfeSndDir</Set>
+        <Set>DatFil=STRCAT( $LclDir,$FilNam )</Set>
+        <Exec func="PUB:ExportFromDB">
+          <Args>
+            <Arg name="FormatName" value="EfekCusAgt"/>
+            <Arg name="FileName"   value="$DatFil"/>
+            <Arg name="TableName"  value="EfekCusAgt"/>
+            <Arg name="SqlName"    value="GetCusAgt"/>
+          </Args>
+        </Exec>
 <!--将文件发到电力-->
-      <System command="EfeFilSend.sh" error="IGNORE">
-        <Arg name="FilNam" value="$FilNam"/>
-      </System>
-      <Set>SvrCod=460441</Set>
-      <Quote name="SendThirdOther"/>
+        <System command="EfeFilSend.sh" error="IGNORE">
+          <Arg name="FilNam" value="$FilNam"/>
+        </System>
+        <Set>SvrCod=460441</Set>
+        <Quote name="SendThirdOther"/>
+      </While>
     </FlowCtrl>
   </Transaction>
 

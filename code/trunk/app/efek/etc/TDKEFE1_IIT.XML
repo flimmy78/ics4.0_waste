@@ -47,7 +47,6 @@
       <Item name="PKGCNT" length=" 6" desc="子包个数"/>
       <AddItem name="TRspCd" expression="ADDCHAR($JYFHDM,6,0,1)" desc="返回码"/>
     </Macro>
-
     <Macro name="SndErrHead" desc="往账交易异常应答报文头">
       <Item name="CWTSXX"  length="256" desc="错误提示信息"/>
       <Item name="CWFSRQ"  length="  8" desc="错误发生日期"/>
@@ -55,7 +54,6 @@
       <Item name="CWFSJYM" length="  2" desc="错误发生交易码"/>
       <Item name="SQLCODE" length="  7" desc="SQL返回码"/>
     </Macro>
-
     <Macro name="SndStdRsp" desc="往账交易应答标准回应格式">
       <Quote name="SndRspHead"/>
       <Switch expression="$JYFHDM">
@@ -68,7 +66,14 @@
         </Default>
       </Switch>
     </Macro>
-
+    <Macro name="SndTxnKey" desc="发起方交易键值">
+      <Item name="FQFJYLSH" length="24" desc="交易流水号"/>
+      <Item name="FQFJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="FQFJYSJ"  length=" 6" desc="交易时间"/>
+    </Macro>
+<!--以下是作为接收方内容-->
+<!--以下是作为接收方内容-->
+<!--以下是作为接收方内容-->
     <Macro name="RcvReqHead" desc="来账业务请求报文头">
       <Item name="SJBCD"  length="10" desc="数据包长度"/>
       <Item name="MYSY"   length=" 3" desc="密钥索引"/>
@@ -114,7 +119,6 @@
       <Item name="YSBZ"   length=" 1" desc="压缩标志"/>
       <Item name="PKGCNT" length=" 6" value="000001" desc="子包个数"/>
     </Macro>
-
     <Macro name="RcvErrHead" desc="来账交易异常应答报文头">
       <Item name="CWTSXX"  length="256" expression="$RspMsg" desc="错误提示信息"/>
       <Item name="CWFSRQ"  length="  8" expression="$JYFSRQ" desc="错误发生日期"/>
@@ -122,7 +126,6 @@
       <Item name="CWFSJYM" length="  2" expression="$JYM" desc="错误发生交易码"/>
       <Item name="SQLCODE" length="  7" desc="SQL返回码"/>
     </Macro>
-
     <Macro name="RcvStdRsp" desc="来账交易应答标准回应格式">
       <PackItem name="TmpDat">
         <Quote name="RcvRspHead"/>
@@ -140,6 +143,11 @@
         </Switch>
       </PackItem>
       <Item name="TmpDat" head_len="10" include_len="no"/>
+    </Macro>
+    <Macro name="RcvTxnKey" desc="接收方交易键值">
+      <Item name="JSFJYLSH" length="24" desc="交易流水号"/>
+      <Item name="JSFJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="JSFJYSJ"  length=" 6" desc="交易时间"/>
     </Macro>
   </Define>
 </Config>

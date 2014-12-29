@@ -767,12 +767,12 @@
     <DynSentence name="GetTxnDtl" desc="单笔业务对账明细">
       <Sentence>
         select FQFJYLSH JYLSH, substr(DWBM, 1, 6) DWBM, DFNY, JFH, JSHMC, KKYHDM,
-           KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, '' ZY, '' SKRDM,
+           KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, '' ZY, '%s' SKRDM, '%s' DZWYBSM,
            KKRQ DAZRQ, KKSJ DAZSJ
         from EfekTxnDtl
         where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
       </Sentence>
-      <Fields>ChkDat|DWBM|SFFS|FYLX|</Fields>
+      <Fields>SKRDM|DZWYBSM|ChkDat|DWBM|SFFS|FYLX|</Fields>
     </DynSentence>
 
     <Attributes>
@@ -803,6 +803,7 @@
         <!--添加明细汇总行字段-->
         <Set>YHDM=0301</Set>
         <Set>SKRDM=301_030600</Set>
+        <Quote name="CreatDZWYBSM"/>
         <Exec func="PUB:ReadRecord" error="IGNORE">
           <Args>
             <Arg name="SqlCmd" value="GetTxnTol"/>
@@ -815,7 +816,7 @@
           <Set>RspMsg=统计明细记录总数出错</Set>
           <Break/>
         </If>
-        <Set>DZWJMC=STRCAT(DZ,$SFFS,$FYLX,_0301,$DWBM,$QRYDAT,001.txt)</Set>
+        <Set>DZWJMC=STRCAT(DZ,$SFFS,$FYLX,_0301,$DWBM,00,$ChkDat,001.txt)</Set>
         <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekSndDir,$DZWJMC)</Set>
         <Exec func="PUB:ExportFromDB">
           <Args>
@@ -865,7 +866,7 @@
         </If>
       </While>
       <Exec func="PUB:CloseCursor" error="IGNORE">
-        <Arg name="CursorName" value="cur_txndtl"/>
+        <Arg name="CursorName" value="cur_txntyp"/>
       </Exec>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>

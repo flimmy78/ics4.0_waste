@@ -64,7 +64,7 @@
 <!--协议表【EfekCusAgt】访问操作-->
     <DynSentence name="ChkCusAgt" desc="根据单位编码和缴费号获取记录">
       <Sentence>
-        select ActFlg from EfekCusAgt where DWBM like '%s%%' and JFH='%s' and QYYHZH='%s'
+        select ActFlg from EfekCusAgt where DWBM = '%s' and JFH='%s' and QYYHZH='%s'
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
@@ -146,7 +146,7 @@
       <Arg name="Len"    value="9"/>
       <Arg name="CycCnd" value="Y"/>
     </Exec>
-    <Set>YHSFLSH=STRCAT(0301,$DWBM,$YHJYRQ,$SFFS,$SelVal)</Set>
+    <Set>DZWYBSM=STRCAT(0301,$DWBM,$YHJYRQ,$SFFS,$SelVal)</Set>
   </Macro>
 
 

@@ -47,19 +47,6 @@
 <!--支付类交易-->
 <!--支付类交易-->
 <!--支付类交易-->
-  <Transaction service="460441" code="460441" log_switch='5' desc="银行发起批量查询欠费客户请求">
-    <Request>
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" expression="DELSPACE($DWBM,all)" desc="单位编码"/>
-      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Quote name="EFE_RES"/>
-    </Response>
-  </Transaction>
-
-
   <Transaction service="460410" code="460410" log_switch='5' desc="银行发起欠费查询交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
@@ -139,7 +126,9 @@
       <Item name="VchTyp" length=" 3" desc="凭证种类"/>
       <Item name="VchNo"  length=" 8" desc="凭证号码"/>
       <Item name="BilDat" length=" 8" desc="凭证日期"/>
+      <Item name="PinBlk"  length="20" necessary="no"/><!--密码-->
       <CopyItem dest_name="KKZH" sour_name="BokAct" desc="扣款账户"/>
+      <AddItem name="TxnSrc" value="TRM" desc="渠道标识"/>
       <AddItem name="OIFlag" value="O" desc="发起方向"/>
       <AddItem name="BatFlg" value="S" desc="批量标识"/>
       <AddItem name="XH" value="0000000001" desc="明细序号"/>
@@ -184,7 +173,6 @@
       </Switch>
     </Response>
   </Transaction>
-
 
 
   <Transaction service="460412" code="460412" log_switch='5' desc="银行方发起单笔当日代收抹账业务请求">
@@ -275,50 +263,48 @@
   </Transaction>
 
 
-  <Transaction service="460443" code="460443" log_switch='5' desc="银行方发起查询客户信息请求">
+  <Transaction service="460413" code="460413" log_switch='5' desc="银行方发起存入预付款交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="JFH" length="20" desc="缴费号"/>
+      <Item name="FYLX"  length=" 3" desc="费用类型"/>
+      <Item name="SFFS"  length=" 3" desc="收费方式"/>
+      <Item name="DWBM"  length=" 8" desc="单位编码"/>
+      <Item name="JFH"   length="20" desc="缴费号"/>
+      <Item name="FKFS"  length=" 1" desc="付款方式"/>
+      <Item name="CRYFK" length="16" desc="存入预付款"/>
+      <Item name="BZSM"  length="128" desc="备注说明"/>
+      <Item name="ActFlg" length=" 1" desc="账户种类"/>
+      <Item name="AVchTp" length=" 3" desc="账户凭证种类"/>
+      <Item name="VchCod" length=" 8" desc="存折号码"/>
+      <Item name="BokAct" length="21" expression="DELSPACE($BokAct,all)" desc="记帐帐号"/>
+      <Item name="KKZHMC" length="128" desc="扣款账户名称"/>
+      <Item name="BActSq" length=" 5" desc="一本通账户序号"/>
+      <Item name="RvsNo"  length="12" desc="销帐号"/>
+      <Item name="VchTyp" length=" 3" desc="凭证种类"/>
+      <Item name="VchNo"  length=" 8" desc="凭证号码"/>
+      <AddItem name="TxnSrc" value="TRM" desc="渠道标识"/>
+      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+      <AddItem name="BatFlg" value="S" desc="批量标识"/>
+      <AddItem name="XH" value="0000000001" desc="明细序号"/>
+      <CopyItem dest_name="KKZH" sour_name="BokAct"/>
+      <CopyItem dest_name="SKJE" sour_name="CRYFK"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="EFE_RES"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460414" code="460414" log_switch='5' desc="银行方发起批量托收【含跨行】记账交易请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <AddItem name="TxnSrc" value="TRM" desc="渠道标识"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length=" 2" value="46"/>
-            <Item name="OFmtCd" length=" 3" value="999"/>
-            <Item name="DWBM"   length=" 8" desc="单位编码"/>
-            <Item name="JFH"    length="20" desc="缴费号"/>
-            <Item name="JSHMC"  length="64" desc="结算户名称"/>
-            <Item name="YDDZ"   length="128" desc="用电地址"/>
-            <Item name="QYZT"   length=" 1"  desc="签约状态"/>
-            <Item name="YQYYHDM" length=" 4" desc="原签约银行代码"/>
-            <Item name="YQYZH"   length="32" desc="原签约账户"/>
-            <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
-            <Item name="YJYRQ"   length=" 8" desc="交易日期"/>
-            <Item name="YJYSJ"   length=" 6" desc="交易时间"/>
-            <Item name="BZ"     length="128" desc="备注"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC"/>
-            <Item name="OFmtCd" length="3" value="D04"/>
-            <Item name="RspCod" length="6"/>
-            <Item name="InPos"  length="4" value="0001"/>
-            <Item name="RspMsg" length="128"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Default>
-          <Item name="BillText" deli_asc="-1"/>
-          <Break/>
-        </Default>
-      </Switch>
+      <Quote name="EFE_RES"/>
     </Response>
   </Transaction>
 
@@ -452,13 +438,10 @@
   </Transaction>
 
 
-  <Transaction service="460442" code="460442" log_switch='5' desc="银行方发起查询托收【含跨行】客户电费交易请求">
+  <Transaction service="460441" code="460441" log_switch='5' desc="银行发起批量查询欠费客户请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" desc="单位编码"/>
-      <Item name="SFFS" length="3" desc="收费方式"/>
-      <Item name="FYLX" length="3" desc="费用类型"/>
-      <Item name="CXRQ" length="8" desc="查询日期"/>
+      <Item name="DWBM" length="8" expression="DELSPACE($DWBM,all)" desc="单位编码"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
@@ -468,15 +451,110 @@
   </Transaction>
 
 
-
-  <Transaction service="460414" code="460414" log_switch='5' desc="银行方发起批量托收【含跨行】记账交易请求">
+  <Transaction service="460442" code="460442" log_switch='5' desc="银行方发起查询托收【含跨行】客户电费交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="DWBM" length="8" desc="单位编码"/>
+      <Item name="SFFS" length="3" desc="收费方式"/>
+      <Item name="FYLX" length="3" desc="费用类型"/>
+      <Item name="CXRQ" length="8" desc="查询日期"/>
+      <AddItem name="TxnSrc" value="TRM" desc="渠道标识"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
       <Quote name="EFE_RES"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460443" code="460443" log_switch='5' desc="银行方发起查询客户信息请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="JFH" length="20" desc="缴费号"/>
+      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length=" 2" value="46"/>
+            <Item name="OFmtCd" length=" 3" value="999"/>
+            <Item name="DWBM"   length=" 8" desc="单位编码"/>
+            <Item name="JFH"    length="20" desc="缴费号"/>
+            <Item name="JSHMC"  length="64" desc="结算户名称"/>
+            <Item name="YDDZ"   length="128" desc="用电地址"/>
+            <Item name="QYZT"   length=" 1"  desc="签约状态"/>
+            <Item name="YQYYHDM" length=" 4" desc="原签约银行代码"/>
+            <Item name="YQYZH"   length="32" desc="原签约账户"/>
+            <Item name="YQYZHMC" length="128" desc="原签约账号名称"/>
+            <Item name="YJYRQ"   length=" 8" desc="交易日期"/>
+            <Item name="YJYSJ"   length=" 6" desc="交易时间"/>
+            <Item name="BZ"     length="128" desc="备注"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC"/>
+            <Item name="OFmtCd" length="3" value="D04"/>
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="128"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Default>
+          <Item name="BillText" deli_asc="-1"/>
+          <Break/>
+        </Default>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460444" code="460444" log_switch='5' desc="银行方发起查询客户基本信息请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="JFH" length="20" desc="缴费号"/>
+      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp">
+        <Case value="N">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length=" 2" value="36" />
+            <Item name="OFmtCd" length=" 3" value="X01" />
+            <Item name="DWBM"   length=" 8" desc="单位编码"/>
+            <Item name="JFH"    length="20" desc="缴费号"/>
+            <Item name="QFJE"   length="16" desc="欠费金额"/>
+            <Item name="YHMC"   length="64" desc="用户名称"/>
+            <Item name="YDDZ"  length="128" desc="用电地址"/>
+            <Item name="BZSM"  length="128" desc="备注说明"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="E">
+          <PackItem name="TmpDat">
+            <Item name="ApCode" length="2" value="SC" />
+            <Item name="OFmtCd" length="3" value="D04" />
+            <Item name="RspCod" length="6"/>
+            <Item name="InPos"  length="4" value="0001"/>
+            <Item name="RspMsg" length="128"/>
+          </PackItem>
+          <Item name="TmpDat" head_len="4" include_len="yes"/>
+          <Break/>
+        </Case>
+        <Case value="A">
+          <Item name="BillText" deli_asc="-1" />
+          <Break/>
+        </Case>
+      </Switch>
     </Response>
   </Transaction>
 
@@ -533,6 +611,34 @@
   </Transaction>
 
 
+  <Transaction service="460450" code="460450" log_switch="5" desc="银行方发起对总账交易请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="DWBM" length="8" desc="单位编码"/>
+      <Item name="SFFS" length="3" desc="收费方式"/>
+      <Item name="FYLX" length="3" desc="费用类型"/>
+      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="EFE_RES"/>
+    </Response>
+  </Transaction>
+
+
+  <Transaction service="460451" code="460451" log_switch='5' desc="银行方发起对明细账交易请求">
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="DWBM"   length=" 8" desc="单位编码"/>
+      <Item name="SFFS"   length=" 3" desc="收费方式"/>
+      <Item name="FYLX"   length=" 3" desc="费用类型"/>
+      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Quote name="EFE_RES"/>
+    </Response>
+  </Transaction>
 
 
   <Transaction service="460460" code="460460" log_switch='5' desc="银行方发起发票打印交易请求">
@@ -605,32 +711,6 @@
   </Transaction>
 
 
-  <Transaction service="460463" code="460463" log_switch='5' desc="银行方发起返回发票打印结果通知请求">
-    <Request>
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="OJYLSH" length=" 4" desc="交易流水号"/>
-      <Item name="OJYRQ"  length=" 8" desc="交易日期"/>
-      <Item name="OJYSJ"  length=" 6" desc="交易时间"/>
-      <Item name="DYRQ"   length=" 8" desc="打印日期"/>
-      <Item name="DYSJ"   length=" 6" desc="打印时间"/>
-      <Item name="DYCZRY" length="20" desc="打印操作人员"/>
-      <Item name="PJLX"   length=" 2" desc="票据类型"/>
-      <Item name="FPDM"    length="32" desc="发票代码"/>
-      <Item name="PJHM"    length="16" desc="票据号码"/>
-      <Item name="DWBM"    length=" 8" desc="单位编码"/>
-      <Item name="DFNY"    length=" 6" desc="电费年月"/>
-      <Item name="JFH"    length="20" desc="缴费号"/>
-      <Item name="DZBZ"   length=" 1" desc="打印标志"/>
-      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Quote name="EFE_RES"/>
-    </Response>
-  </Transaction>
-
-
-
   <Transaction service="460461" code="460461" log_switch='0' desc="银行发起发票作废交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
@@ -652,7 +732,6 @@
       <Quote name="EFE_RES"/>
     </Response>
   </Transaction>
-
 
 
   <Transaction service="460462" code="460462" log_switch='0' desc="银行发起发票查询请求">
@@ -731,104 +810,23 @@
   </Transaction>
 
 
-
-  <Transaction service="460450" code="460450" log_switch="5" desc="银行方发起对总账交易请求">
+  <Transaction service="460463" code="460463" log_switch='5' desc="银行方发起返回发票打印结果通知请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" desc="单位编码"/>
-      <Item name="SFFS" length="3" desc="收费方式"/>
-      <Item name="FYLX" length="3" desc="费用类型"/>
+      <Item name="OJYLSH" length=" 4" desc="交易流水号"/>
+      <Item name="OJYRQ"  length=" 8" desc="交易日期"/>
+      <Item name="OJYSJ"  length=" 6" desc="交易时间"/>
+      <Item name="DYRQ"   length=" 8" desc="打印日期"/>
+      <Item name="DYSJ"   length=" 6" desc="打印时间"/>
+      <Item name="DYCZRY" length="20" desc="打印操作人员"/>
+      <Item name="PJLX"   length=" 2" desc="票据类型"/>
+      <Item name="FPDM"    length="32" desc="发票代码"/>
+      <Item name="PJHM"    length="16" desc="票据号码"/>
+      <Item name="DWBM"    length=" 8" desc="单位编码"/>
+      <Item name="DFNY"    length=" 6" desc="电费年月"/>
+      <Item name="JFH"    length="20" desc="缴费号"/>
+      <Item name="DZBZ"   length=" 1" desc="打印标志"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Quote name="EFE_RES"/>
-    </Response>
-  </Transaction>
-
-
-  <Transaction service="460451" code="460451" log_switch='5' desc="银行方发起对明细账交易请求">
-    <Request>
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM"   length=" 8" desc="单位编码"/>
-      <Item name="SFFS"   length=" 3" desc="收费方式"/>
-      <Item name="FYLX"   length=" 3" desc="费用类型"/>
-      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Quote name="EFE_RES"/>
-    </Response>
-  </Transaction>
-
-
-  <Transaction service="460444" code="460444" log_switch='5' desc="银行方发起查询客户基本信息请求">
-    <Request>
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="JFH" length="20" desc="缴费号"/>
-      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-    </Request>
-    <Response necessary="no">
-      <Include file="etc/TRMTOA_IIT.XML"/>
-      <Switch expression="$MsgTyp">
-        <Case value="N">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length=" 2" value="36" />
-            <Item name="OFmtCd" length=" 3" value="X01" />
-            <Item name="DWBM"   length=" 8" desc="单位编码"/>
-            <Item name="JFH"    length="20" desc="缴费号"/>
-            <Item name="QFJE"   length="16" desc="欠费金额"/>
-            <Item name="YHMC"   length="64" desc="用户名称"/>
-            <Item name="YDDZ"  length="128" desc="用电地址"/>
-            <Item name="BZSM"  length="128" desc="备注说明"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="E">
-          <PackItem name="TmpDat">
-            <Item name="ApCode" length="2" value="SC" />
-            <Item name="OFmtCd" length="3" value="D04" />
-            <Item name="RspCod" length="6"/>
-            <Item name="InPos"  length="4" value="0001"/>
-            <Item name="RspMsg" length="128"/>
-          </PackItem>
-          <Item name="TmpDat" head_len="4" include_len="yes"/>
-          <Break/>
-        </Case>
-        <Case value="A">
-          <Item name="BillText" deli_asc="-1" />
-          <Break/>
-        </Case>
-      </Switch>
-    </Response>
-  </Transaction>
-
-
-  <Transaction service="460413" code="460413" log_switch='5' desc="银行方发起存入预付款交易请求">
-    <Request>
-      <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="FYLX"  length=" 3" desc="费用类型"/>
-      <Item name="SFFS"  length=" 3" desc="收费方式"/>
-      <Item name="DWBM"  length=" 8" desc="单位编码"/>
-      <Item name="JFH"   length="20" desc="缴费号"/>
-      <Item name="FKFS"  length=" 1" desc="付款方式"/>
-      <Item name="CRYFK" length="16" desc="存入预付款"/>
-      <Item name="BZSM"  length="128" desc="备注说明"/>
-      <Item name="ActFlg" length=" 1" desc="账户种类"/>
-      <Item name="AVchTp" length=" 3" desc="账户凭证种类"/>
-      <Item name="VchCod" length=" 8" desc="存折号码"/>
-      <Item name="BokAct" length="21" expression="DELSPACE($BokAct,all)" desc="记帐帐号"/>
-      <Item name="KKZHMC" length="128" desc="扣款账户名称"/>
-      <Item name="BActSq" length=" 5" desc="一本通账户序号"/>
-      <Item name="RvsNo"  length="12" desc="销帐号"/>
-      <Item name="VchTyp" length=" 3" desc="凭证种类"/>
-      <Item name="VchNo"  length=" 8" desc="凭证号码"/>
-      <AddItem name="OIFLAG" value="O" desc="往来标志"/>
-      <AddItem name="BatFlg" value="S" desc="批量标识"/>
-      <AddItem name="XH" value="0000000001" desc="明细序号"/>
-      <CopyItem dest_name="KKZH" sour_name="BokAct"/>
-      <CopyItem dest_name="SKJE" sour_name="CRYFK"/>
     </Request>
     <Response necessary="no">
       <Include file="etc/TRMTOA_IIT.XML"/>
