@@ -561,6 +561,7 @@
 
   <Transaction code="460441" desc="银行发起批量查询欠费客户请求【交易由定时机制处理】">
     <DynSentence name="GetDWBM" desc="获取单位代码">
+      <Sentence>
         select distinct DWBM from EfekCusAgt where ( DWDM='%s' or '%s' ) and QYBZ in ( '0','1' ) and QYZT in ( '0','1' ) and ChkFlg='S'
       </Sentence>
       <Fields>DWDM|DWDM|</Fields>
@@ -646,6 +647,7 @@
   <Transaction code="460445" desc="查询客户基本信息">
     <Quote name="EfeSqlLst"/>
     <FlowCtrl>
+      <Quote name="InitTranByNodNo"/>
       <Set>SvrCod=460445</Set>
       <Quote name="SendThirdOther"/>
     </FlowCtrl>
