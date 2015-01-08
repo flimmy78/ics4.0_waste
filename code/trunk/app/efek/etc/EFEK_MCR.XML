@@ -68,6 +68,12 @@
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
+    <DynSentence name="ChkBatCusAgt" desc="根据单位编码和缴费号获取记录(批扣)">
+      <Sentence>
+        select ActFlg from EfekCusAgt where SUBSTR(DWBM,1,6) = '%s' and JFH='%s' and QYYHZH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|KKZH|</Fields>
+    </DynSentence>
   </Macro>
 <!--以下是应用操作的宏清单-->
 <!--以下是应用操作的宏清单-->
@@ -165,6 +171,7 @@
   </Macro>
 
   <Macro name="ChkCusAgt" desc="客户协议检查">
+  <!--用于签约表中DWBM字段比接收到的值短的情况,用于非批扣交易-->
     <Set>ODWBM=TRIM($DWBM,all)</Set>
     <Set>LEN=0</Set>
     <While condition="INTCMP(STRLEN($DWBM),5,4)" desc="单位编码至少4位【5表示大于或等于】">
@@ -192,17 +199,37 @@
     </While>
     <Set>DWBM=$ODWBM</Set>
     <If condition="IS_EQUAL_STRING($AgtFlg,0)" desc="无协议">
-      <Set>AgtFlg=0</Set>
-<!--留下交易痕迹-->
-      <Exec func="PUB:InsertRecord">
-        <Args>
-          <Arg name="tablename" value="EfekTxnDtl"/>
-        </Args>
-      </Exec>
-      <Set>MsgTyp=E</Set>
-      <Set>RspCod=EFE999</Set>
-      <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
-      <Return/>
+
+      <If condition="INTCMP(STRLEN($DWBM),3,6)" desc="增加批扣6位,签约表8位的情况">
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="ChkBatCusAgt"/>
+          </Args>
+        </Exec>
+        <If condition="INTCMP(~RetCod,3,-1)" desc="系统故障">
+          <Set>AgtFlg=0</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
+          <Return/>
+        </If>
+        <If condition="INTCMP(~RetCod,3,0)" desc="找到协议">
+          <Set>AgtFlg=1</Set>
+        </If>
+      </If>
+      <Else>
+        <Set>AgtFlg=0</Set>
+      <!--留下交易痕迹-->
+        <Exec func="PUB:InsertRecord">
+          <Args>
+            <Arg name="tablename" value="EfekTxnDtl"/>
+          </Args>
+        </Exec>
+        <Set>MsgTyp=E</Set>
+        <Set>RspCod=EFE999</Set>
+        <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
+        <Return/>
+      </Else>
     </If>
   </Macro>
 

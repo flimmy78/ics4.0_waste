@@ -402,11 +402,11 @@
       <Exec func="PUB:ExecSql" error="IGNORE">
         <Arg name="sql" value="UpdBchRecByDskNo"/>
       </Exec>
-      <!--21交易使用定时机制触发-->
-      <!--Exec func="PUB:CallLocal">  
+      <!--21交易使用定时机制触发会有一个问题,就是dskno无法获取-->
+      <Exec func="PUB:CallLocal">  
         <Arg name="TxnCod"  value="460421"/>
-        <Arg name="ObjSvr"  value="OFRTLCL1"/>
-      </Exec-->
+        <Arg name="ObjSvr"  value="OFTKEFE1"/>
+      </Exec>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>
@@ -1091,7 +1091,6 @@
           <Set>RspMsg=账户资料核对出错</Set>
           <Return/>
         </If>
-<!--
         <If condition="IS_NOEQUAL_STRING(DELSPACE($ActNam,both),$XQYZHMC)">
           <Set>MsgTyp=E</Set>
           <Set>RspCod=EFE999</Set>
@@ -1119,7 +1118,6 @@
             <Break/>
           </Case>
         </Switch>
--->
       </If>
       <Else>
         <Set>QYYHDM=$YQYYHDM</Set>

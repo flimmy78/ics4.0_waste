@@ -54,34 +54,6 @@
       <Quote name="InitTranByNodNo"/>
       <Set>SvrCod=460410</Set>
       <Quote name="SendThirdOther"/>
-<!--测试数据-->
-<!--测试数据
-<Set>PKGCNT=000001</Set>
-<Set>Root.Rec_1.JSFJYLSH=201412160306000000065589</Set>
-<Set>Root.Rec_1.JSFJYRQ=20141216</Set>
-<Set>Root.Rec_1.JSFJYSJ=175632</Set>
-<Set>Root.Rec_1.FQFJYLSH=201412160301441000000120</Set>
-<Set>Root.Rec_1.FQFJYRQ=20141216</Set>
-<Set>Root.Rec_1.FQFJYSJ=180204</Set>
-<Set>Root.Rec_1.SFFS=110</Set>
-<Set>Root.Rec_1.FYLX=010</Set>
-<Set>Root.Rec_1.DWBM=03061215</Set>
-<Set>Root.Rec_1.JFH=062360006003093</Set>
-<Set>Root.Rec_1.JSHMC=关润根</Set>
-<Set>Root.Rec_1.YDDZ=九江镇太平西45号1号3楼</Set>
-<Set>Root.Rec_1.KKYHDM=301 </Set>
-<Set>Root.Rec_1.KKZH=6222620710003604005</Set>
-<Set>Root.Rec_1.KKZHMC=测试5</Set>
-<Set>Root.Rec_1.BFJFBZ=1</Set>
-<Set>Root.Rec_1.ZWLSH=0306001312213099</Set>
-<Set>Root.Rec_1.DFNY=201411</Set>
-<Set>Root.Rec_1.QFJE=5246</Set>
-<Set>Root.Rec_1.BJ=5146</Set>
-<Set>Root.Rec_1.WYJ=100</Set>
-<Set>MsgTyp=N</Set>
-<Set>RspCod=000000</Set>
-测试数据-->
-<!--测试数据-->
     </FlowCtrl>
   </Transaction>
 
@@ -115,6 +87,7 @@
           </If>
         </Else>
       </If>
+
     </FlowCtrl>
   </Transaction>
 
@@ -270,13 +243,21 @@
       </Sentence>
       <Fields>DskNo|</Fields>
     </DynSentence>
+    <!--每次都全部发送没有必要-->
+    <!--DynSentence name="GetBchRec" desc="获取扣款处理完成的交易">
+      <Sentence>
+  			select OIFLAG, FQFJYLSH, FQFJYRQ, FQFJYSJ, BrNo,
+  			       PLDSXXBS, DWBM,YHDM,HBFH,SFFS,FYLX,ZBS ,ZJE ,DGBZ,ZJE ,CGBS, CGJE, SBBS, SBJE, SFY, FQFWJMC from EfekBchRec
+  			 where RecSts='B' for read only
+      </Sentence>
+    </DynSentence-->
     <DynSentence name="UpdBchRec" desc="更新处理完成的交易">
       <Sentence>
         update EfekBchRec set RecSts='%s', JSFJYLSH='%s',JSFJYRQ='%s',JSFJYSJ='%s',
-                JSFWJMC='%s',JSFWJLX='02',JSFWJMD5='%s',DAZRQ='%s',DAZSJ='%s'
+                JSFWJMC='%s',JSFWJLX='02',JSFWJMD5='%s'
          where OIFLAG='%s' and FQFJYLSH='%s'
       </Sentence>
-      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|YHWJMC|JSFWJMD5|DAZRQ|DAZSJ|OIFLAG|FQFJYLSH|</Fields>
+      <Fields>RecSts|JSFJYLSH|JSFJYRQ|JSFJYSJ|YHWJMC|JSFWJMD5|OIFLAG|FQFJYLSH|</Fields>
     </DynSentence>
     <DynSentence name="GetTxnDtl" desc="获取扣款处理完成的交易">
       <Sentence>
@@ -910,12 +891,132 @@
   </Transaction>
 
 
-  <Transaction code="460451" desc="银行对明细账服务">
+  <Transaction code="460451" desc="银行对明细账交易">
+    <Quote name="EfeSqlLst"/>
+    <!--供电批量代扣、银行托收、银行跨行托收方式，不用进行对明细账交易,
+    剩下需要对明细账的只剩下银行单笔代收和供电单笔代扣-->
+    <DynSentence name="GetTxnTyp" desc="获取交易类型">
+      <Sentence>
+        select distinct substr(DWBM, 1, 6) DWBM, SFFS, FYLX
+        from EfekTxnDtl
+        where KKRQ='%s' and DtlSts='S' and BatFlg='S' for read only
+      </Sentence>
+      <Fields>ChkDat|</Fields>
+    </DynSentence>
+    <DynSentence name="GetTxnTol" desc="单笔业务对账表头汇总">
+      <Sentence>
+        select DZPCLSH PLDSXXBS, substr(DWBM, 1, 6) DWBM, SFFS, FYLX, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE,
+           KKRQ DAZRQ, '160000' DAZSJ
+        from EfekTxnDtl
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+        group by DZPCLSH, substr(DWBM, 1, 6), SFFS, FYLX, KKRQ for read only
+      </Sentence>
+      <Fields>ChkDat|DWBM|SFFS|FYLX|</Fields>
+    </DynSentence>
+    <DynSentence name="GetTxnDtl" desc="单笔业务对账明细">
+      <Sentence>
+        select FQFJYLSH JYLSH, substr(DWBM, 1, 6) DWBM, DFNY, JFH, JSHMC, KKYHDM,
+           KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, '' ZY, '%s' SKRDM, '%s' DZWYBSM,
+           KKRQ DAZRQ, KKSJ DAZSJ
+        from EfekTxnDtl
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+      </Sentence>
+      <Fields>SKRDM|DZWYBSM|ChkDat|DWBM|SFFS|FYLX|</Fields>
+    </DynSentence>
+
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
 
     <FlowCtrl>
+      <Quote name="InitTranByNodNo"/>
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+          <Arg name="FieldName" value="ChkDat"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,0)" desc="非手工">
+        <Set>ChkDat=CALCDATE($ActDat,-,d,1)</Set>
+      </If>
+
+      <Exec func="PUB:OpenCursor" error="IGNORE">
+        <Arg name="sql" value="GetTxnTyp"/>
+        <Arg name="CursorName" value="cur_txntyp"/>
+      </Exec>
+      <While>
+        <Exec func="PUB:FetchCursor" error="IGNORE">
+          <Arg name="CursorName" value="cur_txntyp"/>
+        </Exec>
+        <If condition="INTCMP(~RetCod,4,0)">
+          <Break/>
+        </If>
+
+        <!--添加明细汇总行字段-->
+        <Set>YHDM=0301</Set>
+        <Set>SKRDM=301_030600</Set>
+        <Quote name="CreatDZWYBSM"/>
+        <Exec func="PUB:ReadRecord" error="IGNORE">
+          <Args>
+            <Arg name="SqlCmd" value="GetTxnTol"/>
+          </Args>
+        </Exec>
+        <If condition="INTCMP(~RetCod,4,0)">
+          <Exec func="PUB:CloseCursor" error="IGNORE"/>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE999</Set>
+          <Set>RspMsg=统计明细记录总数出错</Set>
+          <Break/>
+        </If>
+        <Set>DZWJMC=STRCAT(DZ,$SFFS,$FYLX,_0301,$DWBM,00,$ChkDat,001.txt)</Set>
+        <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekSndDir,$DZWJMC)</Set>
+        <Exec func="PUB:ExportFromDB">
+          <Args>
+            <Arg name="FormatName" value="DZ"/>
+            <Arg name="FileName"   value="$DatFil"/>
+            <Arg name="TableName"  value="EfekTxnDtl"/>
+            <Arg name="SqlName"    value="GetTxnDtl"/>
+          </Args>
+        </Exec>
+<!--将文件发到电力-->
+        <System command="EfeFilSend.sh">
+          <Arg name="EfekIp" value="$EfekIp"/>
+          <Arg name="EfekUsr" value="$EfekUsr"/>
+          <Arg name="EfekDir" value="$EfekDir"/>
+          <Arg name="EfekSndDir" value="$EfekSndDir"/>
+          <Arg name="FilNam" value="$DZWJMC"/>
+          <Arg name="SndTim" value="GETDATETIME(YYYYMMDDHHMISS)"/>
+        </System>
+        <Delete>MD5FIL</Delete>
+        <Delete>JSFWJMD5</Delete>
+        <Set>MD5FIL=STRCAT($DatFil,.MD5)</Set>
+        <Exec func="PUB:OpenFile">
+          <Arg name="FileName" value="$MD5FIL"/>
+          <Arg name="Mode" value="r"/>
+        </Exec>
+        <Exec func="PUB:GetFileLine" error="IGNORE">
+          <Arg name="FieldName" value="JSFWJMD5"/>
+        </Exec>
+        <If condition="INTCMP(~RetCod,4,0)" desc="读取失败">
+          <Exec func="PUB:CloseFile"/>
+          <Break/>
+        </If>
+        <Set>JSFWJMD5=TRIM($JSFWJMD5,right)</Set>
+
+        <Quote name="InitTranByNodNo"/>
+        <Quote name="CreatDZWYBSM"/>
+        <Set>DZPCLSH=$FQFJYLSH</Set>
+
+        <Set>PKGCNT=000001</Set>
+        <Set>WJMC=$DZWJMC</Set>
+        <Set>WJMD5=$JSFWJMD5</Set>
+        <Set>SvrCod=460451</Set>
+        <Quote name="SendThirdOther"/>
+        <If condition="IS_NOEQUAL_STRING($TRspCd,000000)" desc="对账异常">
+          <Set>RspMsg=STRCAT(单笔业务【,$DZPCLSH,】发送对账数据异常)</Set>
+          <Set>JYFHDM=00</Set>
+        </If>
+      </While>
+      <Exec func="PUB:CloseCursor" error="IGNORE">
+        <Arg name="CursorName" value="cur_txntyp"/>
+      </Exec>
       <Set>MsgTyp=N</Set>
       <Set>RspCod=000000</Set>
     </FlowCtrl>
