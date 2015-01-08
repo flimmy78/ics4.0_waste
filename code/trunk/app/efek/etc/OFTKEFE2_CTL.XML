@@ -615,10 +615,18 @@
 
   <Transaction code="460423" desc="供电方发起单笔当日代扣抹账请求">
     <Quote name="EfeSqlLst"/>
-    <DynSentence name="GetTxnDtl" desc="根据流水号获取处理记录">
+    <!--DynSentence name="GetTxnDtl" desc="根据流水号获取处理记录">
       <Sentence>
         select DtlSts, LogNo OLogNo, TlrId,  HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo
           from EfekTxnDtl where OIFlag='I' and FQFJYLSH='%s' and XH='%s' for read only
+      </Sentence>
+      <Fields>YJYLSH|XH|</Fields>
+    </DynSentence-->
+    <!--对于22交易来说,我们是交易接收方,应该使用接收方流水号JSFJYLSH进行交易查询-->
+    <DynSentence name="GetTxnDtl" desc="根据流水号获取处理记录">
+      <Sentence>
+        select DtlSts, LogNo OLogNo, TlrId,  HLogNo OHLogNo, TckNo OTckNo, TTxnCd OTTxnCd, HTxnCd OHTxnCd, NodNo ONodNo
+          from EfekTxnDtl where OIFlag='I' and JSFJYLSH='%s' and XH='%s' for read only
       </Sentence>
       <Fields>YJYLSH|XH|</Fields>
     </DynSentence>
@@ -661,8 +669,9 @@
           <Return/>
         </Case>
         <Case value="-2" desc="无记录">
-          <Set>MsgTyp=N</Set>
-          <Set>RspCod=000000</Set>
+          <Set>MsgTyp=E</Set>
+          <Set>RspCod=EFE015</Set>
+          <Set>RspMsg=无冲正记录</Set>
           <Return/>
         </Case>
       </Switch>
