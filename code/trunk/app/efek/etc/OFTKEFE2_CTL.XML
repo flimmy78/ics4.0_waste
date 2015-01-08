@@ -630,6 +630,12 @@
       </Sentence>
       <Fields>YJYLSH|XH|</Fields>
     </DynSentence>
+    <DynSentence name="UpdTxnDtlByLogNo" desc="根据流水号更新流水">
+      <Sentence>
+        update EfekTxnDtl set HTxnSt='%s', DtlSts='%s' where LogNo='%s'
+      </Sentence>
+      <Fields>HTxnSt|DtlSts|OLogNo|</Fields>
+    </DynSentence>
     <FlowCtrl>
       <Quote name="InitTranByDWBM"/>
       <Exec func="PUB:ReadRecord" error="IGNORE">
@@ -682,6 +688,9 @@
 -->
       <Set>TIATyp=C</Set>
       <Set>HTxnCd=STRCAT(SUBSTR($OHTxnCd,1,5),9)</Set>
+      <Set>TTxnCd=$HTxnCd</Set>
+      <!--Exec func="PUB:GetLogNo"/-->
+      <Set>LogNo=$OLogNo</Set>
       <Exec func="PUB:CallHostOther" error="IGNORE">
         <Arg name="HTxnCd" value="959999"/>
         <Arg name="ObjSvr" value="SHSTPUB1"/>
@@ -696,7 +705,7 @@
           </Exec>
 -->
           <Exec func="PUB:ExecSql">
-            <Arg name="sql" value="UpdTxnDtl"/>
+            <Arg name="sql" value="UpdTxnDtlByLogNo"/>
           </Exec>
           <Exec func="PUB:CommitWork" error="IGNORE"/>
           <Set>MsgTyp=N</Set>
