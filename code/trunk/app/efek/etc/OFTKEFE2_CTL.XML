@@ -192,7 +192,7 @@
     <Quote name="EfeSqlLst"/>
     <FlowCtrl>
 <!--协议判断-->
-      <Exec func="PUB:ReadRecord" error="IGNORE">
+      <!--Exec func="PUB:ReadRecord" error="IGNORE">
         <Arg name="SqlCmd" value="ChkCusAgt" />
       </Exec>
       <If condition="INTCMP(~RetCod,4,0)">
@@ -202,7 +202,8 @@
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
         <Goto>UpdTag</Goto>
-      </If>
+      </If-->
+      <Quote name="ChkCusAgt"/>
       <Set>FTxnTm=GETDATETIME(YYYYMMDDHHMISS)</Set>
       <Set>TxnAmt=$YKJE</Set>
       <Set>TxnCnl=EFE</Set>
