@@ -360,19 +360,19 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetCusAgtDWBM" desc="单位代码">
       <Sentence>
-        select distinct DWBM from EfekCusAgt where FQFJYRQ='%s'
+        select distinct SUBSTR(DWBM,1,6) DWBM from EFEKCUSHIS where FQFJYRQ='%s'
       </Sentence>
       <Fields>QryDat|</Fields>
     </DynSentence>
      <DynSentence name="CntCusAgt" desc="统计数量">
       <Sentence>
-        select count(*) MXBS from EfekCusAgt where FQFJYRQ='%s' and DWBM='%s'
+        select count(*) MXBS from EFEKCUSHIS where FQFJYRQ='%s' and DWBM like '%s%%'
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
     <DynSentence name="GetCusDtl" desc="明细记录">
       <Sentence>
-        select * from EfekCusAgt where FQFJYRQ='%s' and DWBM='%s'
+        select * from EFEKCUSHIS where FQFJYRQ='%s' and DWBM like '%s%%' order by jfh
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
@@ -483,7 +483,9 @@
           <Break/>
         </If>
         <Set>WJMD5=TRIM($WJMD5,right)</Set>
+        <Exec func="PUB:CloseFile"/>
         <Set>SvrCod=460431</Set>
+        <Set>PKGCNT=000001</Set>
         <Quote name="SendThirdOther"/>
         <If condition="INTCMP(~RetCod,3,0)">
           <!--Exec func="PUB:ExecSql" error="IGNORE">
@@ -651,6 +653,13 @@
       </Sentence>
       <Fields>DWBM|JFH|</Fields>
     </DynSentence>
+    <DynSentence name="IntCusHis" desc="保留协议变更痕迹">
+      <Sentence>
+        insert into EFEKCUSHIS
+          select * from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
+    </DynSentence>
     <Attributes>
       <Attribute name="nodatabase" value="2"/>
     </Attributes>
@@ -701,7 +710,7 @@
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
-      <If condition="OR(IS_EQUAL_STRING($ActFlg,1),IS_EQUAL_STRING($ActFlg,2),IS_EQUAL_STRING($ActFlg,4))">
+      <!--If condition="OR(IS_EQUAL_STRING($ActFlg,1),IS_EQUAL_STRING($ActFlg,2),IS_EQUAL_STRING($ActFlg,4))">
         <Set>TxnCnl=1</Set>
         <Set>ActTyp=$ActFlg</Set>
         <Set>PayTyp=1</Set>
@@ -717,7 +726,7 @@
           <Set>RspMsg=客户资料校验不符</Set>
           <Return/>
         </If>
-      </If>
+      </If-->
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
 <!--户名、证件检验通过前端联动交易实现，此处仅验证密码-->
@@ -760,10 +769,10 @@
 <!--测试数据-->
 <!--测试数据-->
 <!--测试数据-->
-      <If condition="IS_NOEQUAL_STRING($ActFlg,0)">
+      <!--If condition="IS_NOEQUAL_STRING($ActFlg,0)">
         <Set>XQYZHMC=测试账户</Set>
       </If>
-<Set>XQYZHMC=测试账户</Set>
+<Set>XQYZHMC=测试账户</Set-->
 <!--测试数据-->
 <!--测试数据-->
 <!--测试数据-->
@@ -775,6 +784,8 @@
           <Arg name="TblNam" value="EfekCusAgt"/>
           <Arg name="CndSts" value="UpdCusAgt"/>
         </Exec>
+        <!--保存变更至协议历史表-->
+        <Quote name="IntCusHis"/>
         <Set>MsgTyp=N</Set>
         <Set>RspCod=000000</Set>
       </If>
@@ -999,6 +1010,7 @@
           <Break/>
         </If>
         <Set>JSFWJMD5=TRIM($JSFWJMD5,right)</Set>
+        <Exec func="PUB:CloseFile"/>
 
         <Quote name="InitTranByNodNo"/>
         <Quote name="CreatDZWYBSM"/>

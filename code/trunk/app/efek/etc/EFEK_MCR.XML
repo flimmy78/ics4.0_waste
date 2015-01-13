@@ -74,6 +74,13 @@
       </Sentence>
       <Fields>DWBM|JFH|KKZH|</Fields>
     </DynSentence>
+    <DynSentence name="IntCusHis" desc="保留协议变更痕迹">
+      <Sentence>
+        insert into EFEKCUSHIS
+          select * from EfekCusAgt where DWBM='%s' and JFH='%s'
+      </Sentence>
+      <Fields>DWBM|JFH|</Fields>
+    </DynSentence>
   </Macro>
 <!--以下是应用操作的宏清单-->
 <!--以下是应用操作的宏清单-->
@@ -675,6 +682,15 @@
       </Default>
     </Switch>
   </Macro>
+
+
+  <Macro name="IntCusHis" desc="保留用户协议变更痕迹">
+    <Exec func="PUB:ExecSql" error="IGNORE">
+      <Arg name="sql" value="IntCusHis"/>
+    </Exec>
+  </Macro>
+
+
 <!--以上是应用操作的宏清单-->
 <!--以上是应用操作的宏清单-->
 <!--以上是应用操作的宏清单-->

@@ -358,7 +358,7 @@
   <Transaction service="460431" code="460431" log_switch='5' desc="银行方发起银行到供电核对代扣协议请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" desc="单位编码"/>
+      <!--Item name="DWBM" length="8" desc="单位编码"/-->
       <Item name="QryDat" length="8" desc="查询日期"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
@@ -614,9 +614,7 @@
   <Transaction service="460450" code="460450" log_switch="5" desc="银行方发起对总账交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM" length="8" desc="单位编码"/>
-      <Item name="SFFS" length="3" desc="收费方式"/>
-      <Item name="FYLX" length="3" desc="费用类型"/>
+      <Item name="CHKDAT" length="8" desc="对账日期"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
@@ -629,9 +627,7 @@
   <Transaction service="460451" code="460451" log_switch='5' desc="银行方发起对明细账交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="DWBM"   length=" 8" desc="单位编码"/>
-      <Item name="SFFS"   length=" 3" desc="收费方式"/>
-      <Item name="FYLX"   length=" 3" desc="费用类型"/>
+      <Item name="CHKDAT" length="8" desc="对账日期"/>
       <AddItem name="OIFLAG" value="O" desc="往来标志"/>
     </Request>
     <Response necessary="no">
