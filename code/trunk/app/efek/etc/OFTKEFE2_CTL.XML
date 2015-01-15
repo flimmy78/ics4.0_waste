@@ -736,7 +736,7 @@
 
 
 
-  <Transaction code="460424" desc="供电方发起批量代扣取消请求">
+  <Transaction code="460424" desc="供电方发起批量代扣取消请求@deprecated">
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetBchRec">
       <Sentence>
@@ -781,18 +781,18 @@
       <Switch expression="$RecSts">
 <!--add by qm, 20141225用于测试目的,需要返回"1 文件未扣款，取消成功"而特别制作的
 一个case.上生产前需要删除-->
-        <Case value="B" desc="账务处理完成">
+        <!--Case value="B" desc="账务处理完成">
           <Set>MsgTyp=N</Set>
           <Set>RspCod=000000</Set>
           <Set>RspMsg=STRCAT(批次【,$YJYLSH,】【,$YJYRQ,】【,$YJYSJ,】未扣款，取消成功)</Set>
           <Set>QXBZ=1</Set>
           <Set>BZ=$RspMsg</Set>
           <Return/>
-        </Case>
+        </Case-->
 <!--add by qm, 20141225用于测试目的,需要返回"1 文件未扣款，取消成功"而特别制作的
 一个case.上生产前需要删除-->
         <!--Case value="b" desc="账务处理完成" /-->
-        <!--Case value="B" desc="账务处理完成" -->
+        <Case value="B" desc="账务处理完成" />
         <Case value="b" desc="账务处理完成" >
           <Set>MsgTyp=N</Set>
           <Set>RspCod=000000</Set>
