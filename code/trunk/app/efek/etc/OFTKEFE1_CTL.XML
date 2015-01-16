@@ -360,19 +360,19 @@
     <Quote name="EfeSqlLst"/>
     <DynSentence name="GetCusAgtDWBM" desc="单位代码">
       <Sentence>
-        select distinct SUBSTR(DWBM,1,6) DWBM from EFEKCUSHIS where FQFJYRQ='%s'
+        select distinct SUBSTR(DWBM,1,6) DWBM from EfekCusAgt where FQFJYRQ='%s'
       </Sentence>
       <Fields>QryDat|</Fields>
     </DynSentence>
      <DynSentence name="CntCusAgt" desc="统计数量">
       <Sentence>
-        select count(*) MXBS from EFEKCUSHIS where FQFJYRQ='%s' and DWBM like '%s%%'
+        select count(*) MXBS from EfekCusAgt where FQFJYRQ='%s' and DWBM like '%s%%'
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
     <DynSentence name="GetCusDtl" desc="明细记录">
       <Sentence>
-        select * from EFEKCUSHIS where FQFJYRQ='%s' and DWBM like '%s%%' order by jfh
+        select * from EfekCusAgt where FQFJYRQ='%s' and DWBM like '%s%%' order by jfh
       </Sentence>
       <Fields>QryDat|DWBM|</Fields>
     </DynSentence>
