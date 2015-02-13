@@ -29,7 +29,7 @@
       <Sentence>
         insert into EfekRunCtl values( '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%s','','','' )
       </Sentence>
-      <Fields>ROOT.DWBM|ROOT.FQFJYLSH|ROOT.FQFJYRQ|ROOT.FQFJYSJ|ROOT.FQFYWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
+      <Fields>ROOT.DWBM|ROOT.FQFJYLSH|ROOT.FQFJYRQ|ROOT.FQFJYSJ|ROOT.YWBSH|ROOT.CZRY|ROOT.ZT|ROOT.BZ|</Fields>
     </DynSentence>
 <!--明细表【EfekTxnDtl】访问操作-->
 <!--明细表【EfekTxnDtl】访问操作-->
@@ -181,6 +181,7 @@
   <!--用于签约表中DWBM字段比接收到的值短的情况,用于非批扣交易-->
     <Set>ODWBM=TRIM($DWBM,all)</Set>
     <Set>LEN=0</Set>
+    <Set>AgtFlg=0</Set><!--默认找不到,如果有协议才更新为1-->
     <While condition="INTCMP(STRLEN($DWBM),5,4)" desc="单位编码至少4位【5表示大于或等于】">
       <Exec func="PUB:ReadRecord" error="IGNORE">
         <Args>
@@ -201,7 +202,6 @@
       <If condition="INTCMP(~RetCod,3,-2)" desc="无协议">
         <Set>LEN=ADD($LEN,2)</Set>
         <Set>DWBM=SUBSTR($ODWBM,1,SUB(STRLEN($ODWBM),$LEN))</Set>
-        <Set>AgtFlg=0</Set>
       </If>
     </While>
     <Set>DWBM=$ODWBM</Set>
@@ -224,19 +224,13 @@
           <Set>AgtFlg=1</Set>
         </If>
       </If>
-      <Else>
+      <If condition="IS_EQUAL_STRING(AgtFlg,0)" desc="默认的错误返回">
         <Set>AgtFlg=0</Set>
-      <!--留下交易痕迹-->
-        <Exec func="PUB:InsertRecord">
-          <Args>
-            <Arg name="tablename" value="EfekTxnDtl"/>
-          </Args>
-        </Exec>
         <Set>MsgTyp=E</Set>
         <Set>RspCod=EFE999</Set>
         <Set>RspMsg=STRCAT(单位【,$DWBM,】缴费号【,$JFH,】账号【,$KKZH,】未与银行签订代扣协议)</Set>
         <Return/>
-      </Else>
+      </If>
     </If>
   </Macro>
 
@@ -278,7 +272,16 @@
     <Set>WDMC=@BCFG.BrNam</Set>
     <Set>MYSY=0</Set>
     <Set>MYCSXL= </Set>
-    <Set>JYJSF=030600</Set>
+    <!--Set>JYJSF=030600</Set-->
+    <Exec func="PUB:IsExistNode" error="IGNORE">
+      <Arg name="FieldName" value="DWBM"/>
+    </Exec>
+    <If condition="INTCMP(~RetCod,3,0)" desc="非手工">
+      <Set>JYJSF= </Set>
+    </If>
+    <Else>
+      <Set>JYJSF=STRCAT(SUBSTR($DWBM,1,4),00)</Set>
+    </Else>
     <Set>JYYDZ= </Set>
     <Set>JYMBDZ= </Set>
     <Set>JYMBDZ= </Set>

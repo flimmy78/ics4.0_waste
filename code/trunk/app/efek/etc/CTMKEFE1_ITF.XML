@@ -831,6 +831,45 @@
   </Transaction>
 
 
+ <Transaction code="460264" service="460264"  desc="查询清算总金额与总笔数" log_switch="5" > 
+    <Request>
+      <Include file="etc/TRMTIA_IIT.XML"/>
+      <Item name="TxnDat"      length="8"  />   <!-- 交易日期 -->
+      <Item name="CAgtNo"      length="10"/>    <!--单位协议号 -->
+    </Request>
+    <Response necessary="no">
+      <Include file="etc/TRMTOA_IIT.XML"/>
+      <Switch expression="$MsgTyp"> <!--N是成功,E是失败,A是授权-->
+         <Case value="N">
+            <PackItem name="TmpDat">
+            <Item name="ApCode"   length="2"   value="46"/>
+            <Item name="OFmtCd"   length="3"   value="A01"/>
+            <Item name="TotCnt"   length="5"/>
+            <Item name="SumAmt"   length="15"/>
+            </PackItem>
+              <Item name="TmpDat" head_len="4" include_len="yes"/>
+              <Break/>
+              </Case>
+             <Case value="E">
+             <PackItem name="TmpDat">
+             <Item name="ApCode" length="2" value="SC" />
+             <Item name="OFmtCd" length="3" value="D04" />
+             <Item name="RspCod" length="6"/>
+             <Item name="InPos"  length="4" value="0001"/>
+             <Item name="RspMsg" length="56"/>
+             </PackItem>
+             <Item name="TmpDat" head_len="4" include_len="yes"/>
+             <Break/>
+            </Case>
+           <Case value="A">
+           <Item name="BillText" deli_asc="-1" />
+           <Break/>
+        </Case>
+      </Switch>
+    </Response>
+  </Transaction>
+
+
   <Transaction service="460490" code="460490" log_switch='5' desc="银行发送代收失败日志服务交易请求">
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>

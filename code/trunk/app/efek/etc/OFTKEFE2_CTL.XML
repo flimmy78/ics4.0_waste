@@ -1117,7 +1117,8 @@
         </If>
         <Switch expression="$ZHLX">
           <Case value="0" desc="对公账户">
-            <If condition="AND(IS_EQUAL_STRING($ZHLX,0),OR(IS_NOEQUAL_STRING($ActQ04,$IdTyp),IS_NOEQUAL_STRING($ActQ13,$ZJHM)))">
+            <!--If condition="AND(IS_EQUAL_STRING($ZHLX,0),OR(IS_NOEQUAL_STRING($ActQ04,$IdTyp),IS_NOEQUAL_STRING($ActQ13,$ZJHM)))"-->
+            <If condition="OR(IS_NOEQUAL_STRING($ZJLX,06),IS_NOEQUAL_STRING(TRIM($ActQ04,both),$ZJHM))">
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE999</Set>
               <Set>RspMsg=STRCAT(证件种类【,$ZJLX,】或证件号码【,$ZJHM,】与银行系统不一致)</Set>
@@ -1127,7 +1128,7 @@
           </Case>
           <Case value="1" desc="对私储蓄"/>
           <Case value="3" desc="对私借记卡">
-            <If condition="AND(IS_EQUAL_STRING($ZHLX,0),OR(IS_NOEQUAL_STRING($ActQ04,$IdTyp),IS_NOEQUAL_STRING($IdNo,$ZJHM)))">
+            <If condition="OR(IS_NOEQUAL_STRING($QYIdTyp,$IDTyp),IS_NOEQUAL_STRING($ZJHM,TRIM($IDNo,both)))">
               <Set>MsgTyp=E</Set>
               <Set>RspCod=EFE999</Set>
               <Set>RspMsg=STRCAT(证件种类【,$ZJLX,】或证件号码【,$ZJHM,】与银行系统不一致)</Set>

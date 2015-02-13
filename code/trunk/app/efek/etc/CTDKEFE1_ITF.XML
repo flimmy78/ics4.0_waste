@@ -25,6 +25,10 @@
       <Column name="HBFH" sort="no"/>
       <Column name="CcyCod" sort="no"/>
     </Table>
+    <Table name="IdTypToZJLX" file="etc/EFE_CSW_441999.XML">
+      <Column name="IdTyp" sort="no"/>
+      <Column name="ZJLX" sort="no"/>
+    </Table>
   </CodeSwitching>
 
 
@@ -186,6 +190,7 @@
       <Item name="ZHLX"    length=" 2" expression="TRIM($ZHLX,both)" desc="账户类型"/>
       <SwitchCode name="ZHLX" new_name="ActFlg" tab_name="ZHLXToActFlg" col_name="ZHLX"/>
       <Item name="ZJLX"    length=" 2" desc="证件类型"/>
+      <SwitchCode name="ZJLX" new_name="QYIdTyp" tab_name="IdTypToZJLX" col_name="ZJLX"/>
       <Item name="ZJHM"    length="32" expression="DELSPACE($ZJHM,both)" desc="证件号码"/>
       <Item name="LXDH"    length="20" desc="联系电话"/>
       <Item name="SJHM"    length="20" desc="手机号码"/>
