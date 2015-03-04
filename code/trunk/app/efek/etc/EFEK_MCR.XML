@@ -272,15 +272,23 @@
     <Set>WDMC=@BCFG.BrNam</Set>
     <Set>MYSY=0</Set>
     <Set>MYCSXL= </Set>
-    <!--Set>JYJSF=030600</Set-->
+    <!--Set>JYJSF=030600</Set--><!--通过DWBM和JFH确定JYJSF的值-->
     <Exec func="PUB:IsExistNode" error="IGNORE">
       <Arg name="FieldName" value="DWBM"/>
     </Exec>
-    <If condition="INTCMP(~RetCod,3,0)" desc="非手工">
-      <Set>JYJSF= </Set>
+    <If condition="INTCMP(~RetCod,3,1)" desc="存在值">
+      <Set>JYJSF=STRCAT(SUBSTR($DWBM,1,4),00)</Set>
     </If>
     <Else>
-      <Set>JYJSF=STRCAT(SUBSTR($DWBM,1,4),00)</Set>
+      <Exec func="PUB:IsExistNode" error="IGNORE">
+        <Arg name="FieldName" value="JFH"/>
+      </Exec>
+      <If condition="INTCMP(~RetCod,3,1)" desc="存在值">
+        <Set>JYJSF=STRCAT(SUBSTR($JFH,1,4),00)</Set>
+      </If>
+      <Else>
+        <Set>JYJSF= </Set>
+      </Else>
     </Else>
     <Set>JYYDZ= </Set>
     <Set>JYMBDZ= </Set>
