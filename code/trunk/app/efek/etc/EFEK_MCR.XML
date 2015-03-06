@@ -236,19 +236,15 @@
 
 
   <Macro name="GetRspMsg" desc="根据电力返回代码获取中文">
-    <If condition="INTCMP(STRLEN(TRIM($CWTSXX,all)),3,0)" desc="错误提示信息无内容时，通过返回码转换">
-      <Exec func="PUB:CodeSwitching" error="IGNORE">
-        <Arg name="DatSrc"  value="EFECSW"/>
-        <Arg name="SourNam" value="JYFHDM"/>
-        <Arg name="DestNam" value="RspMsg"/>
-        <Arg name="TblNam"  value="JYFHDMToRspMsg"/>
-      </Exec>
-    </If>
-    <Else>
-      <Set>RspCod=EFE999</Set>
-      <Set>RspMsg=$CWTSXX</Set>
-    </Else>
-    <Set>RspMsg=STRCAT(电网方提示：,$RspMsg)</Set>
+    <!--由于电网返回错误提示信息内容模糊,需要与标准报错合并-->
+    <Set>RspCod=EFE999</Set>
+    <Exec func="PUB:CodeSwitching" error="IGNORE">
+      <Arg name="DatSrc"  value="EFECSW"/>
+      <Arg name="SourNam" value="JYFHDM"/>
+      <Arg name="DestNam" value="RspMsg"/>
+      <Arg name="TblNam"  value="JYFHDMToRspMsg"/>
+    </Exec>
+    <Set>RspMsg=STRCAT($RspMsg,电网方提示：,$CWTSXX)</Set>
   </Macro>
 
 
@@ -409,6 +405,14 @@
     </Exec>
     <Switch expression="$ActFlg">
       <Case value="0" desc="对公">
+        <Exec func="PUB:AddAuthReason" >
+          <Arg name="AthCod" value="40" />
+          <Arg name="AthMsg" value="EFE000" />
+        </Exec>
+        <Exec  func="PUB:CheckLocalAuth" >
+          <Arg name="ObjSvr" value="SHSTPUB1" />
+        </Exec>
+
         <Set>HTxnCd=451240</Set>
         <Set>BusTyp=PFT57</Set>
         <Set>CrpCod=EFE999999999</Set>

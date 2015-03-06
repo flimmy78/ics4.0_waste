@@ -792,7 +792,7 @@
       <Sentence>
         select PLDSXXBS DZPCLSH, DWBM, SFFS, FYLX, CGBS ZBS, CGJE ZJE, JSFJYRQ DAZRQ, JSFJYSJ DAZSJ
           from EfekBchRec
-         where JSFJYRQ='%s' and RecSts='S' and OIFlag='I' for read only
+         where JSFJYRQ='%s' and (RecSts='S' or RecSts='D') and OIFlag='I' for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
     </DynSentence>
@@ -802,7 +802,7 @@
         select substr(DWBM, 1, 6) DWBM, SFFS, FYLX, KKRQ DAZRQ, '160000' DAZSJ, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE
         from EfekTxnDtl
         where KKRQ='%s'
-          and DtlSts='S' and BatFlg='S'
+          and (DtlSts='S' or DtlSts='D') and BatFlg='S'
         group by substr(DWBM, 1, 6), SFFS, FYLX, KKRQ for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
@@ -899,7 +899,7 @@
       <Sentence>
         select distinct substr(DWBM, 1, 6) DWBM, SFFS, FYLX
         from EfekTxnDtl
-        where KKRQ='%s' and DtlSts='S' and BatFlg='S' for read only
+        where KKRQ='%s' and (DtlSts='S' or DtlSts='D') and BatFlg='S' for read only
       </Sentence>
       <Fields>ChkDat|</Fields>
     </DynSentence>
@@ -908,7 +908,7 @@
         select DZPCLSH PLDSXXBS, substr(DWBM, 1, 6) DWBM, SFFS, FYLX, count(SKJE) ZBS, value(sum(bigint(SKJE)),0) ZJE,
            KKRQ DAZRQ, '160000' DAZSJ
         from EfekTxnDtl
-        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and (DtlSts='S' or DtlSts='D') and BatFlg='S'
         group by DZPCLSH, substr(DWBM, 1, 6), SFFS, FYLX, KKRQ for read only
       </Sentence>
       <Fields>ChkDat|DWBM|SFFS|FYLX|</Fields>
@@ -919,7 +919,7 @@
            KKZH DFZH, KKZHMC DFZHMC, KKRQ, KKSJ, SKJE JE, '' ZY, '%s' SKRDM, '%s' DZWYBSM,
            KKRQ DAZRQ, KKSJ DAZSJ
         from EfekTxnDtl
-        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and DtlSts='S' and BatFlg='S'
+        where KKRQ='%s' and DWBM like '%s%%' and SFFS='%s' and FYLX='%s' and (DtlSts='S' or DtlSts='D') and BatFlg='S'
       </Sentence>
       <Fields>SKRDM|DZWYBSM|ChkDat|DWBM|SFFS|FYLX|</Fields>
     </DynSentence>
@@ -1030,7 +1030,7 @@
         select coalesce(sum(cast(CGJE as bigint)),0) as BatAmt,coalesce(sum(cast(CGBS as bigint)),0) BatCnt
         from EfekBchRec where JSFJYRQ='%s' and DWBM like '%s%%' and RecSts='S' and OIFlag='I'
       </Sentence>
-      <Fields>TxnDat|DWBM|</Fields>
+      <Fields>ClrDat|DWBM|</Fields>
     </DynSentence>
     <DynSentence name="QryDtlTot">
       <Sentence>
@@ -1039,7 +1039,7 @@
         where KKRQ='%s' and DWBM like '%s%%'
           and DtlSts='S' and BatFlg='S'
       </Sentence>
-      <Fields>TxnDat|DWBM|</Fields>
+      <Fields>ClrDat|DWBM|</Fields>
     </DynSentence>
     <FlowCtrl>
 
@@ -1079,13 +1079,13 @@
       <Sentence>
         update EfekBchRec set RecSts='D' where JSFJYRQ='%s' and DWBM like '%s%%' and RecSts='S' and OIFlag='I'
       </Sentence>
-      <Fields>TxnDat|DWBM|</Fields>
+      <Fields>ClrDat|DWBM|</Fields>
     </DynSentence>
     <DynSentence name="UpdTxnJnl"><!--修改清算标志-->
       <Sentence>
         update EfekTxnDtl set DtlSts='D' where KKRQ='%s' and DWBM like '%s%%' and DtlSts='S' and BatFlg='S'
       </Sentence>
-      <Fields>TxnDat|DWBM|</Fields>
+      <Fields>ClrDat|DWBM|</Fields>
     </DynSentence>
 
     <FlowCtrl>
@@ -1207,12 +1207,14 @@
       -->
 
       <If condition="~RetCod=0">  <!--recsts 0:初始化 1:成功 2:失败 -->
-        <Exec func="PUB:ExecSql">
+        <Exec func="PUB:ExecSql" error="IGNORE">
            <Arg name="SqlCmd" value="UpdBatJnl"/>
         </Exec>
-        <Exec func="PUB:ExecSql">
+        <Exec func="PUB:ExecSql" error="IGNORE">
            <Arg name="SqlCmd" value="UpdTxnJnl"/>
         </Exec>
+        <Set>MsgTyp=N</Set>
+        <Set>RspCod=000000</Set>
       </If>
 
     </FlowCtrl>

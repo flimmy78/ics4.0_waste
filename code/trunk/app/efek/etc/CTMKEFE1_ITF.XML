@@ -834,7 +834,7 @@
  <Transaction code="460474" service="460474"  desc="查询清算总金额与总笔数" log_switch="5" > 
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="TxnDat"    length="8"  desc="清算日期" />
+      <Item name="ClrDat"    length="8"  desc="清算日期" />
       <Item name="DWBM"      length="4"  desc="单位编码" />
     </Request>
     <Response necessary="no">
@@ -873,7 +873,7 @@
  <Transaction code="460471" service="460471"  desc="广东电力电费清算" log_switch="5" > 
     <Request>
       <Include file="etc/TRMTIA_IIT.XML"/>
-      <Item name="TxnDat"    length="8"  desc="清算日期" />
+      <Item name="ClrDat"    length="8"  desc="清算日期" />
       <Item name="DWBM"      length="4"  desc="单位编码" />
       <Item name="TotCnt"    length="5"  desc="清算笔数"/>
       <Item name="TxnAmt"    length="15" expression="ADDCHAR(DELSPACE($TxnAmt,all),15,0,1)" desc="清算金额"/>
