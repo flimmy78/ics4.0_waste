@@ -254,7 +254,7 @@
 <!--报文头常量-->
     <Set>XYBBH=1.0.0</Set>
     <Set>JYRBS=301_030600</Set>
-    <Set>SJBLX=0</Set>
+    <!--Set>SJBLX=0</Set-->
     <Set>JYFQF=301</Set>
     <Set>JYFSRQ=GETDATETIME(YYYYMMDD)</Set>
     <Set>JYFSSJ=GETDATETIME(HHMISS)</Set>
@@ -268,7 +268,7 @@
     <Set>WDMC=@BCFG.BrNam</Set>
     <Set>MYSY=0</Set>
     <Set>MYCSXL= </Set>
-    <!--Set>JYJSF=030600</Set--><!--通过DWBM和JFH确定JYJSF的值-->
+    <!--通过DWBM确定JYJSF的值-->
     <Exec func="PUB:IsExistNode" error="IGNORE">
       <Arg name="FieldName" value="DWBM"/>
     </Exec>
@@ -276,15 +276,7 @@
       <Set>JYJSF=STRCAT(SUBSTR($DWBM,1,4),00)</Set>
     </If>
     <Else>
-      <Exec func="PUB:IsExistNode" error="IGNORE">
-        <Arg name="FieldName" value="JFH"/>
-      </Exec>
-      <If condition="INTCMP(~RetCod,3,1)" desc="存在值">
-        <Set>JYJSF=STRCAT(SUBSTR($JFH,1,4),00)</Set>
-      </If>
-      <Else>
-        <Set>JYJSF= </Set>
-      </Else>
+      <Set>JYJSF=030000</Set>
     </Else>
     <Set>JYYDZ= </Set>
     <Set>JYMBDZ= </Set>

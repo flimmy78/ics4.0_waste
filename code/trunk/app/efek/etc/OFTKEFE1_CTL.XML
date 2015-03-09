@@ -278,8 +278,8 @@
         <Exec func="PUB:InitTransaction"/>
         <Set>TotNum=1</Set>
         <Quote name="CreatYHJYLSH"/>
-        <Quote name="CreatYHWJMC"/>
-        <!--Set>YHWJMC=STRCAT(PTFH_,$KHBZ,0301,$DWBM,GETDATETIME(YYYYMMDD),$SelVal,.txt)</Set-->
+        <!--Quote name="CreatYHWJMC"/>
+        <Set>YHWJMC=STRCAT(PTFH_,$KHBZ,0301,$DWBM,GETDATETIME(YYYYMMDD),$SelVal,.txt)</Set-->
         <Set>YHWJMC=REPSTR($FQFWJMC,PTFS,PTFH)</Set>
         <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekSndDir,$YHWJMC)</Set>
         <Exec func="PUB:ExportFromDB">
@@ -813,7 +813,7 @@
         update EfekTxnDtl
         set DZPCLSH='%s'
         where KKRQ='%s' and SFFS='%s' and FYLX='%s'
-          and DtlSts='S' and BatFlg='S'
+          and (DtlSts='S' or DtlSts='D') and BatFlg='S'
       </Sentence>
       <Fields>DZPCLSH|ChkDat|SFFS|FYLX|</Fields>
     </DynSentence>
@@ -950,7 +950,7 @@
         </If>
 
         <!--添加明细汇总行字段-->
-        <Set>YHDM=0301</Set>
+        <Set>YHDM=301</Set>
         <Set>SKRDM=301_030600</Set>
         <Quote name="CreatDZWYBSM"/>
         <Exec func="PUB:ReadRecord" error="IGNORE">
@@ -965,7 +965,8 @@
           <Set>RspMsg=统计明细记录总数出错</Set>
           <Break/>
         </If>
-        <Set>DZWJMC=STRCAT(DZ,$SFFS,$FYLX,_0301,$DWBM,00,$ChkDat,001.txt)</Set>
+        <Quote name="CreatYHWJMC"/>
+        <Set>DZWJMC=STRCAT(DZ,$SFFS,$FYLX,_0301,$DWBM,00,$ChkDat,SUBSTR($SelVal,2,4),.txt)</Set>
         <Set>DatFil=STRCAT(GETENV(WORKDIR),$EfekSndDir,$DZWJMC)</Set>
         <Exec func="PUB:ExportFromDB">
           <Args>
